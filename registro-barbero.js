@@ -3,117 +3,91 @@ document.addEventListener("DOMContentLoaded", () => {
     const msg = document.getElementById("reg-msg");
 
     if (!form) {
-        console.log("Formulario no encontrado");
+        console.warn("⚠️ Formulario no encontrado");
         return;
     }
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        msg.textContent = "⏳ Creando cuenta y registrando barbería...";
+        msg.textContent = "⏳ Creando cuenta...";
         msg.style.color = "#aaa";
 
-        // Datos de la barbería
+        // 1. Recopilar datos
         const name = document.getElementById("barber-name").value.trim();
         const ownerName = document.getElementById("owner-name").value.trim();
         const location = document.getElementById("barber-location").value.trim();
         const phone = document.getElementById("barber-phone").value.trim();
         const delivery = document.getElementById("delivery").value;
-
-        // Datos de autenticación
         const email = document.getElementById("auth-email").value.trim();
         const password = document.getElementById("auth-password").value.trim();
 
-        // Validaciones básicas
-        if (!name || !ownerName || !location || !phone) {
-            msg.textContent = "❌ Completa todos los campos de la barbería";
-            msg.style.color = "#ff3333";
-            return;
-        }
-
-        if (!email || !password) {
-            msg.textContent = "❌ Email y contraseña son obligatorios";
-            msg.style.color = "#ff3333";
-            return;
-        }
-
-        if (password.length < 6) {
-            msg.textContent = "❌ La contraseña debe tener al menos 6 caracteres";
+        if (!name || !ownerName || !location || !phone || !email || !password) {
+            msg.textContent = "❌ Completa todos los campos";
             msg.style.color = "#ff3333";
             return;
         }
 
         try {
-            // ✅ CORREGIDO: usamos supabaseClient.auth en lugar de supabase.auth
+            console.log("🔹 Paso 1: Creando usuario en Supabase...");
             const { data: authData, error: authError } = await supabaseClient.auth.signUp({
                 email: email,
                 password: password
             });
 
-            if (authError) {
-                throw new Error("Error al crear cuenta: " + authError.message);
+            if (authError) throw new Error(authError.message);
+
+            // 🔍 DETECCIÓN DE CONFIRMACIÓN DE EMAIL
+            if (!authData.session) {
+                msg.innerHTML = `
+                    ✅ ¡Cuenta creada!<br>
+                    <small style="color:#aaa; display:block; margin-top:8px;">
+                        Supabase pide confirmar tu correo.<br>
+                        Revisa tu bandeja (o spam), haz clic en el link y luego entra con tu contraseña.
+                    </small>`;
+                msg.style.color = "#00ff88";
+                form.reset();
+                return; // Detiene el flujo aquí para no generar error de RLS
             }
 
-            // Forzar sesión inmediata para que RLS no bloquee
-            if (authData.session) {
-                await supabaseClient.auth.setSession(authData.session);
-            }
+            console.log("🔹 Paso 2: Usuario autenticado. Esperando propagación de token...");
+            // Pequeña pausa para que Supabase adjunte el JWT a las siguientes peticiones
+            await new Promise(res => setTimeout(res, 600));
 
-            if (!authData.user) {
-                throw new Error("No se pudo crear el usuario");
-            }
-
-            msg.textContent = "✅ Cuenta creada. Registrando barbería...";
-
-            // Registrar la barbería vinculada al usuario
+            console.log("🔹 Paso 3: Registrando barbería en base de datos...");
             const cleanPhone = phone.replace(/[^0-9]/g, "");
             const whatsappLink = `https://wa.me/${cleanPhone}`;
 
-            const { data: barberData, error: barberError } = await supabaseClient
+            const { error: barberError } = await supabaseClient
                 .from("barbers")
                 .insert([{
-                    name: name,
+                    name,
                     owner_name: ownerName,
-                    phone: phone,
-                    location: location,
-                    delivery: delivery,
+                    phone,
+                    location,
+                    delivery,
                     whatsapp_link: whatsappLink,
                     owner_id: authData.user.id,
                     created_at: new Date().toISOString()
-                }])
-                .select();
+                }]);
 
-            if (barberError) {
-                throw new Error("Error al registrar barbería: " + barberError.message);
-            }
+            if (barberError) throw new Error(barberError.message);
 
-            // ÉXITO TOTAL
-            msg.innerHTML = `
-                <span style="color:#00ff88; font-size:1.3rem;">
-                    ✅ ¡Todo listo!<br>
-                    <small style="font-size:0.9rem; color:#aaa; display:block; margin-top:10px;">
-                        Cuenta creada y barbería publicada<br>
-                        Redirigiendo al panel...
-                    </small>
-                </span>
-            `;
+            console.log("🔹 Paso 4: Éxito. Redirigiendo al panel...");
+            msg.textContent = "🚀 ¡Todo listo! Redirigiendo al panel...";
             msg.style.color = "#00ff88";
-
             form.reset();
 
-            if (barberData && barberData[0]) {
-                localStorage.setItem("myBarberId", barberData[0].id);
-            }
-
+            // Forzar redirección limpia
             setTimeout(() => {
-                window.location.href = "admin.html";
-            }, 2000);
+                window.location.replace("admin.html");
+            }, 1200);
 
         } catch (error) {
-            console.error("Error:", error);
+            console.error(" Error crítico en registro:", error);
             msg.textContent = "❌ " + error.message;
             msg.style.color = "#ff3333";
         }
     });
 
-    console.log("✅ Formulario de registro con auth inicializado");
+    console.log("✅ Sistema de registro inicializado");
 });
