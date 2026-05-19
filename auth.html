@@ -3,69 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Barbero | BarberHub</title>
+    <title>Acceso | BarberHub</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Evitar parpadeo durante carga */
-        body { opacity: 1 !important; transition: opacity 0.2s; }
-        .loading { display: none; }
-        body.checking-session .loading { display: block; }
-        body.checking-session #auth-form, 
-        body.checking-session #auth-links { display: none; }
+        /* Estilos específicos para Auth */
+        .auth-container {
+            max-width: 400px;
+            margin: 40px auto;
+            padding: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            text-align: center;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .auth-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 8px rgba(0, 242, 255, 0.4);
+        }
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--neon-cyan);
+            color: #000;
+            font-weight: 900;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+        .auth-btn:hover {
+            box-shadow: 0 0 15px var(--neon-cyan);
+            transform: scale(1.02);
+        }
+        .auth-link {
+            display: block;
+            margin-top: 15px;
+            color: var(--neon-pink);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .auth-link:hover { text-decoration: underline; }
+        .error-msg { color: #ff3333; font-size: 0.85rem; margin-top: 10px; display: none; }
     </style>
 </head>
-<body class="checking-session">
-    <header>
-        <img src="logo.png" class="logo-img" alt="Logo BarberHub">
-        <h1>🔐 ACCESO BARBERO</h1>
-        <p>Ingresa para gestionar tus turnos</p>
-    </header>
-    
-    <main style="max-width:450px; margin:40px auto; padding:0 20px;">
-        <!-- Mensaje de carga -->
-        <div class="loading" style="text-align:center; padding:30px; color:var(--neon-cyan);">
-            <p style="font-size:1.5rem; margin-bottom:10px;">⚡</p>
-            <p>Verificando sesión...</p>
-        </div>
+<body>
 
-        <!-- Formulario -->
-        <div id="auth-form" style="background:var(--glass-bg); backdrop-filter:blur(12px); border:1px solid var(--glass-border); border-radius:14px; padding:28px;">
-            <form id="login-form">
-                <label>Email:</label>
-                <input type="email" id="email" required placeholder="tu@email.com" autocomplete="username">
-                
-                <label>Contraseña:</label>
-                <input type="password" id="password" required minlength="6" placeholder="••••••" autocomplete="current-password">
-                
-                <button type="submit" id="btn-login" style="
-                    background:var(--neon-cyan); 
-                    color:#000; 
-                    width:100%; 
-                    padding:14px; 
-                    margin-top:20px; 
-                    border:none; 
-                    border-radius:8px; 
-                    font-weight:700; 
-                    font-size:1.1rem;
-                    cursor:pointer;">
-                    ENTRAR
-                </button>
-            </form>
-            
-            <p id="msg" style="margin-top:15px; text-align:center; font-weight:600; min-height:24px;"></p>
-            
-            <div id="auth-links" style="text-align:center; margin-top:15px; font-size:0.9rem;">
-                <a href="registro-barbero.html" style="color:var(--neon-pink); text-decoration:none;">¿No tienes cuenta? Regístrate aquí</a>
-            </div>
-        </div>
+    <!-- Header simple -->
+    <div style="text-align:center; padding:20px;">
+        <a href="index.html" style="color:#888; text-decoration:none; font-size:0.9rem;">← Volver al Directorio</a>
+    </div>
+
+    <div class="auth-container">
+        <h2 style="color:var(--neon-cyan); margin-bottom:20px; font-family:'Orbitron';">🔐 ACCESO SISTEMA</h2>
         
-        <p style="text-align:center; margin-top:20px;">
-            <a href="index.html" style="color:#888; text-decoration:none;">← Volver al inicio</a>
-        </p>
-    </main>
-    
+        <form id="login-form">
+            <input type="email" id="email" class="auth-input" placeholder="📧 Correo Electrónico" required>
+            <input type="password" id="password" class="auth-input" placeholder="🔑 Contraseña" required>
+            
+            <button type="submit" class="auth-btn">ENTRAR</button>
+            <div id="error-msg" class="error-msg"></div>
+        </form>
+
+        <a href="registro-barbero.html" class="auth-link">¿Eres Barbero? Registra tu Barbería aquí</a>
+        <a href="mis-citas.html" class="auth-link" style="color:#888; font-size:0.8rem; margin-top:5px;">Soy Cliente (Consultar Turno)</a>
+    </div>
+
     <script src="config.js"></script>
-    <script src="auth.js"></script>
+    <script>
+        const form = document.getElementById('login-form');
+        const errorMsg = document.getElementById('error-msg');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                errorMsg.textContent = "❌ " + error.message;
+                errorMsg.style.display = 'block';
+            } else {
+                window.location.href = 'admin.html';
+            }
+        });
+    </script>
 </body>
 </html>
