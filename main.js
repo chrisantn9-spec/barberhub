@@ -46,4 +46,10 @@ async function loadBarbers() {
 }
 
 // Inicializar al cargar
-document.addEventListener("DOMContentLoaded", loadBarbers);
+     // 🌀 Ocultar loader después de 2.5 segundos
+    const loader = document.getElementById('cyber-loader');
+    if (loader) {
+        setTimeout(() => {
+            loader.classList.add('hidden');
+        }, 2500);
+    }  document.addEventListener("DOMContentLoaded", loadBarbers);
