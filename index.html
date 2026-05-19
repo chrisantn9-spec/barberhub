@@ -106,8 +106,23 @@
 
     // 2. Red de seguridad: si algo falla, se oculta a los 2.5s sí o sí
     setTimeout(hideLoader, 2500);
-</script>
-    </script>
+       <script>
+    // 🗑️ ELIMINAR LOADER COMPLETAMENTE (no solo ocultarlo)
+    const killLoader = () => {
+        const loader = document.getElementById('cyber-loader');
+        if (loader) loader.remove(); // Lo borra físicamente del HTML
+    };
+
+    // Ejecutar al instante
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', killLoader);
+    } else {
+        killLoader();
+    }
+
+    // Red de seguridad: si algo falla, lo borra a los 1.5s sí o sí
+    setTimeout(killLoader, 1500);
+</script> 
 </body>
 </html>
 "agregar rostro al loader"
