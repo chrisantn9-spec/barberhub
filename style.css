@@ -162,3 +162,14 @@ button[type="submit"]:hover {
     .barber-card, form { padding: 18px; }
     input, button[type="submit"], .barber-card button { padding: 11px; }
 }
+/* Estilo para el Logo */
+.logo-img {
+    width: 180px; /* Ajusta el tamaño aquí */
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 12px #00f2ff); /* Brillo neón azul */
+    transition: transform 0.3s ease;
+}
+.logo-img:hover {
+    transform: scale(1.05); /* Crece un poquito al pasar el mouse */
+    filter: drop-shadow(0 0 20px #ff00e5); /* Cambia a rosa al hover */
+}
