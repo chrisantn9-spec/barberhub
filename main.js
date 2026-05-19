@@ -53,3 +53,4 @@ async function loadBarbers() {
             loader.classList.add('hidden');
         }, 2500);
     }  document.addEventListener("DOMContentLoaded", loadBarbers);
+"agregar loader cyberpunk"
