@@ -117,4 +117,9 @@ async function loadBookings(selectedDate) {
     } finally {
         isLoading = false; // 🔓 Liberar bloqueo
     }
-}
+}// Exponer funciones al scope global para que funcionen los onclick en HTML
+window.logout = logout;
+window.loadBookings = loadBookings;
+window.confirmBooking = confirmBooking;
+window.updateStatus = updateStatus;
+window.sendWhatsApp = sendWhatsApp;
