@@ -43,8 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            // PASO 1: Crear usuario en Supabase Auth
-            const { data: authData, error: authError } = await supabase.auth.signUp({
+            // ✅ CORREGIDO: usamos supabaseClient.auth en lugar de supabase.auth
+            const { data: authData, error: authError } = await supabaseClient.auth.signUp({
                 email: email,
                 password: password
             });
@@ -53,9 +53,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 throw new Error("Error al crear cuenta: " + authError.message);
             }
 
-            // ✅ FIX CRÍTICO: Forzar sesión inmediata para que RLS no bloquee
+            // Forzar sesión inmediata para que RLS no bloquee
             if (authData.session) {
-                await supabase.auth.setSession(authData.session);
+                await supabaseClient.auth.setSession(authData.session);
             }
 
             if (!authData.user) {
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             msg.textContent = "✅ Cuenta creada. Registrando barbería...";
 
-            // PASO 2: Registrar la barbería vinculada al usuario
+            // Registrar la barbería vinculada al usuario
             const cleanPhone = phone.replace(/[^0-9]/g, "");
             const whatsappLink = `https://wa.me/${cleanPhone}`;
 
@@ -100,12 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             form.reset();
 
-            // Guardar ID localmente
             if (barberData && barberData[0]) {
                 localStorage.setItem("myBarberId", barberData[0].id);
             }
 
-            // Redirigir al panel de admin
             setTimeout(() => {
                 window.location.href = "admin.html";
             }, 2000);
