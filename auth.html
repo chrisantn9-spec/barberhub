@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Barbero | BarberHub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <header>
+        <h1>🔐 ACCESO BARBERO</h1>
+        <p>Ingresa con tu cuenta para gestionar turnos</p>
+    </header>
+    <main style="max-width:450px; margin:40px auto; padding:0 20px;">
+        <div style="background:var(--glass-bg); backdrop-filter:blur(12px); border:1px solid var(--glass-border); border-radius:14px; padding:28px;">
+            <form id="auth-form">
+                <label>Email:</label>
+                <input type="email" id="email" required placeholder="tu@email.com">
+                
+                <label>Contraseña:</label>
+                <input type="password" id="password" required minlength="6" placeholder="Mínimo 6 caracteres">
+                
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button type="submit" id="btn-login" style="background:var(--neon-cyan); color:#000; flex:1;">ENTRAR</button>
+                    <button type="button" id="btn-register" style="background:var(--neon-pink); flex:1;">REGISTRARSE</button>
+                </div>
+            </form>
+            <p id="msg" style="margin-top:15px; text-align:center; font-weight:600;"></p>
+        </div>
+        <p style="text-align:center; margin-top:20px; font-size:0.9rem;">
+            <a href="index.html" style="color:var(--neon-cyan); text-decoration:none;">← Volver al inicio</a>
+        </p>
+    </main>
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>"crear pagina login"
