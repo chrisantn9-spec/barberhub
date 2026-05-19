@@ -70,4 +70,4 @@ document.addEventListener("DOMContentLoaded", () => {
 function getBarberIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
     return params.get("id");
-}
+}"fix redirect reserva a mis citas"
