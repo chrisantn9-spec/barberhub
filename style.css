@@ -139,4 +139,43 @@ button, .btn { cursor: pointer; font-weight: bold; }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 "restaurar tema oscuro y tarjetas"
 "fondo.jpeg como background principal"
+/* 📱 GRID COMPACTO (2 columnas en móvil) */
+#barber-list {
+    display: grid;
+    /* En móvil: 2 columnas. En PC: automáticas según el ancho */
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px;
+    padding-top: 10px;
+}
 
+/* En PC (pantallas grandes), mostramos 3 o 4 columnas */
+@media (min-width: 768px) {
+    #barber-list {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+/* Tarjetas más pequeñas para que quepan en la cuadrícula */
+.barber-card {
+    padding: 8px !important;       /* Menos relleno interno */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.barber-card h3 {
+    font-size: 0.9rem !important;  /* Título más pequeño */
+    margin-bottom: 2px;
+}
+.barber-card p {
+    font-size: 0.7rem !important;  /* Texto más pequeño */
+    margin-bottom: 4px;
+    line-height: 1.1;
+}
+
+/* Botones más pequeños para que no rompan el diseño */
+.barber-card button, .barber-card a {
+    font-size: 0.6rem !important;
+    padding: 4px !important;
+    margin-top: 4px;
+}
