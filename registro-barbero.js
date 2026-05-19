@@ -91,3 +91,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     console.log("✅ Sistema de registro inicializado");
 });
+"fix redirect y deteccion email"
