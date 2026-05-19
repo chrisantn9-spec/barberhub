@@ -79,7 +79,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Forzar redirección limpia
             setTimeout(() => {
-                window.location.replace("admin.html");
+                // Redirección robusta
+setTimeout(() => {
+    window.location.href = "admin.html"; // Usar href en lugar de replace
+}, 1500); // Un poco más de tiempo para asegurar
             }, 1200);
 
         } catch (error) {
