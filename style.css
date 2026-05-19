@@ -372,3 +372,4 @@ button[type="submit"]:hover {
     0% { filter: drop-shadow(0 0 10px var(--neon-cyan)) drop-shadow(0 0 20px var(--neon-pink)); }
     100% { filter: drop-shadow(0 0 22px var(--neon-cyan)) drop-shadow(0 0 45px var(--neon-pink)); }
 }
+"estilos animados rostro loader"
