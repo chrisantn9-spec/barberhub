@@ -1,0 +1,28 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, sans-serif; background: #0f0f0f; color: #fff; padding: 20px; line-height: 1.5; }
+header { text-align: center; margin-bottom: 30px; }
+header h1 { color: #00f2ff; margin-bottom: 10px; }
+header p { color: #aaa; }
+.barber-card { background: #1a1a1a; border: 1px solid #333; padding: 15px; margin-bottom: 15px; border-radius: 10px; }
+.barber-card h3 { color: #00f2ff; margin-bottom: 5px; }
+.barber-card button { background: #ff00e5; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%; font-weight: bold; transition: 0.2s; }
+.barber-card button:hover { background: #d000bb; }
+form { max-width: 400px; margin: 0 auto; }
+label { display: block; margin: 10px 0 5px; color: #aaa; font-size: 0.9rem; }
+input { width: 100%; padding: 10px; background: #222; color: #fff; border: 1px solid #444; border-radius: 5px; }
+button[type="submit"] { background: #00f2ff; color: #000; border: none; padding: 12px; width: 100%; margin-top: 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+button[type="submit"]:hover { background: #00c8d4; }
+.loading, .error, #msg, #reg-msg { text-align: center; margin-top: 10px; color: #aaa; }
+.error { color: #ff4444; }
+#bookings-list { max-width: 600px; margin: 20px auto; }
+.status { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: #ffaa00; color: #000; }
+.status.confirmed { background: #00f2ff; }
+.status.cancelled { background: #ff4444; color: #fff; }
+.action-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.action-btns button { font-size: 13px; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; }
+.btn-confirm { background: #00ff88; color: #000; }
+.btn-cancel { background: #ff4444; color: #fff; }
+.btn-wa { background: #25D366; color: #fff; }
+.nav-links { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; }
+.nav-links a { color: #00f2ff; text-decoration: none; margin: 0 10px; font-size: 0.9rem; }
+.nav-links a:hover { text-decoration: underline; }

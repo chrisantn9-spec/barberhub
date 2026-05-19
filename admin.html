@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Barbero</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <header><h2>📋 PANEL DE TURNOS</h2><p>Ingresa tu ID o usa el guardado</p></header>
+    <div style="max-width:400px; margin:10px auto;">
+        <input type="text" id="barber-id-input" placeholder="Pega tu ID aquí" style="width:100%; padding:10px; margin-bottom:5px;">
+        <button onclick="loadBookings()" style="background:#00f2ff; color:#000; padding:10px; width:100%; border:none; border-radius:5px; cursor:pointer;">CARGAR AGENDA</button>
+    </div>
+    <main id="bookings-list"></main>
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

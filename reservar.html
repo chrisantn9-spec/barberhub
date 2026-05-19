@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservar Turno</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <header><h2>📅 Reservar Turno</h2><p>Completa tus datos para agendar</p></header>
+    <form id="booking-form">
+        <label>Nombre completo:</label><input type="text" id="client-name" required>
+        <label>Teléfono (con código país, ej: 54911...):</label><input type="tel" id="client-phone" required placeholder="5491112345678">
+        <label>Fecha:</label><input type="date" id="booking-date" required>
+        <label>Hora:</label><input type="time" id="booking-time" required>
+        <button type="submit">CONFIRMAR RESERVA</button>
+    </form>
+    <p id="msg"></p>
+    <script src="config.js"></script>
+    <script src="booking.js"></script>
+</body>
+</html>

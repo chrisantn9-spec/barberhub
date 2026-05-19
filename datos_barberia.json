@@ -1,0 +1,28 @@
+{
+  "nombre_negocio": "CYBER CUTS",
+  "barberos": [],
+  "servicios": [
+    {
+      "nombre": "Corte clasico",
+      "precio": 15
+    },
+    {
+      "nombre": "Corte + barba",
+      "precio": 25
+    },
+    {
+      "nombre": "Diseno de barba",
+      "precio": 12
+    },
+    {
+      "nombre": "Tinte",
+      "precio": 35
+    },
+    {
+      "nombre": "Afeitado clasico",
+      "precio": 10
+    }
+  ],
+  "clientes": [],
+  "registros": []
+}

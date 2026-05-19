@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Barbería</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <header><h2>💈 REGISTRA TU BARBERÍA</h2><p>Completa los datos para aparecer en el directorio</p>
+    <div class="nav-links"><a href="index.html">← Volver</a></div></header>
+    <form id="barber-form">
+        <label>Nombre:</label><input type="text" id="barber-name" required placeholder="Ej: Barbería El Clásico">
+        <label>Teléfono:</label><input type="tel" id="barber-phone" required placeholder="54911...">
+        <label>Ubicación:</label><input type="text" id="barber-location" required placeholder="Ej: Centro, Montevideo">
+        <button type="submit">PUBLICAR</button>
+    </form>
+    <p id="reg-msg" style="margin-top:15px; text-align:center;"></p>
+    <script src="config.js"></script>
+    <script src="registro-barbero.js"></script>
+</body>
+</html>
