@@ -88,6 +88,25 @@
         window.addEventListener('load', () => {
             setTimeout(() => document.getElementById('cyber-loader').classList.add('hidden'), 2200);
         });
+        <script>
+    // 🛡️ OCULTAR LOADER A LA FUERZA (no espera imágenes ni fuentes)
+    const hideLoader = () => {
+        const loader = document.getElementById('cyber-loader');
+        if (loader && !loader.classList.contains('hidden')) {
+            loader.classList.add('hidden');
+        }
+    };
+
+    // 1. Se oculta apenas el HTML esté listo (rápido)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', hideLoader);
+    } else {
+        hideLoader();
+    }
+
+    // 2. Red de seguridad: si algo falla, se oculta a los 2.5s sí o sí
+    setTimeout(hideLoader, 2500);
+</script>
     </script>
 </body>
 </html>
