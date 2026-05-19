@@ -1,78 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><!-- Enlace al Manifiesto PWA -->
-<link rel="manifest" href="manifest.json">
-<!-- Color de la barra del navegador en Android -->
-<meta name="theme-color" content="#00f2ff">
-<!-- Icono para iPhone (Apple) -->
-<link rel="apple-touch-icon" href="logo.png">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BarberHub | Directorio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BarberHub | Cyberpunk Directory</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <body>
-    <header>
-        <img src="logo.png" class="logo-img" alt="Logo BarberHub">
-        <div class="nav-links" style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap; margin-top:20px;">
-    <a href="admin.html" style="
-        background: var(--neon-cyan); 
-        color: #000; 
-        padding: 12px 25px; 
-        border-radius: 8px; 
-        font-weight: 700; 
-        text-decoration: none;
-        box-shadow: 0 0 12px rgba(0, 242, 255, 0.4);
-    ">🔐 MI PANEL DE RESERVAS</a>
-    <a href="registro-barbero.html" style="
-        background: transparent; 
-        border: 2px solid var(--neon-pink); 
-        color: var(--neon-pink); 
-        padding: 12px 25px; 
-        border-radius: 8px; 
-        font-weight: 700; 
-        text-decoration: none;
-    "> REGISTRAR BARBERÍA</a>
-</div>
-    <a href="registro-barbero.html" style="
-        background: var(--neon-pink); 
-        color: #fff; 
-        padding: 15px 35px; 
-        border-radius: 8px; 
-        font-weight: 700; 
-        text-decoration: none; 
-        font-size: 1.1rem;
-        box-shadow: 0 0 15px var(--neon-pink);
-        transition: 0.3s;
-        display: inline-block;">
+
+    <!-- 🌀 LOADER CYBERPUNK (Animación de entrada) -->
+    <div id="cyber-loader">
+        <div class="loader-content">
+            <div class="glitch-text" data-text="BARBERHUB SYSTEM">BARBERHUB SYSTEM</div>
+            <div class="boot-sequence">
+                <p class="line">> INITIALIZING CORE...</p>
+                <p class="line">> CONNECTING TO DATABASE...</p>
+                <p class="line">> LOADING UI MODULES...</p>
+                <p class="line">> SYNCING BARBER NETWORK...</p>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+            <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
+        </div>
+        <div class="scanlines"></div>
+    </div>
+
+    <!-- ENCABEZADO -->
+    <header style="text-align: center; padding: 20px 10px;">
+        <!-- LOGO GRANDE (Doble tamaño) -->
+        <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
         
-    </a>
-</div>
-    
-    <main id="barber-list"><p class="loading">Cargando barberías...</p></main>
-    <main id="barber-list"><p class="loading">Cargando barberías...</p></main>
-    <!-- Enlace para clientes -->
-<div style="text-align: center; padding: 40px 0 60px;">
-    <a href="mis-citas.html" style="
-        color: #888; 
-        text-decoration: none; 
-        font-size: 0.95rem; 
-        border-bottom: 1px dashed #888; 
-        padding-bottom: 3px;
-        transition: 0.3s;">
-         ¿Ya tienes turno? Consulta o cancela tus citas aquí
-    </a>
-</div>
-        <script src="config.js"></script>
+        <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            BARBERHUB
+        </h1>
+        <p style="color: #888; font-size: 0.9rem; margin-bottom: 20px;">Reserva tu turno al instante</p>
+
+        <!-- BOTONES DE NAVEGACIÓN (Sin botón extra de registro) -->
+        <div style="display: flex; justify-content: center; gap: 10px;">
+            <a href="admin.html" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: bold;">
+                🔐 MI PANEL
+            </a>
+        </div>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL (Compacto y centrado) -->
+    <!-- max-width: 480px hace que se vea bien en PC como si fuera móvil -->
+    <main style="max-width: 480px; margin: 0 auto; padding: 10px 15px 40px;">
+        
+        <!-- Barra de búsqueda (Opcional, visualmente ayuda) -->
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="search-bar" placeholder="🔍 Buscar barbería..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box;">
+        </div>
+
+        <!-- Lista de Barberías (Aquí se inyectan las tarjetas pequeñas) -->
+        <div id="barber-list">
+            <div style="text-align: center; padding: 20px; color: #666;">
+                <p>Cargando directorio...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <div style="text-align: center; padding: 20px; border-top: 1px solid #222; background: #050505;">
+        <a href="mis-citas.html" style="color: #666; font-size: 0.8rem; text-decoration: none;">
+            ¿Ya tienes turno? Consulta aquí
+        </a>
+        <p style="margin-top: 10px; font-size: 0.6rem; color: #444;">© 2026 BarberHub System</p>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="config.js"></script>
     <script src="main.js"></script>
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-  }
-</script>
+
+    <!-- SCRIPT PARA OCULTAR EL LOADER -->
+    <script>
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('cyber-loader');
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 2200); // Tiempo de la animación
+        });
+    </script>
 </body>
 </html>
-"dejar solo boton registrar"
-"agregar link mis citas clientes"
