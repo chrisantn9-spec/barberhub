@@ -54,23 +54,13 @@
     <script src="config.js"></script>
     <script src="main.js"></script>
     
-    <!-- 🛡️ SCRIPT QUE FUERZA LA CARGA (NO SE TRABA) -->
-    <script>
-        const hideLoader = () => {
-            const loader = document.getElementById('cyber-loader');
-            if (loader) loader.remove(); // Borra el loader completamente
-        };
-
-        // Intenta ocultarlo al instante
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', hideLoader);
-        } else {
-            hideLoader();
-        }
-
-        // Si tarda mucho, lo borra a los 1.5 segundos sí o sí
-        setTimeout(hideLoader, 1500);
-    </script>
+   <script>
+    // ⏱️ ESPERAR 3.5 SEGUNDOS PARA VER LA ANIMACIÓN E IMAGEN
+    setTimeout(() => {
+        const loader = document.getElementById('cyber-loader');
+        if (loader) loader.remove(); // Lo borra completamente
+    }, 3500);
+</script>
 
 </body>
 </html>
