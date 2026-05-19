@@ -53,4 +53,27 @@ async function loadBarbers() {
             loader.classList.add('hidden');
         }, 2500);
     }  document.addEventListener("DOMContentLoaded", loadBarbers);
-"agregar loader cyberpunk"
+"agregar loader cyberpunk
+// 🔍 FUNCIONALIDAD DE BÚSQUEDA POR NOMBRE O ZONA
+document.addEventListener('DOMContentLoaded', () => {
+    const searchBar = document.getElementById('search-bar');
+    if (searchBar) {
+        searchBar.addEventListener('input', (e) => {
+            const searchText = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.barber-card');
+
+            cards.forEach(card => {
+                // Busca en el título (nombre) y en los párrafos (zona/dirección)
+                const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                const paragraphs = Array.from(card.querySelectorAll('p')).map(p => p.textContent.toLowerCase()).join(' ');
+                
+                if (title.includes(searchText) || paragraphs.includes(searchText)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
+});"
+
