@@ -13,14 +13,26 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <header> <div class="nav-links" style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
-    <a href="auth.html" style="background:var(--neon-cyan); color:#000; text-shadow:none;">🔐 ACCESO BARBERO</a>
-    <a href="registro-barbero.html">+ REGISTRAR BARBERÍA</a>
-</div>
+  <body>
+    <header>
         <img src="logo.png" class="logo-img" alt="Logo BarberHub">
-        <p>Tu Estilo by B-u4all</p>
+        <div class="nav-links" style="margin-top: 25px;">
+    <a href="registro-barbero.html" style="
+        background: var(--neon-pink); 
+        color: #fff; 
+        padding: 15px 35px; 
+        border-radius: 8px; 
+        font-weight: 700; 
+        text-decoration: none; 
+        font-size: 1.1rem;
+        box-shadow: 0 0 15px var(--neon-pink);
+        transition: 0.3s;
+        display: inline-block;">
+        💈 REGISTRAR MI BARBERÍA
+    </a>
+</div>
     
-    </header>
+    <main id="barber-list"><p class="loading">Cargando barberías...</p></main>
     <main id="barber-list"><p class="loading">Cargando barberías...</p></main>
     <script src="config.js"></script>
     <script src="main.js"></script>
