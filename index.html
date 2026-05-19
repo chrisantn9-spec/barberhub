@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
+<body onload="setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2500);">
 
     <!-- 🌀 LOADER CYBERPUNK -->
     <div id="cyber-loader">
@@ -25,17 +25,12 @@
         <div class="scanlines"></div>
     </div>
 
-    <!-- 🛡️ SCRIPT DE CIERRE INMEDIATO (VA AQUÍ, NO AL FINAL) -->
+    <!-- ️ SCRIPT DE SEGURIDAD (Elimina el loader aunque haya errores) -->
     <script>
-        (function() {
-            const killLoader = () => {
-                const loader = document.getElementById('cyber-loader');
-                if (loader) loader.remove();
-            };
-            if (document.readyState !== 'loading') killLoader();
-            else document.addEventListener('DOMContentLoaded', killLoader);
-            setTimeout(killLoader, 2500);
-        })();
+        setTimeout(() => {
+            const loader = document.getElementById('cyber-loader');
+            if (loader) loader.remove();
+        }, 2500);
     </script>
 
     <!-- ENCABEZADO -->
@@ -50,7 +45,7 @@
             <a href="registro-barbero.html" style="background: transparent; color: var(--neon-pink); padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);">💈 REGISTRAR BARBERÍA</a>
         </div>
         
-        <a href="admin.html" style="display: inline-block; background: transparent; border: 1px solid #444; color: #666; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.75rem;">🔧 MI PANEL</a>
+        <a href="admin.html" style="display: inline-block; background: transparent; border: 1px solid #444; color: #666; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.75rem;"> MI PANEL</a>
     </header>
 
     <!-- CONTENEDOR PRINCIPAL -->
@@ -68,8 +63,9 @@
         <a href="mis-citas.html" style="color: var(--neon-cyan); font-size: 0.85rem; text-decoration: none; font-weight: 600;">📅 ¿Ya tienes turno? Consultar aquí</a>
     </div>
 
-    <!-- SCRIPTS PRINCIPALES -->
-    
+    <!-- SCRIPTS (SOLO config y main, NADA de admin.js aquí) -->
+    <script src="config.js"></script>
+    <script src="main.js"></script>
 
 </body>
 </html>
