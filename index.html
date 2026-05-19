@@ -21,5 +21,10 @@
     <main id="barber-list"><p class="loading">Cargando barberías...</p></main>
     <script src="config.js"></script>
     <script src="main.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
 </body>
 </html>
