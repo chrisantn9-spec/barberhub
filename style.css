@@ -75,62 +75,62 @@ header p { color: #aaa; font-size: 1.1rem; letter-spacing: 1px; }
 
 main { padding: 40px 20px; max-width: 850px; margin: 0 auto; }
 
+/* 📦 TARJETAS ULTRA COMPACTAS */
 .barber-card {
     background: var(--glass-bg);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
     border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    padding: 12px;          /* Reducido */
-    margin-bottom: 10px;    /* Menos espacio entre tarjetas */
-    transition: transform 0.2s, box-shadow 0.2s;
-    font-size: 0.9rem;      /* Texto base más pequeño */
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    transition: transform 0.15s;
 }
+.barber-card:active { transform: scale(0.98); }
+
 .barber-card h3 {
-    font-size: 1.05rem;     /* Título más compacto */
-    margin-bottom: 5px;
+    font-size: 0.95rem;
+    margin: 0;
     color: var(--neon-cyan);
-    line-height: 1.2;
+    line-height: 1.1;
 }
 .barber-card p {
-    margin: 3px 0;          /* Líneas más juntas */
-    font-size: 0.85rem;
-    color: #ccc;
+    font-size: 0.75rem;
+    margin: 0;
+    color: #bbb;
+    line-height: 1.2;
 }
-.barber-card .action-btns button, 
-.barber-card a {
-    padding: 7px 10px;      /* Botones más pequeños */
-    font-size: 0.8rem;
-    margin: 4px 3px;
-    border-radius: 5px;
+.barber-card .delivery-badge {
+    font-size: 0.7rem;
+    color: var(--neon-pink);
+    font-weight: 600;
 }
-/* Ajuste para tarjetas del admin también */
-.admin-card, .booking-card {
-    padding: 10px;
-    font-size: 0.85rem;
+/* Botones en fila compacta */
+.barber-card .card-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    flex-wrap: wrap;
 }
+.barber-card .card-actions button,
+.barber-card .card-actions a {
+    padding: 5px 6px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    text-align: center;
+    flex: 1;
+    min-width: 65px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
 }
-.barber-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 0 30px rgba(0, 242, 255, 0.25);
-    border-color: var(--neon-cyan);
-}
-.barber-card h3 {
-    font-family: 'Orbitron', sans-serif; color: var(--neon-cyan);
-    font-size: 1.35rem; margin-bottom: 8px;
-}
-.barber-card p { color: #ccc; margin-bottom: 14px; font-weight: 500; }
-
-.barber-card button {
-    background: transparent; color: var(--neon-cyan);
-    border: 2px solid var(--neon-cyan); padding: 12px 20px;
-    border-radius: 6px; cursor: pointer; font-family: 'Orbitron', sans-serif;
-    font-weight: 700; letter-spacing: 1.5px; transition: 0.3s;
-    width: 100%; text-shadow: 0 0 6px var(--neon-cyan);
-    box-shadow: 0 0 12px rgba(0, 242, 255, 0.2);
-}
-.barber-card button:hover {
-    background: var(--neon-cyan); color: #000;
-    box-shadow: 0 0 22px var(--neon-cyan);
+/* Colores de botones compactos */
+.barber-card .btn-reservar { background: var(--neon-cyan); color: #000; }
+.barber-card .btn-wa { background: #25D366; color: #fff; }
+.barber-card .btn-maps { background: transparent; border: 1px solid var(--neon-cyan) !important; color: var(--neon-cyan); }
 }
 
 form {
