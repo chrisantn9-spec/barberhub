@@ -123,3 +123,4 @@ window.loadBookings = loadBookings;
 window.confirmBooking = confirmBooking;
 window.updateStatus = updateStatus;
 window.sendWhatsApp = sendWhatsApp;
+"exponer funciones al global"
