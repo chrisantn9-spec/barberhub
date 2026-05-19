@@ -12,9 +12,7 @@
     <!-- 🌀 LOADER CYBERPUNK -->
     <div id="cyber-loader">
         <div class="loader-content">
-            <!-- Rostro Cyberpunk Grande -->
             <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
-            
             <div class="boot-sequence">
                 <p class="line">> INITIALIZING CORE...</p>
                 <p class="line">> CONNECTING TO DATABASE...</p>
@@ -31,14 +29,27 @@
     <header style="text-align: center; padding: 20px 10px;">
         <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
         <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BARBERHUB</h1>
-        <p style="color: #888; font-size: 0.9rem; margin-bottom: 10px;">Reserva tu turno al instante</p>
-        <a href="admin.html" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: bold;">🔐 MI PANEL</a>
+        <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">Reserva tu turno al instante</p>
+        
+        <!-- BOTONES DE ACCESO -->
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+            <a href="auth.html" style="background: var(--neon-cyan); color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);">
+                🔐 INICIAR SESIÓN
+            </a>
+            <a href="registro-barbero.html" style="background: transparent; color: var(--neon-pink); padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);">
+                💈 REGISTRAR BARBERÍA
+            </a>
+        </div>
+        
+        <a href="admin.html" style="display: inline-block; background: transparent; border: 1px solid #444; color: #666; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.75rem;">
+            🔧 MI PANEL
+        </a>
     </header>
 
     <!-- CONTENEDOR PRINCIPAL -->
-    <main style="max-width: 480px; margin: 0 auto; padding: 10px 15px 60px;">
+    <main style="max-width: 800px; margin: 0 auto; padding: 10px 15px 60px;">
         <div style="margin-bottom: 15px;">
-            <input type="text" id="search-bar" placeholder="🔍 Buscar barbería..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box;">
+            <input type="text" id="search-bar" placeholder="🔍 Buscar por nombre o zona..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
         </div>
         <div id="barber-list">
             <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
@@ -46,14 +57,14 @@
     </main>
 
     <!-- FOOTER -->
-    <div style="text-align: center; padding: 10px; border-top: 1px solid #222; background: #050505; position: fixed; bottom: 0; width: 100%; z-index: 9;">
-        <a href="mis-citas.html" style="color: #666; font-size: 0.8rem; text-decoration: none;">¿Ya tienes turno? Consultar</a>
+    <div style="text-align: center; padding: 15px; border-top: 1px solid #222; background: rgba(0,0,0,0.8); position: fixed; bottom: 0; width: 100%; z-index: 9;">
+        <a href="mis-citas.html" style="color: var(--neon-cyan); font-size: 0.85rem; text-decoration: none; font-weight: 600;">📅 ¿Ya tienes turno? Consultar aquí</a>
     </div>
 
     <script src="config.js"></script>
     <script src="main.js"></script>
     
-    <!-- 🛡️ SCRIPT LOADER - 3.5 SEGUNDOS -->
+    <!-- 🛡️ SCRIPT LOADER -->
     <script>
         setTimeout(() => {
             const loader = document.getElementById('cyber-loader');
