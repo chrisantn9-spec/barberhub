@@ -11,11 +11,13 @@
     <header>
         <img src="logo.png" class="logo-img" alt="Logo BarberHub">
         <h1>💈 REGISTRAR TU BARBERÍA</h1>
-        <p>Completa los datos para aparecer en el directorio</p>
+        <p>Crea tu cuenta y registra tu barbería en un solo paso</p>
     </header>
     
     <main style="max-width:600px; margin:0 auto; padding:20px;">
         <form id="barber-form" style="background:var(--glass-bg); backdrop-filter:blur(12px); border:1px solid var(--glass-border); border-radius:14px; padding:30px;">
+            
+            <h3 style="color:var(--neon-cyan); margin-bottom:15px; font-family:'Orbitron', sans-serif;"> DATOS DE LA BARBERÍA</h3>
             
             <label>📛 Nombre de la Barbería:</label>
             <input type="text" id="barber-name" required placeholder="Ej: Barbería El Clásico">
@@ -38,15 +40,32 @@
                 <option value="si">Sí, hago delivery</option>
             </select>
             
+            <hr style="border:1px solid var(--glass-border); margin:25px 0;">
+            
+            <h3 style="color:var(--neon-pink); margin-bottom:15px; font-family:'Orbitron', sans-serif;">🔐 CREAR TU CUENTA</h3>
+            
+            <label>📧 Email (para iniciar sesión):</label>
+            <input type="email" id="auth-email" required placeholder="tu@email.com">
+            
+            <label>🔑 Contraseña:</label>
+            <input type="password" id="auth-password" required minlength="6" placeholder="Mínimo 6 caracteres">
+            <small style="color:#888; display:block; margin-bottom:15px;">
+                Esta contraseña te permitirá acceder a tu panel de administración
+            </small>
+            
             <button type="submit" style="background:var(--neon-cyan); color:#000; font-size:1.1rem; padding:15px; margin-top:10px; border:none; border-radius:8px; font-weight:700; cursor:pointer; width:100%;">
-                🚀 PUBLICAR MI BARBERÍA
+                🚀 CREAR CUENTA Y PUBLICAR
             </button>
         </form>
         
         <p id="reg-msg" style="margin-top:20px; text-align:center; font-weight:600; font-size:1.1rem;"></p>
         
-        <p style="text-align:center; margin-top:20px;">
-            <a href="index.html" style="color:var(--neon-cyan); text-decoration:none;">← Volver al inicio</a>
+        <p style="text-align:center; margin-top:20px; font-size:0.9rem;">
+            ¿Ya tienes cuenta? <a href="auth.html" style="color:var(--neon-cyan); text-decoration:none;">Inicia sesión aquí</a>
+        </p>
+        
+        <p style="text-align:center; margin-top:10px;">
+            <a href="index.html" style="color:#888; text-decoration:none; font-size:0.85rem;">← Volver al inicio</a>
         </p>
     </main>
     
