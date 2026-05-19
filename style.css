@@ -1,389 +1,64 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap');
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BarberHub | Cyberpunk Directory</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
 
-:root {
-    --neon-cyan: #00f2ff;
-    --neon-pink: #ff00e5;
-    --dark-bg: #050505;
-    --glass-bg: rgba(8, 8, 12, 0.75);
-    --glass-border: rgba(0, 242, 255, 0.25);
-}
+    <!-- 🌀 LOADER CYBERPUNK -->
+    <div id="cyber-loader">
+        <div class="loader-content">
+            <!-- Rostro Cyberpunk Grande -->
+            <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
+            
+            <div class="boot-sequence">
+                <p class="line">> INITIALIZING CORE...</p>
+                <p class="line">> CONNECTING TO DATABASE...</p>
+                <p class="line">> LOADING UI MODULES...</p>
+                <p class="line">> SYNCING BARBER NETWORK...</p>
+            </div>
+            <div class="progress-container"><div class="progress-bar"></div></div>
+            <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
+        </div>
+        <div class="scanlines"></div>
+    </div>
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+    <!-- ENCABEZADO -->
+    <header style="text-align: center; padding: 20px 10px;">
+        <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
+        <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BARBERHUB</h1>
+        <p style="color: #888; font-size: 0.9rem; margin-bottom: 10px;">Reserva tu turno al instante</p>
+        <a href="admin.html" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: bold;">🔐 MI PANEL</a>
+    </header>
 
-body {
-    font-family: 'Rajdhani', sans-serif;
-    background: var(--dark-bg);
-    color: #e0e0e0;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-}
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main style="max-width: 480px; margin: 0 auto; padding: 10px 15px 60px;">
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="search-bar" placeholder="🔍 Buscar barbería..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box;">
+        </div>
+        <div id="barber-list">
+            <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
+        </div>
+    </main>
 
-/* Fondo Cyberpunk Fijo */
-body::before {
-    content: '';
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), url(fondo.jpeg);
-    background-size: cover; background-position: center;
-    z-index: -2;
-}
+    <!-- FOOTER -->
+    <div style="text-align: center; padding: 10px; border-top: 1px solid #222; background: #050505; position: fixed; bottom: 0; width: 100%; z-index: 9;">
+        <a href="mis-citas.html" style="color: #666; font-size: 0.8rem; text-decoration: none;">¿Ya tienes turno? Consultar</a>
+    </div>
 
-/* Efecto Scanlines CRT */
-body::after {
-    content: '';
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 3px);
-    pointer-events: none; z-index: -1;
-}
-
-header {
-    text-align: center; padding: 40px 20px;
-    border-bottom: 1px solid var(--glass-border);
-    backdrop-filter: blur(8px);
-    background: rgba(0,0,0,0.4);
-}
-
-header h1 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.8rem; color: var(--neon-cyan);
-    text-shadow: 0 0 12px var(--neon-cyan), 0 0 24px var(--neon-cyan);
-    letter-spacing: 4px; margin-bottom: 10px;
-    animation: flicker 4s infinite;
-}
-
-header p { color: #aaa; font-size: 1.1rem; letter-spacing: 1px; }
-
-@keyframes flicker {
-    0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
-    20%, 24%, 55% { opacity: 0.35; }
-}
-
-.nav-links { margin-top: 20px; }
-.nav-links a {
-    color: var(--neon-pink); text-decoration: none;
-    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
-    padding: 8px 18px; border: 1px solid var(--neon-pink);
-    border-radius: 4px; transition: 0.3s;
-    text-shadow: 0 0 6px var(--neon-pink);
-    display: inline-block;
-}
-.nav-links a:hover {
-    background: var(--neon-pink); color: #000;
-    box-shadow: 0 0 18px var(--neon-pink);
-}
-
-main { padding: 40px 20px; max-width: 850px; margin: 0 auto; }
-
-/* 📦 TARJETA HOLOGRÁFICA CON ESCANER */
-.barber-card {
-  position: relative;
-  /* Fondo de imagen */
-  background-image: url('card-bg.png') !important;
-  background-color: #05050a !important;
-  background-size: cover !important;
-  background-position: center !important;
-  
-  /* Contorno Neon Pulsante */
-  border: 1px solid rgba(0, 242, 255, 0.15); /* Muy tenue por defecto */
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 10px;
-  overflow: hidden; /* Para que la línea de escaneo no se salga */
-  
-  /* Animación del borde (Aparece y desaparece) */
-  animation: neonPulse 3s infinite alternate;
-}
-
-/*  Capa de Vidrio Oscuro (Para leer el texto sobre la imagen) */
-.barber-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(5, 5, 15, 0.75); /* 75% oscuridad */
-  z-index: 0;
-  border-radius: 10px;
-  pointer-events: none; /* El click pasa a través */
-}
-
-/* 📡 Línea de Escaneo (Láser) */
-.barber-card::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 2px;
-  background: var(--neon-cyan);
-  box-shadow: 0 0 15px var(--neon-cyan), 0 0 30px var(--neon-cyan);
-  opacity: 0.8;
-  z-index: 1;
-  pointer-events: none;
-  animation: scanLine 4s linear infinite;
-}
-
-/* ✨ Asegurar que el contenido (texto/botones) esté encima */
-.barber-card h3, 
-.barber-card p, 
-.barber-card button, 
-.barber-card a,
-.barber-card .card-actions {
-  position: relative; 
-  z-index: 2; /* Encima del vidrio y el láser */
-}
-
-/* Texto brillante */
-.barber-card h3 { color: #fff; text-shadow: 0 0 5px rgba(0, 242, 255, 0.8); margin-bottom: 4px; }
-.barber-card p { color: #ddd; margin: 2px 0; font-size: 0.9rem; }
-
-/* Efecto Hover */
-.barber-card:hover, .barber-card:active {
-  transform: translateY(-2px);
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-}
-
-/* --- ANIMACIONES --- */
-
-/* 1. Borde que pulsa (Aparece y desaparece) */
-@keyframes neonPulse {
-  0% { 
-    border-color: rgba(0, 242, 255, 0.1); 
-    box-shadow:
-form {
-    background: var(--glass-bg); backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border); border-radius: 14px;
-    padding: 28px; max-width: 520px; margin: 0 auto;
-}
-label { display: block; margin: 14px 0 6px; color: var(--neon-pink); font-weight: 600; letter-spacing: 0.5px; }
-input {
-    width: 100%; padding: 13px; background: rgba(0,0,0,0.65);
-    color: #fff; border: 1px solid var(--glass-border);
-    border-radius: 6px; font-family: 'Rajdhani', sans-serif; font-size: 1rem;
-}
-input:focus {
-    outline: none; border-color: var(--neon-cyan);
-    box-shadow: 0 0 12px rgba(0, 242, 255, 0.45);
-}
-
-button[type="submit"] {
-    background: var(--neon-pink); color: #fff; border: none;
-    padding: 15px; width: 100%; margin-top: 22px; border-radius: 6px;
-    font-family: 'Orbitron', sans-serif; font-weight: 700;
-    cursor: pointer; transition: 0.3s; letter-spacing: 1.5px;
-    box-shadow: 0 0 16px rgba(255, 0, 229, 0.45);
-}
-button[type="submit"]:hover {
-    background: #ff33ee; box-shadow: 0 0 28px var(--neon-pink);
-}
-
-.loading, .error, #msg, #reg-msg { text-align: center; margin-top: 16px; font-weight: 600; letter-spacing: 0.5px; }
-.error { color: #ff3333; text-shadow: 0 0 8px #ff0000; }
-
-.status {
-    padding: 5px 12px; border-radius: 5px; font-size: 0.85rem;
-    font-weight: 700; background: rgba(255, 170, 0, 0.15);
-    color: #ffaa00; border: 1px solid #ffaa00;
-}
-.status.confirmed { background: rgba(0, 242, 255, 0.15); color: var(--neon-cyan); border-color: var(--neon-cyan); }
-.status.cancelled { background: rgba(255, 0, 0, 0.15); color: #ff3333; border-color: #ff3333; }
-
-.action-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
-.action-btns button {
-    font-size: 0.9rem; padding: 9px 16px; border: none; border-radius: 5px;
-    cursor: pointer; font-family: 'Orbitron', sans-serif; font-weight: 600; transition: 0.3s;
-}
-.btn-confirm { background: var(--neon-cyan); color: #000; }
-.btn-confirm:hover { box-shadow: 0 0 18px var(--neon-cyan); }
-.btn-cancel { background: #ff3333; color: #fff; }
-.btn-cancel:hover { box-shadow: 0 0 18px #ff0000; }
-.btn-wa { background: #25D366; color: #fff; }
-.btn-wa:hover { box-shadow: 0 0 18px #25D366; }
-
-@media (max-width: 650px) {
-    header h1 { font-size: 1.9rem; letter-spacing: 2px; }
-    .barber-card, form { padding: 18px; }
-    input, button[type="submit"], .barber-card button { padding: 11px; }
-}
-/* Estilo para el Logo */
-.logo-img {
-    width: 180px; /* Ajusta el tamaño aquí */
-    margin-bottom: 15px;
-    filter: drop-shadow(0 0 12px #00f2ff); /* Brillo neón azul */
-    transition: transform 0.3s ease;
-}
-.logo-img:hover {
-    transform: scale(1.05); /* Crece un poquito al pasar el mouse */
-    filter: drop-shadow(0 0 20px #ff00e5); /* Cambia a rosa al hover */
-}
-/* Colores para los estados de las citas */
-.status {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    display: inline-block;
-}
-
-.status.pending {
-    background-color: #ffaa00; /* Naranja para pendiente */
-    color: #000;
-}
-
-.status.confirmed {
-    background-color: #00ff88; /* Verde neón para confirmado */
-    color: #000;
-}
-
-.status.cancelled {
-    background-color: #ff3333; /* Rojo para cancelado */
-    color: #fff;
-}
-/* 🌀 CYBERPUNK LOADER STYLES */
-#cyber-loader {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #050505; z-index: 9999;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Courier New', monospace; color: #00f2ff;
-    transition: opacity 0.6s ease, visibility 0.6s;
-}
-#cyber-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.loader-content { text-align: center; max-width: 90%; }
-.glitch-text {
-    font-size: 2rem; font-weight: 900; letter-spacing: 3px;
-    text-shadow: 2px 2px #ff00ff, -2px -2px #00f2ff;
-    animation: glitch 0.8s infinite; margin-bottom: 25px;
-}
-@keyframes glitch {
-    0%, 100% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-}
-.boot-sequence { text-align: left; margin: 0 auto 20px; max-width: 280px; font-size: 0.85rem; color: #00ff88; }
-.boot-sequence .line { opacity: 0; animation: typeLine 0.3s forwards; }
-.boot-sequence .line:nth-child(1) { animation-delay: 0.2s; }
-.boot-sequence .line:nth-child(2) { animation-delay: 0.6s; }
-.boot-sequence .line:nth-child(3) { animation-delay: 1.0s; }
-.boot-sequence .line:nth-child(4) { animation-delay: 1.4s; }
-@keyframes typeLine { to { opacity: 1; } }
-.progress-container { width: 100%; height: 5px; background: #111; border-radius: 3px; overflow: hidden; margin: 15px 0; border: 1px solid #333; }
-.progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #ff00ff, #00f2ff); animation: loadProgress 2s ease-out forwards; }
-@keyframes loadProgress { to { width: 100%; } }
-.status-text { font-size: 0.75rem; color: #888; letter-spacing: 2px; margin-top: 8px; animation: blink 0.4s infinite; }
-@keyframes blink { 50% { opacity: 0.3; } }
-.scanlines {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%), linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
-    background-size: 100% 2px, 3px 100%; pointer-events: none;
-}
-"tarjetas ultra compactas"
-/* ️ GRID DASHBOARD POR ESQUINAS */
-.cyber-dashboard {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 110px 1fr;
-  grid-template-areas: 
-    "top-left top-right"
-    "bottom-left bottom-right";
-  gap: 10px;
-  padding: 10px;
-  height: 100vh;
-  box-sizing: border-box;
-  background: radial-gradient(circle at 50% 50%, #08080f 0%, #000 100%);
-  position: relative;
-  z-index: 1;
-}
-
-.zone {
-  background: rgba(8, 8, 16, 0.65);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(0, 242, 255, 0.15);
-  border-radius: 8px;
-  padding: 10px;
-  position: relative;
-  overflow: hidden;
-}
-.zone::after {
-  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent); opacity: 0.5;
-}
-
-.top-left    { grid-area: top-left; display: flex; flex-direction: column; justify-content: center; }
-.top-right   { grid-area: top-right; }
-.bottom-left { grid-area: bottom-left; }
-.bottom-right{ grid-area: bottom-right; display: flex; flex-direction: column; }
-
-/* Placeholders para futuras funciones */
-.placeholder {
-  display: flex; align-items: center; justify-content: center;
-  border: 1px dashed rgba(255, 0, 255, 0.25);
-  background: rgba(255, 0, 255, 0.03);
-}
-.zone-label { color: #555; font-family: 'Courier New', monospace; font-size: 0.7rem; text-align: center; letter-spacing: 1px; }
-.cyber-corner-mark {
-  position: absolute; width: 8px; height: 8px; border: 1px solid var(--neon-pink);
-  top: 6px; right: 6px; border-left: none; border-bottom: none; opacity: 0.4;
-}
-
-/* Panel del Directorio */
-.panel-header { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-#search-bar {
-  background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff;
-  padding: 6px 8px; border-radius: 4px; font-size: 0.75rem; flex: 1; min-width: 100px;
-}
-.scroll-container {
-  flex: 1; overflow-y: auto; padding-right: 4px;
-}
-.scroll-container::-webkit-scrollbar { width: 3px; }
-.scroll-container::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 2px; }
-
-/* Tarjetas ultra compactas dentro del panel */
-.barber-card {
-  background: rgba(15, 15, 25, 0.7); border-left: 2px solid var(--neon-cyan);
-  border-radius: 0 6px 6px 0; padding: 8px; margin-bottom: 6px; font-size: 0.78rem;
-}
-.barber-card h3 { font-size: 0.85rem; color: var(--neon-cyan); margin: 0 0 3px; }
-.barber-card p { margin: 2px 0; color: #aaa; font-size: 0.7rem; line-height: 1.3; }
-.barber-card .card-actions { display: flex; gap: 4px; margin-top: 5px; }
-.barber-card .card-actions button, 
-.barber-card .card-actions a {
-  flex: 1; padding: 4px; font-size: 0.65rem; border-radius: 3px; text-align: center;
-  text-decoration: none; border: none; cursor: pointer; font-weight: 600; color: #fff;
-}
-.btn-reservar { background: var(--neon-cyan); color: #000 !important; }
-.btn-wa { background: #25D366; }
-.btn-maps { background: transparent; border: 1px solid #555 !important; color: #ccc !important; }
-
-/* 📱 Responsive: en móvil se apila verticalmente */
-@media (max-width: 768px) {
-  .cyber-dashboard {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto 1fr;
-    grid-template-areas: 
-      "top-left"
-      "top-right"
-      "bottom-left"
-      "bottom-right";
-    height: auto; min-height: 100vh;
-  }
-  .top-right, .bottom-left { min-height: 70px; }
-}
-.loader-face {
-    width: 220px; /* Antes era 120px, ahora mucho más grande */
-    height: auto;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 15px var(--neon-cyan)) drop-shadow(0 0 30px var(--neon-pink));
-    animation: floatFace 3s ease-in-out infinite;
-}
-
-@keyframes floatFace {
-    0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-8px) scale(1.02); }
-}
-
-@keyframes pulseGlow {
-    0% { filter: drop-shadow(0 0 10px var(--neon-cyan)) drop-shadow(0 0 20px var(--neon-pink)); }
-    100% { filter: drop-shadow(0 0 22px var(--neon-cyan)) drop-shadow(0 0 45px var(--neon-pink)); }
-}
-"estilos animados rostro loader"
+    <script src="config.js"></script>
+    <script src="main.js"></script>
+    
+    <!-- 🛡️ SCRIPT LOADER - 3.5 SEGUNDOS -->
+    <script>
+        setTimeout(() => {
+            const loader = document.getElementById('cyber-loader');
+            if (loader) loader.remove();
+        }, 3500);
+    </script>
+</body>
+</html>
