@@ -12,9 +12,8 @@
     <!-- 🌀 LOADER CYBERPUNK -->
     <div id="cyber-loader">
         <div class="loader-content">
-            <!-- Imagen del rostro (si falla, se oculta sola) -->
+            <!-- Rostro Cyberpunk Grande -->
             <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
-            
             
             <div class="boot-sequence">
                 <p class="line">> INITIALIZING CORE...</p>
@@ -39,7 +38,7 @@
     <!-- CONTENEDOR PRINCIPAL -->
     <main style="max-width: 480px; margin: 0 auto; padding: 10px 15px 60px;">
         <div style="margin-bottom: 15px;">
-            <input type="text" id="search-bar" placeholder=" Buscar barbería..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box;">
+            <input type="text" id="search-bar" placeholder="🔍 Buscar barbería..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box;">
         </div>
         <div id="barber-list">
             <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
@@ -54,14 +53,12 @@
     <script src="config.js"></script>
     <script src="main.js"></script>
     
-   <script>
-    // ⏱️ ESPERAR 3.5 SEGUNDOS PARA VER LA ANIMACIÓN E IMAGEN
-    setTimeout(() => {
-        const loader = document.getElementById('cyber-loader');
-        if (loader) loader.remove(); // Lo borra completamente
-    }, 3500);
-</script>
-
+    <!-- 🛡️ SCRIPT LOADER - 3.5 SEGUNDOS -->
+    <script>
+        setTimeout(() => {
+            const loader = document.getElementById('cyber-loader');
+            if (loader) loader.remove();
+        }, 3500);
+    </script>
 </body>
 </html>
-"fix loader y codigo main"
