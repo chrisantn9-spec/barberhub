@@ -25,6 +25,19 @@
         <div class="scanlines"></div>
     </div>
 
+    <!-- 🛡️ SCRIPT DE CIERRE INMEDIATO (VA AQUÍ, NO AL FINAL) -->
+    <script>
+        (function() {
+            const killLoader = () => {
+                const loader = document.getElementById('cyber-loader');
+                if (loader) loader.remove();
+            };
+            if (document.readyState !== 'loading') killLoader();
+            else document.addEventListener('DOMContentLoaded', killLoader);
+            setTimeout(killLoader, 2500);
+        })();
+    </script>
+
     <!-- ENCABEZADO -->
     <header style="text-align: center; padding: 20px 10px;">
         <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
@@ -33,17 +46,11 @@
         
         <!-- BOTONES DE ACCESO -->
         <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-            <a href="auth.html" style="background: var(--neon-cyan); color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);">
-                🔐 INICIAR SESIÓN
-            </a>
-            <a href="registro-barbero.html" style="background: transparent; color: var(--neon-pink); padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);">
-                💈 REGISTRAR BARBERÍA
-            </a>
+            <a href="auth.html" style="background: var(--neon-cyan); color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);">🔐 INICIAR SESIÓN</a>
+            <a href="registro-barbero.html" style="background: transparent; color: var(--neon-pink); padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);">💈 REGISTRAR BARBERÍA</a>
         </div>
         
-        <a href="admin.html" style="display: inline-block; background: transparent; border: 1px solid #444; color: #666; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.75rem;">
-            🔧 MI PANEL
-        </a>
+        <a href="admin.html" style="display: inline-block; background: transparent; border: 1px solid #444; color: #666; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.75rem;">🔧 MI PANEL</a>
     </header>
 
     <!-- CONTENEDOR PRINCIPAL -->
@@ -61,15 +68,9 @@
         <a href="mis-citas.html" style="color: var(--neon-cyan); font-size: 0.85rem; text-decoration: none; font-weight: 600;">📅 ¿Ya tienes turno? Consultar aquí</a>
     </div>
 
+    <!-- SCRIPTS PRINCIPALES -->
     <script src="config.js"></script>
     <script src="main.js"></script>
-    
-    <!-- 🛡️ SCRIPT LOADER -->
-    <script>
-        setTimeout(() => {
-            const loader = document.getElementById('cyber-loader');
-            if (loader) loader.remove();
-        }, 3500);
-    </script>
+
 </body>
 </html>
