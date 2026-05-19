@@ -1,64 +1,50 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BarberHub | Cyberpunk Directory</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
+/* 👤 LOADER CYBERPUNK */
+#cyber-loader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #050505; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Courier New', monospace; color: #00f2ff;
+    transition: opacity 0.5s ease;
+}
+#cyber-loader.hidden { opacity: 0; visibility: hidden; }
+.loader-content { text-align: center; max-width: 90%; }
 
-    <!-- 🌀 LOADER CYBERPUNK -->
-    <div id="cyber-loader">
-        <div class="loader-content">
-            <!-- Rostro Cyberpunk Grande -->
-            <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
-            
-            <div class="boot-sequence">
-                <p class="line">> INITIALIZING CORE...</p>
-                <p class="line">> CONNECTING TO DATABASE...</p>
-                <p class="line">> LOADING UI MODULES...</p>
-                <p class="line">> SYNCING BARBER NETWORK...</p>
-            </div>
-            <div class="progress-container"><div class="progress-bar"></div></div>
-            <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
-        </div>
-        <div class="scanlines"></div>
-    </div>
+/* Imagen del rostro - GRANDE y SIN distorsión */
+.loader-face {
+    width: 220px !important; /* Tamaño fijo grande */
+    height: auto !important; /* Mantiene proporción */
+    max-width: 300px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 15px var(--neon-cyan)) drop-shadow(0 0 30px var(--neon-pink));
+    animation: floatFace 3s ease-in-out infinite;
+    object-fit: contain; /* Evita distorsión */
+}
 
-    <!-- ENCABEZADO -->
-    <header style="text-align: center; padding: 20px 10px;">
-        <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
-        <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BARBERHUB</h1>
-        <p style="color: #888; font-size: 0.9rem; margin-bottom: 10px;">Reserva tu turno al instante</p>
-        <a href="admin.html" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: bold;">🔐 MI PANEL</a>
-    </header>
+@keyframes floatFace {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <main style="max-width: 480px; margin: 0 auto; padding: 10px 15px 60px;">
-        <div style="margin-bottom: 15px;">
-            <input type="text" id="search-bar" placeholder="🔍 Buscar barbería..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box;">
-        </div>
-        <div id="barber-list">
-            <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
-        </div>
-    </main>
+.boot-sequence { text-align: left; margin: 0 auto 15px; max-width: 280px; font-size: 0.85rem; color: #00ff88; }
+.boot-sequence .line { opacity: 0; animation: typeLine 0.3s forwards; }
+.boot-sequence .line:nth-child(1) { animation-delay: 0.2s; }
+.boot-sequence .line:nth-child(2) { animation-delay: 0.6s; }
+.boot-sequence .line:nth-child(3) { animation-delay: 1.0s; }
+.boot-sequence .line:nth-child(4) { animation-delay: 1.4s; }
 
-    <!-- FOOTER -->
-    <div style="text-align: center; padding: 10px; border-top: 1px solid #222; background: #050505; position: fixed; bottom: 0; width: 100%; z-index: 9;">
-        <a href="mis-citas.html" style="color: #666; font-size: 0.8rem; text-decoration: none;">¿Ya tienes turno? Consultar</a>
-    </div>
+@keyframes typeLine { to { opacity: 1; } }
 
-    <script src="config.js"></script>
-    <script src="main.js"></script>
-    
-    <!-- 🛡️ SCRIPT LOADER - 3.5 SEGUNDOS -->
-    <script>
-        setTimeout(() => {
-            const loader = document.getElementById('cyber-loader');
-            if (loader) loader.remove();
-        }, 3500);
-    </script>
-</body>
-</html>
+.progress-container { width: 100%; height: 4px; background: #111; border-radius: 2px; overflow: hidden; margin: 12px 0; border: 1px solid #333; }
+.progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #ff00ff, #00f2ff); animation: loadProgress 3s ease-out forwards; }
+
+@keyframes loadProgress { to { width: 100%; } }
+
+.status-text { font-size: 0.75rem; color: #666; letter-spacing: 2px; margin-top: 8px; animation: blink 0.5s infinite; }
+
+@keyframes blink { 50% { opacity: 0.3; } }
+
+.scanlines {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%), linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+    background-size: 100% 2px, 3px 100%; pointer-events: none;
+}
