@@ -3,20 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Barbería</title>
+    <title>Registrar Barbería | BarberHub</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <header><h2>💈 REGISTRA TU BARBERÍA</h2><p>Completa los datos para aparecer en el directorio</p>
-    <div class="nav-links"><a href="index.html">← Volver</a></div></header>
-    <form id="barber-form">
-        <label>Nombre:</label><input type="text" id="barber-name" required placeholder="Ej: Barbería El Clásico">
-        <label>Teléfono:</label><input type="tel" id="barber-phone" required placeholder="54911...">
-        <label>Ubicación:</label><input type="text" id="barber-location" required placeholder="Ej: Centro, Montevideo">
-        <button type="submit">PUBLICAR</button>
-    </form>
-    <p id="reg-msg" style="margin-top:15px; text-align:center;"></p>
+    <header>
+        <img src="logo.png" class="logo-img" alt="Logo BarberHub">
+        <h1>💈 REGISTRAR TU BARBERÍA</h1>
+        <p>Completa los datos para aparecer en el directorio</p>
+    </header>
+    
+    <main style="max-width:600px; margin:0 auto; padding:20px;">
+        <form id="barber-form" style="background:var(--glass-bg); backdrop-filter:blur(12px); border:1px solid var(--glass-border); border-radius:14px; padding:30px;">
+            
+            <label>📛 Nombre de la Barbería:</label>
+            <input type="text" id="barber-name" required placeholder="Ej: Barbería El Clásico">
+            
+            <label>👤 Tu Nombre (Dueño):</label>
+            <input type="text" id="owner-name" required placeholder="Tu nombre completo">
+            
+            <label>📍 Dirección completa:</label>
+            <input type="text" id="barber-location" required placeholder="Ej: Av. Principal 123, Ciudad, País">
+            <small style="color:#888; display:block; margin-bottom:15px;">
+                Los clientes verán tu ubicación en el mapa
+            </small>
+            
+            <label>📱 Teléfono / WhatsApp:</label>
+            <input type="tel" id="barber-phone" required placeholder="Ej: +50312345678 (con código de país)">
+            
+            <label>🚚 ¿Realiza Delivery?</label>
+            <select id="delivery" style="width:100%; padding:12px; background:rgba(0,0,0,0.65); color:#fff; border:1px solid var(--glass-border); border-radius:6px; font-family:'Rajdhani', sans-serif; font-size:1rem; margin-bottom:15px;">
+                <option value="no">No hago delivery</option>
+                <option value="si">Sí, hago delivery</option>
+            </select>
+            
+            <button type="submit" style="background:var(--neon-cyan); color:#000; font-size:1.1rem; padding:15px; margin-top:10px; border:none; border-radius:8px; font-weight:700; cursor:pointer; width:100%;">
+                🚀 PUBLICAR MI BARBERÍA
+            </button>
+        </form>
+        
+        <p id="reg-msg" style="margin-top:20px; text-align:center; font-weight:600; font-size:1.1rem;"></p>
+        
+        <p style="text-align:center; margin-top:20px;">
+            <a href="index.html" style="color:var(--neon-cyan); text-decoration:none;">← Volver al inicio</a>
+        </p>
+    </main>
+    
     <script src="config.js"></script>
     <script src="registro-barbero.js"></script>
 </body>
