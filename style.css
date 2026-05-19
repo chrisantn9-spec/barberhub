@@ -75,62 +75,79 @@ header p { color: #aaa; font-size: 1.1rem; letter-spacing: 1px; }
 
 main { padding: 40px 20px; max-width: 850px; margin: 0 auto; }
 
+/* 📦 TARJETA HOLOGRÁFICA CON ESCANER */
 .barber-card {
   position: relative;
-  /* Imagen de fondo visible */
+  /* Fondo de imagen */
   background-image: url('card-bg.png') !important;
-  background-color: #050510 !important;
+  background-color: #05050a !important;
   background-size: cover !important;
   background-position: center !important;
   
-  border: 1px solid rgba(0, 242, 255, 0.4);
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-  transition: transform 0.2s;
+  /* Contorno Neon Pulsante */
+  border: 1px solid rgba(0, 242, 255, 0.15); /* Muy tenue por defecto */
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  overflow: hidden; /* Para que la línea de escaneo no se salga */
+  
+  /* Animación del borde (Aparece y desaparece) */
+  animation: neonPulse 3s infinite alternate;
 }
 
-/* Capa de VIDRIO en lugar de Negro Sólido */
+/*  Capa de Vidrio Oscuro (Para leer el texto sobre la imagen) */
 .barber-card::before {
   content: '';
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  /* Fondo negro semitransparente + desenfoque */
-  background: rgba(10, 10, 20, 0.6); 
-  backdrop-filter: blur(3px); 
+  background: rgba(5, 5, 15, 0.75); /* 75% oscuridad */
   z-index: 0;
-  border-radius: 12px;
+  border-radius: 10px;
+  pointer-events: none; /* El click pasa a través */
 }
 
-/* Texto y botones encima del vidrio */
+/* 📡 Línea de Escaneo (Láser) */
+.barber-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 15px var(--neon-cyan), 0 0 30px var(--neon-cyan);
+  opacity: 0.8;
+  z-index: 1;
+  pointer-events: none;
+  animation: scanLine 4s linear infinite;
+}
+
+/* ✨ Asegurar que el contenido (texto/botones) esté encima */
 .barber-card h3, 
 .barber-card p, 
 .barber-card button, 
 .barber-card a,
 .barber-card .card-actions {
   position: relative; 
-  z-index: 1; 
+  z-index: 2; /* Encima del vidrio y el láser */
 }
 
-/* Texto un poco más brillante para contraste */
-.barber-card h3 {
-  color: #fff;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-}
-.barber-card p {
-  color: #e0e0e0;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+/* Texto brillante */
+.barber-card h3 { color: #fff; text-shadow: 0 0 5px rgba(0, 242, 255, 0.8); margin-bottom: 4px; }
+.barber-card p { color: #ddd; margin: 2px 0; font-size: 0.9rem; }
+
+/* Efecto Hover */
+.barber-card:hover, .barber-card:active {
+  transform: translateY(-2px);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
 }
 
-/* Efecto al tocar */
-.barber-card:hover, 
-.barber-card:active {
-  transform: translateY(-4px) scale(1.01);
-  border-color: #00f2ff;
-  box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
-}
+/* --- ANIMACIONES --- */
 
+/* 1. Borde que pulsa (Aparece y desaparece) */
+@keyframes neonPulse {
+  0% { 
+    border-color: rgba(0, 242, 255, 0.1); 
+    box-shadow:
 form {
     background: var(--glass-bg); backdrop-filter: blur(12px);
     border: 1px solid var(--glass-border); border-radius: 14px;
