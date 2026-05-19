@@ -1,28 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap');
+
+:root {
+    --neon-cyan: #00f2ff;
+    --neon-pink: #ff00e5;
+    --dark-bg: #050505;
+    --glass-bg: rgba(8, 8, 12, 0.75);
+    --glass-border: rgba(0, 242, 255, 0.25);
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: system-ui, -apple-system, sans-serif; background: #0f0f0f; color: #fff; padding: 20px; line-height: 1.5; }
-header { text-align: center; margin-bottom: 30px; }
-header h1 { color: #00f2ff; margin-bottom: 10px; }
-header p { color: #aaa; }
-.barber-card { background: #1a1a1a; border: 1px solid #333; padding: 15px; margin-bottom: 15px; border-radius: 10px; }
-.barber-card h3 { color: #00f2ff; margin-bottom: 5px; }
-.barber-card button { background: #ff00e5; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; width: 100%; font-weight: bold; transition: 0.2s; }
-.barber-card button:hover { background: #d000bb; }
-form { max-width: 400px; margin: 0 auto; }
-label { display: block; margin: 10px 0 5px; color: #aaa; font-size: 0.9rem; }
-input { width: 100%; padding: 10px; background: #222; color: #fff; border: 1px solid #444; border-radius: 5px; }
-button[type="submit"] { background: #00f2ff; color: #000; border: none; padding: 12px; width: 100%; margin-top: 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-button[type="submit"]:hover { background: #00c8d4; }
-.loading, .error, #msg, #reg-msg { text-align: center; margin-top: 10px; color: #aaa; }
-.error { color: #ff4444; }
-#bookings-list { max-width: 600px; margin: 20px auto; }
-.status { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; background: #ffaa00; color: #000; }
-.status.confirmed { background: #00f2ff; }
-.status.cancelled { background: #ff4444; color: #fff; }
-.action-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-.action-btns button { font-size: 13px; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; }
-.btn-confirm { background: #00ff88; color: #000; }
-.btn-cancel { background: #ff4444; color: #fff; }
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--dark-bg);
+    color: #e0e0e0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Fondo Cyberpunk Fijo */
+body::before {
+    content: '';
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&w=1920&q=80');
+    background-size: cover; background-position: center;
+    z-index: -2;
+}
+
+/* Efecto Scanlines CRT */
+body::after {
+    content: '';
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 3px);
+    pointer-events: none; z-index: -1;
+}
+
+header {
+    text-align: center; padding: 40px 20px;
+    border-bottom: 1px solid var(--glass-border);
+    backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.4);
+}
+
+header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.8rem; color: var(--neon-cyan);
+    text-shadow: 0 0 12px var(--neon-cyan), 0 0 24px var(--neon-cyan);
+    letter-spacing: 4px; margin-bottom: 10px;
+    animation: flicker 4s infinite;
+}
+
+header p { color: #aaa; font-size: 1.1rem; letter-spacing: 1px; }
+
+@keyframes flicker {
+    0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+    20%, 24%, 55% { opacity: 0.35; }
+}
+
+.nav-links { margin-top: 20px; }
+.nav-links a {
+    color: var(--neon-pink); text-decoration: none;
+    font-family: 'Orbitron', sans-serif; font-size: 0.9rem;
+    padding: 8px 18px; border: 1px solid var(--neon-pink);
+    border-radius: 4px; transition: 0.3s;
+    text-shadow: 0 0 6px var(--neon-pink);
+    display: inline-block;
+}
+.nav-links a:hover {
+    background: var(--neon-pink); color: #000;
+    box-shadow: 0 0 18px var(--neon-pink);
+}
+
+main { padding: 40px 20px; max-width: 850px; margin: 0 auto; }
+
+.barber-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px; padding: 22px; margin-bottom: 22px;
+    box-shadow: 0 0 18px rgba(0, 242, 255, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+.barber-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.25);
+    border-color: var(--neon-cyan);
+}
+.barber-card h3 {
+    font-family: 'Orbitron', sans-serif; color: var(--neon-cyan);
+    font-size: 1.35rem; margin-bottom: 8px;
+}
+.barber-card p { color: #ccc; margin-bottom: 14px; font-weight: 500; }
+
+.barber-card button {
+    background: transparent; color: var(--neon-cyan);
+    border: 2px solid var(--neon-cyan); padding: 12px 20px;
+    border-radius: 6px; cursor: pointer; font-family: 'Orbitron', sans-serif;
+    font-weight: 700; letter-spacing: 1.5px; transition: 0.3s;
+    width: 100%; text-shadow: 0 0 6px var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0, 242, 255, 0.2);
+}
+.barber-card button:hover {
+    background: var(--neon-cyan); color: #000;
+    box-shadow: 0 0 22px var(--neon-cyan);
+}
+
+form {
+    background: var(--glass-bg); backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border); border-radius: 14px;
+    padding: 28px; max-width: 520px; margin: 0 auto;
+}
+label { display: block; margin: 14px 0 6px; color: var(--neon-pink); font-weight: 600; letter-spacing: 0.5px; }
+input {
+    width: 100%; padding: 13px; background: rgba(0,0,0,0.65);
+    color: #fff; border: 1px solid var(--glass-border);
+    border-radius: 6px; font-family: 'Rajdhani', sans-serif; font-size: 1rem;
+}
+input:focus {
+    outline: none; border-color: var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0, 242, 255, 0.45);
+}
+
+button[type="submit"] {
+    background: var(--neon-pink); color: #fff; border: none;
+    padding: 15px; width: 100%; margin-top: 22px; border-radius: 6px;
+    font-family: 'Orbitron', sans-serif; font-weight: 700;
+    cursor: pointer; transition: 0.3s; letter-spacing: 1.5px;
+    box-shadow: 0 0 16px rgba(255, 0, 229, 0.45);
+}
+button[type="submit"]:hover {
+    background: #ff33ee; box-shadow: 0 0 28px var(--neon-pink);
+}
+
+.loading, .error, #msg, #reg-msg { text-align: center; margin-top: 16px; font-weight: 600; letter-spacing: 0.5px; }
+.error { color: #ff3333; text-shadow: 0 0 8px #ff0000; }
+
+.status {
+    padding: 5px 12px; border-radius: 5px; font-size: 0.85rem;
+    font-weight: 700; background: rgba(255, 170, 0, 0.15);
+    color: #ffaa00; border: 1px solid #ffaa00;
+}
+.status.confirmed { background: rgba(0, 242, 255, 0.15); color: var(--neon-cyan); border-color: var(--neon-cyan); }
+.status.cancelled { background: rgba(255, 0, 0, 0.15); color: #ff3333; border-color: #ff3333; }
+
+.action-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+.action-btns button {
+    font-size: 0.9rem; padding: 9px 16px; border: none; border-radius: 5px;
+    cursor: pointer; font-family: 'Orbitron', sans-serif; font-weight: 600; transition: 0.3s;
+}
+.btn-confirm { background: var(--neon-cyan); color: #000; }
+.btn-confirm:hover { box-shadow: 0 0 18px var(--neon-cyan); }
+.btn-cancel { background: #ff3333; color: #fff; }
+.btn-cancel:hover { box-shadow: 0 0 18px #ff0000; }
 .btn-wa { background: #25D366; color: #fff; }
-.nav-links { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; }
-.nav-links a { color: #00f2ff; text-decoration: none; margin: 0 10px; font-size: 0.9rem; }
-.nav-links a:hover { text-decoration: underline; }
+.btn-wa:hover { box-shadow: 0 0 18px #25D366; }
+
+@media (max-width: 650px) {
+    header h1 { font-size: 1.9rem; letter-spacing: 2px; }
+    .barber-card, form { padding: 18px; }
+    input, button[type="submit"], .barber-card button { padding: 11px; }
+}
