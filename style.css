@@ -77,11 +77,37 @@ main { padding: 40px 20px; max-width: 850px; margin: 0 auto; }
 
 .barber-card {
     background: var(--glass-bg);
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(10px);
     border: 1px solid var(--glass-border);
-    border-radius: 14px; padding: 22px; margin-bottom: 22px;
-    box-shadow: 0 0 18px rgba(0, 242, 255, 0.08);
-    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    border-radius: 8px;
+    padding: 12px;          /* Reducido */
+    margin-bottom: 10px;    /* Menos espacio entre tarjetas */
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-size: 0.9rem;      /* Texto base más pequeño */
+}
+.barber-card h3 {
+    font-size: 1.05rem;     /* Título más compacto */
+    margin-bottom: 5px;
+    color: var(--neon-cyan);
+    line-height: 1.2;
+}
+.barber-card p {
+    margin: 3px 0;          /* Líneas más juntas */
+    font-size: 0.85rem;
+    color: #ccc;
+}
+.barber-card .action-btns button, 
+.barber-card a {
+    padding: 7px 10px;      /* Botones más pequeños */
+    font-size: 0.8rem;
+    margin: 4px 3px;
+    border-radius: 5px;
+}
+/* Ajuste para tarjetas del admin también */
+.admin-card, .booking-card {
+    padding: 10px;
+    font-size: 0.85rem;
+}
 }
 .barber-card:hover {
     transform: translateY(-6px);
