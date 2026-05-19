@@ -1,4 +1,7 @@
-// Esperar a que el DOM esté listo
+// ============================================
+// BARBERHUB - admin.js (Versión Optimizada)
+// ============================================
+
 document.addEventListener("DOMContentLoaded", async () => {
     await initAdmin();
 });
@@ -6,30 +9,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function initAdmin() {
     const list = document.getElementById('bookings-list');
     
-    // 1. Verificar sesión
-    const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
-    
-    if (sessionError || !session) {
-        console.log("🔐 No hay sesión activa, redirigiendo a login...");
-        window.location.href = 'auth.html';
+    // Verificar sesión
+    try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        
+        if (error || !session) {
+            console.log("🔐 Sin sesión, redirigiendo a login...");
+            window.location.replace('auth.html');
+            return;
+        }
+    } catch (err) {
+        console.error("Error verificando sesión:", err);
+        window.location.replace('auth.html');
         return;
     }
     
-    const userId = session.user.id;
-    console.log("✅ Usuario autenticado:", userId);
-    
-    // 2. Inicializar fecha en HOY
+    // Fecha por defecto: HOY
     const today = new Date().toISOString().split('T')[0];
     const dateInput = document.getElementById('filter-date');
-    if (dateInput) {
-        dateInput.value = today;
-    }
+    if (dateInput) dateInput.value = today;
     
-    // 3. Cargar turnos
+    // Cargar turnos
     await loadBookings(today);
 }
 
-let isLoading = false; //  Evita ejecuciones simultáneas
+// Flag para evitar doble carga
+let isLoading = false;
 
 async function loadBookings(selectedDate) {
     if (isLoading || !selectedDate) return;
@@ -43,32 +48,38 @@ async function loadBookings(selectedDate) {
 
     try {
         const { data: { session } } = await supabaseClient.auth.getSession();
-        if (!session) { window.location.href = 'auth.html'; return; }
+        if (!session) { window.location.replace('auth.html'); return; }
 
-        // 1. Obtener ID de la barbería (cacheado en memoria si es posible)
-        const { data: barbers } = await supabaseClient
+        // Obtener barbería del usuario
+        const { data: barbers, error: barberError } = await supabaseClient
             .from('barbers')
             .select('id, name')
             .eq('owner_id', session.user.id)
             .limit(1)
             .single();
 
-        if (!barbers) throw new Error("No se encontró tu perfil de barbería");
+        if (barberError || !barbers) {
+            list.innerHTML = `<div style="text-align:center; padding:40px; background:var(--glass-bg); border-radius:12px;">
+                <p>⚠️ No tienes perfil de barbería.</p>
+                <a href="registro-barbero.html" style="color:var(--neon-cyan)">Crear perfil</a>
+            </div>`;
+            return;
+        }
 
         if (summary) summary.textContent = `📍 ${barbers.name} | 📅 ${selectedDate}`;
 
-        // 2. Consulta optimizada: solo columnas necesarias + límite de seguridad
+        // Consulta optimizada de turnos
         const { data, error } = await supabaseClient
             .from('bookings')
             .select('id, client_name, client_phone, booking_date, booking_time, status, created_at')
             .eq('barber_id', barbers.id)
             .eq('booking_date', selectedDate)
             .order('booking_time', { ascending: true })
-            .limit(50); // 🛡️ Protección contra carga masiva
+            .limit(50);
 
         if (error) throw error;
 
-        list.innerHTML = ""; // Limpiar loading
+        list.innerHTML = "";
 
         if (!data || data.length === 0) {
             list.innerHTML = `<div style="text-align:center; padding:40px; color:#888;">
@@ -78,7 +89,7 @@ async function loadBookings(selectedDate) {
             return;
         }
 
-        // 3. Renderizado optimizado (DocumentFragment evita repaints múltiples)
+        // Renderizado optimizado con DocumentFragment
         const fragment = document.createDocumentFragment();
         let confirmed = 0, pending = 0;
 
@@ -108,19 +119,96 @@ async function loadBookings(selectedDate) {
             fragment.appendChild(card);
         });
 
-        list.appendChild(fragment); // ⚡ Renderizado en 1 solo paso
+        list.appendChild(fragment);
         if (summary) summary.textContent += ` | ✅ ${confirmed} | ⏳ ${pending}`;
 
     } catch (err) {
-        console.error(err);
+        console.error("Error cargando turnos:", err);
         list.innerHTML = `<p class="error">❌ ${err.message}</p>`;
     } finally {
-        isLoading = false; // 🔓 Liberar bloqueo
+        isLoading = false;
     }
-}// Exponer funciones al scope global para que funcionen los onclick en HTML
+}
+
+// ✅ CONFIRMAR + ABRIR WHATSAPP
+async function confirmBooking(id, phone, name, date, time) {
+    if (!confirm(`¿Confirmar turno para ${name}? Se abrirá WhatsApp para avisarle.`)) return;
+
+    try {
+        const { error } = await supabaseClient
+            .from('bookings')
+            .update({ status: 'confirmed' })
+            .eq('id', id);
+
+        if (error) throw error;
+
+        // Preparar y abrir WhatsApp
+        const message = `Hola ${name} 👋, tu turno en BarberHub ha sido CONFIRMADO ✅.\n📅 Fecha: ${date}\n⏰ Hora: ${time}\n¡Te esperamos! 💈`;
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+        
+        // Recargar lista
+        await loadBookings(document.getElementById('filter-date').value);
+        
+    } catch (err) {
+        console.error(err);
+        alert("❌ Error al confirmar: " + err.message);
+    }
+}
+
+// Actualizar estado (cancelar, etc.)
+async function updateStatus(id, newStatus) {
+    if (!confirm(`¿Cambiar estado a ${newStatus}?`)) return;
+    
+    try {
+        const { error } = await supabaseClient
+            .from('bookings')
+            .update({ status: newStatus })
+            .eq('id', id);
+            
+        if (error) throw error;
+        await loadBookings(document.getElementById('filter-date').value);
+        
+    } catch (err) {
+        alert("❌ " + err.message);
+    }
+}
+
+// Enviar WhatsApp manual
+function sendWhatsApp(phone, date, time, status) {
+    const text = `Hola! 👋 Recordatorio de tu turno en BarberHub.\n📅 ${date} a las ${time}.\nEstado: ${status}\n💈`;
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, "_blank");
+}
+
+// 🔐 LOGOUT ROBUSTO Y A PRUEBA DE FALLOS
+async function logout() {
+    console.log("🚪 Cerrando sesión...");
+    
+    try {
+        // 1. Cerrar sesión en Supabase
+        await supabaseClient.auth.signOut();
+        
+        // 2. Limpiar almacenamiento local
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // 3. Forzar redirección limpia (replace evita que "atrás" regrese al panel)
+        console.log("✅ Sesión cerrada, redirigiendo...");
+        window.location.replace("auth.html");
+        
+    } catch (error) {
+        console.error("❌ Error al cerrar sesión:", error);
+        // Incluso si hay error, forzamos la redirección
+        window.location.replace("auth.html?loggedout=true");
+    }
+}
+
+// 🌍 EXPOSICIÓN GLOBAL DE FUNCIONES (para onclick en HTML)
 window.logout = logout;
 window.loadBookings = loadBookings;
 window.confirmBooking = confirmBooking;
 window.updateStatus = updateStatus;
 window.sendWhatsApp = sendWhatsApp;
-"exponer funciones al global"
+window.initAdmin = initAdmin;
+
+console.log("✅ admin.js inicializado correctamente");
