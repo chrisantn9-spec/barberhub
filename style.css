@@ -1,25 +1,48 @@
-/* 👤 LOADER CYBERPUNK */
+/* 🌐 FUENTES DE GOOGLE */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
+
+/*  VARIABLES CYBERPUNK */
+:root {
+    --neon-cyan: #00f2ff;
+    --neon-pink: #ff00ff;
+    --dark-bg: #050505;
+    --glass-bg: rgba(20, 20, 30, 0.6);
+    --glass-border: rgba(0, 242, 255, 0.3);
+}
+
+/* 🌑 ESTILOS GLOBALES (Para que NO se vea blanco) */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background-color: var(--dark-bg);
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+h1, h2, h3 { font-family: 'Orbitron', sans-serif; }
+a { text-decoration: none; color: inherit; }
+input { font-family: 'Rajdhani', sans-serif; }
+
+/*  LOADER CYBERPUNK */
 #cyber-loader {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: #050505; z-index: 9999;
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Courier New', monospace; color: #00f2ff;
+    font-family: 'Courier New', monospace; color: var(--neon-cyan);
     transition: opacity 0.5s ease;
 }
-#cyber-loader.hidden { opacity: 0; visibility: hidden; }
 .loader-content { text-align: center; max-width: 90%; }
 
-/* Imagen del rostro - GRANDE y SIN distorsión */
+/* Imagen del rostro */
 .loader-face {
-    width: 220px !important; /* Tamaño fijo grande */
-    height: auto !important; /* Mantiene proporción */
-    max-width: 300px;
+    width: 220px !important;
+    height: auto !important;
     margin-bottom: 20px;
     filter: drop-shadow(0 0 15px var(--neon-cyan)) drop-shadow(0 0 30px var(--neon-pink));
     animation: floatFace 3s ease-in-out infinite;
-    object-fit: contain; /* Evita distorsión */
+    object-fit: contain;
 }
-
 @keyframes floatFace {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-8px); }
@@ -31,16 +54,13 @@
 .boot-sequence .line:nth-child(2) { animation-delay: 0.6s; }
 .boot-sequence .line:nth-child(3) { animation-delay: 1.0s; }
 .boot-sequence .line:nth-child(4) { animation-delay: 1.4s; }
-
 @keyframes typeLine { to { opacity: 1; } }
 
 .progress-container { width: 100%; height: 4px; background: #111; border-radius: 2px; overflow: hidden; margin: 12px 0; border: 1px solid #333; }
 .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #ff00ff, #00f2ff); animation: loadProgress 3s ease-out forwards; }
-
 @keyframes loadProgress { to { width: 100%; } }
 
 .status-text { font-size: 0.75rem; color: #666; letter-spacing: 2px; margin-top: 8px; animation: blink 0.5s infinite; }
-
 @keyframes blink { 50% { opacity: 0.3; } }
 
 .scanlines {
@@ -48,3 +68,59 @@
     background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%), linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
     background-size: 100% 2px, 3px 100%; pointer-events: none;
 }
+
+/*  TARJETAS HOLOGRÁFICAS CON ESCÁNER */
+.barber-card {
+    position: relative;
+    background-image: url('card-bg.png') !important;
+    background-color: #05050a !important;
+    background-size: cover !important;
+    background-position: center !important;
+    
+    /* Contorno Neon Pulsante */
+    border: 1px solid rgba(0, 242, 255, 0.15);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    animation: neonPulse 3s infinite alternate;
+}
+
+/* Capa de Vidrio Oscuro */
+.barber-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(5, 5, 15, 0.75);
+    z-index: 0; border-radius: 10px; pointer-events: none;
+}
+
+/* Línea de Escaneo (Láser) */
+.barber-card::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+    background: var(--neon-cyan);
+    box-shadow: 0 0 15px var(--neon-cyan), 0 0 30px var(--neon-cyan);
+    opacity: 0.8; z-index: 1; pointer-events: none;
+    animation: scanLine 4s linear infinite;
+}
+
+/* Contenido encima */
+.barber-card h3, .barber-card p, .barber-card button, .barber-card a {
+    position: relative; z-index: 2;
+}
+.barber-card h3 { color: #fff; text-shadow: 0 0 5px rgba(0, 242, 255, 0.8); margin-bottom: 4px; font-size: 1.1rem; }
+.barber-card p { color: #ddd; margin: 2px 0; font-size: 0.9rem; }
+
+/* Animaciones de tarjetas */
+@keyframes neonPulse {
+    0% { border-color: rgba(0, 242, 255, 0.1); box-shadow: 0 0 5px rgba(0, 242, 255, 0); }
+    100% { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 242, 255, 0.4); }
+}
+@keyframes scanLine {
+    0% { top: -10%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: 110%; opacity: 0; }
+}
+
+/* Botones generales */
+button, .btn { cursor: pointer; font-weight: bold; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
