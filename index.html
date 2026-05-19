@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- 🌀 LOADER CYBERPUNK (Animación de entrada) -->
+    <!-- 🌀 LOADER (Se mantiene igual) -->
     <div id="cyber-loader">
         <div class="loader-content">
             <div class="glitch-text" data-text="BARBERHUB SYSTEM">BARBERHUB SYSTEM</div>
@@ -19,71 +19,59 @@
                 <p class="line">> LOADING UI MODULES...</p>
                 <p class="line">> SYNCING BARBER NETWORK...</p>
             </div>
-            <div class="progress-container">
-                <div class="progress-bar"></div>
-            </div>
+            <div class="progress-container"><div class="progress-bar"></div></div>
             <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
         </div>
         <div class="scanlines"></div>
     </div>
 
-    <!-- ENCABEZADO -->
-    <header style="text-align: center; padding: 20px 10px;">
-        <!-- LOGO GRANDE (Doble tamaño) -->
-        <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
+    <!-- 🖥️ DASHBOARD POR ESQUINAS -->
+    <div class="cyber-dashboard">
         
-        <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-            BARBERHUB
-        </h1>
-        <p style="color: #888; font-size: 0.9rem; margin-bottom: 20px;">Reserva tu turno al instante</p>
-
-        <!-- BOTONES DE NAVEGACIÓN (Sin botón extra de registro) -->
-        <div style="display: flex; justify-content: center; gap: 10px;">
-            <a href="admin.html" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: bold;">
-                🔐 MI PANEL
-            </a>
-        </div>
-    </header>
-
-    <!-- CONTENEDOR PRINCIPAL (Compacto y centrado) -->
-    <!-- max-width: 480px hace que se vea bien en PC como si fuera móvil -->
-    <main style="max-width: 480px; margin: 0 auto; padding: 10px 15px 40px;">
-        
-        <!-- Barra de búsqueda (Opcional, visualmente ayuda) -->
-        <div style="margin-bottom: 15px;">
-            <input type="text" id="search-bar" placeholder="🔍 Buscar barbería..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box;">
+        <!-- 🔼 Esquina Superior Izquierda: Marca -->
+        <div class="zone top-left">
+            <img src="logo.png" alt="Logo" style="width: 50px; height: auto; margin-bottom: 6px; filter: drop-shadow(0 0 5px var(--neon-cyan));">
+            <h1 style="font-family:'Orbitron'; font-size:1.1rem; margin:0; color:var(--neon-cyan);">BARBERHUB</h1>
+            <p style="font-size:0.65rem; color:#666; margin:2px 0 0;">Sistema de Reservas v2.6</p>
+            <a href="admin.html" style="margin-top:8px; font-size:0.7rem; color:var(--neon-pink); text-decoration:none; border:1px solid var(--neon-pink); padding:4px 8px; border-radius:3px; display:inline-block;">🔐 Panel Barbero</a>
         </div>
 
-        <!-- Lista de Barberías (Aquí se inyectan las tarjetas pequeñas) -->
-        <div id="barber-list">
-            <div style="text-align: center; padding: 20px; color: #666;">
-                <p>Cargando directorio...</p>
+        <!-- 🔼 Esquina Superior Derecha: Placeholder -->
+        <div class="zone top-right placeholder">
+            <span class="zone-label">📡 ESPACIO FUTURO<br><small>Widget / Notificaciones</small></span>
+            <div class="cyber-corner-mark"></div>
+        </div>
+
+        <!-- 🔽 Esquina Inferior Izquierda: Placeholder -->
+        <div class="zone bottom-left placeholder">
+            <span class="zone-label">📊 ESPACIO FUTURO<br><small>Analíticas / Promo</small></span>
+            <div class="cyber-corner-mark"></div>
+        </div>
+
+        <!-- 🔽 Esquina Inferior Derecha: Directorio -->
+        <div class="zone bottom-right">
+            <div class="panel-header">
+                <h3 style="font-family:'Orbitron'; font-size:0.85rem; color:var(--neon-cyan); margin:0;">💈 DIRECTORIO ACTIVO</h3>
+                <input type="text" id="search-bar" placeholder="🔍 Buscar barbería...">
+            </div>
+            <div id="barber-list" class="scroll-container">
+                <!-- Las tarjetas se inyectan aquí automáticamente -->
             </div>
         </div>
 
-    </main>
-
-    <!-- FOOTER -->
-    <div style="text-align: center; padding: 20px; border-top: 1px solid #222; background: #050505;">
-        <a href="mis-citas.html" style="color: #666; font-size: 0.8rem; text-decoration: none;">
-            ¿Ya tienes turno? Consulta aquí
-        </a>
-        <p style="margin-top: 10px; font-size: 0.6rem; color: #444;">© 2026 BarberHub System</p>
     </div>
 
-    <!-- SCRIPTS -->
+    <!--  Enlace Mis Citas -->
+    <div style="position:fixed; bottom:8px; left:50%; transform:translateX(-50%); z-index:10;">
+        <a href="mis-citas.html" style="color:#555; font-size:0.7rem; text-decoration:none; background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:10px;">¿Ya tienes turno? Consultar</a>
+    </div>
+
     <script src="config.js"></script>
     <script src="main.js"></script>
-
-    <!-- SCRIPT PARA OCULTAR EL LOADER -->
     <script>
         window.addEventListener('load', () => {
-            const loader = document.getElementById('cyber-loader');
-            setTimeout(() => {
-                loader.classList.add('hidden');
-            }, 2200); // Tiempo de la animación
+            setTimeout(() => document.getElementById('cyber-loader').classList.add('hidden'), 2200);
         });
     </script>
 </body>
 </html>
-"index completo optimizado"
