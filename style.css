@@ -354,13 +354,12 @@ button[type="submit"]:hover {
   }
   .top-right, .bottom-left { min-height: 70px; }
 }
-/* 👤 ROSTRO CYBERPUNK EN LOADER */
 .loader-face {
-    width: 130px;
+    width: 220px; /* Antes era 120px, ahora mucho más grande */
     height: auto;
-    margin-bottom: 15px;
-    filter: drop-shadow(0 0 12px var(--neon-cyan)) drop-shadow(0 0 25px var(--neon-pink));
-    animation: floatFace 3s ease-in-out infinite, pulseGlow 2s infinite alternate;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 15px var(--neon-cyan)) drop-shadow(0 0 30px var(--neon-pink));
+    animation: floatFace 3s ease-in-out infinite;
 }
 
 @keyframes floatFace {
