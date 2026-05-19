@@ -77,45 +77,58 @@ main { padding: 40px 20px; max-width: 850px; margin: 0 auto; }
 
 .barber-card {
   position: relative;
-  /* Forzamos la imagen con !important */
+  /* Imagen de fondo visible */
   background-image: url('card-bg.png') !important;
-  background-color: #0a0a12 !important; /* Color oscuro si la imagen falla */
+  background-color: #050510 !important;
   background-size: cover !important;
   background-position: center !important;
-  background-repeat: no-repeat !important;
   
-  border: 1px solid rgba(0, 242, 255, 0.3);
-  border-radius: 10px;
-  padding: 12px;
-  margin-bottom: 8px;
+  border: 1px solid rgba(0, 242, 255, 0.4);
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 12px;
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  transition: transform 0.2s;
 }
 
-/* Oscurecemos un poco la imagen para que se lea el texto */
+/* Capa de VIDRIO en lugar de Negro Sólido */
 .barber-card::before {
   content: '';
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.65); /* Ajusta este 0.65 si quieres más/menos luz */
+  /* Fondo negro semitransparente + desenfoque */
+  background: rgba(10, 10, 20, 0.6); 
+  backdrop-filter: blur(3px); 
   z-index: 0;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
-/* Contenido encima de la imagen */
+/* Texto y botones encima del vidrio */
 .barber-card h3, 
 .barber-card p, 
 .barber-card button, 
-.barber-card a {
+.barber-card a,
+.barber-card .card-actions {
   position: relative; 
   z-index: 1; 
 }
 
-/* Efecto Neón al tocar */
+/* Texto un poco más brillante para contraste */
+.barber-card h3 {
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+.barber-card p {
+  color: #e0e0e0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+/* Efecto al tocar */
 .barber-card:hover, 
 .barber-card:active {
-  transform: translateY(-3px);
-  box-shadow: 0 0 15px var(--neon-cyan);
-  border-color: var(--neon-cyan);
+  transform: translateY(-4px) scale(1.01);
+  border-color: #00f2ff;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
 }
 
 form {
