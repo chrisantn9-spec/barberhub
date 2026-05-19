@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- 🌀 LOADER (Se mantiene igual) -->
+    <!-- 🌀 LOADER CYBERPUNK (Se mantiene) -->
     <div id="cyber-loader">
         <div class="loader-content">
             <div class="glitch-text" data-text="BARBERHUB SYSTEM">BARBERHUB SYSTEM</div>
@@ -25,45 +25,44 @@
         <div class="scanlines"></div>
     </div>
 
-    <!-- 🖥️ DASHBOARD POR ESQUINAS -->
-    <div class="cyber-dashboard">
+    <!-- ENCABEZADO RESTAURADO -->
+    <header style="text-align: center; padding: 20px 10px;">
+        <!-- LOGO GRANDE (220px como pediste) -->
+        <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
         
-        <!-- 🔼 Esquina Superior Izquierda: Marca -->
-        <div class="zone top-left">
-            <img src="logo.png" alt="Logo" style="width: 50px; height: auto; margin-bottom: 6px; filter: drop-shadow(0 0 5px var(--neon-cyan));">
-            <h1 style="font-family:'Orbitron'; font-size:1.1rem; margin:0; color:var(--neon-cyan);">BARBERHUB</h1>
-            <p style="font-size:0.65rem; color:#666; margin:2px 0 0;">Sistema de Reservas v2.6</p>
-            <a href="admin.html" style="margin-top:8px; font-size:0.7rem; color:var(--neon-pink); text-decoration:none; border:1px solid var(--neon-pink); padding:4px 8px; border-radius:3px; display:inline-block;">🔐 Panel Barbero</a>
+        <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            BARBERHUB
+        </h1>
+        <p style="color: #888; font-size: 0.9rem; margin-bottom: 10px;">Reserva tu turno al instante</p>
+
+        <!-- BOTÓN ÚNICO AL PANEL -->
+        <a href="admin.html" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 8px 15px; border-radius: 4px; text-decoration: none; font-size: 0.8rem; font-weight: bold;">
+            🔐 MI PANEL
+        </a>
+    </header>
+
+    <!-- CONTENEDOR CENTRAL (Lista vertical) -->
+    <main style="max-width: 480px; margin: 0 auto; padding: 10px 15px 60px;">
+        
+        <!-- BUSCADOR -->
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="search-bar" placeholder="🔍 Buscar barbería..." style="width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 1px solid #333; color: #fff; border-radius: 5px; box-sizing: border-box;">
         </div>
 
-        <!-- 🔼 Esquina Superior Derecha: Placeholder -->
-        <div class="zone top-right placeholder">
-            <span class="zone-label">📡 ESPACIO FUTURO<br><small>Widget / Notificaciones</small></span>
-            <div class="cyber-corner-mark"></div>
-        </div>
-
-        <!-- 🔽 Esquina Inferior Izquierda: Placeholder -->
-        <div class="zone bottom-left placeholder">
-            <span class="zone-label">📊 ESPACIO FUTURO<br><small>Analíticas / Promo</small></span>
-            <div class="cyber-corner-mark"></div>
-        </div>
-
-        <!-- 🔽 Esquina Inferior Derecha: Directorio -->
-        <div class="zone bottom-right">
-            <div class="panel-header">
-                <h3 style="font-family:'Orbitron'; font-size:0.85rem; color:var(--neon-cyan); margin:0;">💈 DIRECTORIO ACTIVO</h3>
-                <input type="text" id="search-bar" placeholder="🔍 Buscar barbería...">
-            </div>
-            <div id="barber-list" class="scroll-container">
-                <!-- Las tarjetas se inyectan aquí automáticamente -->
+        <!-- LISTA DE TARJETAS -->
+        <div id="barber-list">
+            <div style="text-align: center; padding: 20px; color: #666;">
+                <p>Cargando directorio...</p>
             </div>
         </div>
 
-    </div>
+    </main>
 
-    <!--  Enlace Mis Citas -->
-    <div style="position:fixed; bottom:8px; left:50%; transform:translateX(-50%); z-index:10;">
-        <a href="mis-citas.html" style="color:#555; font-size:0.7rem; text-decoration:none; background:rgba(0,0,0,0.6); padding:4px 10px; border-radius:10px;">¿Ya tienes turno? Consultar</a>
+    <!-- FOOTER -->
+    <div style="text-align: center; padding: 10px; border-top: 1px solid #222; background: #050505; position: fixed; bottom: 0; width: 100%; z-index: 9;">
+        <a href="mis-citas.html" style="color: #666; font-size: 0.8rem; text-decoration: none;">
+            ¿Ya tienes turno? Consultar
+        </a>
     </div>
 
     <script src="config.js"></script>
