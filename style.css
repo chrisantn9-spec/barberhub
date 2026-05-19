@@ -173,3 +173,27 @@ button[type="submit"]:hover {
     transform: scale(1.05); /* Crece un poquito al pasar el mouse */
     filter: drop-shadow(0 0 20px #ff00e5); /* Cambia a rosa al hover */
 }
+/* Colores para los estados de las citas */
+.status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+}
+
+.status.pending {
+    background-color: #ffaa00; /* Naranja para pendiente */
+    color: #000;
+}
+
+.status.confirmed {
+    background-color: #00ff88; /* Verde neón para confirmado */
+    color: #000;
+}
+
+.status.cancelled {
+    background-color: #ff3333; /* Rojo para cancelado */
+    color: #fff;
+}
