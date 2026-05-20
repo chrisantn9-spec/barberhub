@@ -155,21 +155,53 @@ async function loadNearbyShops() {
     }
 }
 
-// 💼 BOLSA
+// 💼 BOLSA DE TRABAJO (CLICKEABLE)
 async function loadJobBoard() {
     const container = document.getElementById('job-board');
-    const { data } = await supabaseClient.from('job_board').select('*').limit(3);
-    container.innerHTML = '';
-    if (!data || data.length === 0) {
-        container.innerHTML = '<p style="color:#666; text-align:center; font-size:0.8rem;">Sin ofertas activas.</p>';
-        return;
+    try {
+        const { data, error } = await supabaseClient.from('job_board').select('*').order('created_at', { ascending: false }).limit(10);
+        
+        if (error) throw error;
+        
+        container.innerHTML = '';
+        
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p style="color:#666; text-align:center; font-size:0.8rem; padding:20px;">Sin ofertas activas.</p>';
+            return;
+        }
+        
+        data.forEach(job => {
+            const div = document.createElement('div');
+            div.className = 'job-card';
+            div.style.cssText = 'background:rgba(0,0,0,0.4); border-left:3px solid var(--neon-pink); padding:12px; margin:8px 0; border-radius:0 6px 6px 0; cursor:pointer; transition:0.3s;';
+            div.onclick = () => viewJobDetails(job);
+            
+            const typeIcon = job.type === 'barbero' ? '💈' : '🏪';
+            const typeText = job.type === 'barbero' ? 'Barbero busca trabajo' : 'Barbería busca personal';
+            
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                    <strong style="color:#fff; font-size:0.9rem;">${typeIcon} ${typeText}</strong>
+                    <span style="color:#666; font-size:0.7rem;">${new Date(job.created_at).toLocaleDateString()}</span>
+                </div>
+                <p style="color:#ccc; font-size:0.85rem; margin:5px 0;">${job.description}</p>
+                <p style="color:var(--neon-cyan); font-size:0.75rem; margin-top:5px;">Toca para contactar →</p>
+            `;
+            container.appendChild(div);
+        });
+        
+    } catch (err) {
+        container.innerHTML = '<p style="color:#ff3333; text-align:center;">Error cargando ofertas.</p>';
+        console.error(err);
     }
-    data.forEach(job => {
-        const div = document.createElement('div');
-        div.style.cssText = 'background:rgba(0,0,0,0.4); border-left:3px solid var(--neon-pink); padding:8px; margin:5px 0; border-radius:0 6px 6px 0;';
-        div.innerHTML = `<strong style="color:#fff; font-size:0.85rem;">${job.type === 'barbero' ? '💈 Barbero' : '🏪 Barbería'}</strong> <br> <span style="color:#ccc; font-size:0.8rem;">${job.description}</span>`;
-        container.appendChild(div);
-    });
+}
+
+// VER DETALLES DE OFERTA
+function viewJobDetails(job) {
+    const contactMethod = confirm(`¿Contactar por WhatsApp?\n\n${job.description}\n\nCancelar para copiar número`)
+        ? window.open(`https://wa.me/${job.contact}`, '_blank')
+        : navigator.clipboard.writeText(job.contact).then(() => alert('Número copiado: ' + job.contact));
+}
 }
 
 function logout() { supabaseClient.auth.signOut().then(() => window.location.href = 'index.html'); }
