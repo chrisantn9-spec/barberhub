@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function initAdmin() {
     const list = document.getElementById('bookings-list');
+if (!list) {
+    console.error('❌ No se encontró el elemento #bookings-list');
+    return;
+}
     
     // Verificar sesión
     try {
