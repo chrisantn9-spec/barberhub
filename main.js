@@ -1,79 +1,87 @@
-async function loadBarbers() {
-    const list = document.getElementById("barber-list");
-    
-    // 1. Muestra el loading mientras carga
-    list.innerHTML = '<p class="loading">Cargando barberías...</p>';
-
-    const { data, error } = await supabaseClient
-        .from("barbers")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-        list.innerHTML = `<p class="error">❌ ${error.message}</p>`;
-        return;
-    }
-    
-    if (data.length === 0) {
-        list.innerHTML = `<p class="loading">📭 Aún no hay barberías registradas.</p>`;
-        return;
-    }
-
-    // 2. SI HAY DATOS: Borra el texto "Cargando..." ANTES de poner las tarjetas
-    list.innerHTML = ""; 
-
-    data.forEach(barber => {
-        const card = document.createElement("div");
-        card.className = "barber-card";
-        
-        const deliveryIcon = barber.delivery === 'si' ? '🚚' : '';
-        const mapsQuery = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(barber.location)}`;
-        
-        card.innerHTML = `
-            <h3>${barber.name} ${deliveryIcon}</h3>
-            <p style="color:#aaa; font-size:0.95rem;">👤 ${barber.owner_name || 'Sin nombre'}</p>
-            <p>📍 ${barber.location}</p>
-            <p>📞 ${barber.phone}</p>
-            ${barber.delivery === 'si' ? '<p style="color:var(--neon-pink); font-weight:600;">🚚 Delivery disponible</p>' : ''}
-            <div style="margin-top:15px;">
-                <button onclick="location.href='reservar.html?id=${barber.id}'" style="margin-bottom:10px; background:var(--neon-cyan); color:#000; border:none; padding:12px; width:100%; border-radius:6px; font-weight:700; cursor:pointer;">📅 RESERVAR TURNO</button>
-                <a href="${barber.whatsapp_link || 'https://wa.me/' + barber.phone.replace(/[^0-9]/g,'')}" target="_blank" style="display:block; text-align:center; background:#25D366; color:#fff; padding:10px; border-radius:6px; text-decoration:none; font-weight:700; margin-bottom:8px;">💬 WhatsApp</a>
-                <a href="${mapsQuery}" target="_blank" style="display:block; text-align:center; background:transparent; border:2px solid var(--neon-cyan); color:var(--neon-cyan); padding:10px; border-radius:6px; text-decoration:none; font-weight:700;">🗺️ Ver Ubicación</a>
-            </div>
-        `;
-        list.appendChild(card);
-    });
+// 🧮 Fórmula para calcular distancia entre dos puntos GPS (Haversine)
+function calcularDistancia(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radio tierra en KM
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+              Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return (R * c).toFixed(1); // Retorna KM con 1 decimal
 }
 
-// Inicializar al cargar
-     // 🌀 Ocultar loader después de 2.5 segundos
-    const loader = document.getElementById('cyber-loader');
-    if (loader) {
-        setTimeout(() => {
-            loader.classList.add('hidden');
-        }, 2500);
-    }  document.addEventListener("DOMContentLoaded", loadBarbers);
-"agregar loader cyberpunk
-// 🔍 FUNCIONALIDAD DE BÚSQUEDA POR NOMBRE O ZONA
-document.addEventListener('DOMContentLoaded', () => {
-    const searchBar = document.getElementById('search-bar');
-    if (searchBar) {
-        searchBar.addEventListener('input', (e) => {
-            const searchText = e.target.value.toLowerCase();
-            const cards = document.querySelectorAll('.barber-card');
+//  FUNCIÓN PRINCIPAL
+document.addEventListener("DOMContentLoaded", async () => {
+    const list = document.getElementById('barber-list');
+    if (!list) return;
 
-            cards.forEach(card => {
-                // Busca en el título (nombre) y en los párrafos (zona/dirección)
-                const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
-                const paragraphs = Array.from(card.querySelectorAll('p')).map(p => p.textContent.toLowerCase()).join(' ');
-                
-                if (title.includes(searchText) || paragraphs.includes(searchText)) {
-                    card.style.display = 'flex';
+    list.innerHTML = '<p style="text-align:center; color:#888;">Sincronizando ubicación...</p>';
+
+    // 1. Obtener ubicación del CLIENTE
+    let clientLat = null;
+    let clientLng = null;
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                clientLat = pos.coords.latitude;
+                clientLng = pos.coords.longitude;
+                renderList(clientLat, clientLng); // Renderizar con distancia
+            },
+            () => {
+                console.log("GPS denegado, mostrando lista normal.");
+                renderList(null, null); // Renderizar sin distancia
+            }
+        );
+    } else {
+        renderList(null, null);
+    }
+
+    async function renderList(cLat, cLng) {
+        list.innerHTML = '<p style="text-align:center; color:#888;">Cargando barberías...</p>';
+
+        const { data: barbers, error } = await supabaseClient.from('barbers').select('*');
+
+        if (error) {
+            list.innerHTML = '<p style="color:red">Error cargando datos.</p>';
+            return;
+        }
+
+        // 2. Calcular y ordenar por distancia
+        if (cLat && cLng) {
+            barbers.forEach(b => {
+                if (b.lat && b.lng) {
+                    b.distancia = calcularDistancia(cLat, cLng, b.lat, b.lng);
                 } else {
-                    card.style.display = 'none';
+                    b.distancia = 9999; // Si no tiene GPS, se va al final
                 }
             });
+            barbers.sort((a, b) => a.distancia - b.distancia);
+        }
+
+        list.innerHTML = ''; // Limpiar loader
+
+        // 3. Dibujar tarjetas
+        barbers.forEach(barber => {
+            const card = document.createElement('div');
+            card.className = 'barber-card';
+
+            // Texto de distancia (solo si tiene coordenadas)
+            const distText = (barber.distancia && barber.distancia < 9999) 
+                ? `<span style="color:var(--neon-cyan); font-size:0.8rem;">📍 a ${barber.distancia} km</span>` 
+                : '';
+
+            card.innerHTML = `
+                <h3>${barber.name} ${distText}</h3>
+                <p style="font-size:0.8rem; color:#aaa;">${barber.location}</p>
+                <p style="font-size:0.8rem;">📞 ${barber.phone}</p>
+                <div style="margin-top:10px; display:flex; gap:5px;">
+                    <a href="https://wa.me/${barber.phone}" target="_blank" style="flex:1; background:#25D366; color:#fff; text-align:center; padding:5px; border-radius:4px; text-decoration:none; font-size:0.8rem;">WhatsApp</a>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${barber.lat},${barber.lng}" target="_blank" style="flex:1; background:var(--neon-cyan); color:#000; text-align:center; padding:5px; border-radius:4px; text-decoration:none; font-size:0.8rem;">Ver Mapa</a>
+                </div>
+            `;
+            list.appendChild(card);
         });
     }
-});"
-
+});
+"main.js calcula distancia y ordena"
