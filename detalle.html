@@ -82,6 +82,23 @@
             <button id="btn-booking" class="action-btn btn-booking">📅 RESERVAR TURNO AHORA</button>
             <a id="link-call" href="#" class="action-btn btn-call">📞 Llamar</a>
         </div>
+        <!-- SECCIÓN DE RESEÑAS -->
+<div class="spec-box" style="margin-top:20px;">
+    <h3>⭐ Calificaciones y Reseñas</h3>
+    <div id="reviews-container" style="margin-bottom:15px;"></div>
+    <div style="background:rgba(0,0,0,0.3); padding:10px; border-radius:6px;">
+        <p style="margin:0 0 5px; font-size:0.85rem; color:#888;">Dejar una reseña:</p>
+        <select id="rating-select" style="background:#111; color:#fff; border:1px solid #444; padding:5px; border-radius:4px; margin-right:5px;">
+            <option value="5">⭐⭐⭐⭐⭐</option>
+            <option value="4">⭐⭐⭐⭐</option>
+            <option value="3">⭐⭐⭐</option>
+            <option value="2">⭐⭐</option>
+            <option value="1">⭐</option>
+        </select>
+        <input id="review-comment" placeholder="Tu opinión..." style="flex:1; background:#111; color:#fff; border:1px solid #444; padding:5px; border-radius:4px;">
+        <button onclick="submitReview()" style="background:var(--neon-pink); color:#fff; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; margin-left:5px;">Enviar</button>
+    </div>
+</div>
     </main>
 
     <script src="config.js"></script>
