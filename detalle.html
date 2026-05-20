@@ -243,5 +243,32 @@
             }
         }
     </script>
+    // Cargar reseñas
+async function loadReviews() {
+    const { data } = await supabaseClient.from('reviews').select('*').eq('barber_id', barberId).order('created_at', { ascending: false }).limit(10);
+    const container = document.getElementById('reviews-container');
+    container.innerHTML = '';
+    if (!data || data.length === 0) { container.innerHTML = '<p style="color:#666; font-size:0.85rem;">Aún no hay reseñas.</p>'; return; }
+    data.forEach(r => {
+        container.innerHTML += `<div style="border-bottom:1px solid #333; padding:8px 0; font-size:0.85rem;"><strong style="color:#fff;">${r.client_name}</strong> <span style="color:#ffaa00;">${'⭐'.repeat(r.rating)}</span><p style="margin:3px 0 0; color:#aaa;">${r.comment}</p></div>`;
+    });
+}
+
+// Enviar reseña
+window.submitReview = async () => {
+    const rating = parseInt(document.getElementById('rating-select').value);
+    const comment = document.getElementById('review-comment').value.trim();
+    if (!comment) return alert('Escribe un comentario');
+    
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const name = user ? (user.user_metadata?.nombre || 'Cliente') : 'Anónimo';
+    
+    const { error } = await supabaseClient.from('reviews').insert({ barber_id: barberId, client_name: name, rating, comment });
+    if (error) alert('Error: ' + error.message);
+    else { document.getElementById('review-comment').value = ''; loadReviews(); alert('✅ Reseña enviada'); }
+};
+
+// Llamar al cargar
+if (typeof barberId !== 'undefined') loadReviews();
 </body>
 </html>
