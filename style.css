@@ -179,3 +179,81 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     padding: 4px !important;
     margin-top: 4px;
 }
+/*  PULIDO MÓVIL TIPO APP */
+:root {
+  --nav-height: 70px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: contain;
+  touch-action: manipulation;
+}
+
+/* Evita que el contenido quede tapado por la barra inferior */
+main, .page-content {
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 20px);
+}
+
+/* Botones y enlaces con área táctil mínima (48px) */
+button, a.nav-btn, .action-btn, input, select, textarea {
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 16px; /* Evita zoom automático en iOS */
+}
+
+/* Animaciones suaves tipo app */
+.barber-card, .booking-card, .chat-item, .job-card {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.barber-card:active, .booking-card:active, .chat-item:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* Barra de navegación inferior fija */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--nav-height) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: rgba(10, 10, 20, 0.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(0, 242, 255, 0.2);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+}
+
+.bottom-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  text-decoration: none;
+  font-size: 0.7rem;
+  padding: 8px 0;
+  width: 25%;
+  transition: color 0.2s;
+}
+
+.bottom-nav a span {
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+
+.bottom-nav a.active, .bottom-nav a:hover {
+  color: var(--neon-cyan);
+}
+
+/* Scroll suave y sin rebote en iOS */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
