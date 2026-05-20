@@ -72,3 +72,4 @@ document.addEventListener('DOMContentLoaded', async () => {
         gallery.innerHTML = '<div style="height:150px; background:rgba(0,242,255,0.05); border:1px dashed #444; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#666; font-size:0.9rem;">📷 Sin fotos aún</div>';
     }
 });
+"detalle.js carga datos y fotos"
