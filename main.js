@@ -87,3 +87,4 @@ card.onclick = () => window.location.href = `detalle.html?id=${barber.id}`;
     }
 });
 "main.js calcula distancia y ordena"
+"tarjetas clickeables a detalle"
