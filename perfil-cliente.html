@@ -7,135 +7,116 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Estilos rápidos para que se vea bien */
+        /* Lightbox */
         .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out; }
         .lightbox.active { display: flex; }
         .lightbox img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid var(--neon-cyan); }
-        .avatar-container img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--neon-cyan); object-fit: cover; cursor: pointer; background: #111; }
-        .btn-tiny { padding: 6px 10px; font-size: 1rem; cursor: pointer; border: none; border-radius: 4px; color: #fff; }
-        .btn-pink { background: var(--neon-pink); }
+        
+        /* Avatar */
+        .avatar-container img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--neon-cyan); object-fit: cover; cursor: pointer; background: #111; transition: 0.3s; }
+        .avatar-container img:hover { opacity: 0.8; transform: scale(1.05); }
+
+        /* Botones de navegación */
+        .nav-btn { padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; cursor: pointer; border: none; display: inline-block; text-align: center; }
         .btn-cyan { background: var(--neon-cyan); color: #000; }
-        .job-card { background:rgba(0,0,0,0.4); border-left:3px solid var(--neon-pink); padding:12px; margin:8px 0; border-radius:0 6px 6px 0; cursor:pointer; }
+        .btn-gray { background: #444; color: #fff; }
+        .btn-out { background: #333; color: #fff; border: 1px solid #555 !important; }
+
+        /* Estado de conexión */
+        #connection-status { position: fixed; top: 10px; right: 10px; padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; display: flex; align-items: center; gap: 5px; z-index: 9999; transition: 0.3s; }
+        .status-online { background: rgba(0,255,0,0.2); border: 1px solid #00ff00; color: #00ff00; }
+        .status-offline { background: rgba(255,0,0,0.2); border: 1px solid #ff0000; color: #ff0000; }
+        .pulse { width: 8px; height: 8px; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
-<body style="background:linear-gradient(180deg,#050505 0%,#0a0a1a 100%); min-height:100vh; padding-bottom:80px;">
-<body style="background:linear-gradient(180deg,#050505 0%,#0a0a1a 100%); min-height:100vh; padding-bottom:80px;">
+<body style="background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh; padding-bottom: 80px; color: #fff;">
 
     <!-- 🟢 INDICADOR DE CONEXIÓN -->
-    <div id="connection-status" style="position:fixed; top:10px; right:10px; background:rgba(0,255,0,0.2); border:1px solid #00ff00; color:#00ff00; padding:5px 10px; border-radius:20px; font-size:0.75rem; display:flex; align-items:center; gap:5px; z-index:9999;">
-        <span style="width:8px; height:8px; background:#00ff00; border-radius:50%; display:inline-block; animation: pulse 2s infinite;"></span>
-        Conectado
+    <div id="connection-status" class="status-online">
+        <span class="pulse" style="background: #00ff00;"></span> Conectado
     </div>
 
-    <style>
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-    </style>
-
-    <script>
-        // Detectar conexión
-        function updateConnectionStatus() {
-            const status = document.getElementById('connection-status');
-            if (navigator.onLine) {
-                status.innerHTML = '<span style="width:8px; height:8px; background:#00ff00; border-radius:50%; animation: pulse 2s infinite;"></span> Conectado';
-                status.style.background = 'rgba(0,255,0,0.2)';
-                status.style.borderColor = '#00ff00';
-                status.style.color = '#00ff00';
-            } else {
-                status.innerHTML = '<span style="width:8px; height:8px; background:#ff0000; border-radius:50%;"></span> Sin conexión';
-                status.style.background = 'rgba(255,0,0,0.2)';
-                status.style.borderColor = '#ff0000';
-                status.style.color = '#ff0000';
-            }
-        }
-
-        window.addEventListener('online', updateConnectionStatus);
-        window.addEventListener('offline', updateConnectionStatus);
-        updateConnectionStatus();
-    </script>
-    <!-- LIGHTBOX (Zoom) -->
+    <!-- LIGHTBOX (Zoom de fotos) -->
     <div id="lightbox" class="lightbox" onclick="this.classList.remove('active')">
         <img id="lightbox-img" src="" alt="Zoom">
     </div>
 
-   
-    <header style="background:rgba(10,10,20,0.9); border-bottom:1px solid var(--neon-cyan); padding:20px; text-align:center;">
-    <div class="avatar-container">
-        <img id="client-avatar" src="https://via.placeholder.com/150/111111/00f2ff?text=USER" alt="Foto Perfil">
-        <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="uploadAvatar(this)">
-    </div>
-    <p style="font-size:0.7rem; color:var(--neon-cyan); margin-bottom:15px;">( Toca la foto para cambiarla )</p>
+    <!-- HEADER -->
+    <header style="background: rgba(10,10,20,0.9); border-bottom: 1px solid var(--neon-cyan); padding: 20px; text-align: center;">
+        <div class="avatar-container">
+            <img id="client-avatar" src="https://via.placeholder.com/150/111111/00f2ff?text=USER" alt="Foto Perfil">
+            <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="uploadAvatar(this)">
+        </div>
+        <p style="font-size: 0.7rem; color: var(--neon-cyan); margin-bottom: 15px;">( Toca la foto para cambiarla )</p>
 
-    <h1 id="client-name" style="font-family:'Orbitron'; color:#fff; margin:0; font-size:1.2rem;">Cargando...</h1>
-    <p id="client-email" style="color:#888; font-size:0.8rem; margin:5px 0 15px;">...</p>
-    
-    <!-- ✅ BOTONES DE NAVEGACIÓN -->
-    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:10px;">
-        <a href="index.html" style="background:var(--neon-cyan); color:#000; padding:8px 16px; border-radius:5px; text-decoration:none; font-weight:bold; font-size:0.9rem;">🏠 Inicio</a>
-        <a href="chat-list.html" style="background:#444; color:#fff; padding:8px 16px; border-radius:5px; text-decoration:none; font-weight:bold; font-size:0.9rem;">💬 Chats</a>
-        <button onclick="logout()" style="background:#333; color:#fff; border:1px solid #555; padding:8px 16px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:0.9rem;">🚪 Salir</button>
-    </div>
-</header>
-    <!--  BOTONES DE NAVEGACIÓN -->
-    <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:10px;">
-        <a href="index.html" style="background:var(--neon-cyan); color:#000; padding:8px 16px; border-radius:5px; text-decoration:none; font-weight:bold; font-size:0.9rem;">🏠 Inicio</a>
-        <button onclick="window.location.href='index.html#job-section'" style="background:var(--neon-pink); color:#fff; border:none; padding:8px 16px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:0.9rem;">💼 Empleos</button>
-        <button onclick="logout()" style="background:#333; color:#fff; border:1px solid #555; padding:8px 16px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:0.9rem;">🚪 Salir</button>
-    </div>
-</header>
+        <h1 id="client-name" style="font-family: 'Orbitron'; margin: 0; font-size: 1.2rem;">Cargando...</h1>
+        <p id="client-email" style="color: #888; font-size: 0.8rem; margin: 5px 0 15px;">...</p>
 
-    <main style="max-width:600px; margin:20px auto; padding:0 15px;">
-        
-        <!-- 💬 CHAT -->
-        <!-- Notificaciones de mensajes -->
-<div id="message-notifications" style="margin-top:15px; padding:10px; background:rgba(0,242,255,0.05); border:1px solid var(--neon-cyan); border-radius:6px;">
-    <p style="color:#888; font-size:0.85rem; margin:0;">📬 Cargando mensajes...</p>
-</div>
-        <section class="cyber-section" style="margin-top:20px;">
-            <h2 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">💬 Mis Conversaciones</h2>
-            <button onclick="window.location.'<a href="chat-list.html" ...>Ver todos los mensajes</a>" style="background:var(--neon-cyan); color:#000; border:none; padding:10px 20px; border-radius:6px; cursor:pointer; font-weight:bold; width:100%;">Ver todos los mensajes</button>
+        <!-- BOTONES DE NAVEGACIÓN -->
+        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
+            <a href="index.html" class="nav-btn btn-cyan">🏠 Inicio</a>
+            <a href="chat-list.html" class="nav-btn btn-gray">💬 Chats</a>
+            <button onclick="logout()" class="nav-btn btn-out"> Salir</button>
+        </div>
+    </header>
+
+    <main style="max-width: 600px; margin: 20px auto; padding: 0 15px;">
+
+        <!-- 💬 CONVERSACIONES -->
+        <section style="margin-top: 20px;">
+            <h2 style="color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 10px;">💬 Mis Conversaciones</h2>
+            <a href="chat-list.html" class="nav-btn btn-cyan" style="display: block; text-align: center; width: 100%; box-sizing: border-box;">Ver todos los mensajes</a>
+            <div id="message-notifications" style="margin-top: 10px;"></div>
         </section>
 
-        <!-- 📸 FOTOS -->
-        <section class="cyber-section" style="margin-top:20px;">
-            <h2 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">📸 Mis Fotos</h2>
-            <div id="client-photos" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:15px;"></div>
-            <div style="display:flex; gap:5px; align-items:center;">
-                <input type="text" id="new-photo-url" placeholder="Pegar URL..." style="flex:1; padding:8px; background:rgba(0,0,0,0.5); border:1px solid #444; color:#fff; border-radius:4px; font-size:0.8rem;">
-                <button onclick="addPhoto()" class="btn-tiny btn-pink">➕</button>
-                <button onclick="document.getElementById('photo-upload').click()" class="btn-tiny btn-cyan">📷</button>
-                <input type="file" id="photo-upload" accept="image/*" style="display:none;" onchange="uploadPhoto(this)">
+        <!-- 📸 MIS FOTOS -->
+        <section style="margin-top: 20px;">
+            <h2 style="color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 10px;">📸 Mis Fotos / Estilo</h2>
+            <div id="client-photos" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px;"></div>
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <input type="text" id="new-photo-url" placeholder="Pegar URL..." style="flex: 1; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff; border-radius: 4px; font-size: 0.8rem;">
+                <button onclick="addPhoto()" class="nav-btn" style="background: var(--neon-pink); color: #fff; padding: 6px 10px;">➕</button>
+                <button onclick="document.getElementById('photo-upload').click()" class="nav-btn" style="background: var(--neon-cyan); color: #000; padding: 6px 10px;">📷</button>
+                <input type="file" id="photo-upload" accept="image/*" style="display: none;" onchange="uploadPhoto(this)">
             </div>
+            <p id="upload-status" style="font-size: 0.75rem; color: #888; margin-top: 5px; text-align: center;"></p>
         </section>
 
-        <!-- 📍 CERCANAS -->
-        <section class="cyber-section" style="margin-top:20px;">
-            <h2 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">📍 Cerca de Ti</h2>
-            <div id="nearby-shops" style="color:#888; text-align:center; padding:10px;">Detectando...</div>
+        <!-- ✂️ BARBEROS CERCANOS -->
+        <section style="margin-top: 20px;">
+            <h2 style="color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 10px;">️ Barberos Cerca de Ti</h2>
+            <div id="nearby-shops" style="color: #888; text-align: center; padding: 10px;">Detectando ubicación...</div>
         </section>
 
-        <!-- 💼 BOLSA DE TRABAJO -->
-        <section class="cyber-section" style="margin-top:20px; border:1px solid var(--neon-pink); background:rgba(255,0,255,0.05);">
-            <h2 style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">💼 Bolsa de Trabajo</h2>
-            <div id="job-board" style="min-height:50px;">Cargando ofertas...</div>
-            <button onclick="window.location.href='crear-oferta.html'" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:1px dashed var(--neon-pink); color:var(--neon-pink); border-radius:4px; cursor:pointer; font-weight:bold;">+ Publicar Oferta</button>
+        <!--  BOLSA DE TRABAJO -->
+        <section style="margin-top: 20px; border: 1px solid var(--neon-pink); background: rgba(255,0,255,0.05); padding: 15px; border-radius: 8px;">
+            <h2 style="color: var(--neon-pink); font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 10px;">💼 Bolsa de Trabajo</h2>
+            <div id="job-board" style="min-height: 50px;">Cargando ofertas...</div>
+            <a href="crear-oferta.html" class="nav-btn" style="background: transparent; border: 1px dashed var(--neon-pink); color: var(--neon-pink); display: block; text-align: center; margin-top: 10px; width: 100%; box-sizing: border-box;">+ Publicar Oferta</a>
         </section>
 
     </main>
 
-    <!--  AQUÍ SE CONECTAN LOS SCRIPTS (NO PEGUES CÓDIGO JS AQUÍ DENTRO) -->
+    <!-- SCRIPTS -->
     <script src="config.js"></script>
     <script src="perfil.js"></script>
     
-<!-- ✂️ BARBEROS DESTACADOS -->
-<section class="cyber-section" style="margin-top:20px;">
-    <h2 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">✂️ Barberos Disponibles</h2>
-    <div id="featured-barbers" style="color:#888; text-align:center; padding:15px;">Cargando...</div>
-    <div style="text-align:center; margin-top:10px;">
-        <a href="index.html" style="display:inline-block; background:transparent; border:1px solid var(--neon-cyan); color:var(--neon-cyan); padding:8px 16px; border-radius:6px; text-decoration:none; font-weight:bold; font-size:0.85rem;">Ver todos →</a>
-    </div>
-</section>
+    <!-- LÓGICA DE CONEXIÓN -->
+    <script>
+        function updateConnection() {
+            const el = document.getElementById('connection-status');
+            if (navigator.onLine) {
+                el.className = 'status-online';
+                el.innerHTML = '<span class="pulse" style="background:#00ff00;"></span> Conectado';
+            } else {
+                el.className = 'status-offline';
+                el.innerHTML = '<span class="pulse" style="background:#ff0000;"></span> Sin conexión';
+            }
+        }
+        window.addEventListener('online', updateConnection);
+        window.addEventListener('offline', updateConnection);
+        updateConnection();
+    </script>
 </body>
 </html>
