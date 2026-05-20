@@ -89,3 +89,41 @@
 </body>
 </html>
  
+<script>
+// Cargar bolsa de trabajo en index.html
+async function loadJobBoardMain() {
+    const container = document.getElementById('job-board-main');
+    if (!container) return;
+
+    try {
+        const { data } = await supabaseClient.from('job_board').select('*').order('created_at', { ascending: false }).limit(5);
+        
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#888;">No hay ofertas publicadas aún.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        data.forEach(job => {
+            const div = document.createElement('div');
+            div.style.cssText = 'background:rgba(0,0,0,0.4); border-left:3px solid var(--neon-pink); padding:12px; margin:8px 0; border-radius:0 6px 6px 0;';
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="color:#fff; font-size:0.95rem;">${job.type === 'barbero' ? '💈 Barbero' : '🏪 Barbería'}</strong>
+                    <span style="color:#666; font-size:0.75rem;">${new Date(job.created_at).toLocaleDateString()}</span>
+                </div>
+                <p style="color:#ccc; font-size:0.85rem; margin:5px 0;">${job.description}</p>
+                <a href="https://wa.me/${job.contact}" target="_blank" style="color:var(--neon-cyan); font-size:0.8rem; text-decoration:none; display:inline-block; margin-top:5px;">Contactar por WhatsApp →</a>
+            `;
+            container.appendChild(div);
+        });
+    } catch (err) {
+        container.innerHTML = '<p style="color:#ff3333; text-align:center;">Error cargando ofertas.</p>';
+    }
+}
+
+// Cargar al iniciar
+document.addEventListener('DOMContentLoaded', () => {
+    loadJobBoardMain();
+});
+</script>
