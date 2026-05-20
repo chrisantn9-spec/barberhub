@@ -1,70 +1,50 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <style>
-    button:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-</style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Barbero | BarberHub</title>
+    <title>Panel Admin | BarberHub</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body>
-    <!-- 🌀 CYBERPUNK LOADER -->
-<div id="cyber-loader">
-    <div class="loader-content">
-        <div class="glitch-text" data-text="BARBERHUB SYSTEM">BARBERHUB SYSTEM</div>
-        <div class="boot-sequence">
-            <p class="line">> INITIALIZING CORE...</p>
-            <p class="line">> CONNECTING TO DATABASE...</p>
-            <p class="line">> LOADING UI MODULES...</p>
-            <p class="line">> SYNCING BARBER NETWORK...</p>
+<body onload="setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2000);">
+
+    <!-- 🌀 LOADER ADMIN -->
+    <div id="cyber-loader">
+        <div class="loader-content">
+            <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
+            <div class="boot-sequence">
+                <p class="line">> VERIFYING CREDENTIALS...</p>
+                <p class="line">> CONNECTING TO ADMIN DB...</p>
+                <p class="line">> LOADING DASHBOARD...</p>
+            </div>
+            <div class="progress-container"><div class="progress-bar"></div></div>
+            <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
         </div>
-        <div class="progress-container">
-            <div class="progress-bar"></div>
-        </div>
-        <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
+        <div class="scanlines"></div>
     </div>
-    <div class="scanlines"></div>
-</div>
-    <header>
-        <img src="logo.png" class="logo-img" alt="Logo BarberHub">
-        <h2>📋 PANEL DE TURNOS</h2>
-        <button onclick="logout()" style="
-            background:transparent; 
-            border:1px solid #ff3333; 
-            color:#ff3333; 
-            padding:5px 15px; 
-            border-radius:4px; 
-            cursor:pointer; 
-            font-family:'Rajdhani', sans-serif;
-            font-weight:700;
-        ">Cerrar Sesión</button>
-    </header>
-    
-    <!-- Selector de fecha -->
-    <div style="max-width:800px; margin:20px auto; padding:0 20px;">
-        <div style="background:var(--glass-bg); padding:15px; border-radius:10px; margin-bottom:20px; border:1px solid var(--glass-border); display:flex; align-items:center; gap:10px;">
-            <span style="color:var(--neon-cyan); font-weight:700; font-family:'Orbitron', sans-serif;"> AGENDA:</span>
-            <input type="date" id="filter-date" style="
-                background:rgba(0,0,0,0.5); 
-                color:#fff; 
-                border:1px solid var(--neon-pink); 
-                padding:8px; 
-                border-radius:5px; 
-                font-family:'Rajdhani', sans-serif; 
-                font-size:1rem;
-                flex-grow:1;
-            ">
-            <button onclick="loadBookings(document.getElementById('filter-date').value)" style="background:var(--neon-pink); border:none; padding:8px 15px; border-radius:5px; cursor:pointer; color:#fff; font-weight:700;">VER</button>
+
+    <!-- ️ SCRIPT DE CIERRE (NO DEPENDE DE ADMIN.JS) -->
+    <script>
+        setTimeout(() => {
+            const l = document.getElementById('cyber-loader');
+            if (l) l.remove();
+        }, 3000);
+    </script>
+
+    <!-- CONTENIDO REAL DEL PANEL (Oculto hasta que cargue) -->
+    <div id="admin-dashboard" style="display:none; padding:20px; max-width:900px; margin:0 auto;">
+        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #333;">
+            <h1 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1.5rem;">🔐 PANEL ADMIN</h1>
+            <div>
+                <button onclick="logout()" style="background:#ff3333; color:#fff; border:none; padding:8px 12px; border-radius:4px; cursor:pointer;"> Cerrar Sesión</button>
+            </div>
+        </header>
+        <div id="admin-content">
+            <p style="color:#888; text-align:center;">Cargando turnos y configuración...</p>
         </div>
-        
-        <div id="summary-stats" style="text-align:center; color:#aaa; margin-bottom:15px; font-size:0.9rem;"></div>
-        
-        <main id="bookings-list"><p class="loading">Cargando tus turnos...</p></main>
     </div>
-    
+
     <script src="config.js"></script>
     <script src="admin.js"></script>
 </body>
