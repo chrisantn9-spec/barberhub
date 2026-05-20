@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar Oferta | BarberHub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="background:linear-gradient(180deg,#050505 0%,#0a0a1a 100%); min-height:100vh;">
+
+    <div style="padding:20px;">
+        <a href="perfil-cliente.html" style="color:#888; text-decoration:none;">← Volver al Perfil</a>
+    </div>
+
+    <div style="max-width:500px; margin:20px auto; padding:30px; background:rgba(20,20,30,0.8); border:1px solid var(--neon-pink); border-radius:15px;">
+        <h2 style="color:var(--neon-pink); font-family:'Orbitron'; text-align:center; margin-bottom:20px;">💼 PUBLICAR OFERTA</h2>
+        
+        <form id="job-form">
+            <label style="color:#888; font-size:0.85rem;">Tipo de oferta:</label>
+            <div style="display:flex; gap:10px; margin:10px 0;">
+                <label style="flex:1; padding:10px; background:rgba(0,242,255,0.1); border:1px solid var(--neon-cyan); border-radius:6px; text-align:center; cursor:pointer;">
+                    <input type="radio" name="type" value="barbero" checked style="display:none;"> 💈 Soy Barbero
+                </label>
+                <label style="flex:1; padding:10px; background:rgba(255,0,255,0.1); border:1px solid var(--neon-pink); border-radius:6px; text-align:center; cursor:pointer;">
+                    <input type="radio" name="type" value="barberia" style="display:none;"> 🏪 Soy Barbería
+                </label>
+            </div>
+
+            <label style="color:#888; font-size:0.85rem; display:block; margin-top:15px;">Descripción:</label>
+            <textarea id="description" required rows="4" placeholder="Ej: Busco trabajo los fines de semana. Especialista en degradados..." style="width:100%; padding:12px; margin-top:5px; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px; resize:none;"></textarea>
+
+            <label style="color:#888; font-size:0.85rem; display:block; margin-top:15px;">Teléfono / WhatsApp:</label>
+            <input type="tel" id="contact" required placeholder="573001234567" style="width:100%; padding:12px; margin-top:5px; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px;">
+
+            <button type="submit" style="width:100%; padding:12px; margin-top:20px; background:var(--neon-pink); color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">PUBLICAR OFERTA</button>
+            <p id="status" style="text-align:center; margin-top:10px; font-size:0.85rem;"></p>
+        </form>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        document.getElementById('job-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const status = document.getElementById('status');
+            status.textContent = 'Publicando...';
+            
+            const type = document.querySelector('input[name="type"]:checked').value;
+            const description = document.getElementById('description').value;
+            const contact = document.getElementById('contact').value.replace(/\D/g, '');
+
+            try {
+                const { error } = await supabaseClient.from('job_board').insert([{
+                    type: type,
+                    description: description,
+                    contact: contact
+                }]);
+
+                if (error) throw error;
+
+                status.style.color = '#00ff88';
+                status.textContent = '✅ Oferta publicada!';
+                setTimeout(() => window.location.href = 'perfil-cliente.html', 1500);
+
+            } catch (err) {
+                status.style.color = '#ff3333';
+                status.textContent = '❌ Error: ' + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
