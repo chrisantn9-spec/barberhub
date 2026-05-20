@@ -1,98 +1,50 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso | BarberHub</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
+// En auth.html, reemplaza el script de login por esto:
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btn-login');
+    const errorMsg = document.getElementById('error-msg');
+    
+    btn.disabled = true;
+    btn.textContent = 'Verificando...';
+    errorMsg.style.display = 'none';
 
-    <!-- 🌀 LOADER -->
-    <div id="cyber-loader">
-        <div class="loader-content">
-            <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
-            <div class="boot-sequence">
-                <p class="line">> VERIFYING CREDENTIALS...</p>
-                <p class="line">> CHECKING USER ROLE...</p>
-                <p class="line">> REDIRECTING...</p>
-            </div>
-            <div class="progress-container"><div class="progress-bar"></div></div>
-            <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
-        </div>
-        <div class="scanlines"></div>
-    </div>
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-    <!-- 🛡️ SCRIPT DE CIERRE AUTOMÁTICO -->
-    <script>
-        setTimeout(() => {
-            const l = document.getElementById('cyber-loader');
-            if (l) l.remove();
-        }, 2500);
-    </script>
+    try {
+        // ✅ Supabase guarda la sesión AUTOMÁTICAMENTE en localStorage
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-    <!-- HEADER -->
-    <div style="text-align:center; padding:20px;">
-        <a href="index.html" style="color:#888; text-decoration:none; font-size:0.9rem;">← Volver al Directorio</a>
-    </div>
+        if (error) throw error;
 
-    <!-- FORMULARIO DE LOGIN -->
-    <div style="max-width:420px; margin:20px auto; padding:30px; background:rgba(15,15,25,0.85); backdrop-filter:blur(12px); border:1px solid var(--neon-cyan); border-radius:15px; box-shadow:0 0 25px rgba(0,242,255,0.15);">
-        <h2 style="color:var(--neon-cyan); margin-bottom:20px; font-family:'Orbitron'; text-align:center; font-size:1.4rem;">🔐 ACCESO SISTEMA</h2>
-        
-        <form id="login-form">
-            <input type="email" id="email" placeholder="📧 Correo Electrónico" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:0.95rem;">
-            <input type="password" id="password" placeholder="🔑 Contraseña" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:0.95rem;">
-            
-            <button type="submit" id="btn-login" style="width:100%; padding:12px; background:var(--neon-cyan); color:#000; font-weight:bold; border:none; border-radius:6px; cursor:pointer; margin-top:10px; font-size:1rem; transition:0.3s;">ENTRAR</button>
-            <p id="error-msg" style="color:#ff3333; font-size:0.85rem; margin-top:10px; display:none; text-align:center;"></p>
-        </form>
+        const user = data.user;
+        const role = user.user_metadata?.role || 'cliente';
 
-        <div style="margin-top:25px; text-align:center; border-top:1px solid #333; padding-top:15px;">
-            <a href="registro.html" style="color:var(--neon-pink); text-decoration:none; display:block; margin-bottom:8px; font-weight:600;">✨ Crear Cuenta Nueva</a>
-            <a href="mis-citas.html" style="color:#888; text-decoration:none; display:block; font-size:0.9rem;"> Soy Cliente (Consultar Turno)</a>
-        </div>
-    </div>
+        // Redirigir según rol
+        if (role === 'barbero') {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'perfil-cliente.html';
+        }
 
-    <script src="config.js"></script>
-    <script>
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-login');
-            const errorMsg = document.getElementById('error-msg');
-            
-            btn.disabled = true;
-            btn.textContent = 'Verificando...';
-            errorMsg.style.display = 'none';
+    } catch (err) {
+        errorMsg.textContent = '❌ ' + err.message;
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'ENTRAR';
+    }
+});
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                // 1. Iniciar sesión
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-
-                // 2.  DETECTAR ROL DEL USUARIO
-                const user = data.user;
-                const role = user.user_metadata?.role || 'cliente'; // Si no tiene rol, se asume cliente
-
-                // 3. 🎯 REDIRIGIR SEGÚN EL ROL
-                if (role === 'barbero') {
-                    window.location.href = 'admin.html';
-                } else {
-                    
-                }window.location.href = 'perfil-cliente.html';
-
-            } catch (err) {
-                errorMsg.textContent = '❌ ' + (err.message || 'Error de conexión');
-                errorMsg.style.display = 'block';
-                btn.disabled = false;
-                btn.textContent = 'ENTRAR';
-            }
-        });
-    </script>
-</body>
-</html>
-login redirige segun rol
+// ✅ VERIFICAR SESIÓN AL CARGAR (Auto-login)
+window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+        // Ya hay sesión iniciada, redirigir según rol
+        const role = session.user.user_metadata?.role || 'cliente';
+        if (role === 'barbero') {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'perfil-cliente.html';
+        }
+    }
+});
