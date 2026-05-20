@@ -167,3 +167,39 @@
                     const lat = parseFloat(document.getElementById('shop-lat').value) || 0;
                     const lng = parseFloat(document.getElementById('shop-lng').value) || 0;
                     const photoUrl = document.getElementById('barber-photo-url').value;
+                    
+                    // Convertir URL a array JSON
+                    const photosArray = photoUrl ? JSON.stringify([photoUrl]) : null;
+
+                    const { error: barberError } = await supabaseClient.from('barbers').insert([{
+                        owner_id: authData.user.id,
+                        name: barberiaName,
+                        location: location,
+                        phone: telefono,
+                        lat: lat,
+                        lng: lng,
+                        photos: photosArray,
+                        created_at: new Date().toISOString()
+                    }]);
+
+                    if (barberError) throw barberError;
+                }
+
+                msg.style.color = '#00ff88';
+                msg.textContent = '✅ Cuenta creada. Redirigiendo...';
+                msg.style.display = 'block';
+                setTimeout(() => window.location.href = 'auth.html', 2000);
+
+            } catch (err) {
+                msg.style.color = '#ff3333';
+                msg.textContent = '❌ ' + err.message;
+                msg.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'CREAR CUENTA';
+            }
+        });
+
+        setRole('cliente');
+    </script>
+</body>
+</html>
