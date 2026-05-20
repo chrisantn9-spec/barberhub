@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BarberHub | Cyberpunk Directory</title>
+    <title>BarberHub | Directorio Cyberpunk</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body onload="setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2000);">
+<body style="background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh; padding-bottom: 80px;">
 
-    <!-- 🌀 LOADER CYBERPUNK -->
+    <!-- 🌀 LOADER -->
     <div id="cyber-loader">
         <div class="loader-content">
             <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
@@ -25,58 +25,45 @@
         <div class="scanlines"></div>
     </div>
 
-    <!-- SCRIPT DE CIERRE DE EMERGENCIA -->
     <script>
-        setTimeout(() => {
-            const l = document.getElementById('cyber-loader');
-            if (l) l.remove();
-        }, 3000);
+        setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2000);
     </script>
 
-    <!-- ENCABEZADO -->
+    <!-- HEADER -->
     <header style="text-align: center; padding: 20px 10px;">
         <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
         <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BARBERHUB</h1>
         <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">Reserva tu turno al instante</p>
         
-        <!-- BOTONES DE ACCESO -->
+        <!-- BOTONES DE ACCESO (Sin redirecciones automáticas) -->
         <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
             <a href="auth.html" style="background: var(--neon-cyan); color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);">🔐 INICIAR SESIÓN</a>
             <a href="registro.html" style="background: transparent; color: var(--neon-pink); padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);">✨ REGISTRARSE</a>
+            <a href="perfil-cliente.html" style="background: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid #555;"> Mi Perfil</a>
         </div>
     </header>
 
     <!-- CONTENEDOR PRINCIPAL -->
     <main style="max-width: 800px; margin: 0 auto; padding: 10px 15px 60px;">
         <div style="margin-bottom: 15px;">
-            <input type="text" id="search-bar" placeholder="🔍 Buscar por nombre o zona..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
+            <input type="text" id="search-bar" placeholder=" Buscar por nombre o zona..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
         </div>
         <div id="barber-list">
             <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
         </div>
-    </main>
-<main style="max-width: 800px; margin: 0 auto; padding: 10px 15px 60px;">
-    <!-- Buscador -->
-    <div style="margin-bottom: 15px;">
-        <input type="text" id="search-bar" placeholder="🔍 Buscar por nombre o zona..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
-    </div>
-    
-    <!-- Lista de barberías -->
-    <div id="barber-list">
-        <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
-    </div>
 
-    <!-- 💼 BOLSA DE TRABAJO (NUEVO) -->
-    <div id="job-section" style="margin-top:30px; padding:20px; background:rgba(255,0,255,0.05); border:1px solid var(--neon-pink); border-radius:10px;">
-        <h2 style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1.2rem; margin-bottom:15px; text-align:center;">💼 Bolsa de Trabajo</h2>
-        <div id="job-board-main" style="min-height:100px;">
-            <p style="text-align:center; color:#888;">Cargando ofertas...</p>
+        <!-- 💼 BOLSA DE TRABAJO -->
+        <div id="job-section" style="margin-top:30px; padding:20px; background:rgba(255,0,255,0.05); border:1px solid var(--neon-pink); border-radius:10px;">
+            <h2 style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1.2rem; margin-bottom:15px; text-align:center;">💼 Bolsa de Trabajo</h2>
+            <div id="job-board-main" style="min-height:100px;">
+                <p style="text-align:center; color:#888;">Cargando ofertas...</p>
+            </div>
+            <div style="text-align:center; margin-top:15px;">
+                <a href="crear-oferta.html" style="display:inline-block; background:transparent; border:1px dashed var(--neon-pink); color:var(--neon-pink); padding:10px 20px; border-radius:6px; text-decoration:none; font-weight:bold;">+ Publicar Oferta</a>
+            </div>
         </div>
-        <div style="text-align:center; margin-top:15px;">
-            <a href="crear-oferta.html" style="display:inline-block; background:transparent; border:1px dashed var(--neon-pink); color:var(--neon-pink); padding:10px 20px; border-radius:6px; text-decoration:none; font-weight:bold;">+ Publicar Oferta</a>
-        </div>
-    </div>
-</main>
+    </main>
+
     <!-- FOOTER -->
     <div style="text-align: center; padding: 15px; border-top: 1px solid #222; background: rgba(0,0,0,0.8); position: fixed; bottom: 0; width: 100%; z-index: 9;">
         <a href="mis-citas.html" style="color: var(--neon-cyan); font-size: 0.85rem; text-decoration: none; font-weight: 600;">📅 ¿Ya tienes turno? Consultar aquí</a>
@@ -86,44 +73,6 @@
     <script src="config.js"></script>
     <script src="main.js"></script>
 
+    <!--  SIN SCRIPTS DE REDIRECCIÓN AQUÍ ⛔ -->
 </body>
 </html>
- 
-<script>
-// Cargar bolsa de trabajo en index.html
-async function loadJobBoardMain() {
-    const container = document.getElementById('job-board-main');
-    if (!container) return;
-
-    try {
-        const { data } = await supabaseClient.from('job_board').select('*').order('created_at', { ascending: false }).limit(5);
-        
-        if (!data || data.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:#888;">No hay ofertas publicadas aún.</p>';
-            return;
-        }
-
-        container.innerHTML = '';
-        data.forEach(job => {
-            const div = document.createElement('div');
-            div.style.cssText = 'background:rgba(0,0,0,0.4); border-left:3px solid var(--neon-pink); padding:12px; margin:8px 0; border-radius:0 6px 6px 0;';
-            div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong style="color:#fff; font-size:0.95rem;">${job.type === 'barbero' ? '💈 Barbero' : '🏪 Barbería'}</strong>
-                    <span style="color:#666; font-size:0.75rem;">${new Date(job.created_at).toLocaleDateString()}</span>
-                </div>
-                <p style="color:#ccc; font-size:0.85rem; margin:5px 0;">${job.description}</p>
-                <a href="https://wa.me/${job.contact}" target="_blank" style="color:var(--neon-cyan); font-size:0.8rem; text-decoration:none; display:inline-block; margin-top:5px;">Contactar por WhatsApp →</a>
-            `;
-            container.appendChild(div);
-        });
-    } catch (err) {
-        container.innerHTML = '<p style="color:#ff3333; text-align:center;">Error cargando ofertas.</p>';
-    }
-}
-
-// Cargar al iniciar
-document.addEventListener('DOMContentLoaded', () => {
-    loadJobBoardMain();
-});
-</script>
