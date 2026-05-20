@@ -69,3 +69,21 @@ msgInput.addEventListener('keypress', (e) => {
 // Inicializar y actualizar cada 3 segundos
 loadMessages();
 setInterval(loadMessages, 3000);
+// Marcar mensajes como leídos cuando se abre el chat
+async function markMessagesAsRead() {
+    const barberId = sessionStorage.getItem('chatBarberId');
+    if (!barberId) return;
+
+    await supabaseClient
+        .from('messages')
+        .update({ is_read: true })
+        .eq('barber_id', barberId)
+        .eq('is_read', false);
+}
+
+// Llamar esta función cuando se carga el chat
+document.addEventListener('DOMContentLoaded', () => {
+    loadMessages();
+    markMessagesAsRead(); // <-- Agregar esto
+    setInterval(loadMessages, 3000);
+});
