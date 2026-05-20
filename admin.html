@@ -3,47 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin BarberHub</title>
+    <title>Panel Admin | BarberHub</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Estilos específicos para Admin */
+        body { background: #050505; color: #fff; margin: 0; padding: 20px; font-family: system-ui, -apple-system, sans-serif; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; flex-wrap: wrap; gap: 15px; }
+        .admin-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .nav-btn { padding: 8px 14px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; border: none; transition: 0.2s; }
+        .nav-btn:hover { transform: translateY(-2px); }
+        .btn-cyan { background: var(--neon-cyan, #00f2ff); color: #000; }
+        .btn-pink { background: var(--neon-pink, #ff00ff); color: #fff; }
+        .btn-gray { background: #2a2a35; color: #ccc; border: 1px solid #444; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: rgba(0,242,255,0.05); border: 1px solid #333; padding: 15px; border-radius: 10px; text-align: center; }
+        .stat-card h3 { font-size: 2rem; margin: 0; color: var(--neon-cyan, #00f2ff); }
+        .stat-card p { margin: 5px 0 0; color: #888; font-size: 0.85rem; }
+        
+        .section-title { color: var(--neon-cyan, #00f2ff); font-family: 'Orbitron', sans-serif; margin: 30px 0 15px; border-bottom: 1px solid #333; padding-bottom: 10px; font-size: 1.1rem; }
+        
+        .booking-item { background: rgba(255,255,255,0.03); padding: 12px; margin: 8px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--neon-pink, #ff00ff); gap: 10px; }
+        .booking-info strong { color: #fff; display: block; margin-bottom: 4px; }
+        .booking-info span { color: #888; font-size: 0.85rem; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; }
+        .status-pending { background: #ffaa00; color: #000; }
+        .status-confirmed { background: #00ff88; color: #000; }
+        .btn-confirm { background: var(--neon-cyan, #00f2ff); color: #000; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+        .btn-confirm:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+        .service-tag { background: #222; border: 1px solid #444; padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; margin-right: 5px; margin-bottom: 5px; display: inline-block; }
+        .add-form { background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .add-form input { flex: 1; min-width: 120px; padding: 8px; border-radius: 4px; border: 1px solid #444; background: #111; color: #fff; }
+        .btn-add { background: var(--neon-pink, #ff00ff); color: #fff; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    </style>
 </head>
-<body style="background:#050505; color:#fff; padding:20px;">
+<body>
 
-    <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; border-bottom:1px solid #333; padding-bottom:15px;">
+    <!-- HEADER + NAVEGACIÓN -->
+    <div class="admin-header">
         <div>
-            <h1 style="color:var(--neon-cyan); font-family:'Orbitron'; margin:0;">🔐 PANEL ADMIN</h1>
-            <p id="barber-name" style="color:#888;">Cargando...</p>
+            <h1 style="margin:0; font-size:1.4rem;">🔐 PANEL ADMIN</h1>
+            <p id="barber-name" style="color:#888; margin:5px 0 0;">Cargando perfil...</p>
         </div>
-        <button onclick="logout()" style="background:#ff3333; color:#fff; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">Salir</button>
-    </header>
-
-    <!-- 📊 ESTADÍSTICAS RÁPIDAS -->
-    <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:15px; margin-bottom:30px;">
-        <div style="background:rgba(0,242,255,0.1); border:1px solid var(--neon-cyan); padding:15px; border-radius:10px; text-align:center;">
-            <h3 style="font-size:2rem; margin:0; color:var(--neon-cyan);" id="stat-pending">0</h3>
-            <p style="margin:0; color:#888; font-size:0.8rem;">Citas Pendientes</p>
-        </div>
-        <div style="background:rgba(255,0,255,0.1); border:1px solid var(--neon-pink); padding:15px; border-radius:10px; text-align:center;">
-            <h3 style="font-size:2rem; margin:0; color:var(--neon-pink);" id="stat-confirmed">0</h3>
-            <p style="margin:0; color:#888; font-size:0.8rem;">Confirmadas Hoy</p>
+        <div class="admin-nav">
+            <a href="editar-perfil.html" class="nav-btn btn-gray">✏️ Editar Perfil</a>
+            <a href="horarios.html" class="nav-btn btn-gray"> Horarios</a>
+            <a href="index.html" class="nav-btn btn-gray">🏠 Ver Directorio</a>
+            <button onclick="logout()" class="nav-btn btn-pink">🚪 Salir</button>
         </div>
     </div>
 
-    <!-- 📅 LISTA DE RESERVAS -->
-    <h2 style="color:var(--neon-cyan); font-family:'Orbitron';"> Próximas Citas</h2>
-    <div id="bookings-list" style="min-height:200px; color:#888;">Cargando...</div>
+    <!--  ESTADÍSTICAS RÁPIDAS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3 id="stat-pending">0</h3>
+            <p>Citas Pendientes</p>
+        </div>
+        <div class="stat-card" style="border-color: var(--neon-pink, #ff00ff); background: rgba(255,0,255,0.05);">
+            <h3 id="stat-confirmed" style="color: var(--neon-pink, #ff00ff);">0</h3>
+            <p>Confirmadas Hoy</p>
+        </div>
+    </div>
+
+    <!-- 📅 GESTIÓN DE CITAS -->
+    <h2 class="section-title"> Próximas Citas</h2>
+    <div id="bookings-list" style="min-height: 100px; color: #888; text-align: center; padding: 20px;">Cargando citas...</div>
 
     <!-- ✂️ GESTIÓN DE SERVICIOS -->
-    <div style="margin-top:40px; border-top:1px solid #333; padding-top:20px;">
-        <h2 style="color:var(--neon-pink); font-family:'Orbitron';">✂️ Mis Servicios</h2>
-        <div id="services-list" style="margin-bottom:15px;"></div>
-        
-        <div style="background:rgba(0,0,0,0.5); padding:15px; border-radius:10px;">
-            <h3 style="margin-top:0;">+ Agregar Nuevo Servicio</h3>
-            <input id="new-service-name" placeholder="Nombre (ej: Corte Fade)" style="width:45%; padding:8px; background:#111; border:1px solid #444; color:#fff; border-radius:4px;">
-            <input id="new-service-price" type="number" placeholder="Precio ($)" style="width:20%; padding:8px; background:#111; border:1px solid #444; color:#fff; border-radius:4px;">
-            <button onclick="addService()" style="padding:8px 15px; background:var(--neon-pink); color:#fff; border:none; border-radius:4px; cursor:pointer;">Agregar</button>
-        </div>
+    <h2 class="section-title">✂️ Mis Servicios</h2>
+    <div id="services-list"></div>
+    
+    <div class="add-form">
+        <input id="new-service-name" placeholder="Nombre (ej: Corte Fade)">
+        <input id="new-service-price" type="number" placeholder="Precio ($)">
+        <button onclick="addService()" class="btn-add">+ Agregar</button>
     </div>
 
     <script src="config.js"></script>
