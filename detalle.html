@@ -110,15 +110,24 @@ async function reservarTurno(barberId) {
     if (error) alert("Error: " + error.message);
     else alert("✅ ¡Cita solicitada! Espera confirmación del barbero.");
 }
-</script>
-</html>
-"crear detalle.html cyberpunk"
 <script>
-function abrirChat(barberId, barberName) {
-    // Guardamos el ID y nombre en sessionStorage para usarlos en chat.html
+// Función para abrir chat CORREGIDA
+window.abrirChat = function(barberId, barberName) {
+    console.log("Abriendo chat con:", barberId, barberName);
+    
+    // Validar que el ID sea válido (debe ser un UUID)
+    if (!barberId || barberId === '${barber.id}' || barberId === 'undefined') {
+        alert("❌ Error: No se encontró el ID de la barbería");
+        return;
+    }
+    
+    // Guardar en sessionStorage
     sessionStorage.setItem('chatBarberId', barberId);
-    sessionStorage.setItem('chatBarberName', barberName);
+    sessionStorage.setItem('chatBarberName', barberName || 'Barbería');
+    
+    // Ir al chat
     window.location.href = 'chat.html';
-}
+};
+</script>
 </script>
 "boton chat en detalle"
