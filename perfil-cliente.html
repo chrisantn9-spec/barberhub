@@ -19,7 +19,42 @@
     </style>
 </head>
 <body style="background:linear-gradient(180deg,#050505 0%,#0a0a1a 100%); min-height:100vh; padding-bottom:80px;">
+<body style="background:linear-gradient(180deg,#050505 0%,#0a0a1a 100%); min-height:100vh; padding-bottom:80px;">
 
+    <!-- 🟢 INDICADOR DE CONEXIÓN -->
+    <div id="connection-status" style="position:fixed; top:10px; right:10px; background:rgba(0,255,0,0.2); border:1px solid #00ff00; color:#00ff00; padding:5px 10px; border-radius:20px; font-size:0.75rem; display:flex; align-items:center; gap:5px; z-index:9999;">
+        <span style="width:8px; height:8px; background:#00ff00; border-radius:50%; display:inline-block; animation: pulse 2s infinite;"></span>
+        Conectado
+    </div>
+
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+
+    <script>
+        // Detectar conexión
+        function updateConnectionStatus() {
+            const status = document.getElementById('connection-status');
+            if (navigator.onLine) {
+                status.innerHTML = '<span style="width:8px; height:8px; background:#00ff00; border-radius:50%; animation: pulse 2s infinite;"></span> Conectado';
+                status.style.background = 'rgba(0,255,0,0.2)';
+                status.style.borderColor = '#00ff00';
+                status.style.color = '#00ff00';
+            } else {
+                status.innerHTML = '<span style="width:8px; height:8px; background:#ff0000; border-radius:50%;"></span> Sin conexión';
+                status.style.background = 'rgba(255,0,0,0.2)';
+                status.style.borderColor = '#ff0000';
+                status.style.color = '#ff0000';
+            }
+        }
+
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        updateConnectionStatus();
+    </script>
     <!-- LIGHTBOX (Zoom) -->
     <div id="lightbox" class="lightbox" onclick="this.classList.remove('active')">
         <img id="lightbox-img" src="" alt="Zoom">
