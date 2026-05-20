@@ -83,7 +83,34 @@
 
     <script src="config.js"></script>
     <script src="detalle.js"></script>
-</body>
+</body><script>
+async function reservarTurno(barberId) {
+    const service = prompt("¿Qué servicio quieres? (Escribe el nombre, ej: Corte)");
+    if (!service) return;
+    
+    const price = prompt("¿Cuánto cuesta? (ej: 10)");
+    if (!price) return;
+
+    const fecha = prompt("¿Para qué fecha y hora? (YYYY-MM-DD HH:MM)");
+    // Formato simple para evitar errores
+    
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const email = user ? user.email : 'cliente@anonimo.com';
+    const nombre = user ? (user.user_metadata?.nombre || 'Cliente') : 'Anónimo';
+
+    const { error } = await supabaseClient.from('bookings').insert([{
+        barber_id: barberId,
+        client_email: email,
+        client_name: nombre,
+        booked_at: fecha || new Date().toISOString(),
+        status: 'pending',
+        service_id: null // Simplificado por ahora
+    }]);
+
+    if (error) alert("Error: " + error.message);
+    else alert("✅ ¡Cita solicitada! Espera confirmación del barbero.");
+}
+</script>
 </html>
 "crear detalle.html cyberpunk"
 <script>
