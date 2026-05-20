@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background: #050505; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+        body { background: #050505; display: flex; flex-direction: column; height: 100vh; margin: 0; color: #fff; }
         header { background: rgba(15,15,25,0.95); padding: 15px; border-bottom: 1px solid var(--neon-cyan); display: flex; align-items: center; gap: 10px; }
         header h1 { color: #fff; font-family: 'Orbitron'; font-size: 1rem; margin: 0; flex: 1; }
         .btn-back { color: var(--neon-cyan); text-decoration: none; font-size: 1.2rem; cursor: pointer; }
@@ -26,7 +26,7 @@
 <body>
     <header>
         <a href="javascript:history.back()" class="btn-back">←</a>
-        <h1 id="chat-title">💬 Cargando chat...</h1>
+        <h1 id="chat-title">💬 Cargando...</h1>
     </header>
 
     <div id="chat-messages"></div>
@@ -37,6 +37,87 @@
     </div>
 
     <script src="config.js"></script>
-    <script src="chat.js"></script>
+    <script>
+        // Obtener datos del chat desde sessionStorage
+        const barberId = sessionStorage.getItem('chatBarberId');
+        let barberName = sessionStorage.getItem('chatBarberName') || 'Barbería';
+        
+        // Validar que tengamos un ID válido
+        if (!barberId) {
+            alert("❌ No se encontró la barbería. Vuelve al directorio.");
+            window.location.href = 'index.html';
+        }
+
+        // Actualizar título
+        document.getElementById('chat-title').textContent = `💬 Chat con ${barberName}`;
+
+        const msgInput = document.getElementById('msg-input');
+        const sendBtn = document.getElementById('send-btn');
+        const chatBox = document.getElementById('chat-messages');
+
+        // Obtener nombre del usuario actual
+        let userName = sessionStorage.getItem('chatUserName');
+        if (!userName) {
+            userName = prompt("¿Cómo te llamas?") || "Cliente";
+            sessionStorage.setItem('chatUserName', userName);
+        }
+
+        // 📥 CARGAR MENSAJES
+        async function loadMessages() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('messages')
+                    .select('*')
+                    .eq('barber_id', barberId)  // ✅ Usar la variable real, no texto
+                    .order('created_at', { ascending: true });
+
+                if (error) throw error;
+
+                chatBox.innerHTML = '';
+                data.forEach(msg => {
+                    const isMe = msg.user_name === userName;
+                    const div = document.createElement('div');
+                    div.className = `msg ${isMe ? 'client' : 'barber'}`;
+                    div.innerHTML = `
+                        ${msg.message}
+                        <span class="meta">${msg.user_name} • ${new Date(msg.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span>
+                    `;
+                    chatBox.appendChild(div);
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (err) {
+                console.error("Error cargando mensajes:", err);
+            }
+        }
+
+        // 📤 ENVIAR MENSAJE
+        async function sendMessage() {
+            const text = msgInput.value.trim();
+            if (!text) return;
+
+            try {
+                const { error } = await supabaseClient.from('messages').insert([{
+                    barber_id: barberId,  // ✅ Usar variable real
+                    user_name: userName,
+                    message: text
+                }]);
+
+                if (error) throw error;
+
+                msgInput.value = '';
+                loadMessages();
+            } catch (err) {
+                console.error("Error enviando:", err);
+                alert("❌ No se pudo enviar: " + err.message);
+            }
+        }
+
+        sendBtn.onclick = sendMessage;
+        msgInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+        // Cargar mensajes al iniciar
+        loadMessages();
+        setInterval(loadMessages, 3000);
+    </script>
 </body>
 </html>
