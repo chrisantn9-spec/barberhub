@@ -69,9 +69,11 @@
 
         <!-- Botones de acción -->
         <div class="action-grid">
+            <button onclick="abrirChat('${barber.id}', '${barber.name}')" class="action-btn" style="background:#00f2ff; color:#000; grid-column:span 2; margin-top:10px;"> Enviar Mensaje Directo</button>
             <a id="link-wa" href="#" class="action-btn btn-wa" target="_blank">💬 WhatsApp</a>
             <a id="link-map" href="#" class="action-btn btn-map" target="_blank">🗺️ Ver Mapa</a>
             <a id="link-call" href="#" class="action-btn btn-call"> Llamar</a>
+            
         </div>
     </main>
 
@@ -80,3 +82,12 @@
 </body>
 </html>
 "crear detalle.html cyberpunk"
+<script>
+function abrirChat(barberId, barberName) {
+    // Guardamos el ID y nombre en sessionStorage para usarlos en chat.html
+    sessionStorage.setItem('chatBarberId', barberId);
+    sessionStorage.setItem('chatBarberName', barberName);
+    window.location.href = 'chat.html';
+}
+</script>
+"boton chat en detalle"
