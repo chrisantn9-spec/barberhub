@@ -1,86 +1,47 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil | BarberHub</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        /* Lightbox (Zoom) */
-        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out; }
-        .lightbox.active { display: flex; }
-        .lightbox img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid var(--neon-cyan); }
+// 💼 BOLSA DE TRABAJO (CLICKEABLE)
+async function loadJobBoard() {
+    const container = document.getElementById('job-board');
+    try {
+        const { data, error } = await supabaseClient.from('job_board').select('*').order('created_at', { ascending: false }).limit(10);
         
-        /* Avatar limpio */
-        .avatar-container { position: relative; display: inline-block; margin-bottom: 5px; }
-        .avatar-container img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--neon-cyan); object-fit: cover; cursor: pointer; transition: 0.3s; background: #111; }
-        .avatar-container img:hover { opacity: 0.8; }
+        if (error) throw error;
         
-        /* Botones pequeños */
-        .btn-tiny { padding: 6px 10px !important; font-size: 1rem !important; cursor: pointer; border: none; border-radius: 4px; }
-    </style>
-</head>
-<body style="background:linear-gradient(180deg,#050505 0%,#0a0a1a 100%); min-height:100vh; padding-bottom:80px;">
-
-    <!-- LIGHTBOX -->
-    <div id="lightbox" class="lightbox" onclick="this.classList.remove('active')">
-        <img id="lightbox-img" src="" alt="Zoom">
-    </div>
-
-    <!-- HEADER -->
-    <header style="background:rgba(10,10,20,0.9); border-bottom:1px solid var(--neon-cyan); padding:20px; text-align:center;">
+        container.innerHTML = '';
         
-        <!--  AVATAR SIMPLE -->
-        <div class="avatar-container">
-            <img id="client-avatar" src="https://via.placeholder.com/150/111111/00f2ff?text=USER" alt="Foto Perfil">
-            <!-- Input oculto -->
-            <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="uploadAvatar(this)">
-        </div>
-        <p style="font-size:0.7rem; color:var(--neon-cyan); margin-bottom:15px;">( Toca la foto para cambiarla )</p>
-
-        <h1 id="client-name" style="font-family:'Orbitron'; color:#fff; margin:0; font-size:1.2rem;">Cargando...</h1>
-        <p id="client-email" style="color:#888; font-size:0.8rem; margin:5px 0 15px;">...</p>
+        if (!data || data.length === 0) {
+            container.innerHTML = '<p style="color:#666; text-align:center; font-size:0.8rem; padding:20px;">Sin ofertas activas.</p>';
+            return;
+        }
         
-        <div style="display:flex; gap:10px; justify-content:center;">
-            <button onclick="window.location.href='index.html'" style="background:var(--neon-cyan); color:#000; border:none; padding:8px 16px; border-radius:5px; cursor:pointer; font-weight:bold;">🔍 Buscar Barberías</button>
-            <button onclick="logout()" style="background:#333; color:#fff; border:1px solid #555; padding:8px 16px; border-radius:5px; cursor:pointer;">🚪 Salir</button>
-        </div>
-    </header>
-
-    <main style="max-width:600px; margin:20px auto; padding:0 15px;">
-        
-        <!-- 📸 FOTOS -->
-        <section class="cyber-section">
-            <h2 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">📸 Mis Fotos</h2>
+        data.forEach(job => {
+            const div = document.createElement('div');
+            div.className = 'job-card';
+            div.style.cssText = 'background:rgba(0,0,0,0.4); border-left:3px solid var(--neon-pink); padding:12px; margin:8px 0; border-radius:0 6px 6px 0; cursor:pointer; transition:0.3s;';
+            div.onclick = () => viewJobDetails(job);
             
-            <div id="client-photos" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:15px;"></div>
+            const typeIcon = job.type === 'barbero' ? '💈' : '🏪';
+            const typeText = job.type === 'barbero' ? 'Barbero busca trabajo' : 'Barbería busca personal';
+            
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                    <strong style="color:#fff; font-size:0.9rem;">${typeIcon} ${typeText}</strong>
+                    <span style="color:#666; font-size:0.7rem;">${new Date(job.created_at).toLocaleDateString()}</span>
+                </div>
+                <p style="color:#ccc; font-size:0.85rem; margin:5px 0;">${job.description}</p>
+                <p style="color:var(--neon-cyan); font-size:0.75rem; margin-top:5px;">Toca para contactar →</p>
+            `;
+            container.appendChild(div);
+        });
+        
+    } catch (err) {
+        container.innerHTML = '<p style="color:#ff3333; text-align:center;">Error cargando ofertas.</p>';
+        console.error(err);
+    }
+}
 
-            <div style="display:flex; gap:5px; align-items:center;">
-                <input type="text" id="new-photo-url" placeholder="Pegar URL..." style="flex:1; padding:8px; background:rgba(0,0,0,0.5); border:1px solid #444; color:#fff; border-radius:4px; font-size:0.8rem;">
-                
-                <button onclick="addPhoto()" class="btn-tiny" style="background:var(--neon-pink); color:#fff;">➕</button>
-                <button onclick="document.getElementById('photo-upload').click()" class="btn-tiny" style="background:var(--neon-cyan); color:#000;">📷</button>
-                <input type="file" id="photo-upload" accept="image/*" style="display:none;" onchange="uploadPhoto(this)">
-            </div>
-            <p id="upload-status" style="font-size:0.75rem; color:#888; margin-top:5px; text-align:center;"></p>
-        </section>
-
-        <!-- 📍 CERCANAS -->
-        <section class="cyber-section" style="margin-top:20px;">
-            <h2 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;"> Cerca de Ti</h2>
-            <div id="nearby-shops" style="color:#888; text-align:center; padding:10px;">Detectando...</div>
-        </section>
-
-        <!-- 💼 BOLSA -->
-        <section class="cyber-section" style="margin-top:20px; border:1px solid var(--neon-pink); background:rgba(255,0,255,0.05);">
-            <h2 style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;"> Bolsa de Trabajo</h2>
-            <div id="job-board" style="min-height:50px;">Cargando...</div>
-        </section>
-
-    </main>
-
-    <script src="config.js"></script>
-    <script src="perfil.js"></script>
-</body>
-</html>
+// VER DETALLES DE OFERTA
+function viewJobDetails(job) {
+    const contactMethod = confirm(`¿Contactar por WhatsApp?\n\n${job.description}\n\nCancelar para copiar número`)
+        ? window.open(`https://wa.me/${job.contact}`, '_blank')
+        : navigator.clipboard.writeText(job.contact).then(() => alert('Número copiado: ' + job.contact));
+}
