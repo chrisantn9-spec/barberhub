@@ -72,3 +72,54 @@ async function loadJobBoard() {
 }
 
 function logout() { supabaseClient.auth.signOut().then(() => window.location.href = 'index.html'); }
+// 📸 SUBIR FOTO DESDE CELULAR
+async function uploadPhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const status = document.getElementById('upload-status');
+    status.textContent = '⏳ Subiendo...';
+
+    // Validar tamaño (máx 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        status.textContent = '❌ La foto debe pesar menos de 2MB';
+        status.style.color = '#ff3333';
+        return;
+    }
+
+    // Crear nombre único
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+    const filePath = `client-photos/${fileName}`;
+
+    // Subir a Supabase Storage
+    const { data, error } = await supabaseClient.storage
+        .from('profiles')  // ← Nombre de tu bucket
+        .upload(filePath, file);
+
+    if (error) {
+        console.error('Error subiendo:', error);
+        status.textContent = '❌ Error al subir: ' + error.message;
+        status.style.color = '#ff3333';
+        return;
+    }
+
+    // Obtener URL pública
+    const { data: { publicUrl } } = supabaseClient.storage
+        .from('profiles')
+        .getPublicUrl(filePath);
+
+    // Guardar URL en metadata del usuario
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const photos = [...(user.user_metadata?.photos || []), publicUrl];
+    
+    await supabaseClient.auth.updateUser({ 
+        data: { photos } 
+    });
+
+    status.textContent = '✅ Foto subida correctamente';
+    status.style.color = '#00ff88';
+    
+    // Recargar para mostrar la nueva foto
+    setTimeout(() => location.reload(), 1000);
+}
