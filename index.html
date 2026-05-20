@@ -55,7 +55,28 @@
             <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
         </div>
     </main>
+<main style="max-width: 800px; margin: 0 auto; padding: 10px 15px 60px;">
+    <!-- Buscador -->
+    <div style="margin-bottom: 15px;">
+        <input type="text" id="search-bar" placeholder="🔍 Buscar por nombre o zona..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
+    </div>
+    
+    <!-- Lista de barberías -->
+    <div id="barber-list">
+        <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
+    </div>
 
+    <!-- 💼 BOLSA DE TRABAJO (NUEVO) -->
+    <div id="job-section" style="margin-top:30px; padding:20px; background:rgba(255,0,255,0.05); border:1px solid var(--neon-pink); border-radius:10px;">
+        <h2 style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1.2rem; margin-bottom:15px; text-align:center;">💼 Bolsa de Trabajo</h2>
+        <div id="job-board-main" style="min-height:100px;">
+            <p style="text-align:center; color:#888;">Cargando ofertas...</p>
+        </div>
+        <div style="text-align:center; margin-top:15px;">
+            <a href="crear-oferta.html" style="display:inline-block; background:transparent; border:1px dashed var(--neon-pink); color:var(--neon-pink); padding:10px 20px; border-radius:6px; text-decoration:none; font-weight:bold;">+ Publicar Oferta</a>
+        </div>
+    </div>
+</main>
     <!-- FOOTER -->
     <div style="text-align: center; padding: 15px; border-top: 1px solid #222; background: rgba(0,0,0,0.8); position: fixed; bottom: 0; width: 100%; z-index: 9;">
         <a href="mis-citas.html" style="color: var(--neon-cyan); font-size: 0.85rem; text-decoration: none; font-weight: 600;">📅 ¿Ya tienes turno? Consultar aquí</a>
