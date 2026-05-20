@@ -20,6 +20,7 @@
         .nav-btn { padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; cursor: pointer; border: none; display: inline-block; text-align: center; }
         .btn-cyan { background: var(--neon-cyan); color: #000; }
         .btn-gray { background: #444; color: #fff; }
+        .btn-pink { background: var(--neon-pink); color: #fff; }
         .btn-out { background: #333; color: #fff; border: 1px solid #555 !important; }
 
         /* Estado de conexión */
@@ -28,6 +29,16 @@
         .status-offline { background: rgba(255,0,0,0.2); border: 1px solid #ff0000; color: #ff0000; }
         .pulse { width: 8px; height: 8px; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* Notificaciones */
+        .notif-container { position: relative; }
+        .notif-dropdown { display: none; position: absolute; top: 50px; right: 0; background: #111; border: 1px solid #333; border-radius: 8px; width: 280px; max-height: 350px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.5); }
+        .notif-dropdown.active { display: block; }
+        .notif-item { padding: 12px; border-bottom: 1px solid #222; font-size: 0.85rem; }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item strong { color: var(--neon-cyan); display: block; margin-bottom: 3px; }
+        .notif-item p { color: #888; margin: 0; font-size: 0.8rem; }
+        .notif-badge { position: absolute; top: -5px; right: -5px; background: var(--neon-pink); color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
     </style>
 </head>
 <body style="background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh; padding-bottom: 80px; color: #fff;">
@@ -43,7 +54,17 @@
     </div>
 
     <!-- HEADER -->
-    <header style="background: rgba(10,10,20,0.9); border-bottom: 1px solid var(--neon-cyan); padding: 20px; text-align: center;">
+    <header style="background: rgba(10,10,20,0.9); border-bottom: 1px solid var(--neon-cyan); padding: 20px; text-align: center; position: relative;">
+        
+        <!-- Icono de Notificaciones -->
+        <div style="position: absolute; top: 15px; right: 20px; cursor: pointer;" onclick="toggleNotifications()">
+            <span style="font-size: 1.5rem; position: relative;">🔔</span>
+            <span id="notif-badge" class="notif-badge" style="display: none;">0</span>
+        </div>
+        
+        <!-- Dropdown de Notificaciones -->
+        <div id="notif-dropdown" class="notif-dropdown"></div>
+
         <div class="avatar-container">
             <img id="client-avatar" src="https://via.placeholder.com/150/111111/00f2ff?text=USER" alt="Foto Perfil">
             <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="uploadAvatar(this)">
@@ -56,6 +77,7 @@
         <!-- BOTONES DE NAVEGACIÓN -->
         <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
             <a href="index.html" class="nav-btn btn-cyan">🏠 Inicio</a>
+            <a href="mis-citas.html" class="nav-btn btn-pink">📅 Mis Citas</a>
             <a href="chat-list.html" class="nav-btn btn-gray">💬 Chats</a>
             <button onclick="logout()" class="nav-btn btn-out"> Salir</button>
         </div>
@@ -85,11 +107,11 @@
 
         <!-- ✂️ BARBEROS CERCANOS -->
         <section style="margin-top: 20px;">
-            <h2 style="color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 10px;">️ Barberos Cerca de Ti</h2>
+            <h2 style="color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 10px;">✂️ Barberos Cerca de Ti</h2>
             <div id="nearby-shops" style="color: #888; text-align: center; padding: 10px;">Detectando ubicación...</div>
         </section>
 
-        <!--  BOLSA DE TRABAJO -->
+        <!-- 💼 BOLSA DE TRABAJO -->
         <section style="margin-top: 20px; border: 1px solid var(--neon-pink); background: rgba(255,0,255,0.05); padding: 15px; border-radius: 8px;">
             <h2 style="color: var(--neon-pink); font-family: 'Orbitron'; font-size: 1rem; margin-bottom: 10px;">💼 Bolsa de Trabajo</h2>
             <div id="job-board" style="min-height: 50px;">Cargando ofertas...</div>
@@ -102,8 +124,9 @@
     <script src="config.js"></script>
     <script src="perfil.js"></script>
     
-    <!-- LÓGICA DE CONEXIÓN -->
+    <!-- LÓGICA DE CONEXIÓN Y NOTIFICACIONES -->
     <script>
+        // Estado de conexión
         function updateConnection() {
             const el = document.getElementById('connection-status');
             if (navigator.onLine) {
@@ -117,6 +140,61 @@
         window.addEventListener('online', updateConnection);
         window.addEventListener('offline', updateConnection);
         updateConnection();
+
+        // Notificaciones
+        window.toggleNotifications = async function() {
+            const dropdown = document.getElementById('notif-dropdown');
+            dropdown.classList.toggle('active');
+            if (dropdown.classList.contains('active')) {
+                await loadNotifications();
+            }
+        };
+
+        async function loadNotifications() {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            if (!user) return;
+
+            const { data, error } = await supabaseClient
+                .from('notifications')
+                .select('*')
+                .eq('user_id', user.id)
+                .eq('is_read', false)
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            const dropdown = document.getElementById('notif-dropdown');
+            const badge = document.getElementById('notif-badge');
+
+            if (!data || data.length === 0) {
+                dropdown.innerHTML = '<div class="notif-item" style="color:#666; text-align:center;">📭 Sin notificaciones</div>';
+                badge.style.display = 'none';
+                return;
+            }
+
+            badge.textContent = data.length;
+            badge.style.display = 'block';
+
+            dropdown.innerHTML = '';
+            data.forEach(notif => {
+                const item = document.createElement('div');
+                item.className = 'notif-item';
+                item.innerHTML = `
+                    <strong>${notif.title}</strong>
+                    <p>${notif.message}</p>
+                    <small style="color:#666;">${new Date(notif.created_at).toLocaleString()}</small>
+                `;
+                dropdown.appendChild(item);
+            });
+        }
+
+        // Cerrar notificaciones al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            const notifContainer = document.querySelector('.notif-container');
+            const dropdown = document.getElementById('notif-dropdown');
+            if (!notifContainer.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html>
