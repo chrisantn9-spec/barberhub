@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Horarios | BarberHub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="background:#050505; color:#fff; padding:20px;">
+    <h1 style="color:var(--neon-cyan); font-family:'Orbitron';">⏰ Configurar Horarios</h1>
+    <p style="color:#888; margin-bottom:20px;">Define tus días y horas de atención.</p>
+    
+    <div id="days-container"></div>
+    <button onclick="saveAvailability()" style="width:100%; padding:12px; background:var(--neon-cyan); color:#000; border:none; border-radius:6px; cursor:pointer; font-weight:bold; margin-top:20px;"> Guardar Horarios</button>
+    <a href="admin.html" style="display:block; text-align:center; margin-top:15px; color:#888; text-decoration:none;">← Volver al Panel</a>
+
+    <script src="config.js"></script>
+    <script src="horarios.js"></script>
+</body>
+</html>
