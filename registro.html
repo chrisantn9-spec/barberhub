@@ -28,7 +28,13 @@
             <input type="password" id="password" placeholder="🔑 Contraseña (mín 6 caracteres)" required minlength="6" style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
             <input type="text" id="nombre" placeholder=" Tu Nombre" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
             <input type="tel" id="telefono" placeholder="📱 Teléfono (opcional)" style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
-
+<!-- 📷 SUBIDA DE FOTO DEL LOCAL -->
+<label style="display:block; width:100%; padding:10px; background:rgba(0,242,255,0.1); border:1px dashed var(--neon-cyan); color:var(--neon-cyan); text-align:center; border-radius:6px; cursor:pointer; margin:10px 0; font-size:0.9rem;">
+    📸 Subir Foto de la Fachada
+    <input type="file" id="barber-photo-input" accept="image/*" style="display:none;" onchange="uploadBarberPhoto(this)">
+</label>
+<input type="hidden" id="barber-photo-url">
+<div id="photo-preview" style="margin-top:5px; text-align:center;"></div>
             <!-- Campos SOLO PARA BARBERO -->
             <div id="campos-barbero" style="display:none; margin-top:15px; padding-top:15px; border-top:1px dashed #444;">
                 <input type="text" id="barberia-name" placeholder="✂️ Nombre de tu Barbería" style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid var(--neon-cyan); color:#fff; border-radius:5px; box-sizing:border-box;">
