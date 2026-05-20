@@ -1,1 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Detalle Barbería | BarberHub</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Estilos específicos para detalle */
+        .detail-header { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+        .btn-back { background:transparent; border:1px solid var(--neon-cyan); color:var(--neon-cyan); padding:6px 12px; border-radius:4px; text-decoration:none; font-size:0.8rem; }
+        .gallery { display:grid; grid-template-columns:1fr; gap:8px; margin:15px 0; }
+        .gallery img { width:100%; height:200px; object-fit:cover; border-radius:8px; border:1px solid rgba(0,242,255,0.3); }
+        .spec-box { background:rgba(15,15,25,0.7); border:1px solid #333; border-radius:8px; padding:12px; margin:10px 0; }
+        .spec-box h3 { color:var(--neon-cyan); font-size:0.9rem; margin-bottom:6px; font-family:'Orbitron'; }
+        .spec-box p { color:#ccc; font-size:0.85rem; line-height:1.4; }
+        .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:15px; }
+        .action-btn { padding:10px; border-radius:6px; text-align:center; text-decoration:none; font-weight:bold; font-size:0.85rem; border:none; cursor:pointer; }
+        .btn-wa { background:#25D366; color:#fff; }
+        .btn-map { background:var(--neon-cyan); color:#000; }
+        .btn-call { background:#444; color:#fff; grid-column:span 2; }
+        .loading-detail { text-align:center; padding:40px; color:#888; }
+    </style>
+</head>
+<body>
 
+    <!-- 🌀 LOADER -->
+    <div id="cyber-loader">
+        <div class="loader-content">
+            <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
+            <div class="boot-sequence">
+                <p class="line">> FETCHING BARBER DATA...</p>
+                <p class="line">> LOADING GALLERY...</p>
+                <p class="line">> RENDERING SPECS...</p>
+            </div>
+            <div class="progress-container"><div class="progress-bar"></div></div>
+            <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
+        </div>
+        <div class="scanlines"></div>
+    </div>
+
+    <script>
+        setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2000);
+    </script>
+
+    <main style="max-width:600px; margin:0 auto; padding:15px 15px 80px;">
+        <div class="detail-header">
+            <a href="index.html" class="btn-back">← Volver</a>
+            <h1 id="shop-name" style="font-family:'Orbitron'; font-size:1.3rem; color:#fff; flex:1;">Cargando...</h1>
+        </div>
+
+        <!-- Galería de fotos -->
+        <div id="gallery" class="gallery"></div>
+
+        <!-- Especificaciones -->
+        <div class="spec-box">
+            <h3>📍 Ubicación</h3>
+            <p id="shop-location">...</p>
+        </div>
+        <div class="spec-box">
+            <h3> Descripción / Servicios</h3>
+            <p id="shop-desc">Sin descripción disponible.</p>
+        </div>
+        <div class="spec-box">
+            <h3> Contacto</h3>
+            <p id="shop-phone">...</p>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-grid">
+            <a id="link-wa" href="#" class="action-btn btn-wa" target="_blank">💬 WhatsApp</a>
+            <a id="link-map" href="#" class="action-btn btn-map" target="_blank">🗺️ Ver Mapa</a>
+            <a id="link-call" href="#" class="action-btn btn-call"> Llamar</a>
+        </div>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="detalle.js"></script>
+</body>
+</html>
