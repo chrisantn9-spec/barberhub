@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body onload="setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2000);">
+<body>
 
-    <!-- 🌀 LOADER ADMIN -->
+    <!-- 🌀 LOADER -->
     <div id="cyber-loader">
         <div class="loader-content">
             <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
@@ -24,29 +24,53 @@
         <div class="scanlines"></div>
     </div>
 
-    <!-- ️ SCRIPT DE CIERRE (NO DEPENDE DE ADMIN.JS) -->
+    <!-- SCRIPT QUE ELIMINA EL LOADER EN 3s -->
     <script>
         setTimeout(() => {
-            const l = document.getElementById('cyber-loader');
-            if (l) l.remove();
+            const loader = document.getElementById('cyber-loader');
+            if (loader) loader.remove();
         }, 3000);
     </script>
 
-    <!-- CONTENIDO REAL DEL PANEL (Oculto hasta que cargue) -->
-    <div id="admin-dashboard" style="display:none; padding:20px; max-width:900px; margin:0 auto;">
-        <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid #333;">
-            <h1 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1.5rem;">🔐 PANEL ADMIN</h1>
-            <div>
-                <button onclick="logout()" style="background:#ff3333; color:#fff; border:none; padding:8px 12px; border-radius:4px; cursor:pointer;"> Cerrar Sesión</button>
-            </div>
+    <!-- CONTENIDO DEL PANEL -->
+    <div id="admin-panel" style="display:none; min-height:100vh; background:linear-gradient(180deg, #050505 0%, #0a0a1a 100%); padding:20px;">
+        
+        <header style="max-width:900px; margin:0 auto 30px; display:flex; justify-content:space-between; align-items:center; padding:15px; background:rgba(20,20,30,0.8); border:1px solid var(--neon-cyan); border-radius:10px;">
+            <h1 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1.5rem; margin:0;">🔐 PANEL ADMIN</h1>
+            <button onclick="logout()" style="background:#ff3333; color:#fff; border:none; padding:8px 16px; border-radius:5px; cursor:pointer; font-weight:bold;">🚪 Salir</button>
         </header>
-        <div id="admin-content">
-            <p style="color:#888; text-align:center;">Cargando turnos y configuración...</p>
-        </div>
+
+        <main style="max-width:900px; margin:0 auto;">
+            <!-- Filtro de fecha -->
+            <div style="margin-bottom:20px; padding:15px; background:rgba(20,20,30,0.6); border-radius:8px; border:1px solid #333;">
+                <label style="color:#888; font-size:0.9rem;">📅 Filtrar por fecha:</label>
+                <input type="date" id="filter-date" style="margin-left:10px; padding:8px; background:rgba(0,0,0,0.6); border:1px solid var(--neon-cyan); color:#fff; border-radius:4px;">
+            </div>
+
+            <!-- ✅ ESTE ES EL ELEMENTO QUE FALTABA -->
+            <div id="bookings-list" style="background:rgba(20,20,30,0.6); border-radius:8px; border:1px solid #333; padding:15px; min-height:200px;">
+                <p style="text-align:center; color:#666; padding:40px;">Cargando turnos...</p>
+            </div>
+        </main>
     </div>
 
     <script src="config.js"></script>
     <script src="admin.js"></script>
+    
+    <script>
+        // Mostrar panel después del loader
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const panel = document.getElementById('admin-panel');
+                if (panel) panel.style.display = 'block';
+            }, 3000);
+        });
+
+        // Logout
+        async function logout() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+        }
+    </script>
 </body>
 </html>
-"admin.html con loader blindado"
