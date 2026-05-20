@@ -65,6 +65,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         barbers.forEach(barber => {
             const card = document.createElement('div');
             card.className = 'barber-card';
+            card.style.cursor = 'pointer';
+card.onclick = () => window.location.href = `detalle.html?id=${barber.id}`;
 
             // Texto de distancia (solo si tiene coordenadas)
             const distText = (barber.distancia && barber.distancia < 9999) 
