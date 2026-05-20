@@ -10,18 +10,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('client-avatar').src = user.user_metadata.avatar;
     }
 
-    // 2. Cargar fotos guardadas en metadata
+    // 2. Cargar fotos guardadas
     const photos = user.user_metadata?.photos || [];
     const photoBox = document.getElementById('client-photos');
     photoBox.innerHTML = '';
     photos.forEach(url => {
         const img = document.createElement('img');
         img.src = url;
-        img.style.width = '100%'; img.style.height = '80px'; img.style.objectFit = 'cover'; img.style.borderRadius = '6px';
+        img.style.cssText = 'width:100%; height:80px; object-fit:cover; border-radius:6px; cursor:zoom-in; border:1px solid #333;';
+        img.onclick = () => openLightbox(url); // Click para agrandar
         photoBox.appendChild(img);
     });
 
-    // 3. Barberías cercanas (reutiliza lógica de distancia)
+    // 3. Barberías cercanas
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const { data: shops } = await supabaseClient.from('barbers').select('name, location, lat, lng').limit(3);
@@ -36,11 +37,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 4. Cargar Bolsa de Trabajo
     loadJobBoard();
 });
 
-// Agregar foto a metadata
+// LIGHTBOX (Abrir foto grande)
+function openLightbox(url) {
+    document.getElementById('lightbox-img').src = url;
+    document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+}
+
+// AGREGAR FOTO POR URL
 async function addPhoto() {
     const url = document.getElementById('new-photo-url').value.trim();
     if (!url) return;
@@ -50,7 +59,70 @@ async function addPhoto() {
     location.reload();
 }
 
-// Cargar ofertas de trabajo
+// SUBIR FOTO DESDE CELULAR
+async function uploadPhoto(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    const status = document.getElementById('upload-status');
+    status.textContent = '⏳ Subiendo...';
+    status.style.color = '#888';
+
+    if (file.size > 2 * 1024 * 1024) {
+        status.textContent = '❌ Máximo 2MB';
+        status.style.color = '#ff3333';
+        return;
+    }
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `client-photos/${fileName}`;
+
+    const { data, error } = await supabaseClient.storage.from('profiles').upload(filePath, file);
+    if (error) {
+        status.textContent = '❌ ' + error.message;
+        status.style.color = '#ff3333';
+        return;
+    }
+
+    const { data: { publicUrl } } = supabaseClient.storage.from('profiles').getPublicUrl(filePath);
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const photos = [...(user.user_metadata?.photos || []), publicUrl];
+    await supabaseClient.auth.updateUser({ data: { photos } });
+
+    status.textContent = '✅ Subida!';
+    status.style.color = '#00ff88';
+    setTimeout(() => location.reload(), 1000);
+}
+
+// SUBIR FOTO DE PERFIL (AVATAR)
+async function uploadAvatar(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+        alert('La foto debe pesar menos de 2MB');
+        return;
+    }
+
+    const fileExt = file.name.split('.').pop();
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    const fileName = `avatar-${user.id}.${fileExt}`;
+    const filePath = `avatars/${fileName}`;
+
+    const { data, error } = await supabaseClient.storage.from('profiles').upload(filePath, file, { upsert: true });
+    if (error) {
+        alert('Error: ' + error.message);
+        return;
+    }
+
+    const { data: { publicUrl } } = supabaseClient.storage.from('profiles').getPublicUrl(filePath);
+    await supabaseClient.auth.updateUser({ data: { avatar: publicUrl } });
+    
+    location.reload();
+}
+
+// CARGAR BOLSA DE TRABAJO
 async function loadJobBoard() {
     const { data } = await supabaseClient.from('job_board').select('*').order('created_at', { ascending: false }).limit(5);
     const container = document.getElementById('job-board');
@@ -63,7 +135,7 @@ async function loadJobBoard() {
         const div = document.createElement('div');
         div.style.cssText = 'background:rgba(0,0,0,0.4); border-left:3px solid var(--neon-pink); padding:10px; margin:8px 0; border-radius:0 6px 6px 0;';
         div.innerHTML = `
-            <strong style="color:#fff; font-size:0.9rem;">${job.type === 'barbero' ? ' Barbero busca trabajo' : ' Barbería busca staff'}</strong>
+            <strong style="color:#fff; font-size:0.9rem;">${job.type === 'barbero' ? '💈 Barbero busca trabajo' : '🏪 Barbería busca staff'}</strong>
             <p style="color:#ccc; font-size:0.8rem; margin:4px 0;">${job.description}</p>
             <a href="https://wa.me/${job.contact}" target="_blank" style="color:var(--neon-cyan); font-size:0.75rem; text-decoration:none;">Contactar →</a>
         `;
@@ -72,54 +144,3 @@ async function loadJobBoard() {
 }
 
 function logout() { supabaseClient.auth.signOut().then(() => window.location.href = 'index.html'); }
-// 📸 SUBIR FOTO DESDE CELULAR
-async function uploadPhoto(input) {
-    const file = input.files[0];
-    if (!file) return;
-
-    const status = document.getElementById('upload-status');
-    status.textContent = '⏳ Subiendo...';
-
-    // Validar tamaño (máx 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-        status.textContent = '❌ La foto debe pesar menos de 2MB';
-        status.style.color = '#ff3333';
-        return;
-    }
-
-    // Crear nombre único
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const filePath = `client-photos/${fileName}`;
-
-    // Subir a Supabase Storage
-    const { data, error } = await supabaseClient.storage
-        .from('profiles')  // ← Nombre de tu bucket
-        .upload(filePath, file);
-
-    if (error) {
-        console.error('Error subiendo:', error);
-        status.textContent = '❌ Error al subir: ' + error.message;
-        status.style.color = '#ff3333';
-        return;
-    }
-
-    // Obtener URL pública
-    const { data: { publicUrl } } = supabaseClient.storage
-        .from('profiles')
-        .getPublicUrl(filePath);
-
-    // Guardar URL en metadata del usuario
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    const photos = [...(user.user_metadata?.photos || []), publicUrl];
-    
-    await supabaseClient.auth.updateUser({ 
-        data: { photos } 
-    });
-
-    status.textContent = '✅ Foto subida correctamente';
-    status.style.color = '#00ff88';
-    
-    // Recargar para mostrar la nueva foto
-    setTimeout(() => location.reload(), 1000);
-}
