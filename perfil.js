@@ -217,3 +217,41 @@ async function loadMessageNotifications() {
     }
 }
 DOMContentLoaded
+
+// 📋 CARGAR BARBEROS DESTACADOS EN PERFIL
+async function loadFeaturedBarbers() {
+    const container = document.getElementById('featured-barbers');
+    if (!container) return;
+
+    try {
+        const { data: barbers } = await supabaseClient.from('barbers').select('name, location, phone').limit(3);
+        
+        if (!barbers || barbers.length === 0) {
+            container.innerHTML = '<p>No hay barberías registradas aún.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        barbers.forEach(barber => {
+            const div = document.createElement('div');
+            div.style.cssText = 'background:rgba(0,242,255,0.05); border:1px solid #333; padding:10px; margin:5px 0; border-radius:6px; cursor:pointer; transition:0.3s;';
+            div.onmouseover = () => div.style.borderColor = 'var(--neon-cyan)';
+            div.onmouseout = () => div.style.borderColor = '#333';
+            div.innerHTML = `
+                <strong style="color:#fff; font-size:0.9rem;">✂️ ${barber.name}</strong>
+                <p style="color:#888; font-size:0.8rem; margin:3px 0;">📍 ${barber.location}</p>
+                <p style="color:var(--neon-cyan); font-size:0.75rem; margin:3px 0;">📞 ${barber.phone}</p>
+            `;
+            div.onclick = () => window.location.href = 'index.html';
+            container.appendChild(div);
+        });
+    } catch (err) {
+        container.innerHTML = '<p style="color:#ff3333;">Error cargando barberos.</p>';
+    }
+}
+
+// Llamar esta función en DOMContentLoaded
+document.addEventListener('DOMContentLoaded', async () => {
+    // ... tu código existente ...
+    loadFeaturedBarbers(); // <-- Agregar esto
+});
