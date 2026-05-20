@@ -1,63 +1,38 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso | BarberHub</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body style="background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh;">
-
-    <div style="text-align:center; padding:20px;">
-        <a href="index.html" style="color:#888; text-decoration:none; font-size:0.9rem;">← Volver</a>
-    </div>
-
-    <div style="max-width:400px; margin:20px auto; padding:30px; background:rgba(20,20,30,0.8); backdrop-filter:blur(10px); border:1px solid var(--neon-cyan); border-radius:15px; box-shadow:0 0 20px rgba(0,242,255,0.2);">
-        <h2 style="color:var(--neon-cyan); margin-bottom:20px; font-family:'Orbitron'; text-align:center;">🔐 ACCESO</h2>
+<!-- En el script de login, reemplaza la redirección por esto: -->
+<script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-login');
+        const errorMsg = document.getElementById('error-msg');
         
-        <form id="login-form">
-            <input type="email" id="email" placeholder="📧 Email" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
-            <input type="password" id="password" placeholder="🔑 Contraseña" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
-            
-            <button type="submit" id="btn-login" style="width:100%; padding:12px; background:var(--neon-cyan); color:#000; font-weight:bold; border:none; border-radius:5px; cursor:pointer; margin-top:10px; font-size:1rem;">ENTRAR</button>
-            <p id="error-msg" style="color:#ff3333; font-size:0.85rem; margin-top:10px; display:none;"></p>
-        </form>
+        btn.disabled = true;
+        btn.textContent = 'Verificando...';
+        errorMsg.style.display = 'none';
 
-        <div style="margin-top:20px; text-align:center;">
-            <a href="registro-barbero.html" style="color:var(--neon-pink); text-decoration:none; display:block; margin:8px 0;">💈 Registrar Barbería</a>
-            <a href="mis-citas.html" style="color:#888; text-decoration:none; display:block; margin:8px 0; font-size:0.9rem;">📅 Soy Cliente</a>
-        </div>
-    </div>
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-    <script src="config.js"></script>
-    <script>
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-login');
-            const errorMsg = document.getElementById('error-msg');
-            
-            btn.disabled = true;
-            btn.textContent = 'Cargando...';
-            errorMsg.style.display = 'none';
+        try {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            if (error) throw error;
 
-            try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            // 🔍 Detectar rol del usuario
+            const user = data.user;
+            const role = user.user_metadata?.role || 'cliente';
 
-                if (error) throw error;
-
-                // ✅ Redirección exitosa
+            // 🎯 Redirigir según rol
+            if (role === 'barbero') {
                 window.location.href = 'admin.html';
-            } catch (err) {
-                errorMsg.textContent = '❌ ' + err.message;
-                errorMsg.style.display = 'block';
-                btn.disabled = false;
-                btn.textContent = 'ENTRAR';
+            } else {
+                window.location.href = 'mis-citas.html'; // o index.html
             }
-        });
-    </script>
-</body>
-</html>
+
+        } catch (err) {
+            errorMsg.textContent = '❌ ' + err.message;
+            errorMsg.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'ENTRAR';
+        }
+    });
+</script>
