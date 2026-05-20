@@ -6,44 +6,21 @@
     <title>Mis Citas | BarberHub</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .booking-card { background:rgba(15,15,25,0.8); border:1px solid #333; border-radius:8px; padding:15px; margin:10px 0; display:flex; justify-content:space-between; align-items:center; }
+        .status-badge { padding:4px 8px; border-radius:4px; font-size:0.75rem; font-weight:bold; }
+        .status-pending { background:#ffaa00; color:#000; }
+        .status-confirmed { background:#00ff88; color:#000; }
+        .status-cancelled { background:#ff3333; color:#fff; }
+        .btn-cancel { background:#ff3333; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:0.8rem; }
+    </style>
 </head>
-<body>
-    <header>
-        <img src="logo.png" class="logo-img" alt="Logo">
-        <h1>📅 MIS CITAS</h1>
-        <p>Consulta tus turnos reservados</p>
-    </header>
-
-    <main style="max-width:600px; margin:0 auto; padding:20px;">
-        
-        <!-- Paso 1: Ingresar Teléfono -->
-        <div id="step-login" style="background:var(--glass-bg); padding:30px; border-radius:14px; border:1px solid var(--glass-border); text-align:center;">
-            <h3 style="color:var(--neon-cyan);">Ingresa tu número de WhatsApp</h3>
-            <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px;">Te mostraremos las citas asociadas a este número.</p>
-            
-            <input type="tel" id="client-phone-input" placeholder="+503 1234 5678" style="width:100%; padding:12px; margin-bottom:15px; background:rgba(0,0,0,0.5); border:1px solid var(--neon-pink); color:#fff; border-radius:6px; font-size:1.1rem; text-align:center;">
-            
-            <button onclick="checkMyBookings()" style="background:var(--neon-cyan); color:#000; width:100%; padding:15px; border:none; border-radius:8px; font-weight:700; font-size:1.1rem; cursor:pointer;">
-                VER MIS CITAS
-            </button>
-        </div>
-
-        <!-- Paso 2: Lista de Citas (Oculta al inicio) -->
-        <div id="step-list" style="display:none;">
-            <button onclick="location.reload()" style="background:transparent; border:1px solid #888; color:#888; padding:5px 10px; border-radius:4px; margin-bottom:15px; cursor:pointer;">← Cambiar número</button>
-            
-            <h3 id="user-phone-display" style="text-align:center; color:var(--neon-pink); margin-bottom:20px;"></h3>
-            
-            <div id="my-bookings-list">
-                <p class="loading">Buscando citas...</p>
-            </div>
-        </div>
-
-        <div style="text-align:center; margin-top:30px;">
-            <a href="index.html" style="color:#888; text-decoration:none;">← Volver al inicio</a>
-        </div>
-    </main>
-
+<body style="background:#050505; color:#fff; padding:20px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h1 style="color:var(--neon-cyan); font-family:'Orbitron'; margin:0;">📅 Mis Citas</h1>
+        <a href="perfil-cliente.html" style="color:#888; text-decoration:none;">← Volver</a>
+    </div>
+    <div id="bookings-list"><p style="text-align:center; color:#888;">Cargando...</p></div>
     <script src="config.js"></script>
     <script src="mis-citas.js"></script>
 </body>
