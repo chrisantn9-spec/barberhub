@@ -216,3 +216,4 @@ async function loadMessageNotifications() {
         console.error('Error cargando notificaciones:', err);
     }
 }
+DOMContentLoaded
