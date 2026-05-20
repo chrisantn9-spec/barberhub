@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body onload="setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2500);">
+<body>
 
     <!-- 🌀 LOADER CYBERPUNK -->
     <div id="cyber-loader">
@@ -25,47 +25,51 @@
         <div class="scanlines"></div>
     </div>
 
-    <!-- ️ SCRIPT DE SEGURIDAD (Elimina el loader aunque haya errores) -->
+    <!-- ️ SCRIPT DE CIERRE INMEDIATO (NO TOCA SUPABASE NI MAIN.JS) -->
     <script>
-        setTimeout(() => {
-            const loader = document.getElementById('cyber-loader');
-            if (loader) loader.remove();
-        }, 2500);
+        (function() {
+            const kill = () => {
+                const l = document.getElementById('cyber-loader');
+                if (l) l.remove();
+            };
+            // 1. Si el DOM ya está listo, mátalo ya
+            if (document.readyState !== 'loading') kill();
+            // 2. Si no, espera a que termine el HTML
+            else document.addEventListener('DOMContentLoaded', kill);
+            // 3. Red de seguridad: 2s máximo sí o sí
+            setTimeout(kill, 2000);
+        })();
     </script>
 
     <!-- ENCABEZADO -->
     <header style="text-align: center; padding: 20px 10px;">
-        <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
-        <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BARBERHUB</h1>
-        <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">Reserva tu turno al instante</p>
+        <img src="logo.png" alt="Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0,242,255,0.5));">
+        <h1 style="font-family:'Orbitron'; font-size:1.8rem; margin-bottom:5px; background:linear-gradient(90deg,#00f2ff,#ff00ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">BARBERHUB</h1>
+        <p style="color:#888; font-size:0.9rem; margin-bottom:15px;">Reserva tu turno al instante</p>
         
-        <!-- BOTONES DE ACCESO -->
-        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-            <a href="auth.html" style="background: var(--neon-cyan); color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);">🔐 INICIAR SESIÓN</a>
-            <a href="registro-barbero.html" style="background: transparent; color: var(--neon-pink); padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);">💈 REGISTRAR BARBERÍA</a>
+        <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+            <a href="auth.html" style="background:var(--neon-cyan); color:#000; padding:10px 20px; border-radius:5px; text-decoration:none; font-weight:bold; border:2px solid var(--neon-cyan); box-shadow:0 0 10px rgba(0,242,255,0.5);"> INICIAR SESIÓN</a>
+            <a href="registro-barbero.html" style="background:transparent; color:var(--neon-pink); padding:10px 20px; border-radius:5px; text-decoration:none; font-weight:bold; border:2px solid var(--neon-pink); box-shadow:0 0 10px rgba(255,0,255,0.3);">💈 REGISTRAR BARBERÍA</a>
         </div>
         
-        <a href="admin.html" style="display: inline-block; background: transparent; border: 1px solid #444; color: #666; padding: 6px 12px; border-radius: 4px; text-decoration: none; font-size: 0.75rem;"> MI PANEL</a>
+        <a href="admin.html" style="display:inline-block; background:transparent; border:1px solid #444; color:#666; padding:6px 12px; border-radius:4px; text-decoration:none; font-size:0.75rem;"> MI PANEL</a>
     </header>
 
     <!-- CONTENEDOR PRINCIPAL -->
-    <main style="max-width: 800px; margin: 0 auto; padding: 10px 15px 60px;">
-        <div style="margin-bottom: 15px;">
-            <input type="text" id="search-bar" placeholder="🔍 Buscar por nombre o zona..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
-        </div>
+    <main style="max-width:800px; margin:0 auto; padding:10px 15px 60px;">
+        <input type="text" id="search-bar" placeholder=" Buscar por nombre o zona..." style="width:100%; padding:12px; background:rgba(0,0,0,0.6); border:1px solid var(--neon-cyan); color:#fff; border-radius:6px; box-sizing:border-box; margin-bottom:15px; font-size:0.95rem;">
         <div id="barber-list">
-            <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
+            <div style="text-align:center; padding:20px; color:#666;"><p>Cargando directorio...</p></div>
         </div>
     </main>
 
-    <!-- FOOTER -->
-    <div style="text-align: center; padding: 15px; border-top: 1px solid #222; background: rgba(0,0,0,0.8); position: fixed; bottom: 0; width: 100%; z-index: 9;">
-        <a href="mis-citas.html" style="color: var(--neon-cyan); font-size: 0.85rem; text-decoration: none; font-weight: 600;">📅 ¿Ya tienes turno? Consultar aquí</a>
+    <div style="text-align:center; padding:15px; border-top:1px solid #222; background:rgba(0,0,0,0.8); position:fixed; bottom:0; width:100%; z-index:9;">
+        <a href="mis-citas.html" style="color:var(--neon-cyan); font-size:0.85rem; text-decoration:none; font-weight:600;">📅 ¿Ya tienes turno? Consultar aquí</a>
     </div>
 
-    <!-- SCRIPTS (SOLO config y main, NADA de admin.js aquí) -->
-    <script src="config.js"></script>
-    <script src="main.js"></script>
+    <!-- ️ IMPORTANTE: SOLO config.js y main.js. NUNCA admin.js aquí -->
+    <script src="config.js" defer></script>
+    <script src="main.js" defer></script>
 
 </body>
 </html>
