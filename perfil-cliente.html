@@ -7,46 +7,45 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Lightbox para agrandar fotos */
-        .lightbox {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center;
-            cursor: zoom-out;
-        }
+        /* Lightbox */
+        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out; }
         .lightbox.active { display: flex; }
-        .lightbox img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid var(--neon-cyan); box-shadow: 0 0 30px rgba(0,242,255,0.5); }
+        .lightbox img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid var(--neon-cyan); }
         
-        /* Avatar clickeable */
-        .avatar-wrapper { position: relative; display: inline-block; cursor: pointer; }
-        .avatar-wrapper:hover::after {
-            content: '📷 Cambiar'; position: absolute; bottom: 0; left: 0; width: 100%;
-            background: rgba(0,0,0,0.7); color: var(--neon-cyan); font-size: 0.7rem;
-            text-align: center; padding: 4px 0; border-radius: 0 0 50% 50%;
-        }
+        /* Avatar */
+        .avatar-wrapper { position: relative; display: inline-block; margin-bottom: 10px; }
+        .avatar-wrapper img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--neon-cyan); object-fit: cover; cursor: pointer; transition: 0.3s; }
+        .avatar-wrapper img:hover { transform: scale(1.05); filter: brightness(0.7); }
+        .avatar-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .avatar-wrapper:hover .avatar-overlay { opacity: 1; pointer-events: auto; }
         
-        /* Botón pequeño */
-        .btn-small {
-            padding: 6px 12px !important; font-size: 0.8rem !important; width: auto !important;
-            display: inline-block; margin-top: 5px;
-        }
+        /* Botones pequeños */
+        .btn-tiny { padding: 6px 10px !important; font-size: 1rem !important; cursor: pointer; border: none; border-radius: 4px; }
     </style>
 </head>
 <body style="background:linear-gradient(180deg,#050505 0%,#0a0a1a 100%); min-height:100vh; padding-bottom:80px;">
 
-    <!-- LIGHTBOX -->
-    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-        <img id="lightbox-img" src="" alt="Foto ampliada">
+    <!-- LIGHTBOX (Zoom de fotos) -->
+    <div id="lightbox" class="lightbox" onclick="this.classList.remove('active')">
+        <img id="lightbox-img" src="" alt="Zoom">
     </div>
 
     <!-- HEADER PERFIL -->
     <header style="background:rgba(10,10,20,0.9); border-bottom:1px solid var(--neon-cyan); padding:20px; text-align:center;">
-        <!-- Avatar clickeable para cambiar foto -->
-        <div class="avatar-wrapper" onclick="document.getElementById('avatar-input').click()">
-            <img id="client-avatar" src="https://via.placeholder.com/100/0a0a1a/00f2ff?text=USER" style="width:80px; height:80px; border-radius:50%; border:2px solid var(--neon-cyan); margin-bottom:10px; object-fit:cover;">
+        
+        <!--  AVATAR CLICKEABLE -->
+        <div class="avatar-wrapper">
+            <img id="client-avatar" src="https://via.placeholder.com/150/000000/00f2ff?text=USER" alt="Foto Perfil">
+            <div class="avatar-overlay">
+                <span style="color:white; font-size:2rem;">📷</span>
+            </div>
+            <!-- Input oculto que se activa al tocar la imagen -->
             <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="uploadAvatar(this)">
         </div>
+
         <h1 id="client-name" style="font-family:'Orbitron'; color:#fff; margin:0; font-size:1.2rem;">Cargando...</h1>
         <p id="client-email" style="color:#888; font-size:0.8rem; margin:5px 0 15px;">...</p>
+        
         <div style="display:flex; gap:10px; justify-content:center;">
             <button onclick="window.location.href='index.html'" style="background:var(--neon-cyan); color:#000; border:none; padding:8px 16px; border-radius:5px; cursor:pointer; font-weight:bold;">🔍 Buscar Barberías</button>
             <button onclick="logout()" style="background:#333; color:#fff; border:1px solid #555; padding:8px 16px; border-radius:5px; cursor:pointer;">🚪 Salir</button>
@@ -55,14 +54,54 @@
 
     <main style="max-width:600px; margin:20px auto; padding:0 15px;">
         
-        <!-- FOTOS DEL CLIENTE -->
+        <!-- 📸 FOTOS DEL CLIENTE -->
         <section class="cyber-section">
             <h2 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">📸 Mis Fotos / Estilo</h2>
-            <div id="client-photos" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
-                <!-- Se llenan con JS -->
+            
+            <!-- Galería -->
+            <div id="client-photos" style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:15px;">
+                <!-- Fotos aquí -->
             </div>
-            <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
-                <input type="text" id="new-photo-url" placeholder="URL de foto..." style="flex:1; padding:6px; background:rgba(0,0,0,0.5); border:1px solid #444; color:#fff; border-radius:4px; font-size:0.8rem;">
-                <button onclick="addPhoto()" class="btn-small" style="background:var(--neon-pink); color:#fff; border:none; border-radius:4px; cursor:pointer;">➕</button>
-                <button onclick="document.getElementById('photo-upload').click()" class="btn-small" style="background:var(--neon-cyan); color:#000; border:none; border-radius:4px; cursor:pointer;">📷</button>
-                <input type="file" id="photo-upload" accept="image
+
+            <!-- Controles de subida -->
+            <div style="display:flex; gap:5px; align-items:center;">
+                <input type="text" id="new-photo-url" placeholder="Pegar URL de imagen..." style="flex:1; padding:8px; background:rgba(0,0,0,0.5); border:1px solid #444; color:#fff; border-radius:4px; font-size:0.8rem;">
+                
+                <!-- Botón Agregar URL -->
+                <button onclick="addPhoto()" class="btn-tiny" style="background:var(--neon-pink); color:#fff;"></button>
+                
+                <!-- Botón Subir Archivo -->
+                <button onclick="document.getElementById('photo-upload').click()" class="btn-tiny" style="background:var(--neon-cyan); color:#000;">📷</button>
+                <input type="file" id="photo-upload" accept="image/*" style="display:none;" onchange="uploadPhoto(this)">
+            </div>
+            <p id="upload-status" style="font-size:0.75rem; color:#888; margin-top:5px; text-align:center;"></p>
+        </section>
+
+        <!--  NOVEDADES -->
+        <section class="cyber-section" style="margin-top:20px;">
+            <h2 style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">📰 Novedades</h2>
+            <div style="background:rgba(20,20,30,0.6); border:1px solid #333; border-radius:8px; padding:12px; font-size:0.9rem; color:#ccc;">
+                <p>• 📅 Promo: 2x1 en degradados este viernes.</p>
+                <p>• ️ Tip: Usa aceite para barba todos los días.</p>
+            </div>
+        </section>
+
+        <!-- 📍 BARBERÍAS CERCANAS -->
+        <section class="cyber-section" style="margin-top:20px;">
+            <h2 style="color:var(--neon-cyan); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">📍 Cerca de Ti</h2>
+            <div id="nearby-shops" style="color:#888; text-align:center; padding:10px;">Detectando ubicación...</div>
+        </section>
+
+        <!-- 💼 BOLSA DE TRABAJO -->
+        <section class="cyber-section" style="margin-top:20px; border:1px solid var(--neon-pink); background:rgba(255,0,255,0.05);">
+            <h2 style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1rem; margin-bottom:10px;">💼 Bolsa de Trabajo</h2>
+            <div id="job-board" style="min-height:50px;">Cargando...</div>
+        </section>
+
+    </main>
+
+    <!--  CARGA DE SCRIPTS (Orden importante) -->
+    <script src="config.js"></script>
+    <script src="perfil.js"></script>
+</body>
+</html>
