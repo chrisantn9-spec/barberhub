@@ -146,3 +146,73 @@ async function loadJobBoard() {
 }
 
 function logout() { supabaseClient.auth.signOut().then(() => window.location.href = 'index.html'); }
+// 📬 CARGAR NOTIFICACIONES DE MENSAJES
+async function loadMessageNotifications() {
+    const container = document.getElementById('message-notifications');
+    if (!container) return;
+
+    try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) return;
+
+        // Obtener mensajes NO leídos dirigidos a barberías donde el cliente escribió
+        const { data: messages } = await supabaseClient
+            .from('messages')
+            .select('barber_id, message, created_at, user_name')
+            .eq('is_read', false)
+            .order('created_at', { ascending: false })
+            .limit(5);
+
+        if (!messages || messages.length === 0) {
+            container.innerHTML = '<p style="color:#888; font-size:0.85rem; margin:0;">✅ No tienes mensajes nuevos</p>';
+            return;
+        }
+
+        // Agrupar por barbería
+        const barberMap = new Map();
+        messages.forEach(msg => {
+            if (!barberMap.has(msg.barber_id)) {
+                barberMap.set(msg.barber_id, {
+                    count: 0,
+                    last_message: msg.message,
+                    user_name: msg.user_name,
+                    barber_id: msg.barber_id
+                });
+            }
+            barberMap.get(msg.barber_id).count++;
+        });
+
+        // Obtener nombres de barberías
+        const barberIds = Array.from(barberMap.keys());
+        const { data: barbers } = await supabaseClient
+            .from('barbers')
+            .select('id, name')
+            .in('id', barberIds);
+
+        // Mostrar notificaciones
+        container.innerHTML = '<h3 style="color:var(--neon-cyan); font-size:0.9rem; margin:0 0 10px 0;">📬 Mensajes Nuevos:</h3>';
+        
+        barbers?.forEach(barber => {
+            const data = barberMap.get(barber.id);
+            const div = document.createElement('div');
+            div.style.cssText = 'background:rgba(0,0,0,0.4); padding:8px; margin:5px 0; border-radius:4px; border-left:3px solid var(--neon-cyan); cursor:pointer;';
+            div.onclick = () => {
+                sessionStorage.setItem('chatBarberId', barber.id);
+                sessionStorage.setItem('chatBarberName', barber.name);
+                window.location.href = 'chat.html';
+            };
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="color:#fff; font-size:0.9rem;">${barber.name}</strong>
+                    <span style="background:var(--neon-pink); color:#fff; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:bold;">${data.count} nuevo${data.count > 1 ? 's' : ''}</span>
+                </div>
+                <p style="color:#888; font-size:0.8rem; margin:3px 0 0 0;">"${data.last_message}"</p>
+                <p style="color:var(--neon-cyan); font-size:0.7rem; margin:3px 0 0 0;">Toca para responder →</p>
+            `;
+            container.appendChild(div);
+        });
+
+    } catch (err) {
+        console.error('Error cargando notificaciones:', err);
+    }
+}
