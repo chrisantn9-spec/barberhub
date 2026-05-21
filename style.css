@@ -361,3 +361,57 @@ header h1 {
   color: var(--neon-cyan);
   text-shadow: 0 0 8px var(--neon-cyan);
 }
+/* TÍTULO PRINCIPAL CON EFECTO NEÓN */
+.hero-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  margin-bottom: 30px;
+  background: linear-gradient(90deg, #00f2ff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.4));
+}
+
+/* LAYOUT PARA QUE EL FOOTER QUede ABAJO */
+.landing-view {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+/* PIE DE PÁGINA */
+.landing-footer {
+  width: 100%;
+  text-align: center;
+  color: #666;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  padding-top: 20px;
+  opacity: 0.8;
+}
+.landing-footer strong {
+  color: var(--neon-cyan);
+  font-weight: 600;
+}
+
+/* Ajuste móvil */
+@media (max-width: 480px) {
+  .hero-title { font-size: 2.2rem; }
+}
