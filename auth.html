@@ -54,57 +54,54 @@
             <a href="index.html" style="color:#888; text-decoration:none; display:block; font-size:0.9rem;">🏠 Volver al Inicio</a>
         </div>
     </div>
+<script src="config.js"></script>
+<script>
+  // 🔐 LOGIN CON EMAIL/PASSWORD
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btn-login');
+    const errorMsg = document.getElementById('error-msg');
+    btn.disabled = true; btn.textContent = 'Verificando...';
+    errorMsg.style.display = 'none';
 
-    <script src="config.js"></script>
-    <script>
-        // ✅ LOGIN CON REDIRECCIÓN POR ROL
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-login');
-            const errorMsg = document.getElementById('error-msg');
-            
-            btn.disabled = true;
-            btn.textContent = 'Verificando...';
-            errorMsg.style.display = 'none';
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+      });
+      if (error) throw error;
+      
+      const role = data.user.user_metadata?.role || 'cliente';
+      window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+    } catch (err) {
+      errorMsg.textContent = '❌ ' + err.message;
+      errorMsg.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'ENTRAR';
+    }
+  });
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+  // 🌐 LOGIN CON GOOGLE
+  window.signInWithGoogle = async () => {
+    try {
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'https://barberhub-two.vercel.app/perfil-cliente.html'
+        }
+      });
+      if (error) throw error;
+    } catch (err) {
+      alert('❌ Error con Google: ' + err.message);
+    }
+  };
 
-            try {
-                // Supabase guarda la sesión AUTOMÁTICAMENTE en localStorage
-                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-
-                const user = data.user;
-                const role = user.user_metadata?.role || 'cliente';
-
-                // Redirigir según rol
-                if (role === 'barbero') {
-                    window.location.href = 'admin.html';
-                } else {
-                    window.location.href = 'perfil-cliente.html';
-                }
-
-            } catch (err) {
-                errorMsg.textContent = '❌ ' + err.message;
-                errorMsg.style.display = 'block';
-                btn.disabled = false;
-                btn.textContent = 'ENTRAR';
-            }
-        });
-
-        // ✅ AUTO-LOGIN: Si ya hay sesión, redirigir automáticamente
-        window.addEventListener('DOMContentLoaded', async () => {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                const role = session.user.user_metadata?.role || 'cliente';
-                if (role === 'barbero') {
-                    window.location.href = 'admin.html';
-                } else {
-                    window.location.href = 'perfil-cliente.html';
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+  // 🔄 AUTO-LOGIN (Solo si ya hay sesión)
+  window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session && !window.location.href.includes('auth.html')) {
+      const role = session.user.user_metadata?.role || 'cliente';
+      window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+    }
+  });
+</script>
+   
