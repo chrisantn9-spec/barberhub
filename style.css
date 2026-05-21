@@ -782,3 +782,95 @@ header h1 {
 }
 .nav-link i { font-size: 1.3rem; margin-bottom: 4px; }
 .nav-link.active, .nav-link:hover { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
+
+/* =========================================
+   ESTILOS PARA PÁGINAS NUEVAS
+   ========================================= */
+
+/* Explorar Grid (Estilo Pinterest/Insta) */
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.explore-card {
+  background: var(--glass-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.explore-card:hover { transform: scale(1.02); }
+
+.explore-card img { width: 100%; height: auto; display: block; }
+
+.overlay-info {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  padding: 8px;
+  color: white;
+}
+.user-row { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; margin-bottom: 4px; }
+.avatar-small { width: 20px; height: 20px; border-radius: 50%; }
+.rating-badge { font-size: 0.75rem; color: #ffcc00; font-weight: bold; }
+
+.card-actions {
+  padding: 8px;
+  display: flex; gap: 12px;
+  color: #aaa; font-size: 0.85rem;
+}
+
+/* Citas List */
+.appointments-list { display: flex; flex-direction: column; gap: 12px; }
+
+.appointment-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px;
+}
+.appt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.appt-header h3 { margin: 0; font-size: 1rem; color: #fff; }
+.status-badge { font-size: 0.75rem; font-weight: bold; border: 1px solid; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; }
+
+.appt-detail { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; color: #ccc; font-size: 0.9rem; }
+.appt-detail i { color: var(--neon-cyan); width: 20px; text-align: center; }
+
+.appt-footer { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; gap: 10px; }
+
+/* Perfil */
+.profile-container { text-align: center; padding-top: 20px; }
+.profile-header { margin-bottom: 30px; }
+.avatar-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto 10px; }
+.avatar-wrapper img { width: 100%; height: 100%; border-radius: 50%; border: 3px solid var(--neon-cyan); object-fit: cover; }
+.edit-avatar-btn {
+  position: absolute; bottom: 0; right: 0;
+  background: var(--neon-pink); color: white;
+  border: none; border-radius: 50%; width: 30px; height: 30px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.user-email { color: #888; margin: 0; }
+
+.profile-menu { text-align: left; background: var(--glass-bg); border-radius: 16px; padding: 10px; border: 1px solid var(--glass-border); }
+.profile-item {
+  display: flex; align-items: center; gap: 15px;
+  padding: 15px; text-decoration: none; color: white;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: background 0.2s;
+}
+.profile-item:last-child { border-bottom: none; }
+.profile-item:hover { background: rgba(255,255,255,0.05); border-radius: 8px; }
+.profile-item i:first-child { color: var(--neon-cyan); font-size: 1.2rem; width: 24px; text-align: center; }
+.profile-item div { flex: 1; display: flex; flex-direction: column; }
+.profile-item div span { font-weight: 500; }
+.profile-item div small { color: #888; font-size: 0.8rem; }
+.profile-item i:last-child { color: #555; }
+
+.btn-logout {
+  width: 100%; padding: 12px; margin-top: 20px;
+  background: rgba(255, 50, 50, 0.1); color: #ff4444;
+  border: 1px solid rgba(255, 50, 50, 0.3);
+  border-radius: 12px; cursor: pointer; font-weight: 600;
+}
