@@ -518,6 +518,26 @@ header h1 {
   color: var(--neon-cyan);
   font-weight: 600;
 }
+/* =========================================
+   ‍💻 LOGO DE BIENVENIDA (LOGIN)
+   ========================================= */
+.welcome-logo {
+  width: 100px;      /* Tamaño ideal */
+  height: auto;
+  display: block;
+  margin: 0 auto 16px auto; /* Centrado arriba del título */
+  
+  /* Efecto Neón */
+  filter: drop-shadow(0 0 15px var(--neon-cyan));
+  
+  /* Animación de flotación */
+  animation: floatCyber 3s ease-in-out infinite;
+}
+
+@keyframes floatCyber {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
 
 /* Ajuste móvil */
 @media (max-width: 480px) {
