@@ -1,38 +1,33 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) { window.location.href = 'auth.html'; return; }
+// Datos falsos de citas
+const appointments = [
+  { id: 1, barber: "CyberCuts Studio", date: "Viernes, 24 Mayo", time: "16:00", service: "Corte + Barba", status: "Confirmada" },
+  { id: 2, barber: "Neon Barber Shop", date: "Lunes, 27 Mayo", time: "10:30", service: "Degradado Americano", status: "Pendiente" },
+  { id: 3, barber: "Razor & Code", date: "Miércoles, 29 Mayo", time: "18:00", service: "Afeitado Clásico", status: "Completada" }
+];
 
-    const { data, error } = await supabaseClient
-        .from('bookings')
-        .select('*, services(name, price)')
-        .eq('client_email', user.email)
-        .order('booked_at', { ascending: true });
+const list = document.getElementById('appointments-list');
 
-    const list = document.getElementById('bookings-list');
-    list.innerHTML = '';
-    if (!data || data.length === 0) {
-        list.innerHTML = '<p style="text-align:center; color:#888;">No tienes citas aún.</p>';
-        return;
-    }
+appointments.forEach(cita => {
+  const card = document.createElement('div');
+  // Color según estado
+  let statusColor = cita.status === 'Confirmada' ? 'var(--neon-cyan)' : 
+                    cita.status === 'Pendiente' ? '#ffaa00' : '#888';
 
-    data.forEach(b => {
-        const statusClass = b.status === 'confirmed' ? 'status-confirmed' : b.status === 'cancelled' ? 'status-cancelled' : 'status-pending';
-        const div = document.createElement('div');
-        div.className = 'booking-card';
-        div.innerHTML = `
-            <div>
-                <strong style="color:#fff;">${b.services?.name || 'Servicio'}</strong><br>
-                <span style="font-size:0.85rem; color:#aaa;">📅 ${new Date(b.booked_at).toLocaleString()}</span>
-                <span class="status-badge ${statusClass}" style="margin-left:10px;">${b.status.toUpperCase()}</span>
-            </div>
-            ${b.status === 'pending' ? `<button class="btn-cancel" onclick="cancelBooking('${b.id}')">Cancelar</button>` : ''}
-        `;
-        list.appendChild(div);
-    });
+  card.className = 'appointment-card';
+  card.innerHTML = `
+    <div class="appt-header">
+      <h3>${cita.barber}</h3>
+      <span class="status-badge" style="color:${statusColor}; border-color:${statusColor}">${cita.status}</span>
+    </div>
+    <div class="appt-body">
+      <div class="appt-detail"><i class="fas fa-cut"></i> ${cita.service}</div>
+      <div class="appt-detail"><i class="fas fa-calendar"></i> ${cita.date}</div>
+      <div class="appt-detail"><i class="fas fa-clock"></i> ${cita.time}</div>
+    </div>
+    <div class="appt-footer">
+      <button class="btn-outline" onclick="alert('Redirigiendo al mapa...')">Ver Ubicación</button>
+      ${cita.status !== 'Completada' ? '<button class="btn-primary" style="width:auto; padding:8px 16px;">Reprogramar</button>' : ''}
+    </div>
+  `;
+  list.appendChild(card);
 });
-
-window.cancelBooking = async (id) => {
-    if (!confirm('¿Seguro que quieres cancelar esta cita?')) return;
-    await supabaseClient.from('bookings').update({ status: 'cancelled' }).eq('id', id);
-    location.reload();
-};
