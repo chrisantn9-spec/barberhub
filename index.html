@@ -58,14 +58,35 @@
         </div>
     </main>
 
-    <nav class="bottom-nav" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10,10,20,0.95); border-top: 1px solid rgba(0,242,255,0.2); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000;">
-        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">🏠</span>Inicio</a>
-        <a href="mis-citas.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">📅</span>Citas</a>
-        <a href="chat-list.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;"></span>Chats</a>
-        <a href="perfil-cliente.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">👤</span>Perfil</a>
-    </nav>
+<!-- ✅ BLOQUE INTELIGENTE: Muestra u oculta botones según sesión -->
+<div id="auth-buttons" style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+    <a href="auth.html" id="btn-login" style="background: var(--neon-cyan); color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">🔐 INICIAR SESIÓN</a>
+    <a href="registro.html" id="btn-register" style="background: transparent; color: var(--neon-pink); padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; border: 2px solid var(--neon-pink);">✨ REGISTRARSE</a>
+    <a href="perfil-cliente.html" id="btn-profile" style="display:none; background: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">👤 Mi Perfil</a>
+    <button onclick="logout()" id="btn-logout" style="display:none; background: #222; color: #ff3333; border: 1px solid #ff3333; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;"> Salir</button>
+</div>
 
-    <script src="config.js"></script>
-    <script src="main.js"></script>
-</body>
-</html>
+<!-- ✅ SCRIPT DE DETECCIÓN DE SESIÓN -->
+<script src="config.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    
+    if (session) {
+        // ✅ Ya estás logueado: oculta login/registro, muestra perfil/salir
+        document.getElementById('btn-login').style.display = 'none';
+        document.getElementById('btn-register').style.display = 'none';
+        document.getElementById('btn-profile').style.display = 'inline-block';
+        document.getElementById('btn-logout').style.display = 'inline-block';
+        
+        // 🔁 Opcional: Si prefieres que te redirija automático al perfil en vez de quedarse en index,
+        // descomenta las 2 líneas de abajo:
+        // const role = session.user.user_metadata?.role || 'cliente';
+        // window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+    }
+});
+
+function logout() {
+    supabaseClient.auth.signOut().then(() => window.location.reload());
+}
+</script>
