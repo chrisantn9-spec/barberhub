@@ -14,39 +14,36 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
-<body style="background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh; padding-bottom: 80px;">
-<!-- 🌀 LOADER DE INICIO -->
-<div id="cyber-loader">
-  <div class="loader-content">
-    <!-- 👇 Cambia "logo.png" por el nombre real de tu logo -->
-    <img src="logo.png" alt="BarberHub Logo" class="loader-face">
-    
-    <div class="boot-sequence">
-      <div class="line">> Inicializando sistema...</div>
-      <div class="line">> Conectando a BarberHub...</div>
-      <div class="line">> Cargando interfaz...</div>
+<body>
+  <!-- 🌀 LOADER -->
+  <div id="cyber-loader">
+    <div class="loader-content">
+      <!-- ⚠️ RUTA: Sin slash al inicio, todo minúsculas -->
+      <img src="logo.png" alt="BarberHub Logo" class="loader-face">
+      
+      <div class="boot-sequence">
+        <div class="line">> Inicializando sistema...</div>
+        <div class="line">> Conectando a BarberHub...</div>
+      </div>
+      
+      <div class="progress-container">
+        <div class="progress-bar"></div>
+      </div>
     </div>
-    
-    <div class="progress-container">
-      <div class="progress-bar"></div>
-    </div>
-    <div class="status-text">ESPERE POR FAVOR</div>
   </div>
-</div>
-    <!-- LOADER -->
-    <div id="cyber-loader">
-        <div class="loader-content">
-            <div class="boot-sequence">
-                <p class="line">> INITIALIZING CORE...</p>
-                <p class="line">> CHECKING SESSION STATUS...</p>
-                <p class="line">> LOADING UI MODULES...</p>
-            </div>
-            <div class="progress-container"><div class="progress-bar"></div></div>
-            <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
-        </div>
-    </div>
-    <script>setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 1500);</script>
 
+  <!-- ... RESTO DE TU PÁGINA ... -->
+
+  <!-- 🔻 SCRIPT PARA OCULTAR (Pega esto justo antes de </body>) -->
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('cyber-loader');
+        if (loader) loader.classList.add('loader-hidden');
+      }, 2800);
+    });
+  </script>
+</body>
     <!-- HEADER -->
     <header style="text-align: center; padding: 20px 10px;">
         <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin: 0 0 5px 0; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BARBERHUB</h1>
