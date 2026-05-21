@@ -31,19 +31,16 @@
 
 html { scroll-behavior: smooth; }
 
-body {
-  font-family: 'Inter', sans-serif;
-  color: var(--text-main);
-  /* Fondo Cyberpunk + Tu imagen personalizada */
+ body {
   background: 
-    linear-gradient(180deg, var(--dark-bg) 0%, #0f0f1a 100%),
+    linear-gradient(180deg, #050505 0%, #0a0a1a 100%),
     url('fondo.jpeg');
   background-size: cover, auto;
   background-position: center, center;
   background-repeat: no-repeat, no-repeat;
   background-attachment: fixed, fixed;
   min-height: 100vh;
-  overflow-x: hidden;
+
 }
 
 /* Grid sutil estilo Cyberpunk (opcional, quita si prefieres solo la foto) */
