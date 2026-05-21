@@ -124,70 +124,101 @@
 
     <script src="config.js"></script>
     <script>
-        // 🔐 LOGIN CON EMAIL/PASSWORD
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-login');
-            const err = document.getElementById('error-msg');
-            btn.disabled = true; 
-            btn.textContent = 'Verificando...'; 
-            err.style.display = 'none';
-            
-            try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    email: document.getElementById('email').value,
-                    password: document.getElementById('password').value
-                });
-                
-                if (error) throw error;
-                
-                const role = data.user.user_metadata?.role || 'cliente';
-                window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
-                
-            } catch (e) {
-                err.textContent = '❌ ' + e.message; 
-                err.style.display = 'block';
-                btn.disabled = false; 
-                btn.textContent = 'ENTRAR';
-            }
-        });
+ <!-- ========================================
+     FORMULARIO DE LOGIN (HTML)
+     ======================================== -->
+<form id="login-form" class="login-box">
+  <h2>Iniciar Sesión</h2>
+  
+  <input type="email" id="email" placeholder="Email" required>
+  <input type="password" id="password" placeholder="Contraseña" required>
+  
+  <p id="error-msg" style="color: #ff4444; display: none;"></p>
+  
+  <button type="submit" id="btn-login" class="btn-primary">ENTRAR</button>
+  
+  <!-- Botones sociales -->
+  <div class="social-login">
+    <button type="button" class="btn-social google" onclick="signInWithGoogle()">
+      <i class="fab fa-google"></i> Google
+    </button>
+    <!-- Facebook/TikTok comentados por ahora -->
+    <!-- <button type="button" class="btn-social facebook" onclick="signInWithFacebook()">Facebook</button> -->
+  </div>
+</form>
 
-        // 🌐 LOGIN CON GOOGLE
-        window.signInWithGoogle = async () => {
-            console.log('Iniciando Google login...');
-            try {
-                const { error } = await supabaseClient.auth.signInWithOAuth({
-                    provider: 'google',
-                    options: { 
-                        redirectTo: window.location.origin + '/perfil-cliente.html',
-                        queryParams: {
-                            access_type: 'offline',
-                            prompt: 'consent'
-                        }
-                    }
-                });
-                if (error) throw error;
-            } catch (e) { 
-                console.error('Error Google:', e);
-                alert('❌ Error con Google: ' + e.message); 
-            }
-        };
+<!-- ========================================
+     JAVASCRIPT DEL LOGIN (DEBE IR DENTRO DE <script>)
+     ======================================== -->
+<script>
+  // ✅ VERIFICAR SESIÓN AL CARGAR (Auto-login)
+  window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+      const role = session.user.user_metadata?.role || 'cliente';
+      if (role === 'barbero') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'perfil-cliente.html';
+      }
+    }
+  });
 
-        // 📘 LOGIN CON FACEBOOK
-        window.signInWithFacebook = async () => {
-            console.log('Iniciando Facebook login...');
-            try {
-                const { error } = await supabaseClient.auth.signInWithOAuth({
-                    provider: 'facebook',
-                    options: { 
-                        redirectTo: window.location.origin + '/perfil-cliente.html'
-                    }
-                });
-                if (error) throw error;
-            } catch (e) { 
-                console.error('Error Facebook:', e);
-                alert('❌ Error con Facebook: ' + e.message); 
-            }
+  // ✅ MANEJAR EL FORMULARIO DE LOGIN
+  document.getElementById('login-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const btn = document.getElementById('btn-login');
+    const errorMsg = document.getElementById('error-msg');
+    
+    btn.disabled = true;
+    btn.textContent = 'Verificando...';
+    errorMsg.style.display = 'none';
+    
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+      
+      if (error) throw error;
+      
+      const user = data.user;
+      const role = user.user_metadata?.role || 'cliente';
+      
+      if (role === 'barbero') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'perfil-cliente.html';
+      }
+      
+    } catch (err) {
+      errorMsg.textContent = '❌ ' + err.message;
+      errorMsg.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'ENTRAR';
+    }
+  });
+
+  // ✅ FUNCIÓN GOOGLE LOGIN
+  window.signInWithGoogle = async () => {
+    try {
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: { 
+          redirectTo: window.location.origin + '/perfil-cliente.html' 
+        }
+      });
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error Google:', err);
+      alert('❌ Error con Google: ' + err.message);
+    }
+  };
+</script>
         };
 
         // 🔄 AUTO-LOGIN (Si ya hay sesión)
