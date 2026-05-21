@@ -1,63 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta name="theme-color" content="#050505">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<link rel="apple-touch-icon" href="logo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BarberHub | Directorio Cyberpunk</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Meta tags para app móvil -->
+    <meta name="theme-color" content="#050505">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body style="background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh; padding-bottom: 80px;">
 
-    <!-- 🌀 LOADER -->
+    <!-- LOADER -->
     <div id="cyber-loader">
         <div class="loader-content">
-            <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
             <div class="boot-sequence">
                 <p class="line">> INITIALIZING CORE...</p>
                 <p class="line">> CONNECTING TO DATABASE...</p>
                 <p class="line">> LOADING UI MODULES...</p>
-                <p class="line">> SYNCING BARBER NETWORK...</p>
             </div>
             <div class="progress-container"><div class="progress-bar"></div></div>
             <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
         </div>
-        <div class="scanlines"></div>
     </div>
-
-    <script>
-        setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2000);
-    </script>
+    <script>setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2000);</script>
 
     <!-- HEADER -->
     <header style="text-align: center; padding: 20px 10px;">
-        <img src="logo.png" alt="BarberHub Logo" style="width: 220px; max-width: 85vw; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.5));">
-        <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin-bottom: 5px; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BARBERHUB</h1>
+        <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin: 0 0 5px 0; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BARBERHUB</h1>
         <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">Reserva tu turno al instante</p>
         
-        <!-- BOTONES DE ACCESO (Sin redirecciones automáticas) -->
-        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
-            <a href="auth.html" style="background: var(--neon-cyan); color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.5);">🔐 INICIAR SESIÓN</a>
-            <a href="registro.html" style="background: transparent; color: var(--neon-pink); padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--neon-pink); box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);">✨ REGISTRARSE</a>
-            <a href="perfil-cliente.html" style="background: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 2px solid #555;"> Mi Perfil</a>
+        <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <a href="auth.html" style="background: var(--neon-cyan); color: #000; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">🔐 INICIAR SESIÓN</a>
+            <a href="registro.html" style="background: transparent; color: var(--neon-pink); padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; border: 2px solid var(--neon-pink);">✨ REGISTRARSE</a>
+            <a href="perfil-cliente.html" style="background: #333; color: #fff; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">👤 Mi Perfil</a>
         </div>
     </header>
 
-    <!-- CONTENEDOR PRINCIPAL -->
+    <!-- CONTENIDO PRINCIPAL -->
     <main style="max-width: 800px; margin: 0 auto; padding: 10px 15px 60px;">
         <div style="margin-bottom: 15px;">
-            <input type="text" id="search-bar" placeholder=" Buscar por nombre o zona..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
+            <input type="text" id="search-bar" placeholder="🔍 Buscar barbería por nombre o zona..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
         </div>
+        
         <div id="barber-list">
-            <div style="text-align: center; padding: 20px; color: #666;"><p>Cargando directorio...</p></div>
+            <div style="text-align: center; padding: 20px; color: #666;">Cargando directorio...</div>
         </div>
 
-        <!-- 💼 BOLSA DE TRABAJO -->
+        <!-- BOLSA DE TRABAJO -->
         <div id="job-section" style="margin-top:30px; padding:20px; background:rgba(255,0,255,0.05); border:1px solid var(--neon-pink); border-radius:10px;">
             <h2 style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1.2rem; margin-bottom:15px; text-align:center;">💼 Bolsa de Trabajo</h2>
             <div id="job-board-main" style="min-height:100px;">
@@ -69,30 +61,15 @@
         </div>
     </main>
 
-    <!-- FOOTER -->
-    <div style="text-align: center; padding: 15px; border-top: 1px solid #222; background: rgba(0,0,0,0.8); position: fixed; bottom: 0; width: 100%; z-index: 9;">
-        <a href="mis-citas.html" style="color: var(--neon-cyan); font-size: 0.85rem; text-decoration: none; font-weight: 600;">📅 ¿Ya tienes turno? Consultar aquí</a>
-    </div>
+    <!-- BARRA DE NAVEGACIÓN INFERIOR -->
+    <nav class="bottom-nav" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10,10,20,0.95); border-top: 1px solid rgba(0,242,255,0.2); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000;">
+        <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">🏠</span>Inicio</a>
+        <a href="mis-citas.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">📅</span>Citas</a>
+        <a href="chat-list.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">💬</span>Chats</a>
+        <a href="perfil-cliente.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">👤</span>Perfil</a>
+    </nav>
 
-    <!-- SCRIPTS -->
     <script src="config.js"></script>
     <script src="main.js"></script>
-
-    <!<!-- 📱 BARRA DE NAVEGACIÓN INFERIOR -->
-<nav class="bottom-nav">
-  <a href="index.html" class="active">
-    <span>🏠</span> Inicio
-  </a>
-  <a href="mis-citas.html">
-    <span>📅</span> Citas
-  </a>
-  <a href="chat-list.html">
-    <span>💬</span> Chats
-  </a>
-  <a href="perfil-cliente.html">
-    <span>👤</span> Perfil
-  </a>
-</nav>--  SIN SCRIPTS DE REDIRECCIÓN AQUÍ ⛔ -->
-    
 </body>
 </html>
