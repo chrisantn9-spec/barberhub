@@ -153,6 +153,13 @@
     }, 2800); // 2.8 segundos para que se vea la animación
   });
 </script>
-</body>
+    <!-- Pon esto justo antes de cerrar el body en index.html -->
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('cyber-loader').classList.add('loader-hidden');
+    }, 2800);
+  });
+</script>
 </body>
 </html>
