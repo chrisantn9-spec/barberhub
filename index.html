@@ -134,5 +134,15 @@
             window.location.reload(); // Recarga para volver a mostrar los botones de invitado
         };
     </script>
+    <script>
+  // Oculta el loader cuando la página termine de cargar
+  window.addEventListener('load', () => {
+    // Espera un poco más para que se vean las animaciones
+    setTimeout(() => {
+      const loader = document.getElementById('cyber-loader');
+      if (loader) loader.classList.add('loader-hidden');
+    }, 2800); // 2.8s (coincide con la animación de la barra)
+  });
+</script>
 </body>
 </html>
