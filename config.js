@@ -1,3 +1,12 @@
-const SUPABASE_URL = "https://qnlbaxxbsbwbgqucbywn.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_s2KUqB2eUZFtKFatxuQagQ_3HOQ24P0";
-window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// config.js
+const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co'; // ⬅️ PEGA TU URL REAL
+const SUPABASE_KEY = 'TU-CLAVE-ANON-PUBLIC';            // ⬅️ PEGA TU CLAVE REAL
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,        // ✅ Guarda sesión en localStorage
+    autoRefreshToken: true,      // ✅ Refresca el token automáticamente
+    storage: window.localStorage,// ✅ Usa almacenamiento permanente
+    detectSessionInUrl: true     // ✅ Detecta el callback de Google
+  }
+});
