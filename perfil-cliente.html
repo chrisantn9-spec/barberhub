@@ -3,58 +3,86 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Descubrir - BarberHub</title>
+  <title>Mi Perfil - BarberHub</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-  <!-- 🔝 HEADER STICKY + BÚSQUEDA -->
   <header class="app-header">
     <div class="header-top">
-      <h1 class="logo-text">BARBER<span class="cyan">HUB</span></h1>
-      <button class="icon-btn"><i class="fas fa-bell"></i></button>
-    </div>
-    <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input type="text" id="search-input" placeholder="Buscar barbero, zona o estilo...">
+      <h1 class="logo-text">MI <span class="cyan">PERFIL</span></h1>
     </div>
   </header>
 
-  <!-- 🏷️ FILTROS DESLIZABLES -->
-  <div class="filter-scroller">
-    <button class="chip active" data-filter="all">Todos</button>
-    <button class="chip" data-filter="corte">Cortes</button>
-    <button class="chip" data-filter="barba">Barba</button>
-    <button class="chip" data-filter="premium">Premium</button>
-    <button class="chip" data-filter="cerca">Cerca de ti</button>
-  </div>
+  <main class="container feed-container profile-container">
+    <!-- Foto de Perfil -->
+    <div class="profile-header">
+      <div class="avatar-wrapper">
+        <img src="https://i.pravatar.cc/150?img=33" alt="Mi Foto" id="my-avatar">
+        <button class="edit-avatar-btn" onclick="document.getElementById('file-input').click()">
+          <i class="fas fa-camera"></i>
+        </button>
+        <input type="file" id="file-input" hidden onchange="previewImage(event)">
+      </div>
+      <h2>Carlos Barber</h2>
+      <p class="user-email">carlos@barberhub.com</p>
+    </div>
 
-  <!-- 📦 GRID DE BARBERÍAS -->
-  <main class="container feed-container">
-    <div id="barber-grid" class="barber-grid"></div>
+    <!-- Botones de Acción -->
+    <div class="profile-menu">
+      <a href="#" class="profile-item" onclick="alert('Abriendo mensajes...')">
+        <i class="fas fa-comment-alt"></i>
+        <div>
+          <span>Mensajes</span>
+          <small>3 nuevos</small>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <a href="#" class="profile-item" onclick="alert('Abriendo historial...')">
+        <i class="fas fa-history"></i>
+        <div>
+          <span>Historial de Cortes</span>
+          <small>Ver todos</small>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      <a href="#" class="profile-item" onclick="alert('Abriendo ajustes...')">
+        <i class="fas fa-cog"></i>
+        <div>
+          <span>Configuración</span>
+          <small>Cuenta y privacidad</small>
+        </div>
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      
+      <button class="btn-logout" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
+    </div>
   </main>
 
-<!-- MENÚ INFERIOR (Actualizado) -->
-<nav class="bottom-nav">
-  <!-- Inicio (Esta misma página) -->
-  <a href="perfil-cliente.html" class="nav-link active">
-    <i class="fas fa-home"></i><span>Inicio</span>
-  </a>
-  <!-- Explorar (Nueva página) -->
-  <a href="explorar.html" class="nav-link">
-    <i class="fas fa-compass"></i><span>Explorar</span>
-  </a>
-  <!-- Citas (Nueva página) -->
-  <a href="mis-citas.html" class="nav-link">
-    <i class="fas fa-calendar-check"></i><span>Citas</span>
-  </a>
-  <!-- Perfil (Nueva página) -->
-  <a href="mi-perfil.html" class="nav-link">
-    <i class="fas fa-user"></i><span>Perfil</span>
-  </a>
-</nav>
-  <!-- ✅ SCRIPT CORREGIDO: Ahora apunta a perfil.js -->
-  <script src="perfil.js"></script>
+  <nav class="bottom-nav">
+    <a href="perfil-cliente.html" class="nav-link"><i class="fas fa-home"></i><span>Inicio</span></a>
+    <a href="explorar.html" class="nav-link"><i class="fas fa-compass"></i><span>Explorar</span></a>
+    <a href="mis-citas.html" class="nav-link"><i class="fas fa-calendar-check"></i><span>Citas</span></a>
+    <a href="mi-perfil.html" class="nav-link active"><i class="fas fa-user"></i><span>Perfil</span></a>
+  </nav>
+
+  <script>
+    // Función simple para previsualizar foto
+    window.previewImage = (event) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById('my-avatar').src = reader.result;
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    };
+
+    window.logout = () => {
+      if(confirm('¿Seguro que quieres salir?')) {
+        window.location.href = 'index.html'; // Vuelve al inicio de sesión
+      }
+    };
+  </script>
 </body>
 </html>
