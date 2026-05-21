@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
-    <meta name="theme-color" content="#050505">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<link rel="apple-touch-icon" href="logo.png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Citas | BarberHub</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        .booking-card { background:rgba(15,15,25,0.8); border:1px solid #333; border-radius:8px; padding:15px; margin:10px 0; display:flex; justify-content:space-between; align-items:center; }
-        .status-badge { padding:4px 8px; border-radius:4px; font-size:0.75rem; font-weight:bold; }
-        .status-pending { background:#ffaa00; color:#000; }
-        .status-confirmed { background:#00ff88; color:#000; }
-        .status-cancelled { background:#ff3333; color:#fff; }
-        .btn-cancel { background:#ff3333; color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:0.8rem; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Citas - BarberHub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body style="background:#050505; color:#fff; padding:20px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h1 style="color:var(--neon-cyan); font-family:'Orbitron'; margin:0;">📅 Mis Citas</h1>
-        <a href="perfil-cliente.html" style="color:#888; text-decoration:none;">← Volver</a>
+<body>
+  <header class="app-header">
+    <div class="header-top">
+      <h1 class="logo-text">MIS <span class="cyan">CITAS</span></h1>
     </div>
-    <div id="bookings-list"><p style="text-align:center; color:#888;">Cargando...</p></div>
-    <script src="config.js"></script>
-    <script src="mis-citas.js"></script>
+  </header>
+
+  <main class="container feed-container">
+    <h2 style="margin-bottom:15px; font-size:1.2rem;">📅 Próximas Reservas</h2>
+    <div id="appointments-list" class="appointments-list">
+      <!-- Las citas se cargan con JS -->
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="perfil-cliente.html" class="nav-link"><i class="fas fa-home"></i><span>Inicio</span></a>
+    <a href="explorar.html" class="nav-link"><i class="fas fa-compass"></i><span>Explorar</span></a>
+    <a href="mis-citas.html" class="nav-link active"><i class="fas fa-calendar-check"></i><span>Citas</span></a>
+    <a href="mi-perfil.html" class="nav-link"><i class="fas fa-user"></i><span>Perfil</span></a>
+  </nav>
+
+  <script src="mis-citas.js"></script>
 </body>
 </html>
