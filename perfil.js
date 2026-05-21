@@ -216,38 +216,29 @@ async function loadMessageNotifications() {
         console.error('Error cargando notificaciones:', err);
     }
 }
-DOMContentLoaded
-
-// 📋 CARGAR BARBEROS DESTACADOS EN PERFIL
-async function loadFeaturedBarbers() {
-    const container = document.getElementById('featured-barbers');
-    if (!container) return;
-
+document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const { data: barbers } = await supabaseClient.from('barbers').select('name, location, phone').limit(3);
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) { window.location.href = 'auth.html'; return; }
+
+        document.getElementById('client-name').textContent = user.user_metadata?.nombre || 'Cliente';
+        document.getElementById('client-email').textContent = user.email;
         
-        if (!barbers || barbers.length === 0) {
-            container.innerHTML = '<p>No hay barberías registradas aún.</p>';
-            return;
+        if (user.user_metadata?.avatar) {
+            document.getElementById('client-avatar').src = user.user_metadata.avatar;
         }
 
-        container.innerHTML = '';
-        barbers.forEach(barber => {
-            const div = document.createElement('div');
-            div.style.cssText = 'background:rgba(0,242,255,0.05); border:1px solid #333; padding:10px; margin:5px 0; border-radius:6px; cursor:pointer; transition:0.3s;';
-            div.onmouseover = () => div.style.borderColor = 'var(--neon-cyan)';
-            div.onmouseout = () => div.style.borderColor = '#333';
-            div.innerHTML = `
-                <strong style="color:#fff; font-size:0.9rem;">✂️ ${barber.name}</strong>
-                <p style="color:#888; font-size:0.8rem; margin:3px 0;">📍 ${barber.location}</p>
-                <p style="color:var(--neon-cyan); font-size:0.75rem; margin:3px 0;">📞 ${barber.phone}</p>
-            `;
-            div.onclick = () => window.location.href = 'index.html';
-            container.appendChild(div);
-        });
+        document.getElementById('client-avatar').onclick = () => document.getElementById('avatar-input').click();
+
+        loadGallery(user);
+        loadNearbyShops();
+        loadJobBoard();
+        loadMessageNotifications(); // Si existe esta función
+
     } catch (err) {
-        container.innerHTML = '<p style="color:#ff3333;">Error cargando barberos.</p>';
+        console.error(err);
     }
+});
 }
 
 // Llamar esta función en DOMContentLoaded
