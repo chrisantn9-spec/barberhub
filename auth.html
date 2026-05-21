@@ -41,14 +41,22 @@
     <div style="max-width:420px; margin:20px auto; padding:30px; background:rgba(15,15,25,0.85); backdrop-filter:blur(12px); border:1px solid var(--neon-cyan); border-radius:15px; box-shadow:0 0 25px rgba(0,242,255,0.15);">
         <h2 style="color:var(--neon-cyan); margin-bottom:20px; font-family:'Orbitron'; text-align:center; font-size:1.4rem;">🔐 ACCESO SISTEMA</h2>
         
-        <form id="login-form">
-            <input type="email" id="email" placeholder="📧 Correo Electrónico" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:0.95rem;">
-            <input type="password" id="password" placeholder="🔑 Contraseña" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:0.95rem;">
-            
-            <button type="submit" id="btn-login" style="width:100%; padding:12px; background:var(--neon-cyan); color:#000; font-weight:bold; border:none; border-radius:6px; cursor:pointer; margin-top:10px; font-size:1rem;">ENTRAR</button>
-            <p id="error-msg" style="color:#ff3333; font-size:0.85rem; margin-top:10px; display:none; text-align:center;"></p>
-        </form>
+      <form id="login-form">
+    <input type="email" id="email" placeholder="📧 Correo Electrónico" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:0.95rem;">
+    <input type="password" id="password" placeholder="🔑 Contraseña" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:0.95rem;">
 
+    <!-- ✅ BOTÓN GOOGLE (NUEVO) -->
+    <button type="button" onclick="signInWithGoogle()" style="width:100%; padding:12px; margin:8px 0; background:#fff; color:#333; font-weight:bold; border:1px solid #ccc; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+      <img src="https://www.google.com/favicon.ico" width="18" alt="G">
+      Continuar con Google
+    </button>
+    <div style="text-align:center; color:#666; margin:5px 0; font-size:0.85rem;">— o —</div>
+
+    <!-- ✅ BOTÓN ENTRAR (SUBMIT) -->
+    <button type="submit" id="btn-login" style="width:100%; padding:12px; background:var(--neon-cyan); color:#000; font-weight:bold; border:none; border-radius:6px; cursor:pointer; margin-top:5px; font-size:1rem;">ENTRAR</button>
+    
+    <p id="error-msg" style="color:#ff3333; font-size:0.85rem; margin-top:10px; display:none; text-align:center;"></p>
+</form>
         <div style="margin-top:25px; text-align:center; border-top:1px solid #333; padding-top:15px;">
             <a href="registro.html" style="color:var(--neon-pink); text-decoration:none; display:block; margin-bottom:8px; font-weight:600;">✨ Crear Cuenta Nueva</a>
             <a href="index.html" style="color:#888; text-decoration:none; display:block; font-size:0.9rem;">🏠 Volver al Inicio</a>
