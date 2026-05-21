@@ -1,12 +1,15 @@
 // config.js
-const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co'; // ⬅️ PEGA TU URL REAL
-const SUPABASE_KEY = 'TU-CLAVE-ANON-PUBLIC';            // ⬅️ PEGA TU CLAVE REAL
+// ⚠️ NUNCA subas claves secretas a GitHub
+// Usa variables de entorno en Vercel/Netlify
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+const SUPABASE_URL = 'https://TU-PROYECTO.supabase.co';
+const SUPABASE_ANON_KEY = 'tu-anon-key-public-aqui'; // ✅ Esta SÍ es pública
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
-    persistSession: true,        // ✅ Guarda sesión en localStorage
-    autoRefreshToken: true,      // ✅ Refresca el token automáticamente
-    storage: window.localStorage,// ✅ Usa almacenamiento permanente
-    detectSessionInUrl: true     // ✅ Detecta el callback de Google
+    persistSession: true,
+    autoRefreshToken: true,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+    detectSessionInUrl: true
   }
 });
