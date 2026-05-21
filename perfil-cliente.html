@@ -1,153 +1,50 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
-    <meta name="theme-color" content="#050505">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<link rel="apple-touch-icon" href="logo.png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil | BarberHub</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        /* Estilos Generales */
-        body { background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh; padding-bottom: 80px; color: #fff; margin: 0; }
-        
-        /* Lightbox para fotos */
-        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: center; cursor: zoom-out; }
-        .lightbox.active { display: flex; }
-        .lightbox img { max-width: 90%; max-height: 90%; border-radius: 10px; border: 2px solid var(--neon-cyan); }
-        
-        /* Avatar */
-        .avatar-container img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--neon-cyan); object-fit: cover; cursor: pointer; background: #111; transition: 0.3s; }
-        .avatar-container img:hover { opacity: 0.8; transform: scale(1.05); }
-
-        /* Botones de navegación */
-        .nav-btn { padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 0.95rem; cursor: pointer; border: none; display: inline-block; text-align: center; transition: transform 0.2s; }
-        .nav-btn:hover { transform: scale(1.05); }
-        .btn-cyan { background: var(--neon-cyan); color: #000; }
-        .btn-gray { background: #333; color: #fff; }
-        .btn-pink { background: var(--neon-pink); color: #fff; border: 2px solid #fff; } /* ESTILO ESPECIAL PARA CITAS */
-        .btn-out { background: #222; color: #ff3333; border: 1px solid #ff3333 !important; }
-
-        /* Notificaciones */
-        .notif-container { position: absolute; top: 15px; right: 20px; cursor: pointer; z-index: 100; }
-        .notif-dropdown { display: none; position: absolute; top: 40px; right: 0; background: #151520; border: 1px solid var(--neon-cyan); border-radius: 8px; width: 280px; max-height: 350px; overflow-y: auto; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.8); }
-        .notif-dropdown.active { display: block; }
-        .notif-item { padding: 12px; border-bottom: 1px solid #333; }
-        .notif-item:last-child { border-bottom: none; }
-        .notif-item strong { color: var(--neon-cyan); display: block; margin-bottom: 3px; }
-        .notif-badge { position: absolute; top: -5px; left: -5px; background: #ff0055; color: #fff; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; font-weight: bold; border: 2px solid #050505; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Descubrir - BarberHub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- LIGHTBOX (Zoom) -->
-    <div id="lightbox" class="lightbox" onclick="this.classList.remove('active')">
-        <img id="lightbox-img" src="" alt="Zoom">
+  <!-- 🔝 HEADER STICKY + BÚSQUEDA -->
+  <header class="app-header">
+    <div class="header-top">
+      <h1 class="logo-text">BARBER<span class="cyan">HUB</span></h1>
+      <button class="icon-btn"><i class="fas fa-bell"></i></button>
     </div>
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" id="search-input" placeholder="Buscar barbero, zona o estilo...">
+    </div>
+  </header>
 
-    <!-- HEADER -->
-    <header style="background: rgba(10,10,20,0.95); border-bottom: 1px solid var(--neon-cyan); padding: 25px 20px; text-align: center; position: relative;">
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
-        <!-- Campana de Notificaciones -->
-        <div class="notif-container" onclick="toggleNotifications()">
-            <span style="font-size: 1.5rem;">🔔</span>
-            <span id="notif-badge" class="notif-badge" style="display: none;">0</span>
-        </div>
-        <div id="notif-dropdown" class="notif-dropdown"></div>
+  <!-- ️ FILTROS DESLIZABLES (Estilo TikTok/IG) -->
+  <div class="filter-scroller">
+    <button class="chip active" data-filter="all">Todos</button>
+    <button class="chip" data-filter="corte">Cortes</button>
+    <button class="chip" data-filter="barba">Barba</button>
+    <button class="chip" data-filter="premium">Premium</button>
+    <button class="chip" data-filter="cerca">Cerca de ti</button>
+  </div>
 
-        <!-- Foto de Perfil -->
-        <div class="avatar-container">
-            <img id="client-avatar" src="https://via.placeholder.com/150/111111/00f2ff?text=USER" alt="Foto Perfil">
-            <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="uploadAvatar(this)">
-        </div>
-        <p style="font-size: 0.75rem; color: var(--neon-cyan); margin: 5px 0 15px; opacity: 0.8;">Toca tu foto para cambiarla</p>
+  <!-- 📦 GRID DE BARBERÍAS -->
+  <main class="container feed-container">
+    <div id="barber-grid" class="barber-grid">
+      <!-- Las tarjetas se generan con JS -->
+    </div>
+  </main>
 
-        <!-- Datos del Usuario -->
-        <h1 id="client-name" style="font-family: 'Orbitron'; margin: 0; font-size: 1.4rem; color: #fff;">Cargando...</h1>
-        <p id="client-email" style="color: #666; font-size: 0.85rem; margin: 5px 0 20px;">...</p>
+  <!--  MENÚ INFERIOR FIJO -->
+  <nav class="bottom-nav">
+    <a href="#" class="nav-link active"><i class="fas fa-home"></i><span>Inicio</span></a>
+    <a href="#" class="nav-link"><i class="fas fa-compass"></i><span>Explorar</span></a>
+    <a href="#" class="nav-link"><i class="fas fa-calendar-check"></i><span>Citas</span></a>
+    <a href="#" class="nav-link"><i class="fas fa-user"></i><span>Perfil</span></a>
+  </nav>
 
-        <!-- ✅ MENÚ DE NAVEGACIÓN PRINCIPAL -->
-        <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 10px;">
-            
-            <!-- Botón Inicio -->
-            <a href="index.html" class="nav-btn btn-cyan">🏠 Inicio</a>
-            
-            <!-- ⭐ BOTÓN MIS CITAS (Destacado) ⭐ -->
-            <a href="mis-citas.html" class="nav-btn btn-pink">📅 Mis Citas</a>
-            
-            <!-- Botón Chats -->
-            <a href="chat-list.html" class="nav-btn btn-gray">💬 Chats</a>
-            
-            <!-- Botón Salir -->
-            <button onclick="logout()" class="nav-btn btn-out"> Salir</button>
-        </div>
-    </header>
-
-    <main style="max-width: 600px; margin: 20px auto; padding: 0 15px;">
-
-        <!-- 📸 MIS FOTOS -->
-        <section style="margin-top: 25px;">
-            <h2 style="color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px;">📸 Mis Fotos / Estilo</h2>
-            <div id="client-photos" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px;"></div>
-            <div style="display: flex; gap: 5px; align-items: center;">
-                <input type="text" id="new-photo-url" placeholder="Pegar URL de imagen..." style="flex: 1; padding: 8px; background: rgba(0,0,0,0.5); border: 1px solid #444; color: #fff; border-radius: 4px; font-size: 0.8rem;">
-                <button onclick="addPhoto()" class="nav-btn" style="background: var(--neon-pink); color: #fff; padding: 6px 10px; font-size: 0.8rem;">➕</button>
-                <button onclick="document.getElementById('photo-upload').click()" class="nav-btn" style="background: var(--neon-cyan); color: #000; padding: 6px 10px; font-size: 0.8rem;">📷</button>
-                <input type="file" id="photo-upload" accept="image/*" style="display: none;" onchange="uploadPhoto(this)">
-            </div>
-            <p id="upload-status" style="font-size: 0.75rem; color: #888; margin-top: 5px; text-align: center;"></p>
-        </section>
-
-        <!-- ✂️ BARBEROS CERCANOS -->
-        <section style="margin-top: 25px;">
-            <h2 style="color: var(--neon-cyan); font-family: 'Orbitron'; font-size: 1.1rem; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 5px;">✂️ Cerca de Ti</h2>
-            <div id="nearby-shops" style="color: #888; text-align: center; padding: 10px;">Detectando ubicación...</div>
-        </section>
-
-        <!-- 💼 BOLSA DE TRABAJO -->
-        <section style="margin-top: 25px; border: 1px solid var(--neon-pink); background: rgba(255,0,255,0.03); padding: 15px; border-radius: 10px;">
-            <h2 style="color: var(--neon-pink); font-family: 'Orbitron'; font-size: 1.1rem; margin-bottom: 15px;">💼 Bolsa de Trabajo</h2>
-            <div id="job-board" style="min-height: 50px;">Cargando ofertas...</div>
-            <a href="crear-oferta.html" style="display: block; text-align: center; margin-top: 15px; color: var(--neon-pink); border: 1px dashed var(--neon-pink); padding: 10px; border-radius: 6px; text-decoration: none; font-weight: bold;">+ Publicar Oferta</a>
-        </section>
-
-    </main>
-
-    <!-- SCRIPTS -->
-    <script src="config.js"></script>
-    <script src="perfil.js"></script>
-    
-    <!-- LÓGICA EXTRA -->
-    <script>
-        // Notificaciones
-        window.toggleNotifications = async function() {
-            const dropdown = document.getElementById('notif-dropdown');
-            dropdown.classList.toggle('active');
-            if (dropdown.classList.contains('active')) loadNotifications();
-        };
-
-        async function loadNotifications() {
-            const { data: { user } } = await supabaseClient.auth.getUser();
-            if (!user) return;
-            const { data } = await supabaseClient.from('notifications').select('*').eq('user_id', user.id).eq('is_read', false).limit(5);
-            const dropdown = document.getElementById('notif-dropdown');
-            const badge = document.getElementById('notif-badge');
-            dropdown.innerHTML = '';
-            if (data && data.length > 0) {
-                badge.textContent = data.length; badge.style.display = 'block';
-                data.forEach(n => {
-                    dropdown.innerHTML += `<div class="notif-item"><strong>${n.title}</strong><p>${n.message}</p></div>`;
-                });
-            } else {
-                dropdown.innerHTML = '<div class="notif-item" style="color:#666">Sin notificaciones</div>';
-                badge.style.display = 'none';
-            }
-        }
-    </script>
+  <script src="perfil-cliente.js"></script>
 </body>
 </html>
