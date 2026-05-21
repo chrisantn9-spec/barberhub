@@ -193,57 +193,137 @@ header h1 {
 }
 
 /* =========================================
-   🔘 BOTONES Y INPUTS (Estilo Airbnb)
+    CORRECCIÓN DE BOTONES Y LAYOUT
    ========================================= */
 
-/* Inputs (Campos de texto) */
-input, select, textarea {
-  width: 100%;
-  padding: 14px 16px;
-  margin-bottom: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px; /* Bordes muy redondeados (Airbnb) */
-  color: white;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.2s;
+/* Contenedor principal de la landing */
+.landing-view {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 2;
 }
 
-input:focus {
-  border-color: var(--neon-cyan);
-  box-shadow: 0 0 0 2px rgba(0, 242, 255, 0.2);
+/* Header centrado */
+.landing-header {
+  margin-bottom: 60px;
 }
 
-/* Botones principales */
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg, var(--neon-cyan), #00c3ff);
-  color: #000;
-  border: none;
-  border-radius: 12px; /* Redondeado tipo píldora */
+.brand-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3rem;
   font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.1s;
+  letter-spacing: 4px;
+  text-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+  margin: 0;
 }
 
-.btn-primary:active { transform: scale(0.98); }
+/* Sección hero */
+.hero-section {
+  max-width: 600px;
+  margin: 0 auto;
+}
 
-/* Botón secundario */
-.btn-secondary {
+.hero-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+/* Contenedor de botones - CORREGIDO */
+.auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Espacio entre botones */
+  align-items: center;
   width: 100%;
-  padding: 14px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* Botones individuales */
+.auth-buttons .btn-primary,
+.auth-buttons .btn-secondary {
+  width: 100%;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-align: center;
+}
+
+/* Botón primario (Iniciar Sesión) */
+.auth-buttons .btn-primary {
+  background: linear-gradient(135deg, #00f2ff, #00c3ff);
+  color: #000;
+  border: 2px solid transparent;
+  box-shadow: 0 4px 15px rgba(0, 242, 255, 0.3);
+}
+
+.auth-buttons .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 242, 255, 0.5);
+}
+
+/* Botón secundario (Crear Cuenta) */
+.auth-buttons .btn-secondary {
   background: transparent;
   color: var(--neon-cyan);
-  border: 1px solid var(--neon-cyan);
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
+  border: 2px solid var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
 }
 
+.auth-buttons .btn-secondary:hover {
+  background: rgba(0, 242, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 242, 255, 0.4);
+}
+
+/* Responsive: En pantallas grandes, botones lado a lado */
+@media (min-width: 480px) {
+  .auth-buttons {
+    flex-direction: row;
+    max-width: 500px;
+    gap: 20px;
+  }
+  
+  .auth-buttons .btn-primary,
+  .auth-buttons .btn-secondary {
+    flex: 1;
+  }
+}
+
+/* Ajuste del título en móvil */
+@media (max-width: 768px) {
+  .brand-title {
+    font-size: 2rem;
+  }
+  
+  .hero-title {
+    font-size: 1.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+}
 /* =========================================
     MENÚ INFERIOR (Barra de navegación)
    ========================================= */
