@@ -119,4 +119,12 @@
     }
   });
 </script>
-   
+   // 📘 FACEBOOK
+window.signInWithFacebook = async () => {
+  try {
+    await supabaseClient.auth.signInWithOAuth({
+      provider: 'facebook',
+      options: { redirectTo: window.location.origin + '/perfil-cliente.html' }
+    });
+  } catch (e) { alert('❌ ' + e.message); }
+};
