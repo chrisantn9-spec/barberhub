@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- ✅ FIX DEFINITIVO: Favicon autocontenido (mata el error de vercel.svg) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
     <title>BarberHub | Directorio Cyberpunk</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Meta tags para app móvil -->
     <meta name="theme-color" content="#050505">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 </head>
 <body style="background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh; padding-bottom: 80px;">
 
-    <!-- LOADER -->
     <div id="cyber-loader">
         <div class="loader-content">
             <div class="boot-sequence">
@@ -27,7 +27,6 @@
     </div>
     <script>setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 2000);</script>
 
-    <!-- HEADER -->
     <header style="text-align: center; padding: 20px 10px;">
         <h1 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px; font-size: 1.8rem; margin: 0 0 5px 0; background: linear-gradient(90deg, #00f2ff, #ff00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">BARBERHUB</h1>
         <p style="color: #888; font-size: 0.9rem; margin-bottom: 15px;">Reserva tu turno al instante</p>
@@ -39,17 +38,14 @@
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <main style="max-width: 800px; margin: 0 auto; padding: 10px 15px 60px;">
         <div style="margin-bottom: 15px;">
             <input type="text" id="search-bar" placeholder="🔍 Buscar barbería por nombre o zona..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); border: 1px solid var(--neon-cyan); color: #fff; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem;">
         </div>
-        
         <div id="barber-list">
             <div style="text-align: center; padding: 20px; color: #666;">Cargando directorio...</div>
         </div>
 
-        <!-- BOLSA DE TRABAJO -->
         <div id="job-section" style="margin-top:30px; padding:20px; background:rgba(255,0,255,0.05); border:1px solid var(--neon-pink); border-radius:10px;">
             <h2 style="color:var(--neon-pink); font-family:'Orbitron'; font-size:1.2rem; margin-bottom:15px; text-align:center;">💼 Bolsa de Trabajo</h2>
             <div id="job-board-main" style="min-height:100px;">
@@ -61,11 +57,10 @@
         </div>
     </main>
 
-    <!-- BARRA DE NAVEGACIÓN INFERIOR -->
     <nav class="bottom-nav" style="position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(10,10,20,0.95); border-top: 1px solid rgba(0,242,255,0.2); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000;">
         <a href="index.html" style="color: var(--neon-cyan); text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">🏠</span>Inicio</a>
         <a href="mis-citas.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">📅</span>Citas</a>
-        <a href="chat-list.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">💬</span>Chats</a>
+        <a href="chat-list.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;"></span>Chats</a>
         <a href="perfil-cliente.html" style="color: #888; text-decoration: none; text-align: center; font-size: 0.75rem;"><span style="font-size:1.2rem; display:block;">👤</span>Perfil</a>
     </nav>
 
