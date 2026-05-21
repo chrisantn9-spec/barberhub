@@ -518,13 +518,14 @@ header h1 {
   color: var(--neon-cyan);
   font-weight: 600;
 }
-/* ‍💻 LOGO DE BIENVENIDA (Login) - TAMAÑO IDEAL */
+/* 🧑💻 LOGO DE BIENVENIDA (Login) - TAMAÑO GRANDE */
 .welcome-logo {
-  width: 85px;           /* Tamaño balanceado */
+  width: 180px;            /* Tamaño grande y visible */
+  max-width: 80%;          /* Evita que se desborde en móviles */
   height: auto;
   display: block;
-  margin: 0 auto 15px auto;
-  filter: drop-shadow(0 0 12px var(--neon-cyan));
+  margin: 0 auto 20px auto;
+  filter: drop-shadow(0 0 18px var(--neon-cyan));
   animation: floatCyber 3s ease-in-out infinite;
 }
 
