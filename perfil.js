@@ -215,7 +215,7 @@ async function loadMessageNotifications() {
     } catch (err) {
         console.error('Error cargando notificaciones:', err);
     }
-}
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const { data: { user } } = await supabaseClient.auth.getUser();
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (err) {
         console.error(err);
-    }
+    
 });
 }
 
@@ -246,3 +246,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ... tu código existente ...
     loadFeaturedBarbers(); // <-- Agregar esto
 });
+"fix perfil js DOMContentLoaded syntax"
