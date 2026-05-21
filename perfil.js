@@ -1,335 +1,98 @@
-// perfil.js
+//  DATOS DE EJEMPLO (Próximamente vendrán de Supabase)
+const barbers = [
+  { id: 1, name: "CyberCuts Studio", img: "https://placehold.co/400x300/0a0a1a/00f2ff?text=CyberCuts", rating: 4.9, reviews: 128, location: "Centro, 0.5 km", price: "$15", tags: ["corte", "premium"] },
+  { id: 2, name: "Neon Barber Shop", img: "https://placehold.co/400x300/0a0a1a/ff00ff?text=NeonBarber", rating: 4.7, reviews: 85, location: "Norte, 1.2 km", price: "$12", tags: ["barba", "corte"] },
+  { id: 3, name: "Razor & Code", img: "https://placehold.co/400x300/0a0a1a/00ff88?text=RazorCode", rating: 5.0, reviews: 210, location: "Sur, 0.8 km", price: "$18", tags: ["premium", "barba"] },
+  { id: 4, name: "Urban Fade Lab", img: "https://placehold.co/400x300/0a0a1a/ffaa00?text=UrbanFade", rating: 4.5, reviews: 64, location: "Este, 2.0 km", price: "$10", tags: ["corte"] },
+  { id: 5, name: "Blade Runner Barbers", img: "https://placehold.co/400x300/0a0a1a/00f2ff?text=BladeRunner", rating: 4.8, reviews: 150, location: "Oeste, 1.5 km", price: "$16", tags: ["premium", "corte"] },
+  { id: 6, name: "Synthwave Cuts", img: "https://placehold.co/400x300/0a0a1a/ff00ff?text=Synthwave", rating: 4.6, reviews: 92, location: "Centro, 0.3 km", price: "$14", tags: ["barba", "corte"] }
+];
 
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        
-        if (!user) {
-            window.location.href = 'auth.html';
-            return;
-        }
+const grid = document.getElementById('barber-grid');
+const searchInput = document.getElementById('search-input');
+const chips = document.querySelectorAll('.chip');
 
-        // Mostrar datos del usuario
-        document.getElementById('client-name').textContent = user.user_metadata?.nombre || 'Cliente';
-        document.getElementById('client-email').textContent = user.email;
-        
-        if (user.user_metadata?.avatar) {
-            document.getElementById('client-avatar').src = user.user_metadata.avatar;
-        }
+// 🎨 Renderizar tarjetas con animación escalonada
+function renderCards(data) {
+  grid.innerHTML = '';
+  if (data.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>No se encontraron barberías</p></div>`;
+    return;
+  }
+  data.forEach((b, index) => {
+    const card = document.createElement('div');
+    card.className = 'barber-card';
+    card.style.animationDelay = `${index * 0.08}s`;
+    card.innerHTML = `
+      <div class="card-image-wrapper">
+        <img src="${b.img}" alt="${b.name}" loading="lazy">
+        <div class="card-overlay"></div>
+        <button class="fav-btn" onclick="toggleFav(this)"><i class="far fa-heart"></i></button>
+      </div>
+      <div class="card-content">
+        <div class="card-header">
+          <h3>${b.name}</h3>
+          <div class="rating"><i class="fas fa-star"></i> ${b.rating} <span>(${b.reviews})</span></div>
+        </div>
+        <p class="location"><i class="fas fa-map-marker-alt"></i> ${b.location}</p>
+        <div class="card-footer">
+          <span class="price">${b.price} / servicio</span>
+          <button class="btn-book" onclick="bookBarber(${b.id})">Reservar</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
 
-        // Hacer clickeable el avatar
-        const avatarImg = document.getElementById('client-avatar');
-        const avatarInput = document.getElementById('avatar-input');
-        if (avatarImg && avatarInput) {
-            avatarImg.onclick = () => avatarInput.click();
-        }
+// 🔍 Búsqueda en tiempo real + Filtros
+function filterData() {
+  const query = searchInput.value.toLowerCase().trim();
+  const activeFilter = document.querySelector('.chip.active').dataset.filter;
+  
+  const filtered = barbers.filter(b => {
+    const matchesSearch = !query || 
+      b.name.toLowerCase().includes(query) || 
+      b.location.toLowerCase().includes(query);
+    const matchesFilter = activeFilter === 'all' || b.tags.includes(activeFilter);
+    return matchesSearch && matchesFilter;
+  });
+  
+  renderCards(filtered);
+}
 
-        // Cargar galería
-        loadGallery(user);
-        
-        // Cargar barberías cercanas
-        loadNearbyShops();
-        
-        // Cargar bolsa de trabajo
-        loadJobBoard();
-        
-        // Cargar notificaciones de mensajes
-        loadMessageNotifications();
+searchInput.addEventListener('input', filterData);
 
-    } catch (err) {
-        console.error('Error en DOMContentLoaded:', err);
-    }
+chips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    chips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    filterData();
+  });
 });
 
-// 📸 CARGAR GALERÍA DE FOTOS
-function loadGallery(user) {
-    const photos = user.user_metadata?.photos || [];
-    const box = document.getElementById('client-photos');
-    
-    if (!box) return;
-    
-    box.innerHTML = '';
-    
-    if (photos.length === 0) {
-        box.innerHTML = '<p style="color:#666; grid-column:span 3; text-align:center;">Sin fotos aún</p>';
-        return;
-    }
-    
-    photos.forEach(url => {
-        if (!url) return;
-        const img = document.createElement('img');
-        img.src = url;
-        img.style.cssText = 'width:100%; height:80px; object-fit:cover; border-radius:6px; cursor:pointer; border:1px solid #444;';
-        img.onclick = () => {
-            const lightbox = document.getElementById('lightbox');
-            const lightboxImg = document.getElementById('lightbox-img');
-            if (lightbox && lightboxImg) {
-                lightboxImg.src = url;
-                lightbox.classList.add('active');
-            }
-        };
-        box.appendChild(img);
-    });
-}
+// ❤️ Favoritos (visual)
+window.toggleFav = (btn) => {
+  btn.classList.toggle('active');
+  const icon = btn.querySelector('i');
+  icon.classList.toggle('far');
+  icon.classList.toggle('fas');
+};
 
-// 📷 SUBIR FOTO DE PERFIL (AVATAR)
-async function uploadAvatar(input) {
-    const file = input.files[0];
-    if (!file) return;
+// 📅 Reserva (placeholder)
+window.bookBarber = (id) => {
+  alert(`📅 Iniciando reserva para ID: ${id}\n(Próximamente: selector de fecha/hora)`);
+  // window.location.href = `reserva.html?barber=${id}`;
+};
 
-    if (file.size > 2 * 1024 * 1024) {
-        alert('❌ La imagen es muy pesada (máx 2MB)');
-        return;
-    }
+// 🔄 Carga inicial
+renderCards(barbers);
 
-    try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        const fileExt = file.name.split('.').pop();
-        const fileName = `avatar-${user.id}.${fileExt}`;
-        
-        const { error: uploadError } = await supabaseClient.storage
-            .from('profiles')
-            .upload(`avatars/${fileName}`, file, { upsert: true });
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabaseClient.storage
-            .from('profiles')
-            .getPublicUrl(`avatars/${fileName}`);
-
-        await supabaseClient.auth.updateUser({ data: { avatar: publicUrl } });
-        
-        location.reload();
-
-    } catch (err) {
-        console.error('Error subiendo avatar:', err);
-        alert('❌ Error: ' + err.message);
-    }
-}
-
-// ➕ AGREGAR FOTO POR URL
-async function addPhoto() {
-    const url = document.getElementById('new-photo-url').value.trim();
-    if (!url) {
-        alert('Pega una URL primero');
-        return;
-    }
-
-    try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        const photos = [...(user.user_metadata?.photos || []), url];
-        
-        await supabaseClient.auth.updateUser({ data: { photos } });
-        alert('✅ Foto agregada');
-        location.reload();
-        
-    } catch (err) {
-        console.error('Error agregando foto:', err);
-        alert('❌ Error: ' + err.message);
-    }
-}
-
-// 📷 SUBIR FOTO DESDE CELULAR
-async function uploadPhoto(input) {
-    const file = input.files[0];
-    if (!file) return;
-
-    const status = document.getElementById('upload-status');
-    if (status) status.textContent = 'Subiendo...';
-
-    try {
-        if (file.size > 2 * 1024 * 1024) {
-            throw new Error('Imagen muy pesada (máx 2MB)');
-        }
-
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-
-        const { error } = await supabaseClient.storage
-            .from('profiles')
-            .upload(`client-photos/${fileName}`, file);
-
-        if (error) throw error;
-
-        const { data: { publicUrl } } = supabaseClient.storage
-            .from('profiles')
-            .getPublicUrl(`client-photos/${fileName}`);
-
-        const photos = [...(user.user_metadata?.photos || []), publicUrl];
-        await supabaseClient.auth.updateUser({ data: { photos } });
-
-        if (status) {
-            status.textContent = '✅ Listo!';
-            status.style.color = '#00ff88';
-        }
-        
-        setTimeout(() => location.reload(), 1000);
-
-    } catch (err) {
-        console.error('Error subiendo foto:', err);
-        alert('❌ Error: ' + err.message);
-        if (status) status.textContent = '';
-    }
-}
-
-// 📍 CARGAR BARBERÍAS CERCANAS
-async function loadNearbyShops() {
-    const container = document.getElementById('nearby-shops');
-    if (!container) return;
-
-    if (!navigator.geolocation) {
-        container.textContent = 'GPS no disponible';
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-        try {
-            const { data } = await supabaseClient
-                .from('barbers')
-                .select('name, location')
-                .limit(3);
-
-            if (!data || data.length === 0) {
-                container.textContent = 'No hay barberías registradas aún';
-                return;
-            }
-
-            container.innerHTML = '';
-            data.forEach(s => {
-                const div = document.createElement('div');
-                div.style.cssText = 'background:rgba(0,242,255,0.05); border:1px solid #333; padding:8px; margin:5px 0; border-radius:6px; color:#fff; font-size:0.85rem;';
-                div.textContent = `✂️ ${s.name} • ${s.location}`;
-                container.appendChild(div);
-            });
-
-        } catch (err) {
-            console.error('Error cargando barberías:', err);
-            container.textContent = 'Error cargando barberías';
-        }
-    }, () => {
-        container.textContent = 'Permiso de ubicación denegado';
-    });
-}
-
-// 💼 CARGAR BOLSA DE TRABAJO
-async function loadJobBoard() {
-    const container = document.getElementById('job-board');
-    if (!container) return;
-
-    try {
-        const { data, error } = await supabaseClient
-            .from('job_board')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .limit(5);
-
-        if (error) throw error;
-
-        container.innerHTML = '';
-        
-        if (!data || data.length === 0) {
-            container.innerHTML = '<p style="color:#666; text-align:center; font-size:0.8rem;">Sin ofertas activas.</p>';
-            return;
-        }
-
-        data.forEach(job => {
-            const div = document.createElement('div');
-            div.style.cssText = 'background:rgba(0,0,0,0.4); border-left:3px solid var(--neon-pink); padding:10px; margin:8px 0; border-radius:0 6px 6px 0;';
-            
-            const typeIcon = job.type === 'barbero' ? '💈' : '🏪';
-            const typeText = job.type === 'barbero' ? 'Barbero busca trabajo' : 'Barbería busca personal';
-            
-            div.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
-                    <strong style="color:#fff; font-size:0.9rem;">${typeIcon} ${typeText}</strong>
-                    <span style="color:#666; font-size:0.7rem;">${new Date(job.created_at).toLocaleDateString()}</span>
-                </div>
-                <p style="color:#ccc; font-size:0.85rem; margin:5px 0;">${job.description}</p>
-                <a href="https://wa.me/${job.contact}" target="_blank" style="color:var(--neon-cyan); font-size:0.75rem; text-decoration:none;">Contactar →</a>
-            `;
-            container.appendChild(div);
-        });
-
-    } catch (err) {
-        console.error('Error cargando ofertas:', err);
-        container.innerHTML = '<p style="color:#ff3333; text-align:center;">Error cargando ofertas.</p>';
-    }
-}
-
-// 📬 CARGAR NOTIFICACIONES DE MENSAJES
-async function loadMessageNotifications() {
-    const container = document.getElementById('message-notifications');
-    if (!container) return;
-
-    try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) return;
-
-        const { data: messages } = await supabaseClient
-            .from('messages')
-            .select('barber_id, message, created_at, user_name')
-            .eq('is_read', false)
-            .order('created_at', { ascending: false })
-            .limit(5);
-
-        if (!messages || messages.length === 0) {
-            container.innerHTML = '';
-            return;
-        }
-
-        // Agrupar por barbería
-        const barberMap = new Map();
-        messages.forEach(msg => {
-            if (!barberMap.has(msg.barber_id)) {
-                barberMap.set(msg.barber_id, {
-                    count: 0,
-                    last_message: msg.message,
-                    barber_id: msg.barber_id
-                });
-            }
-            barberMap.get(msg.barber_id).count++;
-        });
-
-        // Obtener nombres de barberías
-        const barberIds = Array.from(barberMap.keys());
-        const { data: barbers } = await supabaseClient
-            .from('barbers')
-            .select('id, name')
-            .in('id', barberIds);
-
-        container.innerHTML = '<h3 style="color:var(--neon-cyan); font-size:0.9rem; margin:0 0 10px 0;">📬 Mensajes Nuevos:</h3>';
-        
-        if (barbers) {
-            barbers.forEach(barber => {
-                const data = barberMap.get(barber.id);
-                const div = document.createElement('div');
-                div.style.cssText = 'background:rgba(0,0,0,0.4); padding:8px; margin:5px 0; border-radius:4px; border-left:3px solid var(--neon-cyan); cursor:pointer;';
-                div.onclick = () => {
-                    sessionStorage.setItem('chatBarberId', barber.id);
-                    sessionStorage.setItem('chatBarberName', barber.name);
-                    window.location.href = 'chat.html';
-                };
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <strong style="color:#fff; font-size:0.9rem;">${barber.name}</strong>
-                        <span style="background:var(--neon-pink); color:#fff; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:bold;">${data.count} nuevo${data.count > 1 ? 's' : ''}</span>
-                    </div>
-                    <p style="color:#888; font-size:0.8rem; margin:3px 0 0 0;">"${data.last_message}"</p>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-    } catch (err) {
-        console.error('Error cargando notificaciones:', err);
-    }
-}
-
-// 🚪 CERRAR SESIÓN
-function logout() {
-    supabaseClient.auth.signOut().then(() => {
-        window.location.href = 'index.html';
-    });
-}
-"perfil js completo corregido"
+// 📱 Menú inferior activo
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
