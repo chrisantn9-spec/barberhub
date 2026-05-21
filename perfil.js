@@ -332,3 +332,4 @@ function logout() {
         window.location.href = 'index.html';
     });
 }
+"perfil js completo corregido"
