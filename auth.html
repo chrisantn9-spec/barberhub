@@ -1,130 +1,210 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acceso | BarberHub</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .social-btn { 
+            width:100%; 
+            padding:14px; 
+            margin:6px 0; 
+            border:none; 
+            border-radius:8px; 
+            cursor:pointer; 
+            font-weight:bold; 
+            font-size:1rem; 
+            display:flex; 
+            align-items:center; 
+            justify-content:center; 
+            gap:12px; 
+            transition:all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .social-btn:hover { 
+            transform:translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity:0.95;
+        }
+        .social-btn:active {
+            transform:translateY(0);
+        }
+        .btn-google { background:#fff; color:#333; border:2px solid #ddd; }
+        .btn-facebook { background:#1877F2; color:#fff; border:2px solid #1877F2; }
+        .divider { 
+            text-align:center; 
+            color:#888; 
+            margin:20px 0; 
+            font-size:0.85rem; 
+            position:relative; 
+            font-weight:600;
+        }
+        .divider::before, .divider::after { 
+            content:''; 
+            position:absolute; 
+            top:50%; 
+            width:35%; 
+            height:1px; 
+            background:#444; 
+        }
+        .divider::before { left:0; } 
+        .divider::after { right:0; }
+        .form-input {
+            width:100%; 
+            padding:12px; 
+            margin:6px 0; 
+            background:rgba(0,0,0,0.6); 
+            border:1px solid #444; 
+            color:#fff; 
+            border-radius:6px; 
+            box-sizing:border-box;
+            font-size:0.95rem;
+        }
+        .form-input:focus {
+            outline:none;
+            border-color:var(--neon-cyan);
+        }
+    </style>
 </head>
-<body style="background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh;">
+<body style="background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh; display:flex; align-items:center; justify-content:center; padding:20px;">
 
     <!-- 🌀 LOADER -->
     <div id="cyber-loader">
         <div class="loader-content">
-            <img src="cyber-face.png" alt="Cyber Barber" class="loader-face" onerror="this.style.display='none'">
             <div class="boot-sequence">
-                <p class="line">> VERIFYING CREDENTIALS...</p>
-                <p class="line">> CHECKING USER ROLE...</p>
-                <p class="line">> REDIRECTING...</p>
+                <p class="line">> LOADING AUTH SYSTEM...</p>
+                <p class="line">> CHECKING SESSION...</p>
             </div>
             <div class="progress-container"><div class="progress-bar"></div></div>
-            <p class="status-text">SYSTEM BOOT IN PROGRESS...</p>
         </div>
-        <div class="scanlines"></div>
     </div>
+    <script>setTimeout(() => { const l = document.getElementById('cyber-loader'); if(l) l.remove(); }, 1500);</script>
 
-    <!-- SCRIPT DE CIERRE AUTOMÁTICO -->
-    <script>
-        setTimeout(() => {
-            const l = document.getElementById('cyber-loader');
-            if (l) l.remove();
-        }, 2500);
-    </script>
-
-    <!-- HEADER -->
-    <div style="text-align:center; padding:20px;">
-        <a href="index.html" style="color:#888; text-decoration:none; font-size:0.9rem;">← Volver al Directorio</a>
-    </div>
-
-    <!-- FORMULARIO DE LOGIN -->
-    <div style="max-width:420px; margin:20px auto; padding:30px; background:rgba(15,15,25,0.85); backdrop-filter:blur(12px); border:1px solid var(--neon-cyan); border-radius:15px; box-shadow:0 0 25px rgba(0,242,255,0.15);">
-        <h2 style="color:var(--neon-cyan); margin-bottom:20px; font-family:'Orbitron'; text-align:center; font-size:1.4rem;">🔐 ACCESO SISTEMA</h2>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div style="width:100%; max-width:420px; padding:30px; background:rgba(15,15,25,0.95); backdrop-filter:blur(10px); border:1px solid var(--neon-cyan); border-radius:12px; box-shadow:0 0 30px rgba(0,242,255,0.2);">
         
-      <form id="login-form">
-    <input type="email" id="email" placeholder="📧 Correo Electrónico" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:0.95rem;">
-    <input type="password" id="password" placeholder="🔑 Contraseña" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:0.95rem;">
+        <h2 style="color:var(--neon-cyan); margin-bottom:10px; font-family:'Orbitron'; text-align:center; font-size:1.5rem;">🔐 ACCESO RÁPIDO</h2>
+        <p style="color:#888; text-align:center; margin-bottom:25px; font-size:0.9rem;">Únete a BarberHub en segundos</p>
+        
+        <!-- ✅ BOTONES SOCIALES PRIMERO (LOS MÁS IMPORTANTES) -->
+        <button type="button" onclick="signInWithGoogle()" class="social-btn btn-google">
+            <img src="https://www.google.com/favicon.ico" width="22" alt="G"> 
+            Continuar con Google
+        </button>
+        
+        <button type="button" onclick="signInWithFacebook()" class="social-btn btn-facebook">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" width="22" alt="F" style="filter:invert(1)"> 
+            Continuar con Facebook
+        </button>
 
-    <!-- ✅ BOTÓN GOOGLE (NUEVO) -->
-    <button type="button" onclick="signInWithGoogle()" style="width:100%; padding:12px; margin:8px 0; background:#fff; color:#333; font-weight:bold; border:1px solid #ccc; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
-      <img src="https://www.google.com/favicon.ico" width="18" alt="G">
-      Continuar con Google
-    </button>
-    <div style="text-align:center; color:#666; margin:5px 0; font-size:0.85rem;">— o —</div>
-<!-- BOTÓN FACEBOOK -->
-<button type="button" onclick="signInWithFacebook()" style="width:100%; padding:12px; margin:8px 0; background:#1877F2; color:#fff; font-weight:bold; border:none; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px;">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" width="20" alt="F" style="filter:invert(1)">
-  Continuar con Facebook
-</button>
+        <div class="divider">o usa tu correo</div>
 
-          
-    <!-- ✅ BOTÓN ENTRAR (SUBMIT) -->
-    <button type="submit" id="btn-login" style="width:100%; padding:12px; background:var(--neon-cyan); color:#000; font-weight:bold; border:none; border-radius:6px; cursor:pointer; margin-top:5px; font-size:1rem;">ENTRAR</button>
-    
-    <p id="error-msg" style="color:#ff3333; font-size:0.85rem; margin-top:10px; display:none; text-align:center;"></p>
-</form>
-        <div style="margin-top:25px; text-align:center; border-top:1px solid #333; padding-top:15px;">
-            <a href="registro.html" style="color:var(--neon-pink); text-decoration:none; display:block; margin-bottom:8px; font-weight:600;">✨ Crear Cuenta Nueva</a>
-            <a href="index.html" style="color:#888; text-decoration:none; display:block; font-size:0.9rem;">🏠 Volver al Inicio</a>
+        <!-- FORMULARIO EMAIL/PASSWORD (SECUNDARIO) -->
+        <form id="login-form">
+            <input type="email" id="email" class="form-input" placeholder="📧 Correo Electrónico" required>
+            <input type="password" id="password" class="form-input" placeholder="🔑 Contraseña" required>
+            
+            <button type="submit" id="btn-login" style="width:100%; padding:12px; background:var(--neon-cyan); color:#000; font-weight:bold; border:none; border-radius:6px; cursor:pointer; margin-top:10px; font-size:1rem;">
+                ENTRAR
+            </button>
+            
+            <p id="error-msg" style="color:#ff3333; font-size:0.85rem; margin-top:10px; display:none; text-align:center;"></p>
+        </form>
+
+        <div style="margin-top:25px; text-align:center; border-top:1px solid #333; padding-top:20px;">
+            <p style="color:#888; margin-bottom:10px;">¿No tienes cuenta?</p>
+            <a href="registro.html" style="display:inline-block; color:var(--neon-pink); text-decoration:none; font-weight:600; padding:8px 16px; border:1px solid var(--neon-pink); border-radius:6px;">✨ Crear Cuenta Nueva</a>
+            <br><br>
+            <a href="index.html" style="color:#666; text-decoration:none; font-size:0.85rem;">🏠 Volver al Inicio</a>
         </div>
     </div>
-<script src="config.js"></script>
-<script>
-  // 🔐 LOGIN CON EMAIL/PASSWORD
-  document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('btn-login');
-    const errorMsg = document.getElementById('error-msg');
-    btn.disabled = true; btn.textContent = 'Verificando...';
-    errorMsg.style.display = 'none';
 
-    try {
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value
-      });
-      if (error) throw error;
-      
-      const role = data.user.user_metadata?.role || 'cliente';
-      window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
-    } catch (err) {
-      errorMsg.textContent = '❌ ' + err.message;
-      errorMsg.style.display = 'block';
-      btn.disabled = false; btn.textContent = 'ENTRAR';
-    }
-  });
+    <script src="config.js"></script>
+    <script>
+        // 🔐 LOGIN CON EMAIL/PASSWORD
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            const err = document.getElementById('error-msg');
+            btn.disabled = true; 
+            btn.textContent = 'Verificando...'; 
+            err.style.display = 'none';
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                });
+                
+                if (error) throw error;
+                
+                const role = data.user.user_metadata?.role || 'cliente';
+                window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+                
+            } catch (e) {
+                err.textContent = '❌ ' + e.message; 
+                err.style.display = 'block';
+                btn.disabled = false; 
+                btn.textContent = 'ENTRAR';
+            }
+        });
 
-  // 🌐 LOGIN CON GOOGLE
-  window.signInWithGoogle = async () => {
-    try {
-      const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: 'https://barberhub-two.vercel.app/perfil-cliente.html'
-        }
-      });
-      if (error) throw error;
-    } catch (err) {
-      alert('❌ Error con Google: ' + err.message);
-    }
-  };
+        // 🌐 LOGIN CON GOOGLE
+        window.signInWithGoogle = async () => {
+            console.log('Iniciando Google login...');
+            try {
+                const { error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { 
+                        redirectTo: window.location.origin + '/perfil-cliente.html',
+                        queryParams: {
+                            access_type: 'offline',
+                            prompt: 'consent'
+                        }
+                    }
+                });
+                if (error) throw error;
+            } catch (e) { 
+                console.error('Error Google:', e);
+                alert('❌ Error con Google: ' + e.message); 
+            }
+        };
 
-  // 🔄 AUTO-LOGIN (Solo si ya hay sesión)
-  window.addEventListener('DOMContentLoaded', async () => {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session && !window.location.href.includes('auth.html')) {
-      const role = session.user.user_metadata?.role || 'cliente';
-      window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
-    }
-  });
-</script>
-   // 📘 FACEBOOK
-window.signInWithFacebook = async () => {
-  try {
-    await supabaseClient.auth.signInWithOAuth({
-      provider: 'facebook',
-      options: { redirectTo: window.location.origin + '/perfil-cliente.html' }
-    });
-  } catch (e) { alert('❌ ' + e.message); }
-};
+        // 📘 LOGIN CON FACEBOOK
+        window.signInWithFacebook = async () => {
+            console.log('Iniciando Facebook login...');
+            try {
+                const { error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'facebook',
+                    options: { 
+                        redirectTo: window.location.origin + '/perfil-cliente.html'
+                    }
+                });
+                if (error) throw error;
+            } catch (e) { 
+                console.error('Error Facebook:', e);
+                alert('❌ Error con Facebook: ' + e.message); 
+            }
+        };
+
+        // 🔄 AUTO-LOGIN (Si ya hay sesión)
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session) {
+                    const role = session.user.user_metadata?.role || 'cliente';
+                    // Solo redirige si no estamos ya en auth.html
+                    if (!window.location.href.includes('auth.html')) {
+                        window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+                    }
+                }
+            } catch (e) {
+                console.error('Error verificando sesión:', e);
+            }
+        });
+    </script>
+</body>
+</html>
