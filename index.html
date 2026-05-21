@@ -144,5 +144,15 @@
     }, 2800); // 2.8s (coincide con la animación de la barra)
   });
 </script>
+    <script>
+  // Oculta el loader cuando termine de cargar la página
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const loader = document.getElementById('cyber-loader');
+      if (loader) loader.classList.add('loader-hidden');
+    }, 2800); // 2.8 segundos para que se vea la animación
+  });
+</script>
+</body>
 </body>
 </html>
