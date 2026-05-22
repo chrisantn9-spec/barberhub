@@ -9,7 +9,7 @@
   <style>
     body { 
       background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); 
-      min-height: 100vh; padding-bottom: 80px; color: #fff;
+      min-height: 100vh; padding-bottom: 80px; color: #fff; font-family: 'Inter', sans-serif;
     }
     .header {
       padding: 20px; text-align: center;
@@ -49,7 +49,7 @@
     
     .menu-list {
       background: rgba(20,20,30,0.8); border-radius: 16px;
-      border: 1px solid rgba(0,242,255,0.2); overflow: hidden;
+      border: 1px solid rgba(0,242,255,0.2); overflow: hidden; margin-bottom: 20px;
     }
     .menu-item {
       display: flex; align-items: center; gap: 15px;
@@ -68,13 +68,145 @@
     .menu-item i:last-child { color: #555; }
     
     .btn-logout {
-      width: 100%; padding: 14px; margin-top: 20px;
+      width: 100%; padding: 14px;
       background: rgba(255,68,68,0.1); color: #ff4444;
       border: 1px solid rgba(255,68,68,0.3);
       border-radius: 12px; cursor: pointer; font-weight: 600;
       display: flex; align-items: center; justify-content: center; gap: 8px;
     }
     .btn-logout:hover { background: rgba(255,68,68,0.2); }
+    
+    /* ===== MODALES ===== */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+      z-index: 2000; justify-content: center; align-items: center; padding: 20px;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: rgba(20,20,30,0.95); border: 1px solid var(--neon-cyan);
+      border-radius: 20px; width: 100%; max-width: 450px;
+      max-height: 85vh; overflow-y: auto; padding: 25px;
+      box-shadow: 0 0 40px rgba(0,242,255,0.2);
+      position: relative;
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; padding-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .modal-header h3 { font-family: 'Orbitron'; color: var(--neon-cyan); margin: 0; }
+    .modal-close {
+      background: none; border: none; color: #888; font-size: 1.5rem;
+      cursor: pointer; padding: 5px; transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--neon-pink); }
+    
+    /* Chat Styles */
+    .chat-list { max-height: 300px; overflow-y: auto; margin-bottom: 15px; }
+    .chat-item {
+      display: flex; gap: 12px; padding: 12px;
+      background: rgba(255,255,255,0.03); border-radius: 10px;
+      margin-bottom: 10px; cursor: pointer; transition: background 0.2s;
+    }
+    .chat-item:hover { background: rgba(0,242,255,0.1); }
+    .chat-avatar {
+      width: 45px; height: 45px; border-radius: 50%;
+      background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; color: #000; flex-shrink: 0;
+    }
+    .chat-info { flex: 1; min-width: 0; }
+    .chat-name { font-weight: 600; margin-bottom: 3px; color: #fff; }
+    .chat-preview { color: #888; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-time { color: #555; font-size: 0.75rem; }
+    
+    .chat-input-area {
+      display: flex; gap: 10px; margin-top: 15px; padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .chat-input-area input {
+      flex: 1; padding: 12px 16px; border-radius: 25px;
+      border: 1px solid rgba(0,242,255,0.3); background: rgba(15,15,25,0.7);
+      color: #fff; font-size: 0.95rem;
+    }
+    .chat-input-area button {
+      padding: 12px 20px; background: var(--neon-cyan);
+      border: none; border-radius: 25px; color: #000;
+      font-weight: 600; cursor: pointer;
+    }
+    
+    /* Historial Styles */
+    .appointment-card {
+      background: rgba(255,255,255,0.03); border-radius: 12px;
+      padding: 15px; margin-bottom: 12px; border-left: 3px solid var(--neon-cyan);
+    }
+    .appointment-card.past { border-left-color: #555; opacity: 0.7; }
+    .appt-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .appt-barber { font-weight: 600; color: #fff; }
+    .appt-date { color: var(--neon-pink); font-size: 0.9rem; font-weight: 500; }
+    .appt-service { color: #ccc; font-size: 0.9rem; margin-bottom: 8px; }
+    .appt-footer { display: flex; justify-content: space-between; align-items: center; }
+    .appt-price { color: var(--neon-cyan); font-weight: bold; }
+    .appt-status {
+      padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 500;
+    }
+    .status-confirmed { background: rgba(0,255,136,0.2); color: #00ff88; }
+    .status-pending { background: rgba(255,170,0,0.2); color: #ffaa00; }
+    .status-cancelled { background: rgba(255,68,68,0.2); color: #ff4444; }
+    
+    /* Form Styles */
+    .form-group { margin-bottom: 18px; }
+    .form-group label {
+      display: block; margin-bottom: 6px; color: #ccc; font-size: 0.9rem;
+    }
+    .form-group input, .form-group select {
+      width: 100%; padding: 12px 16px; border-radius: 10px;
+      border: 1px solid rgba(0,242,255,0.3); background: rgba(15,15,25,0.7);
+      color: #fff; font-size: 1rem; box-sizing: border-box;
+    }
+    .form-group input:focus {
+      outline: none; border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0,242,255,0.2);
+    }
+    
+    /* Toggle Switch */
+    .toggle-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label { color: #fff; font-size: 0.95rem; }
+    .toggle-switch {
+      position: relative; width: 50px; height: 28px; flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background: #333; border-radius: 28px; transition: 0.3s;
+    }
+    .toggle-slider:before {
+      position: absolute; content: ""; height: 22px; width: 22px;
+      left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: 0.3s;
+    }
+    input:checked + .toggle-slider { background: var(--neon-cyan); }
+    input:checked + .toggle-slider:before { transform: translateX(22px); }
+    
+    /* Danger Button */
+    .btn-danger {
+      width: 100%; padding: 12px; margin-top: 10px;
+      background: rgba(255,68,68,0.15); color: #ff4444;
+      border: 1px solid rgba(255,68,68,0.4); border-radius: 10px;
+      cursor: pointer; font-weight: 500; transition: all 0.2s;
+    }
+    .btn-danger:hover { background: rgba(255,68,68,0.25); }
+    
+    .btn-save {
+      width: 100%; padding: 14px; margin-top: 20px;
+      background: linear-gradient(135deg, var(--neon-cyan), #00a3ff);
+      border: none; border-radius: 12px; color: #000;
+      font-weight: 700; font-size: 1rem; cursor: pointer;
+    }
     
     /* Bottom Nav */
     .bottom-nav {
@@ -94,6 +226,10 @@
       color: var(--neon-cyan); background: rgba(0,242,255,0.1);
     }
     .nav-link.active i { text-shadow: 0 0 10px var(--neon-cyan); }
+    
+    /* Loading */
+    .loading { text-align: center; padding: 30px; color: #888; }
+    .loading i { font-size: 2rem; color: var(--neon-cyan); margin-bottom: 10px; }
   </style>
 </head>
 <body>
@@ -115,21 +251,26 @@
       <div class="profile-email" id="profile-email">...</div>
     </div>
     
-    <!-- Menú -->
+    <!-- Menú Principal -->
     <div class="menu-list">
-      <div class="menu-item" onclick="alert('📬 Mensajes: Próximamente')">
+      <div class="menu-item" onclick="openModal('modal-chat')">
         <i class="fas fa-comment-alt"></i>
-        <div class="text"><span>Mensajes</span><small>Notificaciones y chats</small></div>
+        <div class="text"><span>Mensajes</span><small>Chats con tus barberías</small></div>
         <i class="fas fa-chevron-right"></i>
       </div>
-      <div class="menu-item" onclick="alert('📅 Historial: Próximamente')">
+      <div class="menu-item" onclick="openModal('modal-history')">
         <i class="fas fa-history"></i>
         <div class="text"><span>Historial de Cortes</span><small>Ver todas tus reservas</small></div>
         <i class="fas fa-chevron-right"></i>
       </div>
-      <div class="menu-item" onclick="alert('⚙️ Ajustes: Próximamente')">
+      <div class="menu-item" onclick="openModal('modal-settings')">
         <i class="fas fa-cog"></i>
-        <div class="text"><span>Configuración</span><small>Cuenta y privacidad</small></div>
+        <div class="text"><span>Configuración</span><small>Editar perfil y preferencias</small></div>
+        <i class="fas fa-chevron-right"></i>
+      </div>
+      <div class="menu-item" onclick="openModal('modal-privacy')">
+        <i class="fas fa-shield-alt"></i>
+        <div class="text"><span>Cuenta y Privacidad</span><small>Seguridad y datos personales</small></div>
         <i class="fas fa-chevron-right"></i>
       </div>
     </div>
@@ -139,7 +280,130 @@
     </button>
   </main>
   
-  <!-- Bottom Navigation (CORREGIDO) -->
+  <!-- ===== MODALES ===== -->
+  
+  <!-- 💬 Chat Modal -->
+  <div id="modal-chat" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-comment-alt"></i> Mensajes</h3>
+        <button class="modal-close" onclick="closeModal('modal-chat')">&times;</button>
+      </div>
+      <div class="chat-list" id="chat-list">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i><br>Cargando chats...</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chat-message" placeholder="Escribe un mensaje...">
+        <button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 📅 Historial Modal -->
+  <div id="modal-history" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-history"></i> Historial de Cortes</h3>
+        <button class="modal-close" onclick="closeModal('modal-history')">&times;</button>
+      </div>
+      <div id="history-list">
+        <div class="loading"><i class="fas fa-spinner fa-spin"></i><br>Cargando historial...</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ⚙️ Configuración Modal -->
+  <div id="modal-settings" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-cog"></i> Configuración</h3>
+        <button class="modal-close" onclick="closeModal('modal-settings')">&times;</button>
+      </div>
+      <form id="settings-form">
+        <div class="form-group">
+          <label>Nombre Completo</label>
+          <input type="text" id="edit-name" placeholder="Tu nombre">
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="tel" id="edit-phone" placeholder="+34 612 345 678">
+        </div>
+        <div class="form-group">
+          <label>Notificaciones Push</label>
+          <div class="toggle-row">
+            <span class="toggle-label">Recordatorios de cita</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notify-reminder" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <span class="toggle-label">Promociones de barberías</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="notify-promo">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+        <button type="button" class="btn-save" onclick="saveSettings()">💾 Guardar Cambios</button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- 🔐 Privacidad Modal -->
+  <div id="modal-privacy" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-shield-alt"></i> Cuenta y Privacidad</h3>
+        <button class="modal-close" onclick="closeModal('modal-privacy')">&times;</button>
+      </div>
+      
+      <div class="form-group">
+        <label>Correo Electrónico</label>
+        <input type="email" id="privacy-email" disabled style="opacity:0.7; cursor:not-allowed;">
+        <small style="color:#666; font-size:0.75rem;">Para cambiar el email, contacta a soporte</small>
+      </div>
+      
+      <div class="form-group">
+        <label>Contraseña</label>
+        <button type="button" class="btn-save" style="background:rgba(0,242,255,0.2); color:var(--neon-cyan);" onclick="changePassword()">
+          <i class="fas fa-key"></i> Cambiar Contraseña
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label>Datos Personales</label>
+        <div class="toggle-row">
+          <span class="toggle-label">Mostrar mi nombre públicamente</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="privacy-name" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Permitir que barberías me contacten</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="privacy-contact" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <hr style="border-color:rgba(255,255,255,0.1); margin:20px 0;">
+      
+      <div class="form-group">
+        <label style="color:#ff4444;">Zona de Peligro</label>
+        <button type="button" class="btn-danger" onclick="deleteAccount()">
+          <i class="fas fa-trash-alt"></i> Eliminar mi cuenta
+        </button>
+        <small style="color:#666; font-size:0.75rem; display:block; margin-top:8px;">
+          Esta acción es irreversible. Se eliminarán todos tus datos y reservas.
+        </small>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bottom Navigation -->
   <nav class="bottom-nav">
     <a href="perfil-cliente.html" class="nav-link">
       <i class="fas fa-home"></i><span>Inicio</span>
@@ -150,7 +414,6 @@
     <a href="mis-citas.html" class="nav-link">
       <i class="fas fa-calendar-check"></i><span>Citas</span>
     </a>
-    <!-- ✅ Perfil activo -->
     <a href="mi-perfil.html" class="nav-link active">
       <i class="fas fa-user"></i><span>Perfil</span>
     </a>
@@ -158,39 +421,299 @@
   
   <script src="config.js"></script>
   <script>
-    // Cargar datos del usuario
+    // ===== VARIABLES GLOBALES =====
+    let currentUser = null;
+    
+    // ===== INICIALIZACIÓN =====
     document.addEventListener('DOMContentLoaded', async () => {
+      await loadUserProfile();
+      loadChatList(); // Simulado
+      loadHistory();  // Simulado
+    });
+    
+    // ===== CARGAR DATOS DEL USUARIO =====
+    async function loadUserProfile() {
       try {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session?.user) {
-          const user = session.user;
-          document.getElementById('profile-name').textContent = user.user_metadata?.nombre || 'Usuario';
-          document.getElementById('profile-email').textContent = user.email;
+          currentUser = session.user;
+          const meta = currentUser.user_metadata || {};
           
-          // Foto personalizada si existe
-          if (user.user_metadata?.avatar) {
-            document.getElementById('my-avatar').src = user.user_metadata.avatar;
+          document.getElementById('profile-name').textContent = meta.nombre || 'Usuario';
+          document.getElementById('profile-email').textContent = currentUser.email;
+          
+          // Formulario de configuración
+          document.getElementById('edit-name').value = meta.nombre || '';
+          document.getElementById('edit-phone').value = meta.telefono || '';
+          document.getElementById('privacy-email').value = currentUser.email;
+          
+          // Avatar personalizado
+          if (meta.avatar) {
+            document.getElementById('my-avatar').src = meta.avatar;
           }
         }
       } catch (err) {
         console.error('Error cargando perfil:', err);
       }
+    }
+    
+    // ===== MODALES =====
+    window.openModal = (modalId) => {
+      document.getElementById(modalId).classList.add('active');
+      document.body.style.overflow = 'hidden'; // Evitar scroll
+    };
+    
+    window.closeModal = (modalId) => {
+      document.getElementById(modalId).classList.remove('active');
+      document.body.style.overflow = '';
+    };
+    
+    // Cerrar modal al hacer clic fuera
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
     });
     
-    // Previsualizar foto
-    window.previewImage = (event) => {
+    // ===== CHAT (Simulado) =====
+    function loadChatList() {
+      const list = document.getElementById('chat-list');
+      // Datos de ejemplo
+      const chats = [
+        { name: "CyberCuts Studio", preview: "¡Tu cita está confirmada para mañana!", time: "10:30", unread: true },
+        { name: "Neon Barber", preview: "Gracias por tu reserva 🙌", time: "Ayer", unread: false },
+        { name: "Urban Blade", preview: "¿Necesitas reprogramar?", time: "Lun", unread: false }
+      ];
+      
+      list.innerHTML = chats.map(c => `
+        <div class="chat-item">
+          <div class="chat-avatar">${c.name.charAt(0)}</div>
+          <div class="chat-info">
+            <div style="display:flex; justify-content:space-between;">
+              <span class="chat-name">${c.name}</span>
+              <span class="chat-time">${c.time}</span>
+            </div>
+            <div class="chat-preview">${c.preview}</div>
+          </div>
+          ${c.unread ? '<span style="background:var(--neon-cyan); color:#000; width:8px; height:8px; border-radius:50%; margin-left:5px;"></span>' : ''}
+        </div>
+      `).join('');
+    }
+    
+    function sendChatMessage() {
+      const input = document.getElementById('chat-message');
+      const msg = input.value.trim();
+      if (msg) {
+        alert(`📤 Mensaje enviado: "${msg}"\n\n(En producción, esto se enviaría vía Supabase Realtime)`);
+        input.value = '';
+      }
+    }
+    
+    // ===== HISTORIAL (Simulado con opción real) =====
+    async function loadHistory() {
+      const container = document.getElementById('history-list');
+      
+      try {
+        // Intentar cargar de Supabase (si existe la tabla appointments)
+        const { data, error } = await supabaseClient
+          .from('appointments')
+          .select('*, barbers(name, location)')
+          .eq('user_id', currentUser?.id)
+          .order('created_at', { ascending: false })
+          .limit(10);
+        
+        if (error || !data?.length) {
+          // Datos de ejemplo si no hay historial real
+          container.innerHTML = `
+            <div class="appointment-card">
+              <div class="appt-header">
+                <span class="appt-barber">CyberCuts Studio</span>
+                <span class="appt-date">24 May, 16:00</span>
+              </div>
+              <div class="appt-service">Corte Clásico + Barba</div>
+              <div class="appt-footer">
+                <span class="appt-price">$22</span>
+                <span class="appt-status status-confirmed">Confirmado</span>
+              </div>
+            </div>
+            <div class="appointment-card past">
+              <div class="appt-header">
+                <span class="appt-barber">Neon Barber Shop</span>
+                <span class="appt-date">10 May, 11:30</span>
+              </div>
+              <div class="appt-service">Corte Fade</div>
+              <div class="appt-footer">
+                <span class="appt-price">$18</span>
+                <span class="appt-status status-confirmed">Completado</span>
+              </div>
+            </div>
+            <p style="text-align:center; color:#666; font-size:0.85rem; margin-top:15px;">
+              <i class="fas fa-info-circle"></i> Historial de ejemplo. Conéctalo a tu tabla 'appointments' para datos reales.
+            </p>
+          `;
+          return;
+        }
+        
+        // Renderizar datos reales
+        container.innerHTML = data.map(appt => {
+          const isPast = new Date(appt.appointment_date) < new Date();
+          return `
+            <div class="appointment-card ${isPast ? 'past' : ''}">
+              <div class="appt-header">
+                <span class="appt-barber">${appt.barbers?.name || 'Barbería'}</span>
+                <span class="appt-date">${new Date(appt.appointment_date).toLocaleDateString('es-ES', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' })}</span>
+              </div>
+              <div class="appt-service">${appt.service || 'Servicio'}</div>
+              <div class="appt-footer">
+                <span class="appt-price">$${appt.price || '0'}</span>
+                <span class="appt-status status-${appt.status || 'pending'}">
+                  ${appt.status === 'confirmed' ? 'Confirmado' : appt.status === 'completed' ? 'Completado' : 'Pendiente'}
+                </span>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+      } catch (err) {
+        console.error('Error cargando historial:', err);
+        container.innerHTML = '<p style="text-align:center; color:#ff4444;">Error cargando historial</p>';
+      }
+    }
+    
+    // ===== CONFIGURACIÓN =====
+    async function saveSettings() {
+      const name = document.getElementById('edit-name').value.trim();
+      const phone = document.getElementById('edit-phone').value.trim();
+      const notifyReminder = document.getElementById('notify-reminder').checked;
+      const notifyPromo = document.getElementById('notify-promo').checked;
+      
+      if (!name) {
+        alert('⚠️ El nombre es obligatorio');
+        return;
+      }
+      
+      try {
+        const { error } = await supabaseClient.auth.updateUser({
+          data: {
+            nombre: name,
+            telefono: phone,
+            notifications: { reminder: notifyReminder, promo: notifyPromo }
+          }
+        });
+        
+        if (error) throw error;
+        
+        // Actualizar UI
+        document.getElementById('profile-name').textContent = name;
+        closeModal('modal-settings');
+        alert('✅ Configuración guardada');
+        
+      } catch (err) {
+        alert('❌ Error: ' + err.message);
+      }
+    }
+    
+    function changePassword() {
+      const newPass = prompt('Ingresa tu nueva contraseña (mínimo 6 caracteres):');
+      if (newPass && newPass.length >= 6) {
+        supabaseClient.auth.updateUser({ password: newPass })
+          .then(({ error }) => {
+            if (error) throw error;
+            alert('✅ Contraseña actualizada');
+          })
+          .catch(err => alert('❌ Error: ' + err.message));
+      } else if (newPass) {
+        alert('⚠️ La contraseña debe tener al menos 6 caracteres');
+      }
+    }
+    
+    // ===== PRIVACIDAD =====
+    async function deleteAccount() {
+      if (!confirm('⚠️ ¿Estás 100% seguro?\n\nEsta acción eliminará:\n• Tu cuenta de usuario\n• Todas tus reservas\n• Tus mensajes y datos personales\n\nNO se puede deshacer.')) {
+        return;
+      }
+      
+      const confirmText = prompt('Escribe "ELIMINAR" para confirmar:');
+      if (confirmText !== 'ELIMINAR') {
+        alert('❌ Operación cancelada');
+        return;
+      }
+      
+      try {
+        // 1. Eliminar citas asociadas
+        await supabaseClient.from('appointments').delete().eq('user_id', currentUser.id);
+        
+        // 2. Eliminar pagos asociados
+        await supabaseClient.from('payments').delete().eq('user_id', currentUser.id);
+        
+        // 3. Eliminar cuenta de usuario (requiere confirmación por email en Supabase)
+        const { error } = await supabaseClient.auth.admin.deleteUser(currentUser.id);
+        
+        if (error) throw error;
+        
+        alert('✅ Cuenta eliminada. Serás redirigido...');
+        await supabaseClient.auth.signOut();
+        window.location.href = 'auth.html';
+        
+      } catch (err) {
+        // Si no tienes permisos de admin, usar método alternativo
+        if (err.message.includes('admin')) {
+          alert('ℹ️ Para eliminar tu cuenta, contacta a soporte o usa la opción "Cerrar sesión y eliminar datos" en Configuración.');
+          // Alternativa: marcar como inactivo
+          await supabaseClient.auth.updateUser({ data: { deleted: true } });
+          await supabaseClient.auth.signOut();
+          window.location.href = 'auth.html';
+        } else {
+          alert('❌ Error: ' + err.message);
+        }
+      }
+    }
+    
+    // ===== AVATAR =====
+    window.previewImage = async (event) => {
       const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          document.getElementById('my-avatar').src = e.target.result;
-          // Aquí podrías subir a Supabase Storage si quieres
-        };
-        reader.readAsDataURL(file);
+      if (!file) return;
+      
+      if (file.size > 2 * 1024 * 1024) {
+        alert('❌ La imagen debe pesar menos de 2MB');
+        return;
+      }
+      
+      // Previsualizar
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('my-avatar').src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+      
+      // Subir a Supabase Storage (opcional)
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `avatars/${currentUser.id}_${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabaseClient.storage
+          .from('profile-avatars')
+          .upload(fileName, file, { upsert: true });
+        
+        if (uploadError) throw uploadError;
+        
+        const { data: { publicUrl } } = supabaseClient.storage
+          .from('profile-avatars')
+          .getPublicUrl(fileName);
+        
+        // Guardar URL en perfil
+        await supabaseClient.auth.updateUser({ data: { avatar: publicUrl } });
+        
+      } catch (err) {
+        console.warn('No se pudo subir la foto:', err.message);
+        // La previsualización local ya funciona aunque falle la subida
       }
     };
     
-    // Logout
+    // ===== LOGOUT =====
     window.doLogout = async () => {
       if (confirm('¿Cerrar sesión?')) {
         await supabaseClient.auth.signOut();
