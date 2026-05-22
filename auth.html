@@ -228,6 +228,7 @@
         showError('❌ Error con Google: ' + err.message)
       }
     }
+  
     
     window.showError = (message) => {
       const el = document.getElementById('error-msg')
@@ -286,6 +287,69 @@
         btn.textContent = 'ENTRAR'
       }
     })
+//  Funciones de verificación por teléfono
+window.sendPhoneOTP = async () => {
+  const phone = document.getElementById('phone-input').value.replace(/[\s\-\(\)]/g, '');
+  const msgEl = document.getElementById('phone-msg');
+  
+  if (!phone.startsWith('+') || phone.length < 10) {
+    msgEl.textContent = '⚠️ Formato inválido. Usa: +34612345678';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  msgEl.textContent = '⏳ Enviando SMS...';
+  msgEl.style.display = 'block';
+
+  const { error } = await window.supabaseClient.auth.signInWithOtp({ phone });
+  
+  if (error) {
+    msgEl.textContent = '❌ ' + error.message;
+  } else {
+    document.getElementById('phone-step-1').style.display = 'none';
+    document.getElementById('phone-step-2').style.display = 'block';
+    document.getElementById('phone-display').textContent = phone;
+    msgEl.textContent = '✅ Revisa tu SMS (o la tabla auth.users en modo test)';
+  }
+};
+
+window.verifyPhoneOTP = async () => {
+  const phone = document.getElementById('phone-input').value.replace(/[\s\-\(\)]/g, '');
+  const token = document.getElementById('otp-input').value;
+  const msgEl = document.getElementById('phone-msg');
+
+  if (!token || token.length !== 6) {
+    msgEl.textContent = '⚠️ Ingresa el código de 6 dígitos';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  msgEl.textContent = '⏳ Verificando...';
+  const { data, error } = await window.supabaseClient.auth.verifyOtp({
+    phone,
+    token,
+    type: 'sms'
+  });
+
+  if (error) {
+    msgEl.textContent = '❌ ' + error.message;
+  } else {
+    msgEl.textContent = '🎉 ¡Verificado! Redirigiendo...';
+    // Guarda sesión y redirige como ya haces con Google
+    const role = data.user.user_metadata?.role || 'cliente';
+    setTimeout(() => {
+      window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+    }, 1200);
+  }
+};
+
+window.resetPhoneAuth = () => {
+  document.getElementById('phone-step-1').style.display = 'block';
+  document.getElementById('phone-step-2').style.display = 'none';
+  document.getElementById('phone-input').value = '';
+  document.getElementById('otp-input').value = '';
+  document.getElementById('phone-msg').style.display = 'none';
+};
     
     // 4. Auto-login al cargar
     window.addEventListener('DOMContentLoaded', async () => {
