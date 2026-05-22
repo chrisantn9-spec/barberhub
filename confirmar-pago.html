@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Pago - BarberHub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="payment-container">
+    <div class="payment-card">
+      <h1>Confirmar Reserva</h1>
+      
+      <div class="appointment-summary">
+        <h3>Resumen de la Cita</h3>
+        <p><strong>Servicio:</strong> <span id="service-name">Corte de Cabello</span></p>
+        <p><strong>Barbero:</strong> <span id="barber-name">CyberCuts Studio</span></p>
+        <p><strong>Fecha:</strong> <span id="appointment-date">Viernes, 24 Mayo</span></p>
+        <p><strong>Hora:</strong> <span id="appointment-time">16:00</span></p>
+        <hr>
+        <p class="total"><strong>Total:</strong> <span class="price">$15.00 USD</span></p>
+      </div>
+
+      <div class="payment-methods">
+        <h3>Método de Pago</h3>
+        
+        <button class="crypto-btn" onclick="payWithCrypto('USDT')">
+          <i class="fas fa-coins"></i>
+          <div>
+            <strong>USDT (Tether)</strong>
+            <small>Fee: ~$1 • Red: Polygon</small>
+          </div>
+        </button>
+
+        <button class="crypto-btn" onclick="payWithCrypto('USDC')">
+          <i class="fas fa-dollar-sign"></i>
+          <div>
+            <strong>USDC</strong>
+            <small>Fee: ~$0.01 • Red: Solana</small>
+          </div>
+        </button>
+
+        <button class="crypto-btn" onclick="payWithCrypto('SOL')">
+          <i class="fab fa-solana"></i>
+          <div>
+            <strong>Solana (SOL)</strong>
+            <small>Fee: $0.00025 • Rápido</small>
+          </div>
+        </button>
+
+        <button class="crypto-btn" onclick="payWithCrypto('BTC')">
+          <i class="fab fa-bitcoin"></i>
+          <div>
+            <strong>Bitcoin (BTC)</strong>
+            <small>Fee: ~$5-15</small>
+          </div>
+        </button>
+      </div>
+
+      <div id="payment-loading" style="display:none; text-align:center; padding:20px;">
+        <i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--neon-cyan);"></i>
+        <p>Creando pago seguro...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    // Obtener datos de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const appointmentId = urlParams.get('id');
+    const amount = parseFloat(urlParams.get('amount')) || 15.00;
+
+    window.payWithCrypto = async (crypto) => {
+      const loadingDiv = document.getElementById('payment-loading');
+      loadingDiv.style.display = 'block';
+
+      try {
+        const response = await fetch('/api/create-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: amount,
+            orderId: appointmentId,
+            preferredCrypto: crypto
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        // Guardar en Supabase
+        const { error: dbError } = await supabaseClient
+          .from('payments')
+          .insert({
+            appointment_id: appointmentId,
+            amount: amount,
+            currency: 'USD',
+            payment_id: data.paymentId,
+            payment_url: data.paymentUrl,
+            payment_status: 'pending'
+          });
+
+        if (dbError) throw dbError;
+
+        // Redirigir a NowPayments
+        window.location.href = data.paymentUrl;
+
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al crear el pago: ' + error.message);
+        loadingDiv.style.display = 'none';
+      }
+    };
+  </script>
+</body>
+</html>
