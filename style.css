@@ -874,3 +874,112 @@ header h1 {
   border: 1px solid rgba(255, 50, 50, 0.3);
   border-radius: 12px; cursor: pointer; font-weight: 600;
 }
+.payment-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--dark-bg);
+}
+
+.payment-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 2px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+}
+
+.payment-card h1 {
+  font-family: 'Orbitron', sans-serif;
+  text-align: center;
+  margin-bottom: 24px;
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+}
+
+.appointment-summary {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.appointment-summary h3 {
+  margin-bottom: 12px;
+  color: var(--neon-cyan);
+}
+
+.appointment-summary p {
+  margin: 8px 0;
+  color: #ccc;
+}
+
+.appointment-summary hr {
+  border: none;
+  border-top: 1px solid var(--glass-border);
+  margin: 12px 0;
+}
+
+.total {
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.total .price {
+  color: var(--neon-cyan);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.payment-methods h3 {
+  margin-bottom: 16px;
+  color: var(--neon-cyan);
+}
+
+.crypto-btn {
+  width: 100%;
+  padding: 16px;
+  margin: 8px 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--glass-border);
+  border-radius: 12px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: left;
+}
+
+.crypto-btn:hover {
+  background: rgba(0, 242, 255, 0.1);
+  border-color: var(--neon-cyan);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 242, 255, 0.2);
+}
+
+.crypto-btn i {
+  font-size: 2rem;
+  color: var(--neon-cyan);
+}
+
+.crypto-btn div {
+  display: flex;
+  flex-direction: column;
+}
+
+.crypto-btn strong {
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+
+.crypto-btn small {
+  font-size: 0.8rem;
+  color: #888;
+}
