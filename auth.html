@@ -248,7 +248,32 @@
       
       const email = document.getElementById('email').value.trim()
       const password = document.getElementById('password').value
-      
+      <!-- 📱 VERIFICACIÓN POR TELÉFONO -->
+<div class="divider"><span>O verifica tu teléfono</span></div>
+
+<div id="phone-auth">
+  <div id="phone-step-1">
+    <div class="form-group">
+      <label for="phone-input">Número de teléfono</label>
+      <input type="tel" id="phone-input" placeholder="+34 612 345 678" required>
+      <small style="color:#888; font-size:0.8rem;">Incluye código de país (ej: +34, +52, +57)</small>
+    </div>
+    <button type="button" onclick="sendPhoneOTP()" class="btn-primary">📤 Enviar Código SMS</button>
+  </div>
+
+  <div id="phone-step-2" style="display:none;">
+    <p style="color:#ccc; font-size:0.9rem; margin-bottom:10px;">
+      Código enviado a <span id="phone-display" style="color:var(--neon-cyan);"></span>
+    </p>
+    <div class="form-group">
+      <input type="text" id="otp-input" placeholder="123456" maxlength="6" inputmode="numeric" pattern="[0-9]*">
+    </div>
+    <button type="button" onclick="verifyPhoneOTP()" class="btn-primary">✅ Verificar Código</button>
+    <button type="button" onclick="resetPhoneAuth()" class="btn-secondary">Cambiar número</button>
+  </div>
+
+  <div id="phone-msg" class="error-message" style="margin-top:10px;"></div>
+</div>
       try {
         const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password })
         if (error) throw error
