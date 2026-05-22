@@ -11,14 +11,16 @@
   
   <!-- Iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- 🌍 International Phone Input -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
-<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+  
+  <!-- 🌍 International Phone Input (Librerías) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+  
   <!-- Tu CSS principal -->
   <link rel="stylesheet" href="style.css">
   
   <style>
-    /* Estilos específicos para login (igual que antes) */
+    /* Estilos específicos para login */
     .auth-container {
       min-height: 100vh;
       display: flex;
@@ -95,13 +97,23 @@
       transition: filter 0.2s;
       margin-bottom: 20px;
     }
-    .btn-primary:hover:not(:disabled) {
-      filter: brightness(1.1);
+    .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    
+    .btn-secondary {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #aaa;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: all 0.2s;
     }
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    
     .divider {
       text-align: center;
       margin: 24px 0;
@@ -122,11 +134,7 @@
       font-size: 0.85rem;
       position: relative;
     }
-    .social-login {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    .social-login { display: flex; flex-direction: column; gap: 12px; }
     .btn-social {
       width: 100%;
       padding: 12px;
@@ -156,38 +164,112 @@
       text-decoration: none;
       font-weight: 600;
     }
+    
+    /* Estilos para el input de teléfono con bandera */
+    .iti { width: 100%; }
+    .iti__country-list {
+      background: #1a1a2e;
+      border: 1px solid rgba(0,242,255,0.2);
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 242, 255, 0.2);
+    }
+    .iti__country { padding: 8px 12px; color: #fff; }
+    .iti__country:hover { background: rgba(0, 242, 255, 0.1); }
+    .iti__highlight { background: rgba(0, 242, 255, 0.2) !important; }
+    .iti__dial-code { color: #888; }
+    #phone-input {
+      width: 100%;
+      padding: 12px 12px 12px 52px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(0, 242, 255, 0.2);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    #phone-input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+      outline: none;
+    }
+    #otp-input {
+      text-align: center;
+      font-size: 1.5rem;
+      letter-spacing: 5px;
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(0,242,255,0.2);
+      border-radius: 10px;
+      color: #fff;
+    }
+    #otp-input:focus {
+      border-color: var(--neon-cyan);
+      outline: none;
+    }
+    #phone-display { color: var(--neon-cyan); font-weight: bold; }
   </style>
 </head>
 <body>
   <div class="auth-container">
     <div class="login-box">
       <!-- 🧑💻 Logo Cyberpunk -->
-<img src="cyber-face.png" alt="BarberHub Logo" class="welcome-logo">
-<h2>Bienvenido</h2>
+      <img src="cyber-face.png" alt="BarberHub Logo" class="welcome-logo" style="width:85px; margin:0 auto 15px; display:block;">
+      <h2>Bienvenido</h2>
       <p class="subtitle">Inicia sesión en BarberHub</p>
       
       <div id="error-msg" class="error-message"></div>
       
+      <!-- FORMULARIO EMAIL/PASSWORD -->
       <form id="login-form">
         <div class="form-group">
           <label for="email">Correo electrónico</label>
           <input type="email" id="email" placeholder="tu@email.com" required autocomplete="email">
         </div>
-        
         <div class="form-group">
           <label for="password">Contraseña</label>
           <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
         </div>
-        
         <button type="submit" id="btn-login" class="btn-primary">ENTRAR</button>
       </form>
       
       <div class="divider"><span>O continúa con</span></div>
       
+      <!-- GOOGLE LOGIN -->
       <div class="social-login">
         <button class="btn-social google" onclick="signInWithGoogle()">
           <i class="fab fa-google"></i> Google
         </button>
+      </div>
+      
+      <!-- 📱 DIVIDER PARA TELÉFONO -->
+      <div class="divider"><span>O verifica tu teléfono</span></div>
+      
+      <!-- 📱 SECCIÓN DE TELÉFONO (AHORA EN EL BODY, NO EN JS) -->
+      <div id="phone-auth">
+        <div id="phone-step-1">
+          <div class="form-group">
+            <label for="phone-input">Número de teléfono <span style="color:var(--neon-pink);">*</span></label>
+            <input type="tel" id="phone-input" placeholder="+34 612 345 678" required>
+            <small style="color:#888; font-size:0.8rem;">
+              <i class="fas fa-info-circle"></i> Selecciona tu país e ingresa tu número
+            </small>
+          </div>
+          <button type="button" onclick="sendPhoneOTP()" class="btn-primary">📤 Enviar Código por SMS</button>
+        </div>
+
+        <div id="phone-step-2" style="display:none;">
+          <p style="color:#ccc; font-size:0.9rem; margin-bottom:10px;">
+            Código enviado a <span id="phone-display"></span>
+          </p>
+          <div class="form-group">
+            <label for="otp-input">Código de verificación <span style="color:var(--neon-pink);">*</span></label>
+            <input type="text" id="otp-input" placeholder="123456" maxlength="6" inputmode="numeric">
+          </div>
+          <button type="button" onclick="verifyPhoneOTP()" class="btn-primary">✅ Verificar Código</button>
+          <button type="button" onclick="resetPhoneAuth()" class="btn-secondary">Cambiar número</button>
+        </div>
+        <div id="phone-msg" class="error-message" style="margin-top:10px;"></div>
       </div>
       
       <div class="register-link">
@@ -200,24 +282,30 @@
        SCRIPTS - ORDEN CRÍTICO
        ======================================== -->
   
-  <!-- 1. Primero: Configurar Supabase (DEBE ir antes que cualquier uso) -->
+  <!-- 1. Configurar Supabase -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
     
     const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MzE5NjQsImV4cCI6MjA2MzMwNzk2NH0.6X8wvGv7VZvZvZvZvZvZvZvZvZvZvZvZvZvZvZvZvZ' // ← Tu key real
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MzE5NjQsImV4cCI6MjA2MzMwNzk2NH0.6X8wvGv7VZvZvZvZvZvZvZvZvZvZvZvZvZvZvZvZvZ'
     
     window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true
-      }
+      auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true }
     })
     
     console.log('✅ Supabase client initialized')
     
-    // 2. Funciones de login (ahora que supabaseClient existe)
+    // Función para mostrar errores
+    window.showError = (message) => {
+      const el = document.getElementById('error-msg')
+      if (el) {
+        el.textContent = message
+        el.style.display = 'block'
+        setTimeout(() => { el.style.display = 'none' }, 5000)
+      }
+    }
+    
+    // Login con Google
     window.signInWithGoogle = async () => {
       try {
         const { error } = await window.supabaseClient.auth.signInWithOAuth({
@@ -230,17 +318,9 @@
         showError('❌ Error con Google: ' + err.message)
       }
     }
-  
     
-    window.showError = (message) => {
-      const el = document.getElementById('error-msg')
-      el.textContent = message
-      el.style.display = 'block'
-      setTimeout(() => { el.style.display = 'none' }, 5000)
-    }
-    
-    // 3. Manejar formulario
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
+    // Login con email/password
+    document.getElementById('login-form')?.addEventListener('submit', async (e) => {
       e.preventDefault()
       const btn = document.getElementById('btn-login')
       const errorMsg = document.getElementById('error-msg')
@@ -251,32 +331,7 @@
       
       const email = document.getElementById('email').value.trim()
       const password = document.getElementById('password').value
-      <!-- 📱 VERIFICACIÓN POR TELÉFONO -->
-<div class="divider"><span>O verifica tu teléfono</span></div>
-
-<div id="phone-auth">
-  <div id="phone-step-1">
-    <div class="form-group">
-      <label for="phone-input">Número de teléfono</label>
-      <input type="tel" id="phone-input" placeholder="+34 612 345 678" required>
-      <small style="color:#888; font-size:0.8rem;">Incluye código de país (ej: +34, +52, +57)</small>
-    </div>
-    <button type="button" onclick="sendPhoneOTP()" class="btn-primary">📤 Enviar Código SMS</button>
-  </div>
-
-  <div id="phone-step-2" style="display:none;">
-    <p style="color:#ccc; font-size:0.9rem; margin-bottom:10px;">
-      Código enviado a <span id="phone-display" style="color:var(--neon-cyan);"></span>
-    </p>
-    <div class="form-group">
-      <input type="text" id="otp-input" placeholder="123456" maxlength="6" inputmode="numeric" pattern="[0-9]*">
-    </div>
-    <button type="button" onclick="verifyPhoneOTP()" class="btn-primary">✅ Verificar Código</button>
-    <button type="button" onclick="resetPhoneAuth()" class="btn-secondary">Cambiar número</button>
-  </div>
-
-  <div id="phone-msg" class="error-message" style="margin-top:10px;"></div>
-</div>
+      
       try {
         const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password })
         if (error) throw error
@@ -289,153 +344,8 @@
         btn.textContent = 'ENTRAR'
       }
     })
-//  Funciones de verificación por teléfono
-window.sendPhoneOTP = async () => {
-  const phone = document.getElementById('phone-input').value.replace(/[\s\-\(\)]/g, '');
-  const msgEl = document.getElementById('phone-msg');
-  
-  if (!phone.startsWith('+') || phone.length < 10) {
-    msgEl.textContent = '⚠️ Formato inválido. Usa: +34612345678';
-    msgEl.style.display = 'block';
-    return;
-  }
-
-  msgEl.textContent = '⏳ Enviando SMS...';
-  msgEl.style.display = 'block';
-
-  const { error } = await window.supabaseClient.auth.signInWithOtp({ phone });
-  
-  if (error) {
-    msgEl.textContent = '❌ ' + error.message;
-  } else {
-    document.getElementById('phone-step-1').style.display = 'none';
-    document.getElementById('phone-step-2').style.display = 'block';
-    document.getElementById('phone-display').textContent = phone;
-    msgEl.textContent = '✅ Revisa tu SMS (o la tabla auth.users en modo test)';
-  }
-};
-
-// Inicializar input internacional
-let phoneInputInstance;
-document.addEventListener('DOMContentLoaded', function() {
-  const phoneInput = document.getElementById('phone-input');
-  if (phoneInput && typeof intlTelInput !== 'undefined') {
-    phoneInputInstance = intlTelInput(phoneInput, {
-      initialCountry: "auto",
-      geoIpLookup: function(callback) {
-        fetch('https://ipapi.co/json')
-          .then(res => res.json())
-          .then(data => callback(data.country_code))
-          .catch(() => callback("es"));
-      },
-      preferredCountries: ["es", "mx", "co", "ar", "us"],
-      separateDialCode: true,
-      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
-    });
-  }
-});
-
-window.sendPhoneOTP = async () => {
-  const msgEl = document.getElementById('phone-msg');
-  
-  if (!phoneInputInstance) {
-    msgEl.textContent = '⚠️ Error: Input no inicializado';
-    msgEl.style.display = 'block';
-    return;
-  }
-
-  // Obtener número completo con código de país
-  const phoneNumber = phoneInputInstance.getNumber();
-  
-  if (!phoneNumber || phoneNumber.length < 10) {
-    msgEl.textContent = '⚠️ Ingresa un número de teléfono válido';
-    msgEl.style.color = '#ff4444';
-    msgEl.style.display = 'block';
-    return;
-  }
-
-  msgEl.textContent = '⏳ Enviando SMS...';
-  msgEl.style.color = '#00f2ff';
-  msgEl.style.display = 'block';
-
-  const { error } = await window.supabaseClient.auth.signInWithOtp({ 
-    phone: phoneNumber 
-  });
-  
-  if (error) {
-    msgEl.textContent = '❌ ' + error.message;
-    msgEl.style.color = '#ff4444';
-  } else {
-    document.getElementById('phone-step-1').style.display = 'none';
-    document.getElementById('phone-step-2').style.display = 'block';
-    document.getElementById('phone-display').textContent = phoneNumber;
-    msgEl.textContent = '✅ Revisa tu SMS';
-    msgEl.style.color = '#00ff88';
-  }
-};
-
-window.verifyPhoneOTP = async () => {
-  const phoneInput = document.getElementById('phone-input');
-  const phoneNumber = phoneInputInstance ? phoneInputInstance.getNumber() : phoneInput.value;
-  const token = document.getElementById('otp-input').value;
-  const msgEl = document.getElementById('phone-msg');
-
-  if (!token || token.length !== 6) {
-    msgEl.textContent = '⚠️ Ingresa el código de 6 dígitos';
-    msgEl.style.color = '#ffaa00';
-    msgEl.style.display = 'block';
-    return;
-  }
-
-  msgEl.textContent = '⏳ Verificando...';
-  msgEl.style.color = '#00f2ff';
-  
-  const { data, error } = await window.supabaseClient.auth.verifyOtp({
-    phone: phoneNumber,
-    token: token,
-    type: 'sms'
-  });
-
-  if (error) {
-    msgEl.textContent = '❌ Código inválido o expirado';
-    msgEl.style.color = '#ff4444';
-  } else {
-    msgEl.textContent = '🎉 ¡Verificado! Redirigiendo...';
-    msgEl.style.color = '#00ff88';
     
-    const role = data.user.user_metadata?.role || 'cliente';
-    setTimeout(() => {
-      window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
-    }, 1200);
-  }
-};
-
-window.resetPhoneAuth = () => {
-  document.getElementById('phone-step-1').style.display = 'block';
-  document.getElementById('phone-step-2').style.display = 'none';
-  document.getElementById('otp-input').value = '';
-  document.getElementById('phone-msg').style.display = 'none';
-  if (phoneInputInstance) {
-    phoneInputInstance.setNumber('');
-  }
-};
-    // Guarda sesión y redirige como ya haces con Google
-    const role = data.user.user_metadata?.role || 'cliente';
-    setTimeout(() => {
-      window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
-    }, 1200);
-  }
-};
-
-window.resetPhoneAuth = () => {
-  document.getElementById('phone-step-1').style.display = 'block';
-  document.getElementById('phone-step-2').style.display = 'none';
-  document.getElementById('phone-input').value = '';
-  document.getElementById('otp-input').value = '';
-  document.getElementById('phone-msg').style.display = 'none';
-};
-    
-    // 4. Auto-login al cargar
+    // Auto-login al cargar
     window.addEventListener('DOMContentLoaded', async () => {
       try {
         const { data: { session } } = await window.supabaseClient.auth.getSession()
@@ -447,6 +357,122 @@ window.resetPhoneAuth = () => {
         console.error('Error verificando sesión:', err)
       }
     })
+  </script>
+  
+  <!-- 2. Scripts para teléfono (FUERA del module, como script normal) -->
+  <script>
+    let phoneInputInstance = null;
+    
+    // Inicializar input internacional cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      const phoneInput = document.getElementById('phone-input');
+      if (phoneInput && typeof intlTelInput !== 'undefined') {
+        phoneInputInstance = intlTelInput(phoneInput, {
+          initialCountry: "auto",
+          geoIpLookup: function(callback) {
+            fetch('https://ipapi.co/json')
+              .then(res => res.json())
+              .then(data => callback(data.country_code))
+              .catch(() => callback("es"));
+          },
+          preferredCountries: ["es", "mx", "co", "ar", "us"],
+          separateDialCode: true,
+          utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
+        });
+      }
+    });
+    
+    window.sendPhoneOTP = async () => {
+      const msgEl = document.getElementById('phone-msg');
+      
+      if (!phoneInputInstance) {
+        msgEl.textContent = '⚠️ Error: Cargando selector de países...';
+        msgEl.style.display = 'block';
+        return;
+      }
+      
+      const phoneNumber = phoneInputInstance.getNumber();
+      
+      if (!phoneNumber || phoneNumber.length < 10) {
+        msgEl.textContent = '⚠️ Ingresa un número válido con código de país';
+        msgEl.style.color = '#ff4444';
+        msgEl.style.display = 'block';
+        return;
+      }
+      
+      msgEl.textContent = '⏳ Enviando SMS...';
+      msgEl.style.color = '#00f2ff';
+      msgEl.style.display = 'block';
+      
+      try {
+        const { error } = await window.supabaseClient.auth.signInWithOtp({ phone: phoneNumber });
+        
+        if (error) {
+          msgEl.textContent = '❌ ' + error.message;
+          msgEl.style.color = '#ff4444';
+        } else {
+          document.getElementById('phone-step-1').style.display = 'none';
+          document.getElementById('phone-step-2').style.display = 'block';
+          document.getElementById('phone-display').textContent = phoneNumber;
+          msgEl.textContent = '✅ Revisa tu SMS';
+          msgEl.style.color = '#00ff88';
+        }
+      } catch (err) {
+        msgEl.textContent = '❌ Error: ' + err.message;
+        msgEl.style.color = '#ff4444';
+      }
+    };
+    
+    window.verifyPhoneOTP = async () => {
+      const token = document.getElementById('otp-input').value;
+      const msgEl = document.getElementById('phone-msg');
+      
+      if (!token || token.length !== 6) {
+        msgEl.textContent = '⚠️ Ingresa el código de 6 dígitos';
+        msgEl.style.color = '#ffaa00';
+        msgEl.style.display = 'block';
+        return;
+      }
+      
+      const phoneNumber = phoneInputInstance ? phoneInputInstance.getNumber() : '';
+      
+      msgEl.textContent = '⏳ Verificando...';
+      msgEl.style.color = '#00f2ff';
+      
+      try {
+        const { data, error } = await window.supabaseClient.auth.verifyOtp({
+          phone: phoneNumber,
+          token: token,
+          type: 'sms'
+        });
+        
+        if (error) {
+          msgEl.textContent = '❌ Código inválido o expirado';
+          msgEl.style.color = '#ff4444';
+        } else {
+          msgEl.textContent = '🎉 ¡Verificado! Redirigiendo...';
+          msgEl.style.color = '#00ff88';
+          
+          const role = data.user.user_metadata?.role || 'cliente';
+          setTimeout(() => {
+            window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+          }, 1200);
+        }
+      } catch (err) {
+        msgEl.textContent = '❌ Error: ' + err.message;
+        msgEl.style.color = '#ff4444';
+      }
+    };
+    
+    window.resetPhoneAuth = () => {
+      document.getElementById('phone-step-1').style.display = 'block';
+      document.getElementById('phone-step-2').style.display = 'none';
+      document.getElementById('otp-input').value = '';
+      document.getElementById('phone-msg').style.display = 'none';
+      if (phoneInputInstance) {
+        phoneInputInstance.setNumber('');
+      }
+    };
   </script>
 </body>
 </html>
