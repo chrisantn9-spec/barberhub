@@ -12,10 +12,6 @@
   <!-- Iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- 🌍 International Phone Input (Librerías) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
-  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
-  
   <!-- Tu CSS principal -->
   <link rel="stylesheet" href="style.css">
   
@@ -27,6 +23,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%);
     }
     .login-box {
       background: rgba(10, 10, 20, 0.85);
@@ -37,21 +34,20 @@
       width: 100%;
       max-width: 420px;
       box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+      text-align: center;
     }
     .login-box h2 {
       font-family: 'Orbitron', sans-serif;
-      text-align: center;
       margin-bottom: 8px;
       color: #fff;
       font-size: 1.8rem;
     }
     .login-box .subtitle {
-      text-align: center;
       color: #a0a0b0;
       margin-bottom: 32px;
       font-size: 0.95rem;
     }
-    .form-group { margin-bottom: 20px; }
+    .form-group { margin-bottom: 20px; text-align: left; }
     .form-group label {
       display: block;
       margin-bottom: 8px;
@@ -67,6 +63,7 @@
       border-radius: 10px;
       color: #fff;
       font-size: 1rem;
+      box-sizing: border-box;
       transition: border-color 0.2s;
     }
     .form-group input:focus {
@@ -83,6 +80,7 @@
       margin-bottom: 20px;
       display: none;
       font-size: 0.9rem;
+      text-align: center;
     }
     .btn-primary {
       width: 100%;
@@ -100,24 +98,12 @@
     .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
     .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
     
-    .btn-secondary {
-      width: 100%;
-      padding: 12px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 10px;
-      color: #aaa;
-      font-weight: 500;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: all 0.2s;
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; }
-    
     .divider {
       text-align: center;
       margin: 24px 0;
       position: relative;
+      color: #666;
+      font-size: 0.85rem;
     }
     .divider::before {
       content: '';
@@ -130,8 +116,6 @@
     .divider span {
       background: rgba(10, 10, 20, 0.85);
       padding: 0 16px;
-      color: #666;
-      font-size: 0.85rem;
       position: relative;
     }
     .social-login { display: flex; flex-direction: column; gap: 12px; }
@@ -149,10 +133,12 @@
       justify-content: center;
       gap: 10px;
       font-size: 0.95rem;
+      transition: all 0.2s;
     }
     .btn-social.google { border-color: #db4437; }
-    .btn-social.google:hover { background: rgba(219, 68, 55, 0.1); }
+    .btn-social.google:hover { background: rgba(219, 68, 55, 0.1); border-color: #db4437; }
     .btn-social.google i { color: #db4437; font-size: 1.2rem; }
+    
     .register-link {
       text-align: center;
       margin-top: 24px;
@@ -164,50 +150,7 @@
       text-decoration: none;
       font-weight: 600;
     }
-    
-    /* Estilos para el input de teléfono con bandera */
-    .iti { width: 100%; }
-    .iti__country-list {
-      background: #1a1a2e;
-      border: 1px solid rgba(0,242,255,0.2);
-      border-radius: 8px;
-      box-shadow: 0 8px 32px rgba(0, 242, 255, 0.2);
-    }
-    .iti__country { padding: 8px 12px; color: #fff; }
-    .iti__country:hover { background: rgba(0, 242, 255, 0.1); }
-    .iti__highlight { background: rgba(0, 242, 255, 0.2) !important; }
-    .iti__dial-code { color: #888; }
-    #phone-input {
-      width: 100%;
-      padding: 12px 12px 12px 52px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(0, 242, 255, 0.2);
-      border-radius: 10px;
-      color: #fff;
-      font-size: 1rem;
-      transition: all 0.3s;
-    }
-    #phone-input:focus {
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
-      outline: none;
-    }
-    #otp-input {
-      text-align: center;
-      font-size: 1.5rem;
-      letter-spacing: 5px;
-      width: 100%;
-      padding: 12px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(0,242,255,0.2);
-      border-radius: 10px;
-      color: #fff;
-    }
-    #otp-input:focus {
-      border-color: var(--neon-cyan);
-      outline: none;
-    }
-    #phone-display { color: var(--neon-cyan); font-weight: bold; }
+    .register-link a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -242,36 +185,6 @@
         </button>
       </div>
       
-      <!-- 📱 DIVIDER PARA TELÉFONO -->
-      <div class="divider"><span>O verifica tu teléfono</span></div>
-      
-      <!-- 📱 SECCIÓN DE TELÉFONO (AHORA EN EL BODY, NO EN JS) -->
-      <div id="phone-auth">
-        <div id="phone-step-1">
-          <div class="form-group">
-            <label for="phone-input">Número de teléfono <span style="color:var(--neon-pink);">*</span></label>
-            <input type="tel" id="phone-input" placeholder="+34 612 345 678" required>
-            <small style="color:#888; font-size:0.8rem;">
-              <i class="fas fa-info-circle"></i> Selecciona tu país e ingresa tu número
-            </small>
-          </div>
-          <button type="button" onclick="sendPhoneOTP()" class="btn-primary">📤 Enviar Código por SMS</button>
-        </div>
-
-        <div id="phone-step-2" style="display:none;">
-          <p style="color:#ccc; font-size:0.9rem; margin-bottom:10px;">
-            Código enviado a <span id="phone-display"></span>
-          </p>
-          <div class="form-group">
-            <label for="otp-input">Código de verificación <span style="color:var(--neon-pink);">*</span></label>
-            <input type="text" id="otp-input" placeholder="123456" maxlength="6" inputmode="numeric">
-          </div>
-          <button type="button" onclick="verifyPhoneOTP()" class="btn-primary">✅ Verificar Código</button>
-          <button type="button" onclick="resetPhoneAuth()" class="btn-secondary">Cambiar número</button>
-        </div>
-        <div id="phone-msg" class="error-message" style="margin-top:10px;"></div>
-      </div>
-      
       <div class="register-link">
         ¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a>
       </div>
@@ -282,7 +195,7 @@
        SCRIPTS - ORDEN CRÍTICO
        ======================================== -->
   
-  <!-- 1. Configurar Supabase -->
+  <!-- Configurar Supabase -->
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
     
@@ -357,122 +270,6 @@
         console.error('Error verificando sesión:', err)
       }
     })
-  </script>
-  
-  <!-- 2. Scripts para teléfono (FUERA del module, como script normal) -->
-  <script>
-    let phoneInputInstance = null;
-    
-    // Inicializar input internacional cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-      const phoneInput = document.getElementById('phone-input');
-      if (phoneInput && typeof intlTelInput !== 'undefined') {
-        phoneInputInstance = intlTelInput(phoneInput, {
-          initialCountry: "auto",
-          geoIpLookup: function(callback) {
-            fetch('https://ipapi.co/json')
-              .then(res => res.json())
-              .then(data => callback(data.country_code))
-              .catch(() => callback("es"));
-          },
-          preferredCountries: ["es", "mx", "co", "ar", "us"],
-          separateDialCode: true,
-          utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
-        });
-      }
-    });
-    
-    window.sendPhoneOTP = async () => {
-      const msgEl = document.getElementById('phone-msg');
-      
-      if (!phoneInputInstance) {
-        msgEl.textContent = '⚠️ Error: Cargando selector de países...';
-        msgEl.style.display = 'block';
-        return;
-      }
-      
-      const phoneNumber = phoneInputInstance.getNumber();
-      
-      if (!phoneNumber || phoneNumber.length < 10) {
-        msgEl.textContent = '⚠️ Ingresa un número válido con código de país';
-        msgEl.style.color = '#ff4444';
-        msgEl.style.display = 'block';
-        return;
-      }
-      
-      msgEl.textContent = '⏳ Enviando SMS...';
-      msgEl.style.color = '#00f2ff';
-      msgEl.style.display = 'block';
-      
-      try {
-        const { error } = await window.supabaseClient.auth.signInWithOtp({ phone: phoneNumber });
-        
-        if (error) {
-          msgEl.textContent = '❌ ' + error.message;
-          msgEl.style.color = '#ff4444';
-        } else {
-          document.getElementById('phone-step-1').style.display = 'none';
-          document.getElementById('phone-step-2').style.display = 'block';
-          document.getElementById('phone-display').textContent = phoneNumber;
-          msgEl.textContent = '✅ Revisa tu SMS';
-          msgEl.style.color = '#00ff88';
-        }
-      } catch (err) {
-        msgEl.textContent = '❌ Error: ' + err.message;
-        msgEl.style.color = '#ff4444';
-      }
-    };
-    
-    window.verifyPhoneOTP = async () => {
-      const token = document.getElementById('otp-input').value;
-      const msgEl = document.getElementById('phone-msg');
-      
-      if (!token || token.length !== 6) {
-        msgEl.textContent = '⚠️ Ingresa el código de 6 dígitos';
-        msgEl.style.color = '#ffaa00';
-        msgEl.style.display = 'block';
-        return;
-      }
-      
-      const phoneNumber = phoneInputInstance ? phoneInputInstance.getNumber() : '';
-      
-      msgEl.textContent = '⏳ Verificando...';
-      msgEl.style.color = '#00f2ff';
-      
-      try {
-        const { data, error } = await window.supabaseClient.auth.verifyOtp({
-          phone: phoneNumber,
-          token: token,
-          type: 'sms'
-        });
-        
-        if (error) {
-          msgEl.textContent = '❌ Código inválido o expirado';
-          msgEl.style.color = '#ff4444';
-        } else {
-          msgEl.textContent = '🎉 ¡Verificado! Redirigiendo...';
-          msgEl.style.color = '#00ff88';
-          
-          const role = data.user.user_metadata?.role || 'cliente';
-          setTimeout(() => {
-            window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
-          }, 1200);
-        }
-      } catch (err) {
-        msgEl.textContent = '❌ Error: ' + err.message;
-        msgEl.style.color = '#ff4444';
-      }
-    };
-    
-    window.resetPhoneAuth = () => {
-      document.getElementById('phone-step-1').style.display = 'block';
-      document.getElementById('phone-step-2').style.display = 'none';
-      document.getElementById('otp-input').value = '';
-      document.getElementById('phone-msg').style.display = 'none';
-      if (phoneInputInstance) {
-        phoneInputInstance.setNumber('');
-      }
-    };
   </script>
 </body>
 </html>
