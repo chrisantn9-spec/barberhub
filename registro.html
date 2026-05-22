@@ -7,6 +7,7 @@
     <title>Registro | BarberHub</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- 🌍 International Phone Input (Librerías) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
@@ -28,7 +29,7 @@
         .iti__dial-code { color: #888; }
         #telefono {
             width: 100%;
-            padding: 12px 12px 12px 52px; /* Espacio para la bandera */
+            padding: 12px 12px 12px 52px;
             background: rgba(0,0,0,0.6);
             border: 1px solid #444;
             color: #fff;
@@ -52,6 +53,13 @@
     <div style="max-width:450px; margin:20px auto; padding:30px; background:rgba(20,20,30,0.8); backdrop-filter:blur(10px); border:1px solid var(--neon-pink); border-radius:15px; box-shadow:0 0 20px rgba(255,0,255,0.2);">
         <h2 style="color:var(--neon-pink); margin-bottom:20px; font-family:'Orbitron'; text-align:center;">✨ CREAR CUENTA</h2>
         
+        <!-- 🔵 GOOGLE LOGIN BUTTON (NUEVO) -->
+        <button onclick="signInWithGoogle()" style="width:100%; padding:12px; margin-bottom:15px; background:rgba(255,255,255,0.05); border:1px solid #db4437; border-radius:8px; color:#fff; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:all 0.2s;">
+            <i class="fab fa-google" style="color:#db4437; font-size:1.2rem;"></i>
+            Continuar con Google
+        </button>
+        <div style="text-align:center; margin:10px 0; color:#666; font-size:0.85rem;">─ O regístrate con email ─</div>
+
         <!-- Selector de tipo de usuario -->
         <div style="display:flex; gap:10px; margin-bottom:20px; background:rgba(0,0,0,0.4); padding:5px; border-radius:8px;">
             <button type="button" id="btn-barbero" onclick="setRole('barbero')" style="flex:1; padding:10px; background:rgba(100,100,100,0.3); color:#ccc; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">💈 Barbero</button>
@@ -105,9 +113,9 @@
     <script src="config.js"></script>
     <script>
         let userRole = 'cliente';
-        let phoneInputInstance = null; // Para intl-tel-input
+        let phoneInputInstance = null;
 
-        // Inicializar selector de países cuando cargue la página
+        // Inicializar selector de países
         document.addEventListener('DOMContentLoaded', function() {
             const phoneInput = document.getElementById('telefono');
             if (phoneInput && typeof intlTelInput !== 'undefined') {
@@ -144,6 +152,24 @@
                 btnBarbero.style.background = 'rgba(100,100,100,0.3)';
                 btnBarbero.style.color = '#ccc';
                 camposBarbero.style.display = 'none';
+            }
+        }
+
+        // 🔵 Google Sign In Function (NUEVA)
+        async function signInWithGoogle() {
+            try {
+                const { error } = await supabaseClient.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: { 
+                        redirectTo: window.location.origin + '/registro.html?role=' + userRole 
+                    }
+                });
+                if (error) throw error;
+            } catch (err) {
+                const msg = document.getElementById('registro-msg');
+                msg.style.color = '#ff3333';
+                msg.textContent = '❌ Error con Google: ' + err.message;
+                msg.style.display = 'block';
             }
         }
 
@@ -215,15 +241,13 @@
             const password = document.getElementById('password').value;
             const nombre = document.getElementById('nombre').value;
             
-            // 🔥 OBTENER TELÉFONO CON CÓDIGO DE PAÍS (formato internacional)
             let telefono = '';
             if (phoneInputInstance) {
-                telefono = phoneInputInstance.getNumber(); // Ej: +34612345678
+                telefono = phoneInputInstance.getNumber();
             } else {
                 telefono = document.getElementById('telefono').value.replace(/[\s\-\(\)]/g, '');
             }
 
-            // Validar que el teléfono tenga formato internacional
             if (!telefono.startsWith('+') || telefono.length < 10) {
                 msg.style.color = '#ffaa00';
                 msg.textContent = '⚠️ Ingresa un teléfono válido con código de país (ej: +34...)';
@@ -240,7 +264,7 @@
                     options: { 
                         data: { 
                             nombre, 
-                            telefono, // Guardamos el teléfono en formato internacional
+                            telefono,
                             role: userRole 
                         } 
                     }
@@ -261,7 +285,7 @@
                         owner_id: authData.user.id,
                         name: barberiaName,
                         location: location,
-                        phone: telefono, // Teléfono internacional
+                        phone: telefono,
                         lat: lat,
                         lng: lng,
                         photos: photosArray,
