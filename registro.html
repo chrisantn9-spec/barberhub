@@ -2,12 +2,46 @@
 <html lang="es">
 <head>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro | BarberHub</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 🌍 International Phone Input (Librerías) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+    
+    <style>
+        /* Estilos para el input de teléfono con bandera */
+        .iti { width: 100%; }
+        .iti__country-list {
+            background: #14141e;
+            border: 1px solid var(--neon-pink);
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(255, 0, 255, 0.3);
+            z-index: 9999;
+        }
+        .iti__country { padding: 8px 12px; color: #fff; }
+        .iti__country:hover { background: rgba(255, 0, 255, 0.1); }
+        .iti__highlight { background: rgba(0, 242, 255, 0.2) !important; }
+        .iti__dial-code { color: #888; }
+        #telefono {
+            width: 100%;
+            padding: 12px 12px 12px 52px; /* Espacio para la bandera */
+            background: rgba(0,0,0,0.6);
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        #telefono:focus {
+            border-color: var(--neon-cyan);
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+        }
+    </style>
 </head>
 <body style="background:linear-gradient(180deg,#050505 0%,#0a0a1a 100%); min-height:100vh;">
 
@@ -20,8 +54,8 @@
         
         <!-- Selector de tipo de usuario -->
         <div style="display:flex; gap:10px; margin-bottom:20px; background:rgba(0,0,0,0.4); padding:5px; border-radius:8px;">
-            <button type="button" id="btn-barbero" onclick="setRole('barbero')" style="flex:1; padding:10px; background:var(--neon-cyan); color:#000; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">💈 Barbero</button>
-            <button type="button" id="btn-cliente" onclick="setRole('cliente')" style="flex:1; padding:10px; background:rgba(100,100,100,0.3); color:#ccc; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">👤 Cliente</button>
+            <button type="button" id="btn-barbero" onclick="setRole('barbero')" style="flex:1; padding:10px; background:rgba(100,100,100,0.3); color:#ccc; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">💈 Barbero</button>
+            <button type="button" id="btn-cliente" onclick="setRole('cliente')" style="flex:1; padding:10px; background:var(--neon-cyan); color:#000; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">👤 Cliente</button>
         </div>
 
         <form id="registro-form">
@@ -29,7 +63,15 @@
             <input type="email" id="email" placeholder="📧 Correo Electrónico" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
             <input type="password" id="password" placeholder="🔑 Contraseña (mín 6 caracteres)" required minlength="6" style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
             <input type="text" id="nombre" placeholder="👤 Tu Nombre" required style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
-            <input type="tel" id="telefono" placeholder="📱 Teléfono (opcional)" style="width:100%; padding:12px; margin:8px 0; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
+            
+            <!-- 📱 TELÉFONO CON SELECTOR DE PAÍSES (OBLIGATORIO) -->
+            <label style="color:#fff; font-size:0.9rem; margin:8px 0 4px; display:block;">
+                📱 Teléfono <span style="color:var(--neon-pink);">*</span>
+            </label>
+            <input type="tel" id="telefono" placeholder="+34 612 345 678" required style="width:100%; padding:12px 12px 12px 52px; background:rgba(0,0,0,0.6); border:1px solid #444; color:#fff; border-radius:5px; box-sizing:border-box;">
+            <small style="color:#888; font-size:0.75rem; display:block; margin-bottom:8px;">
+                <i class="fas fa-info-circle"></i> Selecciona tu país e ingresa tu número
+            </small>
 
             <!-- Campos SOLO PARA BARBERO -->
             <div id="campos-barbero" style="display:none; margin-top:15px; padding-top:15px; border-top:1px dashed #444;">
@@ -63,6 +105,26 @@
     <script src="config.js"></script>
     <script>
         let userRole = 'cliente';
+        let phoneInputInstance = null; // Para intl-tel-input
+
+        // Inicializar selector de países cuando cargue la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const phoneInput = document.getElementById('telefono');
+            if (phoneInput && typeof intlTelInput !== 'undefined') {
+                phoneInputInstance = intlTelInput(phoneInput, {
+                    initialCountry: "auto",
+                    geoIpLookup: function(callback) {
+                        fetch('https://ipapi.co/json')
+                            .then(res => res.json())
+                            .then(data => callback(data.country_code))
+                            .catch(() => callback("es"));
+                    },
+                    preferredCountries: ["es", "mx", "co", "ar", "us"],
+                    separateDialCode: true,
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
+                });
+            }
+        });
 
         function setRole(role) {
             userRole = role;
@@ -152,13 +214,36 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const nombre = document.getElementById('nombre').value;
-            const telefono = document.getElementById('telefono').value;
+            
+            // 🔥 OBTENER TELÉFONO CON CÓDIGO DE PAÍS (formato internacional)
+            let telefono = '';
+            if (phoneInputInstance) {
+                telefono = phoneInputInstance.getNumber(); // Ej: +34612345678
+            } else {
+                telefono = document.getElementById('telefono').value.replace(/[\s\-\(\)]/g, '');
+            }
+
+            // Validar que el teléfono tenga formato internacional
+            if (!telefono.startsWith('+') || telefono.length < 10) {
+                msg.style.color = '#ffaa00';
+                msg.textContent = '⚠️ Ingresa un teléfono válido con código de país (ej: +34...)';
+                msg.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'CREAR CUENTA';
+                return;
+            }
 
             try {
                 const { data: authData, error: authError } = await supabaseClient.auth.signUp({
                     email: email,
                     password: password,
-                    options: { data: { nombre, telefono, role: userRole } }
+                    options: { 
+                        data: { 
+                            nombre, 
+                            telefono, // Guardamos el teléfono en formato internacional
+                            role: userRole 
+                        } 
+                    }
                 });
 
                 if (authError) throw authError;
@@ -170,14 +255,13 @@
                     const lng = parseFloat(document.getElementById('shop-lng').value) || 0;
                     const photoUrl = document.getElementById('barber-photo-url').value;
                     
-                    // Convertir URL a array JSON
                     const photosArray = photoUrl ? JSON.stringify([photoUrl]) : null;
 
                     const { error: barberError } = await supabaseClient.from('barbers').insert([{
                         owner_id: authData.user.id,
                         name: barberiaName,
                         location: location,
-                        phone: telefono,
+                        phone: telefono, // Teléfono internacional
                         lat: lat,
                         lng: lng,
                         photos: photosArray,
