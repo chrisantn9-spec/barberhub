@@ -313,28 +313,110 @@ window.sendPhoneOTP = async () => {
   }
 };
 
+// Inicializar input internacional
+let phoneInputInstance;
+document.addEventListener('DOMContentLoaded', function() {
+  const phoneInput = document.getElementById('phone-input');
+  if (phoneInput && typeof intlTelInput !== 'undefined') {
+    phoneInputInstance = intlTelInput(phoneInput, {
+      initialCountry: "auto",
+      geoIpLookup: function(callback) {
+        fetch('https://ipapi.co/json')
+          .then(res => res.json())
+          .then(data => callback(data.country_code))
+          .catch(() => callback("es"));
+      },
+      preferredCountries: ["es", "mx", "co", "ar", "us"],
+      separateDialCode: true,
+      utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js"
+    });
+  }
+});
+
+window.sendPhoneOTP = async () => {
+  const msgEl = document.getElementById('phone-msg');
+  
+  if (!phoneInputInstance) {
+    msgEl.textContent = '⚠️ Error: Input no inicializado';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  // Obtener número completo con código de país
+  const phoneNumber = phoneInputInstance.getNumber();
+  
+  if (!phoneNumber || phoneNumber.length < 10) {
+    msgEl.textContent = '⚠️ Ingresa un número de teléfono válido';
+    msgEl.style.color = '#ff4444';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  msgEl.textContent = '⏳ Enviando SMS...';
+  msgEl.style.color = '#00f2ff';
+  msgEl.style.display = 'block';
+
+  const { error } = await window.supabaseClient.auth.signInWithOtp({ 
+    phone: phoneNumber 
+  });
+  
+  if (error) {
+    msgEl.textContent = '❌ ' + error.message;
+    msgEl.style.color = '#ff4444';
+  } else {
+    document.getElementById('phone-step-1').style.display = 'none';
+    document.getElementById('phone-step-2').style.display = 'block';
+    document.getElementById('phone-display').textContent = phoneNumber;
+    msgEl.textContent = '✅ Revisa tu SMS';
+    msgEl.style.color = '#00ff88';
+  }
+};
+
 window.verifyPhoneOTP = async () => {
-  const phone = document.getElementById('phone-input').value.replace(/[\s\-\(\)]/g, '');
+  const phoneInput = document.getElementById('phone-input');
+  const phoneNumber = phoneInputInstance ? phoneInputInstance.getNumber() : phoneInput.value;
   const token = document.getElementById('otp-input').value;
   const msgEl = document.getElementById('phone-msg');
 
   if (!token || token.length !== 6) {
     msgEl.textContent = '⚠️ Ingresa el código de 6 dígitos';
+    msgEl.style.color = '#ffaa00';
     msgEl.style.display = 'block';
     return;
   }
 
   msgEl.textContent = '⏳ Verificando...';
+  msgEl.style.color = '#00f2ff';
+  
   const { data, error } = await window.supabaseClient.auth.verifyOtp({
-    phone,
-    token,
+    phone: phoneNumber,
+    token: token,
     type: 'sms'
   });
 
   if (error) {
-    msgEl.textContent = '❌ ' + error.message;
+    msgEl.textContent = '❌ Código inválido o expirado';
+    msgEl.style.color = '#ff4444';
   } else {
     msgEl.textContent = '🎉 ¡Verificado! Redirigiendo...';
+    msgEl.style.color = '#00ff88';
+    
+    const role = data.user.user_metadata?.role || 'cliente';
+    setTimeout(() => {
+      window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+    }, 1200);
+  }
+};
+
+window.resetPhoneAuth = () => {
+  document.getElementById('phone-step-1').style.display = 'block';
+  document.getElementById('phone-step-2').style.display = 'none';
+  document.getElementById('otp-input').value = '';
+  document.getElementById('phone-msg').style.display = 'none';
+  if (phoneInputInstance) {
+    phoneInputInstance.setNumber('');
+  }
+};
     // Guarda sesión y redirige como ya haces con Google
     const role = data.user.user_metadata?.role || 'cliente';
     setTimeout(() => {
