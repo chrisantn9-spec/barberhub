@@ -983,3 +983,17 @@ header h1 {
   font-size: 0.8rem;
   color: #888;
 }
+#phone-auth {
+  background: rgba(10, 10, 20, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 10px;
+}
+
+#phone-msg {
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+}
