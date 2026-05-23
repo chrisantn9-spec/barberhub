@@ -1,156 +1,158 @@
-// chat.js - Versión limpia sin CORS errors
-
-// Obtener datos del chat desde sessionStorage
+// chat.js - VERSIÓN CORREGIDA
 const barberId = sessionStorage.getItem('chatBarberId');
 let barberName = sessionStorage.getItem('chatBarberName') || 'Barbería';
 
-// Validar que tengamos un ID válido de barbería
 if (!barberId || barberId === 'undefined' || barberId === 'null') {
-    console.warn('No hay barbería seleccionada, redirigiendo...');
-    window.location.href = 'index.html';
+  console.warn('No hay barbería seleccionada, redirigiendo...');
+  window.location.href = 'perfil-cliente.html';
 }
 
-// Actualizar título del chat
 const chatTitle = document.getElementById('chat-title');
 if (chatTitle) {
-    chatTitle.textContent = `💬 Chat con ${barberName}`;
+  chatTitle.textContent = `💬 Chat con ${barberName}`;
 }
 
-// Referencias al DOM
 const msgInput = document.getElementById('msg-input');
 const sendBtn = document.getElementById('send-btn');
 const chatBox = document.getElementById('chat-messages');
 
-// Obtener o pedir nombre del usuario
-let userName = sessionStorage.getItem('chatUserName');
-if (!userName) {
-    userName = prompt("¿Cómo te llamas?") || "Cliente";
-    sessionStorage.setItem('chatUserName', userName);
-}
+// 🔥 OBTENER USUARIO AUTENTICADO
+let currentUser = null;
+let userName = '';
 
-// 📥 FUNCIÓN: Cargar mensajes desde Supabase
-async function loadMessages() {
-    if (!chatBox) return;
+async function initChat() {
+  try {
+    const { data: { user }, error } = await supabaseClient.auth.getUser();
+    if (error || !user) {
+      alert('❌ Debes iniciar sesión para chatear');
+      window.location.href = 'auth.html';
+      return;
+    }
     
-    try {
-        const { data, error } = await supabaseClient
-            .from('messages')
-            .select('*')
-            .eq('barber_id', barberId)
-            .order('created_at', { ascending: true });
-
-        if (error) {
-            console.error('Error cargando mensajes:', error);
-            return;
-        }
-
-        chatBox.innerHTML = '';
-        
-        if (!data || data.length === 0) {
-            chatBox.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px; font-size:0.9rem;">💬 Inicia la conversación</p>';
-            return;
-        }
-
-        data.forEach(msg => {
-            const isMe = msg.user_name === userName;
-            const div = document.createElement('div');
-            div.className = `msg ${isMe ? 'client' : 'barber'}`;
-            
-            // Formatear hora
-            const time = new Date(msg.created_at).toLocaleTimeString([], { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-            
-            div.innerHTML = `
-                <div style="white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(msg.message)}</div>
-                <span class="meta" style="font-size:0.65rem; opacity:0.6; margin-top:4px; display:block; text-align:right;">
-                    ${escapeHtml(msg.user_name)} • ${time}
-                </span>
-            `;
-            chatBox.appendChild(div);
-        });
-        
-        // Scroll al fondo
-        chatBox.scrollTop = chatBox.scrollHeight;
-        
-    } catch (err) {
-        console.error('Error en loadMessages:', err);
-    }
+    currentUser = user;
+    userName = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Cliente';
+    
+    // Cargar mensajes
+    loadMessages();
+    
+    // Polling cada 3 segundos
+    setInterval(loadMessages, 3000);
+    
+  } catch (err) {
+    console.error('Error inicializando chat:', err);
+    window.location.href = 'auth.html';
+  }
 }
 
-// 🔒 FUNCIÓN: Escapar HTML para prevenir XSS
+// 📥 Cargar mensajes desde Supabase
+async function loadMessages() {
+  if (!chatBox || !currentUser) return;
+  
+  try {
+    const { data, error } = await supabaseClient
+      .from('messages')
+      .select('*')
+      .eq('barber_id', barberId)
+      .or(`user_id.eq.${currentUser.id},barber_owner_id.eq.${currentUser.id}`)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+
+    chatBox.innerHTML = '';
+    
+    if (!data || data.length === 0) {
+      chatBox.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px; font-size:0.9rem;">💬 Inicia la conversación</p>';
+      return;
+    }
+
+    data.forEach(msg => {
+      const isMe = msg.user_id === currentUser.id;
+      const div = document.createElement('div');
+      div.className = `msg ${isMe ? 'client' : 'barber'}`;
+      
+      const time = new Date(msg.created_at).toLocaleTimeString([], { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      
+      div.innerHTML = `
+        <div style="white-space: pre-wrap; word-wrap: break-word;">${escapeHtml(msg.message)}</div>
+        <span class="meta" style="font-size:0.65rem; opacity:0.6; margin-top:4px; display:block; text-align:right;">
+          ${isMe ? 'Tú' : escapeHtml(msg.user_name || 'Barbería')} • ${time}
+        </span>
+      `;
+      chatBox.appendChild(div);
+    });
+    
+    chatBox.scrollTop = chatBox.scrollHeight;
+    
+  } catch (err) {
+    console.error('Error cargando mensajes:', err);
+  }
+}
+
+// 🔒 Escapar HTML
 function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
-// 📤 FUNCIÓN: Enviar mensaje a Supabase
+// 📤 Enviar mensaje
 async function sendMessage() {
-    const text = msgInput?.value.trim();
-    if (!text) return;
+  const text = msgInput?.value.trim();
+  if (!text || !currentUser) return;
+  
+  try {
+    const { error } = await supabaseClient
+      .from('messages')
+      .insert([{
+        barber_id: barberId,
+        user_id: currentUser.id, // 🔥 AHORA SÍ GUARDAMOS EL USER_ID
+        user_name: userName,
+        message: text,
+        created_at: new Date().toISOString()
+      }]);
 
-    try {
-        const { error } = await supabaseClient
-            .from('messages')
-            .insert([{
-                barber_id: barberId,
-                user_name: userName,
-                message: text,
-                created_at: new Date().toISOString()
-            }]);
+    if (error) throw error;
 
-        if (error) throw error;
-
-        // Limpiar input y recargar
-        if (msgInput) msgInput.value = '';
-        loadMessages();
-        
-    } catch (err) {
-        console.error('Error enviando mensaje:', err);
-        alert('❌ No se pudo enviar: ' + err.message);
-    }
+    if (msgInput) msgInput.value = '';
+    loadMessages();
+    
+  } catch (err) {
+    console.error('Error enviando mensaje:', err);
+    alert('❌ No se pudo enviar: ' + err.message);
+  }
 }
 
 // Event listeners
 if (sendBtn) {
-    sendBtn.onclick = sendMessage;
+  sendBtn.onclick = sendMessage;
 }
 
 if (msgInput) {
-    msgInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
-    
-    // Auto-focus en el input al cargar
-    msgInput.focus();
+  msgInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+  msgInput.focus();
 }
 
-// Cargar mensajes al iniciar
+// Inicializar
 if (chatBox) {
-    loadMessages();
-    
-    // Polling cada 3 segundos para nuevos mensajes
-    const pollInterval = setInterval(loadMessages, 3000);
-    
-    // Limpiar intervalo si se sale de la página
-    window.addEventListener('beforeunload', () => {
-        clearInterval(pollInterval);
-    });
+  initChat();
 }
 
-// Manejar error de red de forma elegante
+// Manejar offline/online
 window.addEventListener('offline', () => {
-    if (chatBox) {
-        const notice = document.createElement('p');
-        notice.style.cssText = 'text-align:center; color:#ff6666; font-size:0.8rem; padding:10px;';
-        notice.textContent = '⚠️ Sin conexión. Los mensajes se enviarán cuando recuperes la señal.';
-        chatBox.appendChild(notice);
-    }
+  if (chatBox) {
+    const notice = document.createElement('p');
+    notice.style.cssText = 'text-align:center; color:#ff6666; font-size:0.8rem; padding:10px;';
+    notice.textContent = '⚠️ Sin conexión.';
+    chatBox.appendChild(notice);
+  }
 });
 
 window.addEventListener('online', () => {
-    loadMessages();
+  loadMessages();
 });
