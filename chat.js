@@ -1,4 +1,4 @@
-// chat.js - CORREGIDO
+// chat.js - FINAL VERSION
 const barberId = sessionStorage.getItem('chatBarberId');
 const barberName = sessionStorage.getItem('chatBarberName') || 'Barbería';
 
@@ -15,53 +15,68 @@ const chatBox = document.getElementById('chat-messages');
 let currentUser = null;
 let userName = '';
 
+// 🔥 OBTENER USUARIO AUTENTICADO (SIN PROMPT)
 async function initChat() {
-  const { data: { user }, error } = await supabaseClient.auth.getUser();
-  
-  if (error || !user) {
+  // Esperar a que supabaseClient esté listo
+  if (!window.supabaseClient) {
+    console.error('❌ supabaseClient no está definido');
     window.location.href = 'auth.html';
     return;
   }
-  
-  currentUser = user;
-  userName = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Cliente';
-  
-  loadMessages();
-  setInterval(loadMessages, 3000);
+
+  try {
+    const { data: { user }, error } = await supabaseClient.auth.getUser();
+    
+    if (error || !user) {
+      window.location.href = 'auth.html';
+      return;
+    }
+    
+    currentUser = user;
+    userName = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Cliente';
+    
+    loadMessages();
+    setInterval(loadMessages, 3000);
+  } catch (err) {
+    console.error('Error initChat:', err);
+    window.location.href = 'auth.html';
+  }
 }
 
 async function loadMessages() {
-  if (!chatBox) return;
+  if (!chatBox || !currentUser) return;
   
-  const { data, error } = await supabaseClient
-    .from('messages')
-    .select('*')
-    .eq('barber_id', barberId)
-    .order('created_at', { ascending: true });
+  try {
+    const { data, error } = await supabaseClient
+      .from('messages')
+      .select('*')
+      .eq('barber_id', barberId)
+      .order('created_at', { ascending: true });
 
-  if (error) return;
-  chatBox.innerHTML = '';
-  
-  if (!data || data.length === 0) {
-    chatBox.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">💬 Inicia la conversación</p>';
-    return;
-  }
-
-  data.forEach(msg => {
-    const isMe = msg.user_id === currentUser?.id;
-    const div = document.createElement('div');
-    div.className = `msg ${isMe ? 'client' : 'barber'}`;
-    const time = new Date(msg.created_at).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+    if (error) { console.error(error); return; }
+    chatBox.innerHTML = '';
     
-    div.innerHTML = `
-      <div style="white-space:pre-wrap;">${escapeHtml(msg.message)}</div>
-      <span style="font-size:0.65rem; opacity:0.6; margin-top:4px; display:block; text-align:right;">
-        ${isMe ? 'Tú' : escapeHtml(msg.user_name)} • ${time}
-      </span>`;
-    chatBox.appendChild(div);
-  });
-  
-  chatBox.scrollTop = chatBox.scrollHeight;
+    if (!data || data.length === 0) {
+      chatBox.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">💬 Inicia la conversación</p>';
+      return;
+    }
+
+    data.forEach(msg => {
+      const isMe = msg.user_id === currentUser.id; // ✅ Compara por ID real
+      const div = document.createElement('div');
+      div.className = `msg ${isMe ? 'client' : 'barber'}`;
+      const time = new Date(msg.created_at).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+      
+      div.innerHTML = `
+        <div style="white-space:pre-wrap;">${escapeHtml(msg.message)}</div>
+        <span style="font-size:0.65rem; opacity:0.6; margin-top:4px; display:block; text-align:right;">
+          ${isMe ? 'Tú' : escapeHtml(msg.user_name)} • ${time}
+        </span>`;
+      chatBox.appendChild(div);
+    });
+    
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (err) { console.error(err); }
 }
 
 function escapeHtml(text) {
@@ -75,21 +90,21 @@ async function sendMessage() {
   const text = msgInput?.value.trim();
   if (!text || !currentUser) return;
   
-  const { error } = await supabaseClient.from('messages').insert([{
-    barber_id: barberId,
-    user_id: currentUser.id,
-    user_name: userName,
-    message: text,
-    created_at: new Date().toISOString()
-  }]);
+  try {
+    const { error } = await supabaseClient.from('messages').insert([{
+      barber_id: barberId,
+      user_id: currentUser.id, // ✅ Guarda ID real
+      user_name: userName,
+      message: text,
+      created_at: new Date().toISOString()
+    }]);
 
-  if (error) {
-    alert('Error: ' + error.message);
-    return;
+    if (error) throw error;
+    msgInput.value = '';
+    loadMessages();
+  } catch (err) {
+    alert('Error: ' + err.message);
   }
-  
-  msgInput.value = '';
-  loadMessages();
 }
 
 if (sendBtn) sendBtn.onclick = sendMessage;
@@ -97,7 +112,7 @@ if (sendBtn) sendBtn.onclick = sendMessage;
 if (msgInput) {
   msgInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault();
+      e.preventDefault(); // ✅ Evita reset
       sendMessage();
     }
   });
