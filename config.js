@@ -5,7 +5,7 @@ if (typeof supabase === 'undefined') {
   const { createClient } = supabase;
   
   // ⚠️ VERIFICA QUE ESTA KEY ESTÉ COMPLETA EN TU DASHBOARD DE SUPABASE
-  const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
+  const SUPABASE_URL ='sb_publishable_s2KUqB2eUZFtKFatxuQagQ_3HOQ24P0';
   const SUPABASE_ANON_KEY = 'TU_KEY_COMPLETA_AQUI'; // ← Pega tu key real aquí
 
   window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
