@@ -5,16 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro | BarberHub</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
-    /* =========================================
-       ESTILOS CYBERPUNK (Corregido - Solo Turquesa)
-       ========================================= */
     :root {
-      --neon-cyan: #00E5EE; /* Turquesa Neón Principal */
-      --neon-dark: #008B91; /* Turquesa Oscuro para sombras */
+      --neon-cyan: #00E5EE;
     }
 
     body {
@@ -28,7 +23,7 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /* 🌌 MURO DE PALABRAS EN EL FONDO */
+    /* 🌌 FONDO ANIMADO */
     .bg-text-layer {
       position: fixed;
       top: -10%; left: -10%;
@@ -53,17 +48,11 @@
       white-space: nowrap;
     }
 
-    /* 💡 LUZ QUE RECORRE EL FONDO */
     .bg-light-beam {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       z-index: -1;
-      background: linear-gradient(90deg, 
-        transparent 0%, 
-        transparent 45%, 
-        rgba(0, 229, 238, 0.1) 50%, 
-        transparent 55%, 
-        transparent 100%);
+      background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(0, 229, 238, 0.1) 50%, transparent 55%, transparent 100%);
       animation: sweepLight 6s linear infinite;
       pointer-events: none;
     }
@@ -99,18 +88,19 @@
       50% { transform: translateY(-10px); }
     }
 
-    /* ✨ TÍTULO CYBERPUNK (Sin rosa, solo Turquesa) */
+    /* ✨ TÍTULO SIMPLE (Sin efecto glitch) */
     .card-brand {
       font-family: 'Orbitron', sans-serif;
       font-size: 2.5rem;
       font-weight: 900;
       letter-spacing: 3px;
       margin-bottom: 10px;
-      position: relative;
       display: inline-block;
     }
 
-    .word-barber { color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+    .word-barber { 
+      color: #ffffff; 
+    }
     
     .word-hub {
       color: var(--neon-cyan);
@@ -121,35 +111,6 @@
     @keyframes hubPulse {
       0%, 100% { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); }
       50% { text-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan); }
-    }
-
-    /* Efecto Glitch corregido (Solo cian y blanco, nada de rosa) */
-    .card-brand::before, .card-brand::after {
-      content: attr(data-text);
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 15, 20, 0.95); overflow: hidden; pointer-events: none;
-    }
-    
-    .card-brand::before { 
-      left: 2px; 
-      text-shadow: -2px 0 var(--neon-dark); /* Sombra oscura en lugar de rosa */
-      clip-path: inset(44% 0 61% 0); 
-      animation: glitch-anim 2.5s infinite linear alternate-reverse; 
-    }
-    
-    .card-brand::after { 
-      left: -2px; 
-      text-shadow: -2px 0 var(--neon-cyan); 
-      clip-path: inset(12% 0 58% 0); 
-      animation: glitch-anim 3s infinite linear alternate-reverse; 
-    }
-
-    @keyframes glitch-anim {
-      0% { clip-path: inset(40% 0 61% 0); } 
-      20% { clip-path: inset(92% 0 1% 0); }
-      40% { clip-path: inset(10% 0 50% 0); } 
-      60% { clip-path: inset(50% 0 25% 0); }
-      100% { clip-path: inset(60% 0 10% 0); }
     }
 
     .register-subtitle { color: #aaa; font-size: 0.95rem; margin-bottom: 20px; }
@@ -365,7 +326,8 @@
   <!-- 💎 TARJETA DE REGISTRO -->
   <div class="register-card">
     
-    <h2 class="card-brand" data-text="BARBERHUB">
+    <!-- ✅ Título simple sin glitch -->
+    <h2 class="card-brand">
       <span class="word-barber">BARBER</span><span class="word-hub">HUB</span>
     </h2>
     <p class="register-subtitle">Crea tu cuenta gratis</p>
@@ -467,7 +429,6 @@
 
   <script src="config.js"></script>
   <script>
-    // 🔘 CONTROL DEL ROL
     let currentRole = 'cliente';
     window.setRole = (role) => {
       currentRole = role;
@@ -477,7 +438,6 @@
       if (role === 'barbero') { barberFields.classList.add('active'); } else { barberFields.classList.remove('active'); }
     };
 
-    // 📜 FUNCIONES DEL MODAL
     window.openTermsModal = () => {
       document.getElementById('terms-modal').classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -489,14 +449,12 @@
     document.getElementById('terms-modal')?.addEventListener('click', (e) => { if (e.target.id === 'terms-modal') closeTermsModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeTermsModal(); });
 
-    // ✅ ACTIVAR BOTÓN SOLO SI ACEPTA TÉRMINOS
     const termsCheck = document.getElementById('terms-check');
     const btnReg = document.getElementById('btn-register');
     if (termsCheck && btnReg) {
       termsCheck.addEventListener('change', () => { btnReg.disabled = !termsCheck.checked; });
     }
 
-    // 📝 LÓGICA DE REGISTRO CON SUPABASE
     document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const msg = document.getElementById('msg');
