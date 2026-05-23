@@ -20,7 +20,7 @@
       background: #050505;
     }
 
-    /* 🌌 FONDO ANIMADO CYBERPUNK */
+    /* 🌌 FONDO ANIMADO CYBERPUNK (Líneas moviéndose) */
     .cyber-bg {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -28,52 +28,15 @@
       background: #050505;
       overflow: hidden;
     }
-    
     .cyber-line {
       position: absolute;
       background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
-      opacity: 0.3;
+      opacity: 0.25;
     }
-    .cyber-line.h { height: 2px; width: 100%; left: 0; animation: moveH 4s linear infinite; }
-    .cyber-line.v { width: 2px; height: 100%; top: 0; animation: moveV 4s linear infinite; }
-    
-    @keyframes moveH {
-      0% { top: -10%; opacity: 0; } 50% { opacity: 0.6; } 100% { top: 110%; opacity: 0; }
-    }
-    @keyframes moveV {
-      0% { left: -10%; opacity: 0; } 50% { opacity: 0.6; } 100% { left: 110%; opacity: 0; }
-    }
-
-    /* 🌟 TEXTO BARBERHUB CON LUZ QUE RECORRE LA PALABRA */
-    .bg-text {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 14vw;
-      font-weight: 900;
-      white-space: nowrap;
-      z-index: -1;
-      pointer-events: none;
-      /* Base transparente con contorno sutil */
-      color: transparent;
-      -webkit-text-stroke: 2px rgba(0, 242, 255, 0.15);
-      /* Gradiente que simula la luz viajando de izquierda a derecha */
-      background: linear-gradient(90deg,
-        transparent 0%, transparent 30%,
-        rgba(0, 242, 255, 1) 45%,
-        rgba(255, 0, 255, 1) 55%,
-        transparent 70%, transparent 100%
-      );
-      background-size: 300% 100%;
-      -webkit-background-clip: text;
-      animation: sweepLight 5s linear infinite;
-      filter: drop-shadow(0 0 25px rgba(0, 242, 255, 0.6));
-    }
-    @keyframes sweepLight {
-      0% { background-position: 0% 0; }   /* Empieza en la B */
-      100% { background-position: 300% 0; } /* Termina al final de la palabra */
-    }
+    .cyber-line.h { height: 2px; width: 100%; left: 0; animation: moveH 5s linear infinite; }
+    .cyber-line.v { width: 2px; height: 100%; top: 0; animation: moveV 5s linear infinite; }
+    @keyframes moveH { 0% { top: -10%; opacity: 0; } 50% { opacity: 0.5; } 100% { top: 110%; opacity: 0; } }
+    @keyframes moveV { 0% { left: -10%; opacity: 0; } 50% { opacity: 0.5; } 100% { left: 110%; opacity: 0; } }
 
     /* 💎 TARJETA FLOTANTE NEÓN */
     .login-card {
@@ -81,20 +44,18 @@
       backdrop-filter: blur(20px);
       border: 1px solid var(--neon-cyan);
       border-radius: 20px;
-      padding: 45px 30px;
+      padding: 40px 30px 35px;
       width: 90%;
-      max-width: 440px;
+      max-width: 420px;
       text-align: center;
       position: relative;
       box-shadow: 0 0 40px rgba(0, 242, 255, 0.25), inset 0 0 20px rgba(0, 242, 255, 0.05);
       animation: floatCard 6s ease-in-out infinite;
     }
-    
     @keyframes floatCard {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
-
     .login-card::before {
       content: '';
       position: absolute;
@@ -106,47 +67,49 @@
       filter: blur(12px);
     }
 
-    /* ️ LOGO GRANDE */
+    /* ️ LOGO */
     .login-logo {
-      width: 160px; /* Aumentado para que se vea bien */
+      width: 140px;
       height: auto;
-      margin-bottom: 15px;
-      filter: drop-shadow(0 0 15px var(--neon-cyan));
-      animation: floatLogo 3s ease-in-out infinite;
-    }
-    @keyframes floatLogo {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
+      margin-bottom: 8px;
+      filter: drop-shadow(0 0 12px var(--neon-cyan));
     }
 
-    /* ✨ TÍTULO BIENVENIDO (VISIBLE Y NEÓN) */
+    /* 🌟 BARBERHUB DENTRO DE LA TARJETA */
+    .card-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px rgba(0, 242, 255, 0.7);
+      margin: 0 0 12px 0;
+    }
+
+    /* ✨ TÍTULO BIENVENIDO */
     .login-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 800;
-      margin: 10px 0 40px;
-      color: #fff; /* Color base por si falla el degradado */
+      margin: 0 0 35px;
       background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-cyan));
       background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       animation: shineText 3s linear infinite;
-      filter: drop-shadow(0 0 12px rgba(0, 242, 255, 0.8));
-      letter-spacing: 2px;
+      filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.6));
     }
-    @keyframes shineText {
-      to { background-position: 200% center; }
-    }
+    @keyframes shineText { to { background-position: 200% center; } }
 
     /* Inputs */
     .input-group {
       position: relative;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
       text-align: left;
     }
     .input-group input {
       width: 100%;
-      padding: 15px 16px;
+      padding: 14px 16px;
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 12px;
@@ -158,34 +121,30 @@
     }
     .input-group input:focus {
       border-color: var(--neon-cyan);
-      box-shadow: 0 0 18px rgba(0, 242, 255, 0.25);
+      box-shadow: 0 0 15px rgba(0, 242, 255, 0.25);
       background: rgba(255, 255, 255, 0.09);
     }
 
-    /* Botones */
-    .btn-neon {
+    /* Botón Principal */
+    .btn-login-main {
       width: 100%;
-      padding: 15px;
+      padding: 14px;
       border: none;
       border-radius: 12px;
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s ease;
-      margin-bottom: 0;
       text-transform: uppercase;
       letter-spacing: 1px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-    }
-
-    .btn-login-main {
       background: var(--neon-cyan);
       color: #000;
       box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .btn-login-main:hover {
       background: #fff;
@@ -193,30 +152,44 @@
       transform: translateY(-3px);
     }
 
-    /* ✅ SEPARADOR CON MÁS ESPACIO */
+    /* ✅ SEPARADOR CON ESPACIO CORREGIDO */
     .divider {
-      margin: 45px 0 30px; /* Más separación arriba y abajo */
+      margin: 35px 0 22px; /* Más espacio arriba y abajo */
       border: 0;
       border-top: 1px solid rgba(255,255,255,0.15);
       position: relative;
     }
     .divider span {
       position: absolute;
-      top: -12px; left: 50%; transform: translateX(-50%);
-      background: rgba(10, 10, 20, 0.95); /* Mismo fondo que la tarjeta */
-      padding: 0 14px; 
+      top: -11px; left: 50%; transform: translateX(-50%);
+      background: rgba(10, 10, 20, 0.95);
+      padding: 0 12px; 
       color: #888; 
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
 
+    /* Botón Google */
     .btn-google {
-      background: transparent;
+      width: 100%;
+      padding: 14px;
       border: 1px solid var(--neon-pink);
+      border-radius: 12px;
+      background: transparent;
       color: var(--neon-pink);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
     .btn-google:hover {
       background: rgba(255, 0, 255, 0.1);
@@ -228,7 +201,6 @@
     .links-container {
       display: flex;
       justify-content: space-between;
-      margin-top: 25px;
       font-size: 0.85rem;
     }
     .links-container a {
@@ -244,18 +216,18 @@
 </head>
 <body>
 
-  <!-- 🌌 FONDO ANIMADO -->
+  <!--  FONDO ANIMADO -->
   <div class="cyber-bg">
     <div class="cyber-line h" style="top: 20%;"></div>
-    <div class="cyber-line h" style="top: 60%; animation-delay: 2s;"></div>
+    <div class="cyber-line h" style="top: 60%; animation-delay: 2.5s;"></div>
     <div class="cyber-line v" style="left: 30%;"></div>
-    <div class="cyber-line v" style="left: 80%; animation-delay: 1s;"></div>
-    <div class="bg-text">BARBERHUB</div>
+    <div class="cyber-line v" style="left: 80%; animation-delay: 1.5s;"></div>
   </div>
 
   <!-- 💎 TARJETA LOGIN -->
   <div class="login-card">
     <img src="logo.png" alt="Logo BarberHub" class="login-logo">
+    <h2 class="card-brand">BARBERHUB</h2>
     <h1 class="login-title">Bienvenido</h1>
 
     <form id="login-form">
@@ -263,17 +235,17 @@
         <input type="email" id="email" placeholder=" Correo electrónico" required>
       </div>
       <div class="input-group">
-        <input type="password" id="password" placeholder="🔑 Contraseña" required>
+        <input type="password" id="password" placeholder="Contraseña" required>
       </div>
       
-      <button type="submit" class="btn-neon btn-login-main">
+      <button type="submit" class="btn-login-main">
         <i class="fas fa-bolt"></i> INICIAR SESIÓN
       </button>
     </form>
 
     <hr class="divider"><span>O CONTINÚA CON</span>
 
-    <button onclick="loginGoogle()" class="btn-neon btn-google">
+    <button onclick="loginGoogle()" class="btn-google">
       <i class="fab fa-google"></i> Google
     </button>
 
