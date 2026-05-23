@@ -320,5 +320,22 @@
             cargarServiciosEjemplo();
         }
     </script>
+    /* ✅ FIX SOLO PARA PC: evita que se estire y mantenga el diseño original */
+@media (min-width: 768px) {
+  body {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+  .admin-header, .stats-grid, .section-title, .add-form, .menu-item {
+    max-width: 800px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .admin-header {
+    flex-wrap: nowrap; /* Evita que el header se parta en 2 líneas en PC */
+  }
+}
 </body>
 </html>
