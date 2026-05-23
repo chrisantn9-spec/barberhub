@@ -87,23 +87,50 @@
       50% { transform: translateY(-10px); }
     }
 
-    /* ✨ TÍTULO CYBERPUNK GLITCH */
+    /* ✨ TÍTULO CYBERPUNK - BARBER (Blanco) HUB (Turquesa Neón) */
     .card-brand {
       font-family: 'Orbitron', sans-serif;
       font-size: 2.8rem;
       font-weight: 900;
       letter-spacing: 3px;
-      color: #fff;
       margin-bottom: 10px;
       position: relative;
       display: inline-block;
-      text-shadow: 
-        0 0 5px #00E5EE,
-        0 0 10px #00E5EE,
-        0 0 20px rgba(0, 229, 238, 0.8);
     }
 
-    /* Capas del efecto Glitch */
+    /* BARBER en blanco */
+    .word-barber {
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    /* HUB en Turquesa Neón */
+    .word-hub {
+      color: #00E5EE;
+      text-shadow: 
+        0 0 10px #00E5EE,
+        0 0 20px #00E5EE,
+        0 0 40px rgba(0, 229, 238, 0.8);
+      display: inline-block;
+      animation: hubPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes hubPulse {
+      0%, 100% { 
+        text-shadow: 
+          0 0 10px #00E5EE,
+          0 0 20px #00E5EE,
+          0 0 40px rgba(0, 229, 238, 0.8);
+      }
+      50% { 
+        text-shadow: 
+          0 0 15px #00E5EE,
+          0 0 30px #00E5EE,
+          0 0 60px rgba(0, 229, 238, 1);
+      }
+    }
+
+    /* Efecto Glitch adicional */
     .card-brand::before,
     .card-brand::after {
       content: attr(data-text);
@@ -112,6 +139,7 @@
       width: 100%; height: 100%;
       background: rgba(15, 15, 20, 0.95);
       overflow: hidden;
+      pointer-events: none;
     }
 
     .card-brand::before {
@@ -204,143 +232,4 @@
     .divider span {
       position: absolute;
       top: -12px; left: 50%; transform: translateX(-50%);
-      background: rgba(15, 15, 20, 1);
-      padding: 0 15px; 
-      color: #888; 
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    /* Botón Google */
-    .btn-google {
-      width: 100%;
-      padding: 16px;
-      border: 1px solid #ff00ff;
-      border-radius: 12px;
-      background: transparent;
-      color: #ff00ff;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 0 10px rgba(255, 0, 255, 0.15);
-      margin-bottom: 20px;
-    }
-    .btn-google:hover {
-      background: rgba(255, 0, 255, 0.1);
-      box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
-      transform: translateY(-3px);
-      color: #fff;
-    }
-
-    .links-container {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-    }
-    .links-container a {
-      color: #aaa;
-      text-decoration: none;
-      transition: 0.2s;
-    }
-    .links-container a:hover {
-      color: #00E5EE;
-      text-shadow: 0 0 5px #00E5EE;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- 🌌 FONDO CON PALABRAS Y LUZ -->
-  <div class="bg-text-layer">
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-  </div>
-  <div class="bg-light-beam"></div>
-
-  <!-- 💎 TARJETA LOGIN -->
-  <div class="login-card">
-    
-    <!-- ✅ Título con data-text para el glitch -->
-    <h2 class="card-brand" data-text="BARBERHUB">
-      <span class="word-barber">BARBER</span><span class="word-hub">HUB</span>
-    </h2>
-    
-    <p class="login-subtitle">Bienvenido de nuevo</p>
-
-    <form id="login-form">
-      <div class="input-group">
-        <input type="email" id="email" placeholder=" Correo electrónico" required>
-      </div>
-      <div class="input-group">
-        <input type="password" id="password" placeholder="Contraseña" required>
-      </div>
-      
-      <button type="submit" class="btn-login-main">
-        <i class="fas fa-bolt"></i> INICIAR SESIÓN
-      </button>
-    </form>
-
-    <hr class="divider"><span>O CONTINÚA CON</span>
-
-    <button onclick="loginGoogle()" class="btn-google">
-      <i class="fab fa-google"></i> Google
-    </button>
-
-    <div class="links-container">
-      <a href="recuperar-password.html">¿Olvidaste contraseña?</a>
-      <a href="registro.html">Registrarse</a>
-    </div>
-  </div>
-
-  <script src="config.js"></script>
-  <script>
-    // Login con Email
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const btn = document.querySelector('.btn-login-main');
-      
-      const originalText = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
-      
-      try {
-        const { error } = await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
-        if (error) throw error;
-        window.location.href = 'perfil-cliente.html';
-      } catch (err) {
-        alert('❌ Error: ' + err.message);
-        btn.innerHTML = originalText;
-      }
-    });
-
-    // Login con Google
-    async function loginGoogle() {
-      try {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: window.location.origin + '/perfil-cliente.html' }
-        });
-        if (error) throw error;
-      } catch (err) {
-        alert('❌ Error con Google: ' + err.message);
-      }
-    }
-  </script>
-</body>
-</html>
+      background: rgba(1
