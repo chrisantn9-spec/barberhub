@@ -3,103 +3,517 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Admin | BarberHub</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Panel Barbero | BarberHub</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
-    #app-content { opacity: 0; visibility: hidden; transition: opacity 0.3s ease; }
-    #app-content.visible { opacity: 1; visibility: visible; }
+    :root {
+      --neon-cyan: #00E5EE;
+      --neon-pink: #ff00ff;
+      --dark-bg: #050505;
+      --card-bg: rgba(15, 15, 25, 0.85);
+      --glass-border: rgba(0, 229, 238, 0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      overflow-x: hidden;
+      min-height: 100vh;
+      background: var(--dark-bg);
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      position: relative;
+    }
+
+    /* 🔒 ANTI-FLASH: Contenido oculto hasta verificar rol */
+    #app-content {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    #app-content.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* 🌌 FONDO ANIMADO CYBERPUNK */
+    .bg-text-layer {
+      position: fixed;
+      top: -10%; left: -10%;
+      width: 120%; height: 120%;
+      z-index: -2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      gap: 40px;
+      transform: rotate(-15deg);
+      pointer-events: none;
+      opacity: 0.3;
+    }
+    .bg-text-layer span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4vw;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(0, 229, 238, 0.2);
+      white-space: nowrap;
+    }
+
+    .bg-light-beam {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(0, 229, 238, 0.1) 50%, transparent 55%, transparent 100%);
+      animation: sweepLight 6s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes sweepLight {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* 💎 TARJETAS FLOTANTES */
+    .profile-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      padding-bottom: 100px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .profile-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 30px;
+      margin-bottom: 24px;
+      box-shadow: 0 0 40px rgba(0, 229, 238, 0.15), inset 0 0 20px rgba(0, 229, 238, 0.05);
+      animation: floatCard 6s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--neon-pink), var(--neon-cyan), var(--neon-pink));
+      animation: glowLine 3s ease-in-out infinite;
+    }
+    @keyframes glowLine {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* ✨ TÍTULO BARBERHUB */
+    .page-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .page-brand .word-barber { color: #fff; }
+    .page-brand .word-hub {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan), 0 0 40px rgba(0, 229, 238, 0.8);
+      animation: hubPulse 2s ease-in-out infinite;
+    }
+    @keyframes hubPulse {
+      0%, 100% { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); }
+      50% { text-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan); }
+    }
+
+    /* 👤 SECCIÓN AVATAR BARBERO */
+    .avatar-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 25px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .avatar-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 15px;
+    }
+    
+    .avatar-wrapper img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--neon-pink); /* Borde rosa para el barbero */
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.5);
+      animation: avatarGlowPink 3s ease-in-out infinite;
+    }
+    
+    @keyframes avatarGlowPink {
+      0%, 100% { box-shadow: 0 0 25px rgba(255, 0, 255, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(255, 0, 255, 0.9); }
+    }
+    
+    .user-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+    
+    .user-role {
+      background: rgba(255, 0, 255, 0.2);
+      color: var(--neon-pink);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      border: 1px solid var(--neon-pink);
+      margin-bottom: 10px;
+    }
+
+    .user-email {
+      color: var(--neon-cyan);
+      font-size: 0.95rem;
+    }
+
+    /* 📊 STATS CARDS (Dinero y Citas) */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 15px;
+      margin-bottom: 0;
+    }
+    
+    .stat-card {
+      background: rgba(255, 0, 255, 0.08); /* Fondo ligeramente rosa */
+      border: 1px solid rgba(255, 0, 255, 0.3);
+      border-radius: 16px;
+      padding: 18px 12px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+    
+    .stat-card:hover {
+      background: rgba(255, 0, 255, 0.15);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 0, 255, 0.3);
+    }
+    
+    .stat-number {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--neon-pink);
+      margin-bottom: 5px;
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+    }
+    
+    .stat-label {
+      color: #aaa;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* 🧭 MENÚ DE OPCIONES */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .menu-item:hover {
+      background: rgba(0, 229, 238, 0.1);
+      border-color: var(--neon-cyan);
+      transform: translateX(5px);
+      box-shadow: 0 6px 20px rgba(0, 229, 238, 0.2);
+    }
+    
+    .menu-item i {
+      font-size: 1.3rem;
+      color: var(--neon-cyan);
+      width: 28px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    
+    .menu-item:hover i {
+      transform: scale(1.2) rotate(5deg);
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+    
+    .menu-item span {
+      flex: 1;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    
+    .menu-item .arrow {
+      color: #555;
+      font-size: 0.9rem;
+    }
+
+    .menu-item.danger {
+      border-color: rgba(255, 68, 68, 0.3);
+    }
+    .menu-item.danger i {
+      color: #ff4444;
+    }
+    .menu-item.danger:hover {
+      background: rgba(255, 68, 68, 0.1);
+      border-color: #ff4444;
+      box-shadow: 0 6px 20px rgba(255, 68, 68, 0.2);
+    }
+
+    /* 📱 BOTTOM NAV */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 70px;
+      background: rgba(10, 10, 20, 0.95);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #666;
+      font-size: 0.7rem;
+      transition: color 0.2s;
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+    
+    .nav-link i {
+      font-size: 1.4rem;
+      margin-bottom: 4px;
+    }
+    
+    .nav-link.active, .nav-link:hover {
+      color: var(--neon-cyan);
+      background: rgba(0, 229, 238, 0.1);
+      text-shadow: 0 0 8px var(--neon-cyan);
+    }
+
+    /* 🎨 RESPONSIVE */
+    @media (max-width: 600px) {
+      .profile-card { padding: 24px 20px; }
+      .page-brand { font-size: 1.8rem; }
+      .user-name { font-size: 1.4rem; }
+      .menu-item { padding: 14px 16px; }
+    }
   </style>
 </head>
 <body>
 
-  <div id="app-content">
-    <header class="app-header">
-      <div class="header-top">
-        <h1 class="logo-text" id="admin-title">🔐 Panel <span class="cyan">Admin</span></h1>
-        <button class="icon-btn" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i></button>
-      </div>
-    </header>
+  <!-- 🌌 FONDO ANIMADO -->
+  <div class="bg-text-layer">
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+  </div>
+  <div class="bg-light-beam"></div>
 
-    <main class="feed-container">
-      <div class="stats-cyber-grid">
-        <div class="stat-card-cyber"><h3 class="stat-number">0</h3><p class="stat-label">Citas Pendientes</p></div>
-        <div class="stat-card-cyber" style="border-color: var(--neon-pink);">
-          <h3 class="stat-number" style="color: var(--neon-pink);">0</h3><p class="stat-label">Confirmadas Hoy</p>
+  <!-- ✅ CONTENIDO OCULTO HASTA VERIFICAR ROL -->
+  <div id="app-content">
+    
+    <div class="profile-wrapper">
+      
+      <!-- Título Cyberpunk -->
+      <h1 class="page-brand">
+        <span class="word-barber">BARBER</span><span class="word-hub">HUB</span>
+      </h1>
+
+      <!-- 💎 Tarjeta de Perfil / Dashboard -->
+      <div class="profile-card">
+        <div class="avatar-section">
+          <div class="avatar-wrapper">
+            <img src="https://placehold.co/200x200/111/ff00ff?text=✂️" alt="Avatar Barbero" id="user-avatar">
+          </div>
+          <h2 class="user-name" id="display-name">Cargando...</h2>
+          <span class="user-role">💈 Barbero Verificado</span>
+          <p class="user-email" id="display-email">email@ejemplo.com</p>
+        </div>
+
+        <!-- 📊 Estadísticas de Negocio -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="stat-pending">3</div>
+            <div class="stat-label">Pendientes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-today">8</div>
+            <div class="stat-label">Hoy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="stat-earnings">$120</div>
+            <div class="stat-label">Ganancias</div>
+          </div>
         </div>
       </div>
 
-      <h3 class="section-title">📅 Próximas Citas</h3>
-      <div id="bookings-list" style="min-height: 100px; color: #888; text-align: center; padding: 20px;">Cargando citas...</div>
-
-      <h3 class="section-title">✂️ Mis Servicios</h3>
-      <div id="services-list"></div>
-      
-      <div class="add-form">
-        <input id="new-service-name" placeholder="Nombre (ej: Corte Fade)">
-        <input id="new-service-price" type="number" placeholder="Precio ($)">
-        <button class="btn-book" onclick="addService()">+ Agregar</button>
+      <!-- 🧭 Menú de Administración -->
+      <div class="profile-card">
+        <div class="menu-grid">
+          <a href="gestionar-citas.html" class="menu-item">
+            <i class="fas fa-calendar-check"></i>
+            <span>Gestión de Citas</span>
+            <i class="fas fa-chevron-right arrow"></i>
+          </a>
+          
+          <a href="pagos-barbero.html" class="menu-item">
+            <i class="fas fa-wallet"></i>
+            <span>Mis Pagos</span>
+            <i class="fas fa-chevron-right arrow"></i>
+          </a>
+          
+          <a href="editar-perfil.html" class="menu-item">
+            <i class="fas fa-store"></i>
+            <span>Mi Barbería</span>
+            <i class="fas fa-chevron-right arrow"></i>
+          </a>
+          
+          <a href="horarios.html" class="menu-item">
+            <i class="fas fa-clock"></i>
+            <span>Horarios y Disponibilidad</span>
+            <i class="fas fa-chevron-right arrow"></i>
+          </a>
+          
+          <a href="chat-list.html" class="menu-item">
+            <i class="fas fa-comments"></i>
+            <span>Mensajes con Clientes</span>
+            <i class="fas fa-chevron-right arrow"></i>
+          </a>
+          
+          <a href="configuracion.html" class="menu-item">
+            <i class="fas fa-cog"></i>
+            <span>Configuración de Cuenta</span>
+            <i class="fas fa-chevron-right arrow"></i>
+          </a>
+          
+          <button onclick="cerrarSesion()" class="menu-item danger" style="width:100%; text-align:left; background:none; border:none; cursor:pointer;">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Cerrar Sesión</span>
+            <i class="fas fa-chevron-right arrow"></i>
+          </button>
+        </div>
       </div>
-    </main>
 
+    </div>
+
+    <!-- 📱 Navegación Inferior -->
     <nav class="bottom-nav">
-      <a href="admin.html" class="nav-link active"><i class="fas fa-home"></i><span>Inicio</span></a>
-      <a href="citas-barbero.html" class="nav-link"><i class="fas fa-calendar"></i><span>Citas</span></a>
-      <a href="chat-list.html" class="nav-link"><i class="fas fa-comments"></i><span>Chats</span></a>
-      <a href="pagos-barbero.html" class="nav-link"><i class="fas fa-wallet"></i><span>Pagos</span></a>
+      <a href="admin.html" class="nav-link active">
+        <i class="fas fa-home"></i>
+        <span>Inicio</span>
+      </a>
+      <a href="gestionar-citas.html" class="nav-link">
+        <i class="fas fa-calendar"></i>
+        <span>Citas</span>
+      </a>
+      <a href="chat-list.html" class="nav-link">
+        <i class="fas fa-comments"></i>
+        <span>Chat</span>
+      </a>
+      <a href="admin.html" class="nav-link active"> <!-- Perfil está activo porque es el dashboard -->
+        <i class="fas fa-user-shield"></i>
+        <span>Panel</span>
+      </a>
     </nav>
-  </div>
+
+  </div> <!-- ✅ FIN DE #app-content -->
 
   <script src="config.js"></script>
   <script>
-    // Al inicio de tu script de verificación de sesión:
-(async () => {
-  const { data: { user } } = await supabaseClient.auth.getUser();
-  
-  // Si el usuario no tiene rol definido, redirigir a completar perfil
-  if (user && !user.user_metadata?.role) {
-    window.location.href = 'complete-profile.html';
-    return;
-  }
-  
-  // ... resto de tu lógica de redirección por rol
-})();
+    // ✅ VERIFICACIÓN INMEDIATA DE SESIÓN Y ROL (ANTI-FLASH)
     (async () => {
       try {
+        if (!window.supabaseClient) {
+          window.location.href = 'auth.html';
+          return;
+        }
+
         const { data: { user }, error } = await supabaseClient.auth.getUser();
-        if (error || !user) { window.location.href = 'auth.html'; return; }
         
-        // Si NO es barbero, redirigir a cliente
+        // 1. Si no hay sesión -> Login
+        if (error || !user) {
+          window.location.href = 'auth.html';
+          return;
+        }
+
+        // 2. 🔒 SEGURIDAD: Si el usuario NO es barbero, lo mandamos a la página de cliente
         if (user.user_metadata?.role !== 'barbero') {
           window.location.href = 'perfil-cliente.html';
           return;
         }
 
-        // Mostrar nombre y contenido
+        // 3. Si es barbero -> Mostrar datos
         const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Barbero';
-        document.getElementById('admin-title').innerHTML = `🔐 Hola, <span class="cyan">${nombre}</span>`;
+        const email = user.email || 'sin-email@barberhub.com';
+
+        document.getElementById('display-name').textContent = nombre;
+        document.getElementById('display-email').textContent = email;
+
+        // ✨ Mostrar contenido con transición suave
         document.getElementById('app-content').classList.add('visible');
-        
-        // Aquí puedes cargar datos reales de Supabase
-        // loadBarberData(user.id);
+
       } catch (err) {
-        console.error(err);
+        console.error('Error de autenticación:', err);
         window.location.href = 'auth.html';
       }
     })();
 
+    // 🚪 Cerrar sesión
     async function cerrarSesion() {
-      if (confirm('¿Cerrar sesión?')) {
+      if (!confirm('¿Cerrar sesión?')) return;
+      try {
         await supabaseClient.auth.signOut();
         window.location.href = 'auth.html';
+      } catch (err) {
+        console.error('Error al cerrar sesión:', err);
+        window.location.href = 'auth.html';
       }
-    }
-
-    function addService() {
-      const nombre = document.getElementById('new-service-name').value;
-      const precio = document.getElementById('new-service-price').value;
-      if (nombre && precio) alert(`✅ Servicio "${nombre}" ($${precio}) agregado.`);
     }
   </script>
 </body>
