@@ -22,7 +22,7 @@
       font-family: 'Inter', sans-serif;
     }
 
-    /*  MURO DE PALABRAS EN EL FONDO (BarberHub repetido) */
+    /* 🌌 MURO DE PALABRAS EN EL FONDO (BarberHub repetido) */
     .bg-text-layer {
       position: fixed;
       top: -10%; left: -10%;
@@ -40,10 +40,11 @@
     
     .bg-text-layer span {
       font-family: 'Orbitron', sans-serif;
-      font-size: 4vw; /* Tamaño grande */
+      font-size: 4vw;
       font-weight: 900;
       color: transparent;
-      -webkit-text-stroke: 1px rgba(0, 242, 255, 0.3); /* Borde neón tenue */
+      /* ✅ BORDE TURQUESA TENUE */
+      -webkit-text-stroke: 1px rgba(0, 229, 238, 0.3);
       white-space: nowrap;
     }
 
@@ -52,10 +53,11 @@
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       z-index: -1;
+      /* ✅ LUZ TURQUESA */
       background: linear-gradient(90deg, 
         transparent 0%, 
         transparent 45%, 
-        rgba(0, 242, 255, 0.15) 50%, 
+        rgba(0, 229, 238, 0.15) 50%, 
         transparent 55%, 
         transparent 100%);
       animation: sweepLight 6s linear infinite;
@@ -72,7 +74,8 @@
       /* Fondo neutro oscuro */
       background: rgba(15, 15, 20, 0.95);
       backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 242, 255, 0.3);
+      /* ✅ BORDE DE TARJETA EN TURQUESA */
+      border: 1px solid rgba(0, 229, 238, 0.3);
       border-radius: 20px;
       
       padding: 50px 30px 40px;
@@ -80,7 +83,7 @@
       max-width: 420px;
       text-align: center;
       position: relative;
-      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 242, 255, 0.05);
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 229, 238, 0.05);
       animation: floatCard 6s ease-in-out infinite;
       z-index: 10;
     }
@@ -90,7 +93,7 @@
       50% { transform: translateY(-10px); }
     }
 
-    /* ✨ TÍTULO DIVIDIDO: BARBER (Blanco) HUB (Neón) */
+    /* ✨ TÍTULO DIVIDIDO: BARBER (Blanco) HUB (Turquesa Neón) */
     .card-brand {
       font-family: 'Orbitron', sans-serif;
       font-size: 2.5rem;
@@ -105,9 +108,10 @@
       color: #ffffff; /* Blanco puro */
     }
     
+    /* ✅ HUB EN TURQUESA NEÓN */
     .card-brand .word-hub {
-      color: var(--neon-cyan); /* Color neón */
-      text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+      color: #00E5EE; /* Color Turquesa Neón */
+      text-shadow: 0 0 10px #00E5EE, 0 0 20px #00E5EE, 0 0 40px rgba(0, 229, 238, 0.5);
     }
 
     /* Efecto de luz brillante que pasa por el título */
@@ -150,8 +154,9 @@
       box-sizing: border-box;
     }
     .input-group input:focus {
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+      /* ✅ FOCO EN TURQUESA */
+      border-color: #00E5EE;
+      box-shadow: 0 0 15px rgba(0, 229, 238, 0.2);
       background: rgba(255, 255, 255, 0.08);
     }
 
@@ -171,9 +176,10 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      background: var(--neon-cyan);
+      /* ✅ BOTÓN TURQUESA */
+      background: #00E5EE;
       color: #000;
-      box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+      box-shadow: 0 0 20px rgba(0, 229, 238, 0.4);
       margin-bottom: 10px;
     }
     .btn-login-main:hover {
@@ -239,8 +245,8 @@
       transition: 0.2s;
     }
     .links-container a:hover {
-      color: var(--neon-cyan);
-      text-shadow: 0 0 5px var(--neon-cyan);
+      color: #00E5EE;
+      text-shadow: 0 0 5px #00E5EE;
     }
   </style>
 </head>
@@ -248,7 +254,6 @@
 
   <!-- 🌌 FONDO CON PALABRAS Y LUZ -->
   <div class="bg-text-layer">
-    <!-- Repetimos la palabra varias veces para llenar el fondo -->
     <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
     <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
     <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
@@ -258,10 +263,10 @@
   </div>
   <div class="bg-light-beam"></div>
 
-  <!-- 💎 TARJETA LOGIN (SIN LOGO) -->
+  <!-- 💎 TARJETA LOGIN -->
   <div class="login-card">
     
-    <!-- ✅ Título: BARBER en blanco, HUB en neón -->
+    <!-- ✅ Título: BARBER en blanco, HUB en Turquesa -->
     <h2 class="card-brand">
       <span class="word-barber">BARBER</span><span class="word-hub">HUB</span>
     </h2>
