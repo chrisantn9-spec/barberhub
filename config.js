@@ -1,16 +1,13 @@
-// config.js - SIN MÓDULOS - Funciona en todos los navegadores
-
-// Verificar que Supabase CDN está cargado
+// config.js - Versión estable para navegador
 if (typeof supabase === 'undefined') {
-  console.error('❌ Supabase no está cargado. Verifica que el CDN esté incluido en tu HTML.');
+  console.error('❌ Supabase CDN no cargó. Revisa el orden de tus scripts en HTML.');
 } else {
   const { createClient } = supabase;
   
-  // Tus credenciales (VERIFICA QUE ESTÉN COMPLETAS)
+  // ⚠️ VERIFICA QUE ESTA KEY ESTÉ COMPLETA EN TU DASHBOARD DE SUPABASE
   const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // ← TU KEY COMPLETA AQUÍ
-  
-  // Crear cliente global
+  const SUPABASE_ANON_KEY = 'TU_KEY_COMPLETA_AQUI'; // ← Pega tu key real aquí
+
   window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
       autoRefreshToken: true,
@@ -19,5 +16,5 @@ if (typeof supabase === 'undefined') {
     }
   });
   
-  console.log('✅ Supabase inicializado correctamente');
+  console.log('✅ Supabase conectado correctamente');
 }
