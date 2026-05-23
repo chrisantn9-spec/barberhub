@@ -4,12 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro | BarberHub</title>
-  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
-    /* CONFIGURACIÓN BÁSICA */
+    /* =========================================
+       ESTILOS CYBERPUNK (Igual que auth.html)
+       ========================================= */
+    :root {
+      --neon-cyan: #00E5EE;
+      --neon-pink: #ff00ff;
+    }
+
     body {
       overflow: hidden;
       display: flex;
@@ -74,23 +81,29 @@
       border-radius: 20px;
       padding: 40px 30px;
       width: 90%;
-      max-width: 480px;
+      max-width: 460px; /* Un poco más ancho que login */
       text-align: center;
       position: relative;
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 229, 238, 0.05);
       animation: floatCard 6s ease-in-out infinite;
       z-index: 10;
+      max-height: 90vh; /* Para que quepa en pantallas pequeñas */
+      overflow-y: auto; /* Scroll si es muy alto */
     }
     
+    /* Scrollbar personalizado para la tarjeta */
+    .register-card::-webkit-scrollbar { width: 6px; }
+    .register-card::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
+
     @keyframes floatCard {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
     }
 
-    /* ✨ TÍTULO CYBERPUNK */
+    /* ✨ TÍTULO CYBERPUNK GLITCH */
     .card-brand {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.8rem;
+      font-size: 2.5rem;
       font-weight: 900;
       letter-spacing: 3px;
       margin-bottom: 10px;
@@ -98,282 +111,151 @@
       display: inline-block;
     }
 
-    .word-barber {
-      color: #ffffff;
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    }
-
+    .word-barber { color: #ffffff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
     .word-hub {
-      color: #00E5EE;
-      text-shadow: 
-        0 0 10px #00E5EE,
-        0 0 20px #00E5EE,
-        0 0 40px rgba(0, 229, 238, 0.8);
-      display: inline-block;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan), 0 0 40px rgba(0, 229, 238, 0.8);
       animation: hubPulse 2s ease-in-out infinite;
     }
 
     @keyframes hubPulse {
-      0%, 100% { 
-        text-shadow: 0 0 10px #00E5EE, 0 0 20px #00E5EE, 0 0 40px rgba(0, 229, 238, 0.8);
-      }
-      50% { 
-        text-shadow: 0 0 15px #00E5EE, 0 0 30px #00E5EE, 0 0 60px rgba(0, 229, 238, 1);
-      }
+      0%, 100% { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); }
+      50% { text-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan); }
     }
 
-    .card-brand::before,
-    .card-brand::after {
+    /* Glitch effect layers */
+    .card-brand::before, .card-brand::after {
       content: attr(data-text);
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(15, 15, 20, 0.95);
-      overflow: hidden;
-      pointer-events: none;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 15, 20, 0.95); overflow: hidden; pointer-events: none;
     }
-
-    .card-brand::before {
-      left: 2px;
-      text-shadow: -2px 0 #ff00ff;
-      clip-path: inset(44% 0 61% 0);
-      animation: glitch-anim 2.5s infinite linear alternate-reverse;
-    }
-
-    .card-brand::after {
-      left: -2px;
-      text-shadow: -2px 0 #00E5EE;
-      clip-path: inset(12% 0 58% 0);
-      animation: glitch-anim 3s infinite linear alternate-reverse;
-    }
-
+    .card-brand::before { left: 2px; text-shadow: -2px 0 var(--neon-pink); clip-path: inset(44% 0 61% 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
+    .card-brand::after { left: -2px; text-shadow: -2px 0 var(--neon-cyan); clip-path: inset(12% 0 58% 0); animation: glitch-anim 3s infinite linear alternate-reverse; }
     @keyframes glitch-anim {
-      0% { clip-path: inset(40% 0 61% 0); }
-      20% { clip-path: inset(92% 0 1% 0); }
-      40% { clip-path: inset(10% 0 50% 0); }
-      60% { clip-path: inset(50% 0 25% 0); }
-      80% { clip-path: inset(15% 0 70% 0); }
+      0% { clip-path: inset(40% 0 61% 0); } 20% { clip-path: inset(92% 0 1% 0); }
+      40% { clip-path: inset(10% 0 50% 0); } 60% { clip-path: inset(50% 0 25% 0); }
       100% { clip-path: inset(60% 0 10% 0); }
     }
 
-    .register-subtitle {
-      color: #aaa;
-      font-size: 1rem;
-      margin-bottom: 25px;
-    }
+    .register-subtitle { color: #aaa; font-size: 0.95rem; margin-bottom: 20px; }
 
-    /* 🔘 SELECTOR DE ROL (Barbero/Cliente) */
+    /* 🔘 SELECTOR DE ROL */
     .role-selector {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 20px;
       background: rgba(255, 255, 255, 0.05);
-      padding: 5px;
+      padding: 4px;
       border-radius: 12px;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
     .role-btn {
       flex: 1;
-      padding: 12px;
+      padding: 10px;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       background: transparent;
       color: #888;
       font-weight: 600;
-      font-size: 0.9rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s;
     }
-    
     .role-btn.active {
-      background: #00E5EE;
+      background: var(--neon-cyan);
       color: #000;
       box-shadow: 0 0 15px rgba(0, 229, 238, 0.5);
-      font-weight: 700;
-    }
-    
-    .role-btn:hover:not(.active) {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
     }
 
     /* Inputs */
-    .input-group {
-      position: relative;
-      margin-bottom: 16px;
-      text-align: left;
-    }
-    
-    .input-group label {
-      display: block;
-      color: #aaa;
-      font-size: 0.8rem;
-      margin-bottom: 6px;
-      margin-left: 4px;
-    }
-    
+    .input-group { text-align: left; margin-bottom: 15px; }
     .input-group input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 12px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
+      border-radius: 8px;
       color: #fff;
-      font-size: 1rem;
-      outline: none;
-      transition: 0.3s;
-      box-sizing: border-box;
+      box-sizing: border-box; /* Importante para que no se salga */
     }
-    
     .input-group input:focus {
-      border-color: #00E5EE;
-      box-shadow: 0 0 15px rgba(0, 229, 238, 0.2);
-      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--neon-cyan);
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 229, 238, 0.2);
     }
 
-    /* Campos extra para barbero (ocultos por defecto) */
+    /* Campos extra de Barbero (Ocultos por defecto) */
     .barber-fields {
       display: none;
-      margin-top: 10px;
-      padding-top: 15px;
-      border-top: 1px dashed rgba(255, 255, 255, 0.1);
-    }
-    
-    .barber-fields.active {
-      display: block;
       animation: fadeIn 0.3s ease;
+      border-top: 1px dashed rgba(255,255,255,0.1);
+      padding-top: 15px;
+      margin-bottom: 15px;
     }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .barber-fields.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ✅ CASILLA DE TÉRMINOS */
+    .terms-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+      margin-bottom: 20px;
+      padding: 10px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 8px;
     }
+    .terms-container input[type="checkbox"] {
+      margin-top: 4px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--neon-cyan);
+      cursor: pointer;
+    }
+    .terms-text {
+      font-size: 0.8rem;
+      color: #aaa;
+      line-height: 1.4;
+    }
+    .terms-text a { color: var(--neon-cyan); text-decoration: underline; }
 
     /* Botón Principal */
     .btn-register-main {
       width: 100%;
-      padding: 16px;
-      border: none;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: #00E5EE;
-      color: #000;
-      box-shadow: 0 0 20px rgba(0, 229, 238, 0.4);
-      margin: 20px 0 10px;
-    }
-    
-    .btn-register-main:hover {
-      background: #fff;
-      box-shadow: 0 0 35px rgba(255, 255, 255, 0.6);
-      transform: translateY(-3px);
-    }
-    
-    .btn-register-main:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    /* Mensajes */
-    .msg {
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      margin: 10px 0;
-      display: none;
-    }
-    .msg.ok {
-      background: rgba(0, 255, 136, 0.15);
-      color: #00ff88;
-      border: 1px solid #00ff88;
-    }
-    .msg.err {
-      background: rgba(255, 68, 68, 0.15);
-      color: #ff4444;
-      border: 1px solid #ff4444;
-    }
-
-    /* Separador */
-    .divider {
-      margin: 25px 0 20px;
-      border: 0;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      position: relative;
-    }
-    .divider span {
-      position: absolute;
-      top: -12px; left: 50%; transform: translateX(-50%);
-      background: rgba(15, 15, 20, 1);
-      padding: 0 15px; 
-      color: #888; 
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    /* Botón Google */
-    .btn-google {
-      width: 100%;
       padding: 14px;
-      border: 1px solid #ff00ff;
-      border-radius: 12px;
-      background: transparent;
-      color: #ff00ff;
+      border: none;
+      border-radius: 10px;
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 20px rgba(0, 229, 238, 0.4);
+      transition: all 0.3s;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 0 10px rgba(255, 0, 255, 0.15);
-      margin-bottom: 15px;
     }
-    .btn-google:hover {
-      background: rgba(255, 0, 255, 0.1);
-      box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
-      transform: translateY(-3px);
-      color: #fff;
-    }
+    .btn-register-main:hover { background: #fff; transform: translateY(-2px); }
+    .btn-register-main:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #555; }
 
-    .login-link {
-      color: #aaa;
+    /* Mensajes de error/éxito */
+    #msg {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
       font-size: 0.85rem;
-      margin-top: 15px;
+      display: none;
     }
-    .login-link a {
-      color: #00E5EE;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .login-link a:hover {
-      text-shadow: 0 0 5px #00E5EE;
-    }
+    #msg.err { background: rgba(255, 0, 0, 0.1); color: #ff5555; border: 1px solid #ff5555; }
+    #msg.ok { background: rgba(0, 255, 0, 0.1); color: #00ff88; border: 1px solid #00ff88; }
+
+    .login-link { margin-top: 20px; font-size: 0.9rem; color: #888; }
+    .login-link a { color: var(--neon-cyan); text-decoration: none; }
   </style>
 </head>
-  <!-- Aviso de responsabilidad -->
-<div style="position: fixed; bottom: 75px; left: 0; right: 0; text-align: center; color: #555; font-size: 0.7rem; padding: 8px; background: rgba(5,5,5,0.6); backdrop-filter: blur(4px); z-index: 999;">
-  Al usar BarberHub, aceptas que eres responsable de tus interacciones y transacciones dentro de la plataforma.
-</div>
 <body>
 
-  <!-- 🌌 FONDO CON PALABRAS Y LUZ (Igual que auth.html) -->
+  <!-- 🌌 FONDO ANIMADO -->
   <div class="bg-text-layer">
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
     <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
     <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
     <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
@@ -384,14 +266,12 @@
   <!-- 💎 TARJETA DE REGISTRO -->
   <div class="register-card">
     
-    <!-- Título Cyberpunk -->
     <h2 class="card-brand" data-text="BARBERHUB">
       <span class="word-barber">BARBER</span><span class="word-hub">HUB</span>
     </h2>
-    
     <p class="register-subtitle">Crea tu cuenta gratis</p>
 
-    <!-- 🔘 Selector de Rol -->
+    <!-- Selector de Rol -->
     <div class="role-selector">
       <button type="button" class="role-btn active" id="btn-cliente" onclick="setRole('cliente')">👤 Cliente</button>
       <button type="button" class="role-btn" id="btn-barbero" onclick="setRole('barbero')">💈 Barbero</button>
@@ -399,116 +279,117 @@
 
     <form id="register-form">
       <div class="input-group">
-        <label>Nombre completo</label>
-        <input type="text" id="nombre" placeholder="Tu nombre" required>
+        <input type="text" id="nombre" placeholder="Tu nombre completo" required>
       </div>
       
       <div class="input-group">
-        <label>Correo electrónico</label>
         <input type="email" id="email" placeholder="tu@email.com" required>
       </div>
       
       <div class="input-group">
-        <label>Contraseña</label>
-        <input type="password" id="password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+        <input type="password" id="password" placeholder="Contraseña (min 6)" minlength="6" required>
       </div>
 
-      <!-- Campos extra para Barbero -->
+      <!-- Campos Extra para Barbero (Ocultos al inicio) -->
       <div id="barber-fields" class="barber-fields">
         <div class="input-group">
-          <label>Nombre de tu barbería</label>
-          <input type="text" id="barberia" placeholder="Ej: CyberCuts Studio">
+          <input type="text" id="barberia" placeholder="Nombre de tu Barbería">
         </div>
         <div class="input-group">
-          <label>Dirección del local</label>
-          <input type="text" id="direccion" placeholder="Ciudad, Dirección">
+          <input type="text" id="direccion" placeholder="Dirección del Local">
         </div>
       </div>
+
       <!-- ✅ CLÁUSULA DE RESPONSABILIDAD -->
-<div style="margin: 18px 0 10px; text-align: left; padding: 0 5px;">
-  <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; color: #999; font-size: 0.82rem; line-height: 1.45;">
-    <input type="checkbox" id="terms-check" required style="margin-top: 3px; accent-color: #00E5EE; width: 18px; height: 18px; cursor: pointer;">
-    <span>
-      Acepto que soy el único responsable de mis interacciones, citas y transacciones dentro de BarberHub. La plataforma actúa únicamente como intermediario y no se hace responsable por el servicio prestado por barberos ni por el comportamiento de los usuarios. Al continuar, acepto los <a href="#" style="color: #00E5EE; text-decoration: underline;">Términos de Uso</a>.
-    </span>
-  </label>
-</div>
-      <button type="submit" class="btn-register-main" id="btn-register">
+      <div class="terms-container">
+        <input type="checkbox" id="terms-check" required>
+        <span class="terms-text">
+          Acepto que soy el único responsable de mis interacciones, citas y transacciones dentro de BarberHub. La plataforma actúa únicamente como intermediario y no se hace responsable por el servicio prestado.
+          <a href="#">Leer Términos</a>.
+        </span>
+      </div>
+
+      <button type="submit" class="btn-register-main" id="btn-register" disabled>
         <i class="fas fa-user-plus"></i> CREAR CUENTA
       </button>
       
-      <div id="msg" class="msg"></div>
+      <div id="msg"></div>
     </form>
 
-    <hr class="divider"><span>O REGÍSTRATE CON</span>
-
-    <button onclick="registerGoogle()" class="btn-google">
-      <i class="fab fa-google"></i> Google
-    </button>
-
-    <p class="login-link">
+    <div class="login-link">
       ¿Ya tienes cuenta? <a href="auth.html">Inicia sesión</a>
-    </p>
+    </div>
   </div>
 
   <script src="config.js"></script>
   <script>
-    // 🔘 Control del selector de rol
-    let role = 'cliente';
-    
-    window.setRole = (r) => {
-      role = r;
-      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('btn-' + r).classList.add('active');
-      
+    // 1. CONTROL DEL ROL (Cliente / Barbero)
+    let currentRole = 'cliente';
+
+    window.setRole = (role) => {
+      currentRole = role;
+      document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-' + role).classList.add('active');
+
       const barberFields = document.getElementById('barber-fields');
-      if (r === 'barbero') {
+      if (role === 'barbero') {
         barberFields.classList.add('active');
       } else {
         barberFields.classList.remove('active');
       }
     };
 
-    // 📝 Registro con Email
+    // 2. ACTIVAR BOTÓN SOLO SI ACEPTA TÉRMINOS
+    const termsCheck = document.getElementById('terms-check');
+    const btnReg = document.getElementById('btn-register');
+    
+    if (termsCheck && btnReg) {
+      termsCheck.addEventListener('change', () => {
+        btnReg.disabled = !termsCheck.checked;
+      });
+    }
+
+    // 3. LÓGICA DE REGISTRO CON SUPABASE
     document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      // ✅ Validar que aceptó la cláusula
-if (!document.getElementById('terms-check').checked) {
-  msg.textContent = '⚠️ Debes aceptar los términos para continuar.';
-  msg.className = 'msg err'; msg.style.display = 'block';
-  return;
-}
-      const btn = document.getElementById('btn-register');
-      const msg = document.getElementById('msg');
       
+      const msg = document.getElementById('msg');
       const nombre = document.getElementById('nombre').value;
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
-      msg.style.display = 'none';
+
+      // Validar checkbox de términos
+      if (!termsCheck.checked) {
+        msg.textContent = '⚠️ Debes aceptar los términos de responsabilidad.';
+        msg.className = 'err';
+        msg.style.display = 'block';
+        return;
+      }
+
+      // Desactivar botón mientras carga
+      btnReg.disabled = true;
+      btnReg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
 
       try {
-        // 1. Crear usuario en Supabase Auth
+        // 1. Crear usuario en Auth
         const { data, error } = await supabaseClient.auth.signUp({
           email: email,
           password: password,
           options: {
             data: {
               nombre: nombre,
-              role: role
+              role: currentRole // Guardamos si es barbero o cliente
             }
           }
         });
-        
+
         if (error) throw error;
 
-        // 2. Si es barbero, crear entrada en tabla barbers
-        if (role === 'barbero') {
+        // 2. Si es Barbero, creamos su perfil en la tabla 'barbers'
+        if (currentRole === 'barbero') {
           const barberia = document.getElementById('barberia').value || nombre + "'s Barbería";
           const direccion = document.getElementById('direccion').value || 'Sin dirección';
-          
+
           await supabaseClient.from('barbers').insert([{
             owner_id: data.user.id,
             name: barberia,
@@ -519,55 +400,30 @@ if (!document.getElementById('terms-check').checked) {
           }]);
         }
 
-        // ✅ Éxito
+        // Éxito
         msg.textContent = '✅ Cuenta creada. Revisa tu email.';
-        msg.className = 'msg ok';
+        msg.className = 'ok';
         msg.style.display = 'block';
         
         setTimeout(() => {
-          window.location.href = 'auth.html';
+          window.location.href = 'auth.html'; // Ir al login
         }, 2500);
 
       } catch (err) {
-        // ❌ Manejo de errores
-        if (err.message.includes('rate limit') || err.message.includes('too many requests')) {
-          msg.textContent = '⏳ Demasiados intentos. Espera 15 min o usa otro email.';
-        } else if (err.message.includes('already registered')) {
-          msg.textContent = 'ℹ️ Ese email ya está registrado.';
-        } else {
-          msg.textContent = '❌ ' + err.message;
-        }
-        msg.className = 'msg err';
+        // Errores comunes
+        let errorText = 'Error desconocido';
+        if (err.message.includes('rate limit')) errorText = '⏳ Demasiados intentos. Espera 15 min.';
+        else if (err.message.includes('already registered')) errorText = 'ℹ️ Ese email ya está registrado.';
+        else errorText = '❌ ' + err.message;
+
+        msg.textContent = errorText;
+        msg.className = 'err';
         msg.style.display = 'block';
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-user-plus"></i> CREAR CUENTA';
+        
+        btnReg.disabled = false;
+        btnReg.innerHTML = '<i class="fas fa-user-plus"></i> CREAR CUENTA';
       }
     });
-
-    // 🔵 Registro con Google
-    async function registerGoogle() {
-      try {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: { 
-            redirectTo: window.location.origin + '/perfil-cliente.html',
-            queryParams: { access_type: 'offline', prompt: 'consent' }
-          }
-        });
-        if (error) throw error;
-      } catch (err) {
-        alert('❌ Error con Google: ' + err.message);
-      }
-    }
   </script>
-  // 🔒 Activar/desactivar botón según checkbox
-const termsCheck = document.getElementById('terms-check');
-const btnReg = document.getElementById('btn-register');
-if (termsCheck && btnReg) {
-  btnReg.disabled = true; // Empieza desactivado
-  termsCheck.addEventListener('change', () => {
-    btnReg.disabled = !termsCheck.checked;
-  });
-}
 </body>
 </html>
