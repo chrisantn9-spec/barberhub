@@ -1,329 +1,94 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💈</text></svg>">
-    <meta name="theme-color" content="#050505">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <link rel="apple-touch-icon" href="logo.png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Admin | BarberHub</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- 🔥 Supabase CDN primero -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        /* Estilos específicos para Admin */
-        body { background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); color: #fff; margin: 0; padding: 20px; font-family: system-ui, -apple-system, sans-serif; min-height: 100vh; padding-bottom: 80px; }
-        
-        .admin-header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 25px; border-bottom: 1px solid rgba(0,242,255,0.2); 
-            padding-bottom: 15px; flex-wrap: wrap; gap: 15px; 
-        }
-        .admin-header h1 { margin: 0; font-size: 1.4rem; font-family: 'Orbitron', sans-serif; }
-        .admin-header #barber-name { color: #00f2ff; font-weight: bold; margin: 5px 0 0; }
-        
-        .admin-nav { display: flex; gap: 10px; flex-wrap: wrap; }
-        .nav-btn { 
-            padding: 8px 14px; border-radius: 6px; text-decoration: none; 
-            font-size: 0.9rem; font-weight: 600; cursor: pointer; border: none; 
-            transition: 0.2s; background: #2a2a35; color: #ccc; 
-        }
-        .nav-btn:hover { transform: translateY(-2px); background: #3a3a45; }
-        .btn-cyan { background: #00f2ff !important; color: #000 !important; }
-        .btn-pink { background: #ff00ff !important; color: #fff !important; }
-        
-        /* 🔥 Botón de Pagos con estilo correcto */
-        .menu-item {
-            display: flex; align-items: center; gap: 10px;
-            background: rgba(0,242,255,0.08); border: 1px solid rgba(0,242,255,0.3);
-            padding: 12px 16px; border-radius: 10px; cursor: pointer;
-            transition: all 0.2s; margin-bottom: 20px;
-        }
-        .menu-item:hover { 
-            background: rgba(0,242,255,0.2); 
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,242,255,0.2);
-        }
-        .menu-item i { font-size: 1.2rem; color: #00f2ff; }
-        .menu-item span { font-weight: 600; color: #fff; }
-        
-        .stats-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
-            gap: 15px; margin-bottom: 30px; 
-        }
-        .stat-card { 
-            background: rgba(0,242,255,0.05); border: 1px solid rgba(0,242,255,0.2); 
-            padding: 15px; border-radius: 10px; text-align: center; 
-        }
-        .stat-card h3 { font-size: 2rem; margin: 0; color: #00f2ff; }
-        .stat-card p { margin: 5px 0 0; color: #888; font-size: 0.85rem; }
-        .stat-card.pink { border-color: #ff00ff; background: rgba(255,0,255,0.05); }
-        .stat-card.pink h3 { color: #ff00ff; }
-        
-        .section-title { 
-            color: #00f2ff; font-family: 'Orbitron', sans-serif; 
-            margin: 30px 0 15px; border-bottom: 1px solid rgba(0,242,255,0.2); 
-            padding-bottom: 10px; font-size: 1.1rem; 
-        }
-        
-        .booking-item { 
-            background: rgba(255,255,255,0.03); padding: 12px; margin: 8px 0; 
-            border-radius: 8px; display: flex; justify-content: space-between; 
-            align-items: center; border-left: 3px solid #ff00ff; gap: 10px; 
-        }
-        .booking-info strong { color: #fff; display: block; margin-bottom: 4px; }
-        .booking-info span { color: #888; font-size: 0.85rem; }
-        .status-badge { 
-            padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; 
-            font-weight: bold; text-transform: uppercase; 
-        }
-        .status-pending { background: #ffaa00; color: #000; }
-        .status-confirmed { background: #00ff88; color: #000; }
-        .btn-confirm { 
-            background: #00f2ff; color: #000; border: none; 
-            padding: 6px 12px; border-radius: 4px; cursor: pointer; 
-            font-size: 0.8rem; font-weight: bold; 
-        }
-        .btn-confirm:disabled { background: #333; color: #666; cursor: not-allowed; }
-
-        .service-tag { 
-            background: #222; border: 1px solid #444; padding: 6px 10px; 
-            border-radius: 6px; font-size: 0.85rem; margin-right: 5px; 
-            margin-bottom: 5px; display: inline-block; 
-        }
-        .add-form { 
-            background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; 
-            margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap; 
-            align-items: center; 
-        }
-        .add-form input { 
-            flex: 1; min-width: 120px; padding: 8px; border-radius: 4px; 
-            border: 1px solid #444; background: #111; color: #fff; 
-        }
-        .btn-add { 
-            background: #ff00ff; color: #fff; border: none; 
-            padding: 8px 16px; border-radius: 4px; cursor: pointer; 
-            font-weight: bold; 
-        }
-        
-        /* Bottom Nav para móvil */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(10,10,20,0.95); backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(0,242,255,0.2);
-            display: flex; justify-content: space-around; padding: 10px 0;
-            z-index: 1000;
-        }
-        .nav-link {
-            display: flex; flex-direction: column; align-items: center;
-            color: #888; text-decoration: none; font-size: 0.75rem;
-            padding: 5px 10px; border-radius: 8px; transition: all 0.2s;
-        }
-        .nav-link i { font-size: 1.3rem; margin-bottom: 3px; }
-        .nav-link:hover, .nav-link.active { color: #00f2ff; background: rgba(0,242,255,0.1); }
-        
-  }
-}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin | BarberHub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    #app-content { opacity: 0; visibility: hidden; transition: opacity 0.3s ease; }
+    #app-content.visible { opacity: 1; visibility: visible; }
+  </style>
 </head>
 <body>
-<!-- ✅ MENÚ ORGANIZADO -->
-<div class="nav-wrapper">
-  <div class="nav-container">
-    <div>
-      <h1 class="nav-title">🔐 Panel <span>Admin</span></h1>
-      <p id="barber-name">Cargando...</p>
-    </div>
-    <div class="nav-links">
-      <a href="editar-perfil.html" class="nav-btn">✏️ Editar</a>
-      <a href="horarios.html" class="nav-btn">🕐 Horarios</a>
-      <a href="pagos-barbero.html" class="nav-btn primary">💰 Pagos</a>
-      <a href="index.html" class="nav-btn">🏠 Directorio</a>
-      <button onclick="cerrarSesion()" class="nav-btn danger">🚪 Salir</button>
-    </div>
-  </div>
-</div>
-    <!-- 🔥 Botón de Pagos (con estilo correcto) -->
-    <div class="menu-item" onclick="window.location.href='pagos-barbero.html'">
-        <i class="fas fa-wallet"></i>
-        <span>💰 Ver Pagos Recibidos</span>
-    </div>
 
-    <!-- ESTADÍSTICAS RÁPIDAS -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h3 id="stat-pending">0</h3>
-            <p>Citas Pendientes</p>
+  <div id="app-content">
+    <header class="app-header">
+      <div class="header-top">
+        <h1 class="logo-text" id="admin-title">🔐 Panel <span class="cyan">Admin</span></h1>
+        <button class="icon-btn" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </header>
+
+    <main class="feed-container">
+      <div class="stats-cyber-grid">
+        <div class="stat-card-cyber"><h3 class="stat-number">0</h3><p class="stat-label">Citas Pendientes</p></div>
+        <div class="stat-card-cyber" style="border-color: var(--neon-pink);">
+          <h3 class="stat-number" style="color: var(--neon-pink);">0</h3><p class="stat-label">Confirmadas Hoy</p>
         </div>
-        <div class="stat-card pink">
-            <h3 id="stat-confirmed">0</h3>
-            <p>Confirmadas Hoy</p>
-        </div>
-    </div>
+      </div>
 
-    <!-- 📅 GESTIÓN DE CITAS -->
-    <h2 class="section-title">📅 Próximas Citas</h2>
-    <div id="bookings-list" style="min-height: 100px; color: #888; text-align: center; padding: 20px;">Cargando citas...</div>
+      <h3 class="section-title">📅 Próximas Citas</h3>
+      <div id="bookings-list" style="min-height: 100px; color: #888; text-align: center; padding: 20px;">Cargando citas...</div>
 
-    <!-- ✂️ GESTIÓN DE SERVICIOS -->
-    <h2 class="section-title">✂️ Mis Servicios</h2>
-    <div id="services-list"></div>
-    
-    <div class="add-form">
+      <h3 class="section-title">✂️ Mis Servicios</h3>
+      <div id="services-list"></div>
+      
+      <div class="add-form">
         <input id="new-service-name" placeholder="Nombre (ej: Corte Fade)">
         <input id="new-service-price" type="number" placeholder="Precio ($)">
-        <button onclick="addService()" class="btn-add">+ Agregar</button>
-    </div>
+        <button class="btn-book" onclick="addService()">+ Agregar</button>
+      </div>
+    </main>
 
-    <!-- Bottom Nav -->
     <nav class="bottom-nav">
-        <a href="admin.html" class="nav-link active"><i class="fas fa-home"></i><span>Inicio</span></a>
-        <a href="citas-barbero.html" class="nav-link"><i class="fas fa-calendar"></i><span>Citas</span></a>
-        <a href="chat-list.html" class="nav-link"><i class="fas fa-comments"></i><span>Chats</span></a>
-        <a href="pagos-barbero.html" class="nav-link"><i class="fas fa-wallet"></i><span>Pagos</span></a>
+      <a href="admin.html" class="nav-link active"><i class="fas fa-home"></i><span>Inicio</span></a>
+      <a href="citas-barbero.html" class="nav-link"><i class="fas fa-calendar"></i><span>Citas</span></a>
+      <a href="chat-list.html" class="nav-link"><i class="fas fa-comments"></i><span>Chats</span></a>
+      <a href="pagos-barbero.html" class="nav-link"><i class="fas fa-wallet"></i><span>Pagos</span></a>
     </nav>
+  </div>
 
-    <!-- Scripts -->
-    <script src="config.js"></script>
-    <script>
-        // 🔥 1. Verificar sesión y mostrar nombre del barbero
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!window.supabaseClient) {
-                console.error('❌ Supabase no cargó');
-                window.location.href = 'auth.html';
-                return;
-            }
-
-            try {
-                const { data: { user }, error } = await supabaseClient.auth.getUser();
-                
-                if (error || !user) {
-                    window.location.href = 'auth.html';
-                    return;
-                }
-
-                // 🔒 Verificar que sea barbero
-                const role = user.user_metadata?.role;
-                if (role !== 'barbero') {
-                    window.location.href = 'perfil-cliente.html';
-                    return;
-                }
-
-                // ✅ Mostrar nombre real
-                const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Barbero';
-                const nombreEl = document.getElementById('barber-name');
-                if (nombreEl) nombreEl.textContent = `👋 Hola, ${nombre}`;
-
-                // 🔥 Cargar datos del barbero (opcional: conectar con tabla barbers)
-                // const { data: barber } = await supabaseClient.from('barbers').select('*').eq('owner_id', user.id).single();
-                // if (barber) { /* cargar estadísticas, servicios, etc. */ }
-
-                // Cargar citas y servicios (ejemplo estático - conectar con Supabase después)
-                cargarCitasEjemplo();
-                cargarServiciosEjemplo();
-
-            } catch (err) {
-                console.error('Error en admin:', err);
-                window.location.href = 'auth.html';
-            }
-        });
-
-        // 🔥 2. Cerrar sesión correctamente
-        async function cerrarSesion() {
-            if (!confirm('¿Cerrar sesión?')) return;
-            try {
-                await supabaseClient.auth.signOut();
-                window.location.href = 'auth.html';
-            } catch (err) {
-                console.error('Error logout:', err);
-                window.location.href = 'auth.html';
-            }
+  <script src="config.js"></script>
+  <script>
+    (async () => {
+      try {
+        const { data: { user }, error } = await supabaseClient.auth.getUser();
+        if (error || !user) { window.location.href = 'auth.html'; return; }
+        
+        // Si NO es barbero, redirigir a cliente
+        if (user.user_metadata?.role !== 'barbero') {
+          window.location.href = 'perfil-cliente.html';
+          return;
         }
 
-        // 🔥 3. Ejemplo de citas (conectar con Supabase después)
-        function cargarCitasEjemplo() {
-            const container = document.getElementById('bookings-list');
-            if (!container) return;
-            
-            const citas = [
-                { cliente: 'Carlos M.', servicio: 'Corte + Barba', hora: '10:30 AM', estado: 'pending' },
-                { cliente: 'Ana R.', servicio: 'Corte Clásico', hora: '11:00 AM', estado: 'confirmed' },
-                { cliente: 'Luis P.', servicio: 'Afeitado', hora: '12:00 PM', estado: 'pending' }
-            ];
-            
-            container.innerHTML = '';
-            citas.forEach(c => {
-                const div = document.createElement('div');
-                div.className = 'booking-item';
-                div.innerHTML = `
-                    <div class="booking-info">
-                        <strong>${c.cliente}</strong>
-                        <span>${c.servicio} • ${c.hora}</span>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <span class="status-badge status-${c.estado}">${c.estado === 'pending' ? 'Pendiente' : 'Confirmada'}</span>
-                        ${c.estado === 'pending' ? `<button class="btn-confirm" onclick="confirmarCita('${c.cliente}')">Confirmar</button>` : ''}
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-            
-            // Actualizar estadísticas
-            document.getElementById('stat-pending').textContent = citas.filter(c => c.estado === 'pending').length;
-            document.getElementById('stat-confirmed').textContent = citas.filter(c => c.estado === 'confirmed').length;
-        }
+        // Mostrar nombre y contenido
+        const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Barbero';
+        document.getElementById('admin-title').innerHTML = `🔐 Hola, <span class="cyan">${nombre}</span>`;
+        document.getElementById('app-content').classList.add('visible');
+        
+        // Aquí puedes cargar datos reales de Supabase
+        // loadBarberData(user.id);
+      } catch (err) {
+        console.error(err);
+        window.location.href = 'auth.html';
+      }
+    })();
 
-        function confirmarCita(cliente) {
-            alert(`✅ Cita de ${cliente} confirmada`);
-            // Aquí iría la llamada a Supabase para actualizar el estado
-            cargarCitasEjemplo(); // Recargar para reflejar cambios
-        }
+    async function cerrarSesion() {
+      if (confirm('¿Cerrar sesión?')) {
+        await supabaseClient.auth.signOut();
+        window.location.href = 'auth.html';
+      }
+    }
 
-        // 🔥 4. Ejemplo de servicios (conectar con Supabase después)
-        function cargarServiciosEjemplo() {
-            const container = document.getElementById('services-list');
-            if (!container) return;
-            
-            const servicios = [
-                { nombre: 'Corte Clásico', precio: 15 },
-                { nombre: 'Barba Completa', precio: 10 },
-                { nombre: 'Corte + Barba', precio: 22 },
-                { nombre: 'Afeitado Clásico', precio: 12 }
-            ];
-            
-            container.innerHTML = '';
-            servicios.forEach(s => {
-                const tag = document.createElement('span');
-                tag.className = 'service-tag';
-                tag.innerHTML = `<strong>${s.nombre}</strong> $${s.precio}`;
-                container.appendChild(tag);
-            });
-        }
-
-        // 🔥 5. Agregar nuevo servicio (ejemplo)
-        function addService() {
-            const nombre = document.getElementById('new-service-name').value.trim();
-            const precio = document.getElementById('new-service-price').value;
-            
-            if (!nombre || !precio) {
-                alert('Completa nombre y precio');
-                return;
-            }
-            
-            // Aquí iría la inserción en Supabase:
-            // await supabaseClient.from('services').insert([{ barber_id: ..., name: nombre, price: precio }]);
-            
-            alert(`✅ Servicio "${nombre}" agregado por $${precio}`);
-            document.getElementById('new-service-name').value = '';
-            document.getElementById('new-service-price').value = '';
-            cargarServiciosEjemplo();
-        }
-    </script>
- 
+    function addService() {
+      const nombre = document.getElementById('new-service-name').value;
+      const precio = document.getElementById('new-service-price').value;
+      if (nombre && precio) alert(`✅ Servicio "${nombre}" ($${precio}) agregado.`);
+    }
+  </script>
 </body>
 </html>
