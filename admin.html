@@ -53,6 +53,18 @@
 
   <script src="config.js"></script>
   <script>
+    // Al inicio de tu script de verificación de sesión:
+(async () => {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+  
+  // Si el usuario no tiene rol definido, redirigir a completar perfil
+  if (user && !user.user_metadata?.role) {
+    window.location.href = 'complete-profile.html';
+    return;
+  }
+  
+  // ... resto de tu lógica de redirección por rol
+})();
     (async () => {
       try {
         const { data: { user }, error } = await supabaseClient.auth.getUser();
