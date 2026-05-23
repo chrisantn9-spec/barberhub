@@ -468,7 +468,12 @@
     // 📝 Registro con Email
     document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      
+      // ✅ Validar que aceptó la cláusula
+if (!document.getElementById('terms-check').checked) {
+  msg.textContent = '⚠️ Debes aceptar los términos para continuar.';
+  msg.className = 'msg err'; msg.style.display = 'block';
+  return;
+}
       const btn = document.getElementById('btn-register');
       const msg = document.getElementById('msg');
       
