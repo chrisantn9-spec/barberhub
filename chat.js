@@ -1,8 +1,8 @@
-// chat.js - VERSIÓN FINAL SIN PROMPT
+// chat.js - SIN PROMPT, CON AUTH
 const barberId = sessionStorage.getItem('chatBarberId');
 const barberName = sessionStorage.getItem('chatBarberName') || 'Barbería';
 
-if (!barberId) {
+if (!barberId || barberId === 'undefined' || barberId === 'null') {
   window.location.href = 'perfil-cliente.html';
 }
 
@@ -15,7 +15,7 @@ const chatBox = document.getElementById('chat-messages');
 let currentUser = null;
 let userName = '';
 
-// 🔥 1. OBTENER USUARIO AUTENTICADO (SIN PROMPT)
+// 🔥 OBTENER USUARIO AUTENTICADO
 async function initChat() {
   const { data: { user }, error } = await supabaseClient.auth.getUser();
   
@@ -50,7 +50,7 @@ async function loadMessages() {
   }
 
   data.forEach(msg => {
-    const isMe = msg.user_id === currentUser?.id; // ✅ Compara por ID
+    const isMe = msg.user_id === currentUser?.id;
     const div = document.createElement('div');
     div.className = `msg ${isMe ? 'client' : 'barber'}`;
     const time = new Date(msg.created_at).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
@@ -79,7 +79,7 @@ async function sendMessage() {
   
   const { error } = await supabaseClient.from('messages').insert([{
     barber_id: barberId,
-    user_id: currentUser.id, // ✅ GUARDA USER_ID REAL
+    user_id: currentUser.id,
     user_name: userName,
     message: text,
     created_at: new Date().toISOString()
@@ -94,13 +94,12 @@ async function sendMessage() {
   loadMessages();
 }
 
-// 🔥 2. BOTÓN CON type="button" Y preventDefault
 if (sendBtn) sendBtn.onclick = sendMessage;
 
 if (msgInput) {
   msgInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); // ✅ EVITA RESET
+      e.preventDefault();
       sendMessage();
     }
   });
