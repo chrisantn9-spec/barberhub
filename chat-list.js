@@ -1,23 +1,24 @@
-// chat-list.js - CORREGIDO
+// chat-list.js - CORREGIDO: Usa usuario autenticado
 document.addEventListener('DOMContentLoaded', async () => {
-  const { data: { user } } = await supabaseClient.auth.getUser();
-  if (!user) { 
-    window.location.href = 'auth.html'; 
-    return; 
+  const { data: { user }, error } = await supabaseClient.auth.getUser();
+  
+  if (error || !user) {
+    window.location.href = 'auth.html';
+    return;
   }
   
-  loadChatList(user.id);
+  loadChatList(user);
 });
 
-async function loadChatList(currentUserId) {
+async function loadChatList(currentUser) {
   const container = document.getElementById('chat-list');
   
   try {
-    // Obtener mensajes donde el usuario es el remitente
+    // 🔥 Filtrar por user_id del usuario autenticado
     const { data: messages, error } = await supabaseClient
       .from('messages')
       .select('barber_id, created_at, message, user_name')
-      .eq('user_id', currentUserId) // 🔥 Filtrar por user_id real
+      .eq('user_id', currentUser.id)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -52,7 +53,6 @@ async function loadChatList(currentUserId) {
       return; 
     }
 
-    // Ordenar por más reciente
     barbers.sort((a, b) => 
       new Date(chatMap.get(b.id).last_time) - new Date(chatMap.get(a.id).last_time)
     );
@@ -91,7 +91,7 @@ async function loadChatList(currentUserId) {
     });
     
   } catch (err) { 
-    console.error('Error cargando chats:', err);
+    console.error('Error:', err);
     container.innerHTML = '<p style="text-align:center; color:#ff3333;">Error cargando chats.</p>'; 
   }
 }
