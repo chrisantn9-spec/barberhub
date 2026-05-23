@@ -5,17 +5,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.location.href = 'auth.html'; 
     return; 
   }
-  loadChatList(user.id); // ✅ Pasa el ID
+  loadChatList(user.id);
 });
 
 async function loadChatList(currentUserId) {
   const container = document.getElementById('chat-list');
   
-  // ✅ FILTRA SOLO TUS MENSAJES
   const { data: messages, error } = await supabaseClient
     .from('messages')
     .select('barber_id, created_at, message')
-    .eq('user_id', currentUserId) // ← FILTRO POR TU ID
+    .eq('user_id', currentUserId)
     .order('created_at', { ascending: false });
 
   if (error || !messages?.length) {
