@@ -556,5 +556,14 @@ if (!document.getElementById('terms-check').checked) {
       }
     }
   </script>
+  // 🔒 Activar/desactivar botón según checkbox
+const termsCheck = document.getElementById('terms-check');
+const btnReg = document.getElementById('btn-register');
+if (termsCheck && btnReg) {
+  btnReg.disabled = true; // Empieza desactivado
+  termsCheck.addEventListener('change', () => {
+    btnReg.disabled = !termsCheck.checked;
+  });
+}
 </body>
 </html>
