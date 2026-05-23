@@ -5,56 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BarberHub</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <!-- 🌀 LOADER DE INICIO -->
-  <div id="cyber-loader">
-    <div class="loader-content">
-      <img src="logo.png" alt="BarberHub Logo" class="loader-face">
-      <div class="boot-sequence">
-        <div class="line">> Inicializando sistema...</div>
-        <div class="line">> Conectando a BarberHub...</div>
-      </div>
-      <div class="progress-container">
-        <div class="progress-bar"></div>
-      </div>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="logo">Barber<span>Hub</span></h1>
+      <a href="auth.html" class="btn btn-outline">Entrar</a>
+    </div>
+  </header>
+
+  <!-- Búsqueda -->
+  <div class="search-wrapper">
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Buscar barbería o servicio...">
     </div>
   </div>
 
-  <!-- 🏠 CONTENIDO PRINCIPAL (Solo bienvenida + acceso) -->
-<main class="container landing-view">
-  <header class="landing-header">
-    <h1 class="brand-title">BARBER<span style="color: var(--neon-cyan);">HUB</span></h1>
-  </header>
-
-  <section class="hero-section">
-    <!-- ✅ TÍTULO CAMBIADO -->
-    <h2 class="hero-title">URBAN STYLE</h2>
-    
-    <div class="auth-buttons">
-      <a href="auth.html" class="btn-primary">Iniciar Sesión</a>
-      <a href="registro.html" class="btn-secondary">Crear Cuenta</a>
+  <!-- Contenido -->
+  <main class="container">
+    <h2 class="section-title">🔥 Barberías destacadas</h2>
+    <div class="grid" id="barbers-grid">
+      <!-- Tarjeta ejemplo -->
+      <div class="card">
+        <img src="https://placehold.co/400x300/111/00f2ff?text=CyberCuts" class="card-img" alt="Barbería">
+        <div class="card-body">
+          <h3 class="card-title">CyberCuts Studio</h3>
+          <p class="card-subtitle">Centro, Madrid • 0.8 km</p>
+          <div class="card-footer">
+            <span class="card-rating"><i class="fas fa-star"></i> 4.9</span>
+            <span class="card-price">$15</span>
+          </div>
+        </div>
+      </div>
+      <!-- Duplica tarjetas para probar el grid -->
+      <div class="card">
+        <img src="https://placehold.co/400x300/111/ff00ff?text=Neon" class="card-img" alt="Barbería">
+        <div class="card-body">
+          <h3 class="card-title">Neon Barber Shop</h3>
+          <p class="card-subtitle">Malasaña, Madrid • 1.2 km</p>
+          <div class="card-footer">
+            <span class="card-rating"><i class="fas fa-star"></i> 4.8</span>
+            <span class="card-price">$18</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </section>
+  </main>
 
-  <!-- ✅ PIE DE PÁGINA AGREGADO -->
-  <footer class="landing-footer">
-    
-  </footer><footer class="landing-footer">
-  &copy; 2026 All Rights Reserved by <strong>𝔹-𝕌𝟜𝔸𝕃𝕃</strong>
-</footer>
-</main>
-
-  <!-- ⚡ SCRIPT PARA OCULTAR LOADER -->
-  <script>
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const loader = document.getElementById('cyber-loader');
-        if (loader) loader.classList.add('loader-hidden');
-      }, 2800);
-    });
-  </script>
+  <!-- Menú inferior -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active"><i class="fas fa-home"></i> Inicio</a>
+    <a href="#" class="nav-item"><i class="fas fa-compass"></i> Explorar</a>
+    <a href="#" class="nav-item"><i class="fas fa-calendar"></i> Citas</a>
+    <a href="#" class="nav-item"><i class="fas fa-user"></i> Perfil</a>
+  </nav>
 
 </body>
 </html>
