@@ -3,65 +3,298 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - BarberHub</title>
-  <!-- 1. Supabase CDN PRIMERO -->
+  <title>Inicio de Sesión | BarberHub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
-    body { background:#0a0a1a; color:#fff; font-family:sans-serif; padding:20px; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; }
-    form { background:#111; padding:30px; border-radius:12px; border:1px solid #00f2ff; width:100%; max-width:350px; }
-    h2 { text-align:center; color:#00f2ff; margin:0 0 20px; }
-    input { width:100%; padding:12px; margin:8px 0; background:#222; border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:1rem; }
-    input:focus { outline:none; border-color:#00f2ff; }
-    button { width:100%; padding:14px; background:#00f2ff; color:#000; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:10px; font-size:1rem; }
-    button:disabled { opacity:0.6; cursor:not-allowed; }
-    .msg { margin-top:12px; text-align:center; font-size:0.9rem; min-height:20px; display:none; padding:8px; border-radius:6px; }
-    .msg.err { background:rgba(255,68,68,0.15); color:#ff4444; }
-    .link { text-align:center; margin-top:15px; font-size:0.85rem; }
-    .link a { color:#00f2ff; text-decoration:none; }
+    /* ESTILOS ESPECÍFICOS PARA ESTA PÁGINA */
+    body {
+      overflow: hidden; /* Evita scroll para el fondo animado */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* 🌌 FONDO ANIMADO CYBERPUNK */
+    .cyber-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      background: #050505;
+      overflow: hidden;
+    }
+    
+    /* Líneas que se mueven */
+    .cyber-line {
+      position: absolute;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+      opacity: 0.3;
+    }
+    .cyber-line.h { height: 2px; width: 100%; left: 0; animation: moveH 4s linear infinite; }
+    .cyber-line.v { width: 2px; height: 100%; top: 0; animation: moveV 4s linear infinite; }
+    
+    @keyframes moveH {
+      0% { top: -10%; opacity: 0; } 50% { opacity: 0.6; } 100% { top: 110%; opacity: 0; }
+    }
+    @keyframes moveV {
+      0% { left: -10%; opacity: 0; } 50% { opacity: 0.6; } 100% { left: 110%; opacity: 0; }
+    }
+
+    /* Texto gigante "BARBERHUB" en fondo */
+    .bg-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10vw;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(0, 242, 255, 0.08);
+      white-space: nowrap;
+      animation: pulseText 5s ease-in-out infinite;
+      z-index: -1;
+    }
+    
+    @keyframes pulseText {
+      0%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.5; transform: translate(-50%, -50%) scale(1.05); }
+    }
+
+    /*  TARJETA FLOTANTE NEÓN */
+    .login-card {
+      background: rgba(10, 10, 20, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 20px;
+      padding: 40px 30px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 40px rgba(0, 242, 255, 0.2), inset 0 0 20px rgba(0, 242, 255, 0.05);
+      animation: floatCard 6s ease-in-out infinite;
+    }
+    
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Brillo del borde */
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink), var(--neon-cyan));
+      z-index: -1;
+      border-radius: 22px;
+      opacity: 0.4;
+      filter: blur(12px);
+    }
+
+    .login-logo {
+      width: 80px;
+      height: auto;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 10px var(--neon-cyan));
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    .login-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin: 10px 0 30px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+    }
+
+    /* Inputs flotantes */
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 14px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+      box-sizing: border-box; /* Importante */
+    }
+    .input-group input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Botones Neón */
+    .btn-neon {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* Botón Principal (Cyan) */
+    .btn-login-main {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+    }
+    .btn-login-main:hover {
+      background: #fff;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+      transform: translateY(-3px);
+    }
+
+    /* Botón Google (Rosa Neón) */
+    .btn-google {
+      background: transparent;
+      border: 1px solid var(--neon-pink);
+      color: var(--neon-pink);
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+    }
+    .btn-google:hover {
+      background: rgba(255, 0, 255, 0.1);
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.5);
+      transform: translateY(-3px);
+      color: #fff;
+    }
+
+    .divider {
+      margin: 20px 0;
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+    }
+    .divider span {
+      position: absolute;
+      top: -10px; left: 50%; transform: translateX(-50%);
+      background: #0a0a14; /* Mismo color que la tarjeta */
+      padding: 0 10px; color: #666; font-size: 0.8rem;
+    }
+
+    .links-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      font-size: 0.85rem;
+    }
+    .links-container a {
+      color: #aaa;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    .links-container a:hover {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 5px var(--neon-cyan);
+    }
   </style>
 </head>
 <body>
-  <form id="login-form">
-    <h2>👋 Iniciar Sesión</h2>
-    <input type="email" id="email" placeholder="📧 Email" required>
-    <input type="password" id="password" placeholder="🔑 Contraseña" required>
-    <button type="submit" id="btn">ENTRAR</button>
-    <div id="msg" class="msg err"></div>
-    <div class="link"><a href="registro.html">¿No tienes cuenta? Regístrate</a></div>
-    <div class="link"><a href="recuperar-password.html">¿Olvidaste tu contraseña?</a></div>
-  </form>
 
-  <!-- 2. config.js → 3. Lógica -->
+  <!-- 🌌 FONDO ANIMADO -->
+  <div class="cyber-bg">
+    <div class="cyber-line h" style="top: 20%;"></div>
+    <div class="cyber-line h" style="top: 60%; animation-delay: 2s;"></div>
+    <div class="cyber-line v" style="left: 30%;"></div>
+    <div class="cyber-line v" style="left: 80%; animation-delay: 1s;"></div>
+    <div class="bg-text">BARBERHUB</div>
+  </div>
+
+  <!-- 💎 TARJETA LOGIN -->
+  <div class="login-card">
+    <img src="logo.png" alt="Logo BarberHub" class="login-logo">
+    <h1 class="login-title">Bienvenido</h1>
+
+    <form id="login-form">
+      <div class="input-group">
+        <input type="email" id="email" placeholder=" Correo electrónico" required>
+      </div>
+      <div class="input-group">
+        <input type="password" id="password" placeholder="🔑 Contraseña" required>
+      </div>
+      
+      <button type="submit" class="btn-neon btn-login-main">
+        <i class="fas fa-bolt"></i> INICIAR SESIÓN
+      </button>
+    </form>
+
+    <hr class="divider"><span>O CONTINÚA CON</span>
+
+    <!-- Botón Google recuperado y estilizado -->
+    <button onclick="loginGoogle()" class="btn-neon btn-google">
+      <i class="fab fa-google"></i> Google
+    </button>
+
+    <div class="links-container">
+      <a href="recuperar-password.html">¿Olvidaste contraseña?</a>
+      <a href="registro.html">Registrarse</a>
+    </div>
+  </div>
+
   <script src="config.js"></script>
   <script>
+    // 1. Login con Email
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('btn');
-      const msg = document.getElementById('msg');
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const btn = document.querySelector('.btn-login-main');
       
-      if (!window.supabaseClient) {
-        msg.textContent = '❌ Error: API Key no cargada';
-        msg.style.display = 'block';
-        return;
-      }
-
-      btn.disabled = true; btn.textContent = 'Verificando...';
-      msg.style.display = 'none';
-
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
+      
       try {
-        const { error } = await window.supabaseClient.auth.signInWithPassword({
-          email: document.getElementById('email').value,
-          password: document.getElementById('password').value
+        const { error } = await supabaseClient.auth.signInWithPassword({
+          email: email,
+          password: password
         });
+        
         if (error) throw error;
-
-        window.location.href = 'perfil-cliente.html'; // Redirige al dashboard
+        window.location.href = 'perfil-cliente.html';
       } catch (err) {
-        msg.textContent = '❌ ' + err.message;
-        msg.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'ENTRAR';
+        alert(' Error: ' + err.message);
+        btn.innerHTML = originalText;
       }
     });
+
+    // 2. Login con Google
+    async function loginGoogle() {
+      try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: window.location.origin + '/perfil-cliente.html' }
+        });
+        if (error) throw error;
+      } catch (err) {
+        alert('Error con Google: ' + err.message);
+      }
+    }
   </script>
 </body>
 </html>
