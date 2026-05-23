@@ -1,8 +1,8 @@
-// chat.js - CORREGIDO: Sin reset, con usuario autenticado
+// chat.js - VERSIÓN FINAL SIN PROMPT
 const barberId = sessionStorage.getItem('chatBarberId');
 const barberName = sessionStorage.getItem('chatBarberName') || 'Barbería';
 
-if (!barberId || barberId === 'undefined' || barberId === 'null') {
+if (!barberId) {
   window.location.href = 'perfil-cliente.html';
 }
 
@@ -15,59 +15,55 @@ const chatBox = document.getElementById('chat-messages');
 let currentUser = null;
 let userName = '';
 
-// 🔥 1. VALIDAR SESIÓN ANTES DE HACER NADA
+// 🔥 1. OBTENER USUARIO AUTENTICADO (SIN PROMPT)
 async function initChat() {
-  try {
-    const { data: { user }, error } = await supabaseClient.auth.getUser();
-    if (error || !user) {
-      alert('Debes iniciar sesión para chatear');
-      window.location.href = 'auth.html';
-      return;
-    }
-    currentUser = user;
-    // Usa el nombre guardado en el registro, NUNCA prompt()
-    userName = user.user_metadata?.nombre || user.email.split('@')[0] || 'Cliente';
-    
-    loadMessages();
-    setInterval(loadMessages, 3000); // Polling seguro
-  } catch (err) {
-    console.error('Error init:', err);
+  const { data: { user }, error } = await supabaseClient.auth.getUser();
+  
+  if (error || !user) {
+    alert('Debes iniciar sesión');
     window.location.href = 'auth.html';
+    return;
   }
+  
+  currentUser = user;
+  userName = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Cliente';
+  
+  loadMessages();
+  setInterval(loadMessages, 3000);
 }
 
 async function loadMessages() {
-  if (!chatBox || !currentUser) return;
-  try {
-    const { data, error } = await supabaseClient
-      .from('messages')
-      .select('*')
-      .eq('barber_id', barberId)
-      .order('created_at', { ascending: true });
+  if (!chatBox) return;
+  
+  const { data, error } = await supabaseClient
+    .from('messages')
+    .select('*')
+    .eq('barber_id', barberId)
+    .order('created_at', { ascending: true });
 
-    if (error) throw error;
-    chatBox.innerHTML = '';
+  if (error) return;
+  chatBox.innerHTML = '';
+  
+  if (!data?.length) {
+    chatBox.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">💬 Inicia la conversación</p>';
+    return;
+  }
+
+  data.forEach(msg => {
+    const isMe = msg.user_id === currentUser?.id; // ✅ Compara por ID
+    const div = document.createElement('div');
+    div.className = `msg ${isMe ? 'client' : 'barber'}`;
+    const time = new Date(msg.created_at).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
     
-    if (!data?.length) {
-      chatBox.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">💬 Inicia la conversación</p>';
-      return;
-    }
-
-    data.forEach(msg => {
-      const isMe = msg.user_id === currentUser.id;
-      const div = document.createElement('div');
-      div.className = `msg ${isMe ? 'client' : 'barber'}`;
-      const time = new Date(msg.created_at).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
-      
-      div.innerHTML = `
-        <div style="white-space:pre-wrap; word-wrap:break-word;">${escapeHtml(msg.message)}</div>
-        <span style="font-size:0.65rem; opacity:0.6; margin-top:4px; display:block; text-align:right;">
-          ${isMe ? 'Tú' : escapeHtml(msg.user_name)} • ${time}
-        </span>`;
-      chatBox.appendChild(div);
-    });
-    chatBox.scrollTop = chatBox.scrollHeight;
-  } catch (err) { console.error(err); }
+    div.innerHTML = `
+      <div style="white-space:pre-wrap;">${escapeHtml(msg.message)}</div>
+      <span style="font-size:0.65rem; opacity:0.6; margin-top:4px; display:block; text-align:right;">
+        ${isMe ? 'Tú' : escapeHtml(msg.user_name)} • ${time}
+      </span>`;
+    chatBox.appendChild(div);
+  });
+  
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function escapeHtml(text) {
@@ -81,29 +77,30 @@ async function sendMessage() {
   const text = msgInput?.value.trim();
   if (!text || !currentUser) return;
   
-  try {
-    const { error } = await supabaseClient.from('messages').insert([{
-      barber_id: barberId,
-      user_id: currentUser.id, //  Guarda ID real
-      user_name: userName,
-      message: text,
-      created_at: new Date().toISOString()
-    }]);
-    if (error) throw error;
-    msgInput.value = '';
-    loadMessages();
-  } catch (err) {
-    alert('❌ Error: ' + err.message);
+  const { error } = await supabaseClient.from('messages').insert([{
+    barber_id: barberId,
+    user_id: currentUser.id, // ✅ GUARDA USER_ID REAL
+    user_name: userName,
+    message: text,
+    created_at: new Date().toISOString()
+  }]);
+
+  if (error) {
+    alert('Error: ' + error.message);
+    return;
   }
+  
+  msgInput.value = '';
+  loadMessages();
 }
 
-//  2. EVENTOS SEGUROS (Sin reset)
+// 🔥 2. BOTÓN CON type="button" Y preventDefault
 if (sendBtn) sendBtn.onclick = sendMessage;
 
 if (msgInput) {
   msgInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); //  EVITA EL RESET AL PULSAR ENTER
+      e.preventDefault(); // ✅ EVITA RESET
       sendMessage();
     }
   });
