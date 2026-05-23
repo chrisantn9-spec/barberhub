@@ -4,272 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login - BarberHub</title>
-  
-  <!-- Fuentes -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-  
-  <!-- Iconos -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Tu CSS principal -->
-  <link rel="stylesheet" href="style.css">
-  
+  <!-- 1. Supabase CDN PRIMERO -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* Estilos específicos para login */
-    .auth-container {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%);
-    }
-    .login-box {
-      background: rgba(10, 10, 20, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(0, 242, 255, 0.2);
-      border-radius: 20px;
-      padding: 40px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
-      text-align: center;
-    }
-    .login-box h2 {
-      font-family: 'Orbitron', sans-serif;
-      margin-bottom: 8px;
-      color: #fff;
-      font-size: 1.8rem;
-    }
-    .login-box .subtitle {
-      color: #a0a0b0;
-      margin-bottom: 32px;
-      font-size: 0.95rem;
-    }
-    .form-group { margin-bottom: 20px; text-align: left; }
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: #fff;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-    .form-group input {
-      width: 100%;
-      padding: 14px 16px;
-      background: rgba(15, 15, 25, 0.7);
-      border: 1px solid rgba(0, 242, 255, 0.2);
-      border-radius: 10px;
-      color: #fff;
-      font-size: 1rem;
-      box-sizing: border-box;
-      transition: border-color 0.2s;
-    }
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 12px rgba(0, 242, 255, 0.2);
-    }
-    .error-message {
-      background: rgba(255, 68, 68, 0.15);
-      border: 1px solid rgba(255, 68, 68, 0.3);
-      color: #ff4444;
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: none;
-      font-size: 0.9rem;
-      text-align: center;
-    }
-    .btn-primary {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #00f2ff, #00c3ff);
-      border: none;
-      border-radius: 10px;
-      color: #000;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: filter 0.2s;
-      margin-bottom: 20px;
-    }
-    .btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    
-    .divider {
-      text-align: center;
-      margin: 24px 0;
-      position: relative;
-      color: #666;
-      font-size: 0.85rem;
-    }
-    .divider::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 0; right: 0;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.1);
-    }
-    .divider span {
-      background: rgba(10, 10, 20, 0.85);
-      padding: 0 16px;
-      position: relative;
-    }
-    .social-login { display: flex; flex-direction: column; gap: 12px; }
-    .btn-social {
-      width: 100%;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-      color: #fff;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      font-size: 0.95rem;
-      transition: all 0.2s;
-    }
-    .btn-social.google { border-color: #db4437; }
-    .btn-social.google:hover { background: rgba(219, 68, 55, 0.1); border-color: #db4437; }
-    .btn-social.google i { color: #db4437; font-size: 1.2rem; }
-    
-    .register-link {
-      text-align: center;
-      margin-top: 24px;
-      color: #a0a0b0;
-      font-size: 0.9rem;
-    }
-    .register-link a {
-      color: var(--neon-cyan);
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .register-link a:hover { text-decoration: underline; }
+    body { background:#0a0a1a; color:#fff; font-family:sans-serif; padding:20px; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; }
+    form { background:#111; padding:30px; border-radius:12px; border:1px solid #00f2ff; width:100%; max-width:350px; }
+    h2 { text-align:center; color:#00f2ff; margin:0 0 20px; }
+    input { width:100%; padding:12px; margin:8px 0; background:#222; border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:1rem; }
+    input:focus { outline:none; border-color:#00f2ff; }
+    button { width:100%; padding:14px; background:#00f2ff; color:#000; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:10px; font-size:1rem; }
+    button:disabled { opacity:0.6; cursor:not-allowed; }
+    .msg { margin-top:12px; text-align:center; font-size:0.9rem; min-height:20px; display:none; padding:8px; border-radius:6px; }
+    .msg.err { background:rgba(255,68,68,0.15); color:#ff4444; }
+    .link { text-align:center; margin-top:15px; font-size:0.85rem; }
+    .link a { color:#00f2ff; text-decoration:none; }
   </style>
 </head>
 <body>
-  <div class="auth-container">
-    <div class="login-box">
-      <!-- 🧑💻 Logo Cyberpunk -->
-      <img src="cyber-face.png" alt="BarberHub Logo" class="welcome-logo" style="width:85px; margin:0 auto 15px; display:block;">
-      <h2>Bienvenido</h2>
-      <p class="subtitle">Inicia sesión en BarberHub</p>
+  <form id="login-form">
+    <h2>👋 Iniciar Sesión</h2>
+    <input type="email" id="email" placeholder="📧 Email" required>
+    <input type="password" id="password" placeholder="🔑 Contraseña" required>
+    <button type="submit" id="btn">ENTRAR</button>
+    <div id="msg" class="msg err"></div>
+    <div class="link"><a href="registro.html">¿No tienes cuenta? Regístrate</a></div>
+  </form>
+
+  <!-- 2. config.js → 3. Lógica -->
+  <script src="config.js"></script>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn');
+      const msg = document.getElementById('msg');
       
-      <div id="error-msg" class="error-message"></div>
-      
-      <!-- FORMULARIO EMAIL/PASSWORD -->
-      <form id="login-form">
-        <div class="form-group">
-          <label for="email">Correo electrónico</label>
-          <input type="email" id="email" placeholder="tu@email.com" required autocomplete="email">
-        </div>
-        <div class="form-group">
-          <label for="password">Contraseña</label>
-          <input type="password" id="password" placeholder="••••••••" required autocomplete="current-password">
-        </div>
-        <button type="submit" id="btn-login" class="btn-primary">ENTRAR</button>
-      </form>
-      
-      <div class="divider"><span>O continúa con</span></div>
-      
-      <!-- GOOGLE LOGIN -->
-      <div class="social-login">
-        <button class="btn-social google" onclick="signInWithGoogle()">
-          <i class="fab fa-google"></i> Google
-        </button>
-      </div>
-      
-      <div class="register-link">
-        ¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a>
-      </div>
-    </div>
-  </div>
-  
-  <!-- ========================================
-       SCRIPTS - ORDEN CRÍTICO
-       ======================================== -->
-  
-  <!-- Configurar Supabase -->
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
-    
-    const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co'
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MzE5NjQsImV4cCI6MjA2MzMwNzk2NH0.6X8wvGv7VZvZvZvZvZvZvZvZvZvZvZvZvZvZvZvZvZ'
-    
-    window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true }
-    })
-    
-    console.log('✅ Supabase client initialized')
-    
-    // Función para mostrar errores
-    window.showError = (message) => {
-      const el = document.getElementById('error-msg')
-      if (el) {
-        el.textContent = message
-        el.style.display = 'block'
-        setTimeout(() => { el.style.display = 'none' }, 5000)
+      if (!window.supabaseClient) {
+        msg.textContent = '❌ Error: API Key no cargada';
+        msg.style.display = 'block';
+        return;
       }
-    }
-    
-    // Login con Google
-    window.signInWithGoogle = async () => {
+
+      btn.disabled = true; btn.textContent = 'Verificando...';
+      msg.style.display = 'none';
+
       try {
-        const { error } = await window.supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: window.location.origin + '/perfil-cliente.html' }
-        })
-        if (error) throw error
+        const { error } = await window.supabaseClient.auth.signInWithPassword({
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value
+        });
+        if (error) throw error;
+
+        window.location.href = 'perfil-cliente.html'; // Redirige al dashboard
       } catch (err) {
-        console.error('Error Google:', err)
-        showError('❌ Error con Google: ' + err.message)
+        msg.textContent = '❌ ' + err.message;
+        msg.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'ENTRAR';
       }
-    }
-    
-    // Login con email/password
-    document.getElementById('login-form')?.addEventListener('submit', async (e) => {
-      e.preventDefault()
-      const btn = document.getElementById('btn-login')
-      const errorMsg = document.getElementById('error-msg')
-      
-      btn.disabled = true
-      btn.textContent = 'Verificando...'
-      errorMsg.style.display = 'none'
-      
-      const email = document.getElementById('email').value.trim()
-      const password = document.getElementById('password').value
-      
-      try {
-        const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password })
-        if (error) throw error
-        
-        const role = data.user.user_metadata?.role || 'cliente'
-        window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html'
-      } catch (err) {
-        showError('❌ ' + err.message)
-        btn.disabled = false
-        btn.textContent = 'ENTRAR'
-      }
-    })
-    
-    // Auto-login al cargar
-    window.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const { data: { session } } = await window.supabaseClient.auth.getSession()
-        if (session) {
-          const role = session.user.user_metadata?.role || 'cliente'
-          window.location.href = role === 'barbero' ? 'admin.html' : 'perfil-cliente.html'
-        }
-      } catch (err) {
-        console.error('Error verificando sesión:', err)
-      }
-    })
+    });
   </script>
 </body>
 </html>
