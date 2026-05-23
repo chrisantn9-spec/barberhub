@@ -1,338 +1,220 @@
 /* =========================================
-   🚀 MEJORAS CYBERPUNK - BOTONES Y PERFIL
+   BARBERHUB - BASE LIMPIA (AIRBNB + TU FONDO)
    ========================================= */
 
-/* 🔷 BOTONES CYBERPUNK CON NEÓN */
-.btn-cyber {
-  position: relative;
-  padding: 12px 28px;
-  background: transparent;
-  border: 2px solid var(--neon-cyan);
-  color: var(--neon-cyan);
-  font-weight: 600;
-  font-size: 0.95rem;
-  border-radius: 8px;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 0 10px rgba(0, 242, 255, 0.3),
-              inset 0 0 10px rgba(0, 242, 255, 0.1);
+/* 1. FUENTES */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* 2. VARIABLES */
+:root {
+  --bg-dark: #0a0a12;
+  --card-bg: rgba(20, 20, 30, 0.85);
+  --border-light: rgba(255, 255, 255, 0.1);
+  --accent: #00f2ff;       /* Tu color principal */
+  --accent-hover: #00d4e0;
+  --text-main: #ffffff;
+  --text-muted: #a0a0b0;
+  --radius: 16px;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 8px 30px rgba(0, 242, 255, 0.2);
 }
 
-.btn-cyber::before {
-  content: '';
-  position: absolute;
+/* 3. RESET & BASE */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--text-main);
+  /* TU FONDO DE GITHUB + CAPA OSCURA PARA LEGIBILIDAD */
+  background: 
+    linear-gradient(180deg, rgba(10,10,18,0.85) 0%, rgba(10,10,18,0.95) 100%),
+    url('fondo.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  padding-bottom: 80px; /* Espacio para menú inferior */
+}
+
+/* 4. CONTENEDOR PRINCIPAL */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 5. HEADER SIMPLE */
+.app-header {
+  position: sticky;
   top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.4), transparent);
-  transition: left 0.5s ease;
+  z-index: 100;
+  background: rgba(10, 10, 18, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-light);
+  padding: 16px 0;
+  margin-bottom: 24px;
 }
-
-.btn-cyber:hover {
-  background: rgba(0, 242, 255, 0.1);
-  box-shadow: 0 0 20px rgba(0, 242, 255, 0.6),
-              inset 0 0 20px rgba(0, 242, 255, 0.2);
-  transform: translateY(-2px);
-  text-shadow: 0 0 8px var(--neon-cyan);
-}
-
-.btn-cyber:hover::before {
-  left: 100%;
-}
-
-.btn-cyber:active {
-  transform: translateY(0);
-}
-
-/* Botón primario (más brillante) */
-.btn-cyber-primary {
-  background: linear-gradient(135deg, rgba(0, 242, 255, 0.2), rgba(0, 195, 255, 0.2));
-  border-color: var(--neon-cyan);
-  color: #fff;
-  box-shadow: 0 0 15px rgba(0, 242, 255, 0.4),
-              inset 0 0 15px rgba(0, 242, 255, 0.2);
-  animation: pulse-cyan 2s ease-in-out infinite;
-}
-
-.btn-cyber-primary:hover {
-  background: linear-gradient(135deg, rgba(0, 242, 255, 0.3), rgba(0, 195, 255, 0.3));
-  box-shadow: 0 0 30px rgba(0, 242, 255, 0.7),
-              inset 0 0 25px rgba(0, 242, 255, 0.3);
-}
-
-/* Botón secundario (rosa neón) */
-.btn-cyber-secondary {
-  border-color: var(--neon-pink);
-  color: var(--neon-pink);
-  box-shadow: 0 0 10px rgba(255, 0, 255, 0.3),
-              inset 0 0 10px rgba(255, 0, 255, 0.1);
-}
-
-.btn-cyber-secondary:hover {
-  background: rgba(255, 0, 255, 0.1);
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.6),
-              inset 0 0 20px rgba(255, 0, 255, 0.2);
-  text-shadow: 0 0 8px var(--neon-pink);
-}
-
-/* Botón de peligro (rojo neón) */
-.btn-cyber-danger {
-  border-color: #ff3333;
-  color: #ff3333;
-  box-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
-}
-
-.btn-cyber-danger:hover {
-  background: rgba(255, 51, 51, 0.1);
-  box-shadow: 0 0 20px rgba(255, 51, 51, 0.6);
-  text-shadow: 0 0 8px #ff3333;
-}
-
-/* Animación de pulso */
-@keyframes pulse-cyan {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(0, 242, 255, 0.4),
-                inset 0 0 15px rgba(0, 242, 255, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(0, 242, 255, 0.7),
-                inset 0 0 20px rgba(0, 242, 255, 0.3);
-  }
-}
-
-/* 🔷 PERFIL ESTILO FACEBOOK FUTURISTA */
-.profile-card-cyber {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  border-radius: 20px;
-  padding: 30px;
-  margin: 20px auto;
-  max-width: 600px;
-  box-shadow: 0 8px 32px rgba(0, 242, 255, 0.15),
-              inset 0 0 20px rgba(0, 242, 255, 0.05);
-  position: relative;
-  overflow: hidden;
-}
-
-.profile-card-cyber::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-pink), var(--neon-cyan), transparent);
-  animation: glow-line 3s ease-in-out infinite;
-}
-
-@keyframes glow-line {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
-/* Avatar con borde neón animado */
-.profile-avatar-cyber {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 3px solid var(--neon-cyan);
-  object-fit: cover;
-  margin: 0 auto 20px;
-  display: block;
-  box-shadow: 0 0 20px rgba(0, 242, 255, 0.4),
-              0 0 40px rgba(0, 242, 255, 0.2);
-  animation: avatar-glow 3s ease-in-out infinite;
-  transition: transform 0.3s ease;
-}
-
-.profile-avatar-cyber:hover {
-  transform: scale(1.05) rotate(2deg);
-}
-
-@keyframes avatar-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.4),
-                0 0 40px rgba(0, 242, 255, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 30px rgba(0, 242, 255, 0.7),
-                0 0 60px rgba(0, 242, 255, 0.4);
-  }
-}
-
-/* Nombre de usuario con efecto neón */
-.profile-name-cyber {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  text-align: center;
-  margin: 0 0 8px 0;
-  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-  letter-spacing: 1px;
-}
-
-/* Email/Info con estilo */
-.profile-info-cyber {
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Menú de opciones estilo Facebook futurista */
-.profile-menu-cyber {
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  justify-content: space-between;
+  align-items: center;
 }
+.logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.logo span { color: var(--accent); }
 
-.menu-item-cyber {
+/* 6. BARRA DE BÚSQUEDA */
+.search-wrapper {
+  max-width: 600px;
+  margin: 0 auto 30px;
+  padding: 0 20px;
+}
+.search-bar {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  text-decoration: none;
-  color: var(--text-main);
-  transition: all 0.3s ease;
-  cursor: pointer;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 50px;
+  padding: 12px 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-
-.menu-item-cyber:hover {
-  background: rgba(0, 242, 255, 0.08);
-  border-color: var(--neon-cyan);
-  transform: translateX(5px);
-  box-shadow: 0 4px 15px rgba(0, 242, 255, 0.2);
+.search-bar:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0, 242, 255, 0.15);
 }
-
-.menu-item-cyber i {
-  font-size: 1.3rem;
-  color: var(--neon-cyan);
-  width: 30px;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.menu-item-cyber:hover i {
-  transform: scale(1.2) rotate(5deg);
-  text-shadow: 0 0 10px var(--neon-cyan);
-}
-
-.menu-item-cyber span {
+.search-bar i { color: var(--text-muted); margin-right: 10px; }
+.search-bar input {
   flex: 1;
-  font-weight: 500;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-main);
   font-size: 1rem;
 }
+.search-bar input::placeholder { color: var(--text-muted); }
 
-.menu-item-cyber .arrow {
-  color: #555;
-  font-size: 0.9rem;
+/* 7. GRID DE TARJETAS (ESTILO AIRBNB) */
+.section-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 30px 0 16px;
+  padding-left: 4px;
 }
-
-/* Badge de notificación */
-.badge-cyber {
-  background: var(--neon-pink);
-  color: #fff;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-  animation: badge-pulse 2s ease-in-out infinite;
-}
-
-@keyframes badge-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-/* Stats cards */
-.stats-cyber-grid {
+.grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 16px;
-  margin: 25px 0;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
 }
-
-.stat-card-cyber {
-  background: rgba(0, 242, 255, 0.05);
-  border: 1px solid rgba(0, 242, 255, 0.2);
-  border-radius: 12px;
-  padding: 20px;
-  text-align: center;
-  transition: all 0.3s ease;
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  cursor: pointer;
 }
-
-.stat-card-cyber:hover {
-  background: rgba(0, 242, 255, 0.1);
-  border-color: var(--neon-cyan);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 242, 255, 0.3);
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-hover);
 }
-
-.stat-card-cyber .stat-number {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--neon-cyan);
-  margin: 0 0 5px 0;
-  text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-}
-
-.stat-card-cyber .stat-label {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Responsive */
-@media (max-width: 650px) {
-  .profile-card-cyber {
-    padding: 20px;
-    margin: 15px;
-  }
-  
-  .profile-name-cyber {
-    font-size: 1.5rem;
-  }
-  
-  .menu-item-cyber {
-    padding: 14px 16px;
-  }
-  
-  .btn-cyber {
-    padding: 10px 20px;
-    font-size: 0.85rem;
-  }
-}
-
-/* Efecto de scanline (líneas de escaneo retro) */
-.scanline-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+.card-img {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, 
-    transparent 50%, 
-    rgba(0, 0, 0, 0.02) 50%
-  );
-  background-size: 100% 4px;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.3;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+.card-body { padding: 14px; }
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.card-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-light);
+}
+.card-price {
+  font-weight: 700;
+  color: var(--accent);
+}
+.card-rating { color: #ffcc00; font-size: 0.85rem; }
+
+/* 8. BOTONES */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
+}
+.btn-outline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 9. MENÚ INFERIOR (APP STYLE) */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 65px;
+  background: rgba(10, 10, 18, 0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  transition: color 0.2s;
+}
+.nav-item i { font-size: 1.3rem; margin-bottom: 4px; }
+.nav-item.active, .nav-item:hover { color: var(--accent); }
+
+/* 10. RESPONSIVE */
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+  .header-inner { padding: 0 16px; }
+  .section-title { padding-left: 16px; }
 }
