@@ -4,17 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro - BarberHub</title>
-  <!-- 1. Cargar Supabase CDN PRIMERO -->
+  <!-- 1. Supabase CDN PRIMERO -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <style>
-    body { background: #0a0a1a; color: #fff; font-family: sans-serif; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin:0; }
-    form { background: #111; padding: 30px; border-radius: 12px; border: 1px solid #00f2ff; width: 100%; max-width: 350px; }
-    h2 { text-align:center; color:#00f2ff; margin-top:0; }
-    input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box; font-size:1rem; }
-    button { width: 100%; padding: 12px; background: #00f2ff; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size:1rem; }
+    body { background:#0a0a1a; color:#fff; font-family:sans-serif; padding:20px; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; }
+    form { background:#111; padding:30px; border-radius:12px; border:1px solid #00f2ff; width:100%; max-width:380px; }
+    h2 { text-align:center; color:#00f2ff; margin:0 0 20px; }
+    input, select { width:100%; padding:12px; margin:8px 0; background:#222; border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:1rem; }
+    input:focus, select:focus { outline:none; border-color:#00f2ff; }
+    
+    /* 🔥 SELECTOR BARBERO/CLIENTE VISIBLE */
+    .role-selector { display:flex; gap:8px; margin:15px 0; background:#0a0a1a; padding:4px; border-radius:8px; }
+    .role-btn { flex:1; padding:10px; border:none; border-radius:6px; cursor:pointer; background:transparent; color:#888; font-weight:600; transition:0.2s; }
+    .role-btn.active { background:#00f2ff; color:#000; }
+    
+    button { width:100%; padding:14px; background:#00f2ff; color:#000; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:15px; font-size:1rem; }
     button:disabled { opacity:0.6; cursor:not-allowed; }
-    .msg { margin-top: 15px; text-align: center; font-size: 0.9rem; min-height:20px; }
+    .msg { margin-top:12px; text-align:center; font-size:0.9rem; min-height:20px; display:none; padding:8px; border-radius:6px; }
+    .msg.ok { background:rgba(0,255,136,0.15); color:#00ff88; }
+    .msg.err { background:rgba(255,68,68,0.15); color:#ff4444; }
     .link { text-align:center; margin-top:15px; font-size:0.85rem; }
     .link a { color:#00f2ff; text-decoration:none; }
   </style>
@@ -22,54 +30,77 @@
 <body>
   <form id="registro-form">
     <h2>✨ Crear Cuenta</h2>
+    
+    <!-- 🔥 SELECTOR DE ROL -->
+    <div class="role-selector">
+      <button type="button" class="role-btn" id="btn-barbero" onclick="setRole('barbero')">💈 Barbero</button>
+      <button type="button" class="role-btn active" id="btn-cliente" onclick="setRole('cliente')">👤 Cliente</button>
+    </div>
+
     <input type="email" id="email" placeholder="📧 Email" required>
     <input type="password" id="password" placeholder="🔑 Contraseña (mín 6)" required minlength="6">
     <input type="text" id="nombre" placeholder="👤 Tu Nombre" required>
+    
+    <!-- Campos extra para barbero (ocultos por defecto) -->
+    <div id="campos-barbero" style="display:none; margin-top:10px; border-top:1px dashed #444; padding-top:10px;">
+      <input type="text" id="barberia" placeholder="✂️ Nombre de tu Barbería">
+      <input type="text" id="direccion" placeholder="📍 Dirección del Local">
+    </div>
+
     <button type="submit" id="btn">REGISTRARSE</button>
     <div id="msg" class="msg"></div>
     <div class="link"><a href="auth.html">¿Ya tienes cuenta? Inicia sesión</a></div>
   </form>
 
-  <!-- 2. Cargar config.js -->
+  <!-- 2. config.js → 3. Lógica -->
   <script src="config.js"></script>
-  
-  <!-- 3. Lógica simple de registro -->
   <script>
+    let role = 'cliente';
+    window.setRole = (r) => {
+      role = r;
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('btn-' + r).classList.add('active');
+      document.getElementById('campos-barbero').style.display = r === 'barbero' ? 'block' : 'none';
+    };
+
     document.getElementById('registro-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('btn');
       const msg = document.getElementById('msg');
       
-      // 🔍 Verificación crítica: ¿Cargó supabaseClient?
       if (!window.supabaseClient) {
-        msg.style.color = 'red';
-        msg.textContent = '❌ ERROR: config.js no cargó o la API Key está vacía.';
-        console.error('supabaseClient es undefined');
+        msg.textContent = '❌ Config error: API Key no cargada';
+        msg.className = 'msg err'; msg.style.display = 'block';
         return;
       }
 
-      btn.disabled = true;
-      btn.textContent = 'Creando cuenta...';
-      msg.textContent = '';
+      btn.disabled = true; btn.textContent = 'Creando...';
+      msg.style.display = 'none';
 
       try {
         const { data, error } = await window.supabaseClient.auth.signUp({
           email: document.getElementById('email').value,
           password: document.getElementById('password').value,
-          options: { data: { nombre: document.getElementById('nombre').value } }
+          options: { data: { nombre: document.getElementById('nombre').value, role: role } }
         });
-
         if (error) throw error;
 
-        msg.style.color = '#00ff88';
+        if (role === 'barbero') {
+          await window.supabaseClient.from('barbers').insert([{
+            owner_id: data.user.id,
+            name: document.getElementById('barberia').value || document.getElementById('nombre').value + "'s Barbería",
+            location: document.getElementById('direccion').value || 'Sin dirección',
+            phone: '', lat: 0, lng: 0
+          }]);
+        }
+
         msg.textContent = '✅ Cuenta creada. Redirigiendo...';
+        msg.className = 'msg ok'; msg.style.display = 'block';
         setTimeout(() => window.location.href = 'auth.html', 2000);
       } catch (err) {
-        msg.style.color = 'red';
         msg.textContent = '❌ ' + err.message;
-        btn.disabled = false;
-        btn.textContent = 'REGISTRARSE';
-        console.error('Error registro:', err);
+        msg.className = 'msg err'; msg.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'REGISTRARSE';
       }
     });
   </script>
