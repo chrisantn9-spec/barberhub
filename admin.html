@@ -94,5 +94,29 @@
 
     <script src="config.js"></script>
     <script src="admin.js"></script>
+    <script>
+  async function mostrarNombreUsuario() {
+    // 1. Obtener usuario autenticado
+    const { data: { user }, error } = await supabaseClient.auth.getUser();
+    
+    if (error || !user) {
+      window.location.href = 'auth.html';
+      return;
+    }
+
+    // 2. Extraer nombre guardado en el registro
+    const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario';
+
+    // 3. Mostrar en TODOS los elementos con el ID correcto
+    const elementos = document.querySelectorAll('#user-display-name, #barber-display-name');
+    elementos.forEach(el => {
+      el.textContent = nombre;
+      el.style.opacity = '1'; // Opcional: si tenías opacidad 0 para efecto fade
+    });
+  }
+
+  // Ejecutar al cargar la página
+  document.addEventListener('DOMContentLoaded', mostrarNombreUsuario);
+</script>
 </body>
 </html>
