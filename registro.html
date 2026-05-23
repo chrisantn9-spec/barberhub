@@ -4,13 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro | BarberHub</title>
+  
   <!-- 1. Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- 2. Librería de teléfono internacional -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
-  <!-- 3. Supabase CDN (DEBE ir antes de config.js) -->
+  
+  <!-- 2. Supabase CDN (DEBE ir antes de config.js) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
   
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,180 +17,157 @@
       background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%);
       min-height: 100vh;
       color: #fff;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: system-ui, sans-serif;
       padding: 20px;
     }
     .container { max-width: 450px; margin: 0 auto; }
-    .back-link { display: inline-block; color: #888; text-decoration: none; margin-bottom: 20px; }
-    .back-link:hover { color: #00f2ff; }
+    .back { display: inline-block; color: #888; text-decoration: none; margin-bottom: 20px; }
+    .back:hover { color: #00f2ff; }
     
     .card {
       background: rgba(20, 20, 30, 0.85);
-      backdrop-filter: blur(12px);
       border: 1px solid #ff00ff;
       border-radius: 16px;
       padding: 24px;
       box-shadow: 0 0 25px rgba(255, 0, 255, 0.15);
     }
-    h2 { color: #ff00ff; text-align: center; margin-bottom: 20px; font-size: 1.5rem; }
+    h2 { color: #ff00ff; text-align: center; margin-bottom: 20px; }
     
-    .role-selector { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 8px; }
-    .role-btn { flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: #888; transition: 0.2s; }
+    .roles { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 8px; }
+    .role-btn { flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; background: transparent; color: #888; }
     .role-btn.active { background: #00f2ff; color: #000; }
     
     .form-group { margin-bottom: 16px; }
     label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: #ccc; }
-    
-    /* 🔧 FIX BANDERA DESORDENADA */
-    input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
-      width: 100%;
-      padding: 12px;
-      background: rgba(0,0,0,0.5);
-      border: 1px solid #444;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 1rem;
-      box-sizing: border-box; /* CRÍTICO */
+    input, select {
+      width: 100%; padding: 12px; background: rgba(0,0,0,0.5);
+      border: 1px solid #444; border-radius: 8px; color: #fff; font-size: 1rem;
     }
     input:focus { outline: none; border-color: #00f2ff; }
-    
-    /* Estilos específicos para intl-tel-input */
-    .iti { width: 100%; }
-    .iti__flag-container { z-index: 10; }
-    .iti__country-list { background: #14141e; border: 1px solid #444; border-radius: 6px; }
-    .iti__country { color: #fff; padding: 6px 12px; }
-    .iti__country:hover { background: rgba(0,242,255,0.1); }
-    .iti__dial-code { color: #888; }
     
     .barber-fields { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #444; }
     .btn-submit {
       width: 100%; padding: 14px; background: linear-gradient(135deg, #ff00ff, #cc00cc);
       border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; margin-top: 10px;
     }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-    .msg { margin-top: 12px; padding: 10px; border-radius: 6px; text-align: center; display: none; font-size: 0.9rem; }
-    .msg.success { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; }
-    .msg.error { background: rgba(255,68,68,0.15); color: #ff4444; border: 1px solid #ff4444; }
-    .login-link { text-align: center; margin-top: 20px; color: #888; }
-    .login-link a { color: #00f2ff; text-decoration: none; }
+    .btn-submit:disabled { opacity: 0.5; }
+    
+    .msg { margin-top: 12px; padding: 10px; border-radius: 6px; text-align: center; display: none; }
+    .msg.ok { background: rgba(0,255,136,0.15); color: #00ff88; }
+    .msg.err { background: rgba(255,68,68,0.15); color: #ff4444; }
+    
+    .link { text-align: center; margin-top: 20px; color: #888; }
+    .link a { color: #00f2ff; text-decoration: none; }
   </style>
 </head>
 <body>
   <div class="container">
-    <a href="index.html" class="back-link">← Volver</a>
+    <a href="index.html" class="back">← Volver</a>
+    
     <div class="card">
       <h2>✨ Crear Cuenta</h2>
       
-      <div class="role-selector">
+      <div class="roles">
         <button type="button" class="role-btn" onclick="setRole('barbero')">💈 Barbero</button>
         <button type="button" class="role-btn active" onclick="setRole('cliente')">👤 Cliente</button>
       </div>
       
-      <form id="registro-form">
+      <form id="form">
         <div class="form-group">
           <label>📧 Email</label>
           <input type="email" id="email" placeholder="tu@email.com" required>
         </div>
         <div class="form-group">
           <label>🔑 Contraseña</label>
-          <input type="password" id="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+          <input type="password" id="pass" placeholder="Mínimo 6 caracteres" required minlength="6">
         </div>
         <div class="form-group">
           <label>👤 Nombre</label>
-          <input type="text" id="nombre" placeholder="Tu nombre completo" required>
-        </div>
-        <div class="form-group">
-          <label>📱 Teléfono</label>
-          <input type="tel" id="telefono" placeholder="Selecciona país y escribe número">
+          <input type="text" id="nombre" placeholder="Tu nombre" required>
         </div>
         
-        <div id="campos-barbero" class="barber-fields">
+        <div id="barber" class="barber-fields">
           <div class="form-group">
-            <label>✂️ Nombre Barbería</label>
-            <input type="text" id="barberia-name" placeholder="Mi Barbería">
+            <label>✂️ Barbería</label>
+            <input type="text" id="barberia" placeholder="Nombre de tu local">
           </div>
           <div class="form-group">
             <label>📍 Dirección</label>
-            <input type="text" id="location" placeholder="Calle, Ciudad">
+            <input type="text" id="direccion" placeholder="Calle, Ciudad">
           </div>
         </div>
         
-        <button type="submit" class="btn-submit" id="btn-registro">CREAR CUENTA</button>
-        <div id="registro-msg" class="msg"></div>
+        <button type="submit" class="btn-submit" id="btn">CREAR CUENTA</button>
+        <div id="msg" class="msg"></div>
       </form>
       
-      <div class="login-link">¿Ya tienes cuenta? <a href="auth.html">Inicia sesión</a></div>
+      <div class="link">¿Ya tienes cuenta? <a href="auth.html">Inicia sesión</a></div>
     </div>
   </div>
 
-  <!-- ORDEN CRÍTICO: 1. Supabase CDN → 2. config.js → 3. Lógica -->
+  <!-- ORDEN: 1. CDN → 2. config.js → 3. Lógica -->
   <script src="config.js"></script>
   <script>
-    let userRole = 'cliente';
-    let phoneInputInstance = null;
-
-    // Inicializar selector de teléfono
-    document.addEventListener('DOMContentLoaded', () => {
-      const input = document.getElementById('telefono');
-      if (input && typeof intlTelInput !== 'undefined') {
-        phoneInputInstance = intlTelInput(input, {
-          initialCountry: 'auto',
-          geoIpLookup: cb => fetch('https://ipapi.co/json').then(r=>r.json()).then(d=>cb(d.country_code)).catch(()=>cb('es')),
-          preferredCountries: ['es','mx','co','ar','us'],
-          separateDialCode: true,
-          utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js'
-        });
-      }
-    });
-
-    window.setRole = (role) => {
-      userRole = role;
+    let role = 'cliente';
+    
+    window.setRole = (r) => {
+      role = r;
       document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-      document.querySelector(`.role-btn[onclick="setRole('${role}')"]`).classList.add('active');
-      document.getElementById('campos-barbero').style.display = role === 'barbero' ? 'block' : 'none';
+      document.querySelector(`.role-btn[onclick="setRole('${r}')"]`).classList.add('active');
+      document.getElementById('barber').style.display = r === 'barbero' ? 'block' : 'none';
     };
-
-    document.getElementById('registro-form').addEventListener('submit', async (e) => {
+    
+    document.getElementById('form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('btn-registro');
-      const msg = document.getElementById('registro-msg');
+      const btn = document.getElementById('btn');
+      const msg = document.getElementById('msg');
       
+      // Verificar que supabaseClient existe
       if (!window.supabaseClient) {
-        msg.textContent = '❌ Error de configuración: API Key inválida o CDN no cargado.';
-        msg.className = 'msg error'; msg.style.display = 'block';
+        msg.textContent = '❌ Error: API Key inválida o CDN no cargó';
+        msg.className = 'msg err'; msg.style.display = 'block';
         return;
       }
-
+      
       btn.disabled = true; btn.textContent = 'Creando...';
       msg.style.display = 'none';
-
-      const telefono = phoneInputInstance ? phoneInputInstance.getNumber() : document.getElementById('telefono').value;
-
+      
       try {
+        // 1. Crear usuario en Auth
         const { data, error } = await supabaseClient.auth.signUp({
           email: document.getElementById('email').value,
-          password: document.getElementById('password').value,
-          options: { data: { nombre: document.getElementById('nombre').value, telefono, role: userRole } }
+          password: document.getElementById('pass').value,
+          options: {
+            data: {
+              nombre: document.getElementById('nombre').value,
+              role: role
+            }
+          }
         });
+        
         if (error) throw error;
-
-        if (userRole === 'barbero') {
+        
+        // 2. Si es barbero, crear entrada en barbers
+        if (role === 'barbero') {
           await supabaseClient.from('barbers').insert([{
             owner_id: data.user.id,
-            name: document.getElementById('barberia-name').value || 'Mi Barbería',
-            location: document.getElementById('location').value || 'Sin dirección',
-            phone: telefono,
+            name: document.getElementById('barberia').value || document.getElementById('nombre').value + "'s Barbería",
+            location: document.getElementById('direccion').value || 'Sin dirección',
+            phone: '',
             lat: 0, lng: 0
           }]);
         }
-
+        
+        // 3. Éxito
         msg.textContent = '✅ Cuenta creada. Redirigiendo...';
-        msg.className = 'msg success'; msg.style.display = 'block';
+        msg.className = 'msg ok'; msg.style.display = 'block';
         setTimeout(() => window.location.href = 'auth.html', 2000);
+        
       } catch (err) {
-        msg.textContent = '❌ ' + (err.message || 'Error desconocido');
-        msg.className = 'msg error'; msg.style.display = 'block';
+        msg.textContent = '❌ ' + err.message;
+        msg.className = 'msg err'; msg.style.display = 'block';
         btn.disabled = false; btn.textContent = 'CREAR CUENTA';
+        console.error('Registro error:', err);
       }
     });
   </script>
