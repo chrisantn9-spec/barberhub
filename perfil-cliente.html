@@ -9,6 +9,19 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
+    /* 🔒 ANTI-FLASH: Contenido oculto hasta verificar rol */
+    #app-content {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    #app-content.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
     /* Header cyberpunk mejorado */
     .app-header {
       background: rgba(5, 5, 15, 0.95);
@@ -377,118 +390,135 @@
 </head>
 <body>
 
-  <!-- Header Cyberpunk -->
-  <header class="app-header">
-    <div class="header-top">
-      <div>
-        <h1 class="logo-text">BarberHub</h1>
-        <p class="user-welcome">👋 Hola, <span id="user-name">Cargando...</span></p>
+  <!-- ✅ CONTENIDO OCULTO HASTA VERIFICAR ROL -->
+  <div id="app-content">
+
+    <!-- Header Cyberpunk -->
+    <header class="app-header">
+      <div class="header-top">
+        <div>
+          <h1 class="logo-text">BarberHub</h1>
+          <p class="user-welcome">👋 Hola, <span id="user-name">Cargando...</span></p>
+        </div>
+        <div class="header-actions">
+          <button class="icon-btn" title="Notificaciones">
+            <i class="fas fa-bell"></i>
+          </button>
+          <a href="auth.html" class="logout-btn-cyber" onclick="cerrarSesion(event)">
+            <i class="fas fa-sign-out-alt"></i> Salir
+          </a>
+        </div>
       </div>
-      <div class="header-actions">
-        <button class="icon-btn" title="Notificaciones">
-          <i class="fas fa-bell"></i>
-        </button>
-        <a href="auth.html" class="logout-btn-cyber" onclick="cerrarSesion(event)">
-          <i class="fas fa-sign-out-alt"></i> Salir
-        </a>
+    </header>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <div class="search-bar-cyber">
+        <i class="fas fa-search"></i>
+        <input type="text" id="search-input" placeholder="Buscar barbero o servicio...">
       </div>
     </div>
-  </header>
 
-  <!-- Search Bar -->
-  <div class="search-container">
-    <div class="search-bar-cyber">
-      <i class="fas fa-search"></i>
-      <input type="text" id="search-input" placeholder="Buscar barbero o servicio...">
-    </div>
-  </div>
+    <!-- Main Content -->
+    <main class="container">
+      <!-- Precios -->
+      <section class="prices-section">
+        <div class="section-header">
+          <i class="fas fa-coins" style="color: var(--neon-pink); font-size: 1.5rem;"></i>
+          <h3>Precios</h3>
+        </div>
+        <div class="prices-grid">
+          <div class="price-item-cyber">
+            <span class="price-name">Corte Clásico</span>
+            <span class="price-value">$15</span>
+          </div>
+          <div class="price-item-cyber">
+            <span class="price-name">Barba Completa</span>
+            <span class="price-value">$10</span>
+          </div>
+          <div class="price-item-cyber">
+            <span class="price-name">Corte + Barba</span>
+            <span class="price-value">$22</span>
+          </div>
+          <div class="price-item-cyber">
+            <span class="price-name">Afeitado Clásico</span>
+            <span class="price-value">$12</span>
+          </div>
+          <div class="price-item-cyber">
+            <span class="price-name">Cejas</span>
+            <span class="price-value">$5</span>
+          </div>
+        </div>
+      </section>
 
-  <!-- Main Content -->
-  <main class="container">
-    <!-- Precios -->
-    <section class="prices-section">
-      <div class="section-header">
-        <i class="fas fa-coins" style="color: var(--neon-pink); font-size: 1.5rem;"></i>
-        <h3>Precios</h3>
+      <!-- Barberos Destacados -->
+      <h2 class="section-title-cyber">
+        <i class="fas fa-fire" style="color: #ff6600;"></i>
+        Barberos Destacados
+      </h2>
+      <div class="barber-grid" id="barbers-list">
+        <!-- Se llena con JS -->
       </div>
-      <div class="prices-grid">
-        <div class="price-item-cyber">
-          <span class="price-name">Corte Clásico</span>
-          <span class="price-value">$15</span>
-        </div>
-        <div class="price-item-cyber">
-          <span class="price-name">Barba Completa</span>
-          <span class="price-value">$10</span>
-        </div>
-        <div class="price-item-cyber">
-          <span class="price-name">Corte + Barba</span>
-          <span class="price-value">$22</span>
-        </div>
-        <div class="price-item-cyber">
-          <span class="price-name">Afeitado Clásico</span>
-          <span class="price-value">$12</span>
-        </div>
-        <div class="price-item-cyber">
-          <span class="price-name">Cejas</span>
-          <span class="price-value">$5</span>
-        </div>
-      </div>
-    </section>
+    </main>
 
-    <!-- Barberos Destacados -->
-    <h2 class="section-title-cyber">
-      <i class="fas fa-fire" style="color: #ff6600;"></i>
-      Barberos Destacados
-    </h2>
-    <div class="barber-grid" id="barbers-list">
-      <!-- Se llena con JS -->
-    </div>
-  </main>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="perfil-cliente.html" class="nav-link active">
+        <i class="fas fa-home"></i>
+        <span>Inicio</span>
+      </a>
+      <a href="explorar.html" class="nav-link">
+        <i class="fas fa-compass"></i>
+        <span>Explorar</span>
+      </a>
+      <a href="mis-citas.html" class="nav-link">
+        <i class="fas fa-calendar-check"></i>
+        <span>Citas</span>
+      </a>
+      <a href="mi-perfil.html" class="nav-link">
+        <i class="fas fa-user"></i>
+        <span>Perfil</span>
+      </a>
+    </nav>
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <a href="perfil-cliente.html" class="nav-link active">
-      <i class="fas fa-home"></i>
-      <span>Inicio</span>
-    </a>
-    <a href="explorar.html" class="nav-link">
-      <i class="fas fa-compass"></i>
-      <span>Explorar</span>
-    </a>
-    <a href="mis-citas.html" class="nav-link">
-      <i class="fas fa-calendar-check"></i>
-      <span>Citas</span>
-    </a>
-    <a href="mi-perfil.html" class="nav-link">
-      <i class="fas fa-user"></i>
-      <span>Perfil</span>
-    </a>
-  </nav>
+  </div> <!-- ✅ FIN DE #app-content -->
 
   <script src="config.js"></script>
   <script>
-    // Mostrar nombre del usuario
-    document.addEventListener('DOMContentLoaded', async () => {
-      if (!window.supabaseClient) return;
-      
+    // ✅ VERIFICACIÓN INMEDIATA DE SESIÓN Y ROL (ANTI-FLASH)
+    (async () => {
       try {
+        if (!window.supabaseClient) {
+          window.location.href = 'auth.html';
+          return;
+        }
+
         const { data: { user }, error } = await supabaseClient.auth.getUser();
+        
+        // Si no hay sesión, redirigir al login
         if (error || !user) {
           window.location.href = 'auth.html';
           return;
         }
-        
+
+        // 🔍 Si es barbero, redirigir INMEDIATAMENTE (antes de mostrar nada)
+        if (user.user_metadata?.role === 'barbero') {
+          window.location.href = 'admin.html';
+          return;
+        }
+
+        // ✅ Si es cliente: mostrar nombre y hacer visible el contenido
         const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario';
         document.getElementById('user-name').textContent = nombre;
         
-        // Si es barbero, redirigir
-        if (user.user_metadata?.role === 'barbero') {
-          window.location.href = 'admin.html';
-        }
+        // Mostrar contenido con transición suave
+        document.getElementById('app-content').classList.add('visible');
+
       } catch (err) {
-        console.error('Error:', err);
+        console.error('Error de autenticación:', err);
+        window.location.href = 'auth.html';
       }
-    });
+    })();
     
     // Cerrar sesión
     async function cerrarSesion(e) {
@@ -509,6 +539,8 @@
     // Renderizar barberos
     function renderBarbers(list) {
       const container = document.getElementById('barbers-list');
+      if (!container) return;
+      
       container.innerHTML = '';
       list.forEach((b, index) => {
         const card = document.createElement('div');
@@ -544,7 +576,7 @@
       });
     }
     
-    // Búsqueda
+    // Búsqueda en tiempo real
     document.getElementById('search-input')?.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase();
       const filtered = barbers.filter(b => 
@@ -554,7 +586,7 @@
       renderBarbers(filtered.length ? filtered : barbers);
     });
     
-    // Inicializar
+    // Inicializar lista de barberos
     renderBarbers(barbers);
   </script>
 </body>
