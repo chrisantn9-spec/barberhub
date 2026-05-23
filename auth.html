@@ -358,17 +358,20 @@
     });
 
     // Login con Google
-    async function loginGoogle() {
-      try {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: window.location.origin + '/perfil-cliente.html' }
-        });
-        if (error) throw error;
-      } catch (err) {
-        alert('❌ Error con Google: ' + err.message);
+  async function loginGoogle() {
+  try {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: { 
+        redirectTo: window.location.origin + '/complete-profile.html', // 👈 Redirige a completar perfil
+        queryParams: { access_type: 'offline', prompt: 'consent' }
       }
-    }
+    });
+    if (error) throw error;
+  } catch (err) {
+    alert('❌ Error con Google: ' + err.message);
+  }
+}
   </script>
   <!-- Aviso de responsabilidad -->
 <div style="position: fixed; bottom: 75px; left: 0; right: 0; text-align: center; color: #555; font-size: 0.7rem; padding: 8px; background: rgba(5,5,5,0.6); backdrop-filter: blur(4px); z-index: 999;">
