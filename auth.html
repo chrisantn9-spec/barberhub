@@ -9,266 +9,252 @@
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-  /* CONFIGURACIÓN BÁSICA */
-  body {
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    background: #050505;
-    font-family: 'Inter', sans-serif;
-  }
+    /* CONFIGURACIÓN BÁSICA */
+    body {
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #050505;
+      font-family: 'Inter', sans-serif;
+    }
 
-  /*  MURO DE PALABRAS EN EL FONDO */
-  .bg-text-layer {
-    position: fixed;
-    top: -10%; left: -10%;
-    width: 120%; height: 120%;
-    z-index: -2;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-content: center;
-    gap: 40px;
-    transform: rotate(-15deg);
-    pointer-events: none;
-    opacity: 0.4;
-  }
-  
-  .bg-text-layer span {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 4vw;
-    font-weight: 900;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(0, 229, 238, 0.2);
-    white-space: nowrap;
-  }
+    /* 🌌 MURO DE PALABRAS EN EL FONDO */
+    .bg-text-layer {
+      position: fixed;
+      top: -10%; left: -10%;
+      width: 120%; height: 120%;
+      z-index: -2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      gap: 40px;
+      transform: rotate(-15deg);
+      pointer-events: none;
+      opacity: 0.4;
+    }
+    
+    .bg-text-layer span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4vw;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(0, 229, 238, 0.2);
+      white-space: nowrap;
+    }
 
-  /* LUZ QUE RECORRE EL FONDO */
-  .bg-light-beam {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: -1;
-    background: linear-gradient(90deg, 
-      transparent 0%, 
-      transparent 45%, 
-      rgba(0, 229, 238, 0.1) 50%, 
-      transparent 55%, 
-      transparent 100%);
-    animation: sweepLight 6s linear infinite;
-    pointer-events: none;
-  }
-  
-  @keyframes sweepLight {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
+    /* 💡 LUZ QUE RECORRE EL FONDO */
+    .bg-light-beam {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        transparent 45%, 
+        rgba(0, 229, 238, 0.1) 50%, 
+        transparent 55%, 
+        transparent 100%);
+      animation: sweepLight 6s linear infinite;
+      pointer-events: none;
+    }
+    
+    @keyframes sweepLight {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
 
-  /* 💎 TARJETA DE INICIO */
-  .login-card {
-    background: rgba(15, 15, 20, 0.95);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 229, 238, 0.3);
-    border-radius: 20px;
-    padding: 50px 30px 40px;
-    width: 90%;
-    max-width: 420px;
-    text-align: center;
-    position: relative;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 229, 238, 0.05);
-    animation: floatCard 6s ease-in-out infinite;
-    z-index: 10;
-  }
-  
-  @keyframes floatCard {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
+    /* 💎 TARJETA DE INICIO */
+    .login-card {
+      background: rgba(15, 15, 20, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 229, 238, 0.3);
+      border-radius: 20px;
+      padding: 50px 30px 40px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 229, 238, 0.05);
+      animation: floatCard 6s ease-in-out infinite;
+      z-index: 10;
+    }
+    
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
 
-  /* ✨ TÍTULO CYBERPUNK GLITCH */
-  .card-brand {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.8rem;
-    font-weight: 900;
-    letter-spacing: 3px;
-    color: #fff;
-    margin-bottom: 10px;
-    position: relative;
-    display: inline-block;
-    /* Brillo Neón Base */
-    text-shadow: 
-      0 0 5px #00E5EE,
-      0 0 10px #00E5EE,
-      0 0 20px rgba(0, 229, 238, 0.8);
-    animation: glitch-anim 3s infinite linear alternate-reverse;
-  }
+    /* ✨ TÍTULO CYBERPUNK GLITCH */
+    .card-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: #fff;
+      margin-bottom: 10px;
+      position: relative;
+      display: inline-block;
+      text-shadow: 
+        0 0 5px #00E5EE,
+        0 0 10px #00E5EE,
+        0 0 20px rgba(0, 229, 238, 0.8);
+    }
 
-  /* Capas del efecto Glitch (Cian y Rosa) */
-  .card-brand::before,
-  .card-brand::after {
-    content: attr(data-text);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(15, 15, 20, 0.95); /* Igual que el fondo de la tarjeta */
-  }
+    /* Capas del efecto Glitch */
+    .card-brand::before,
+    .card-brand::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(15, 15, 20, 0.95);
+      overflow: hidden;
+    }
 
-  .card-brand::before {
-    left: 2px;
-    text-shadow: -1px 0 #ff00ff; /* Glitch Rosa */
-    clip-path: inset(0 0 0 0);
-    animation: glitch-1 2s infinite linear alternate-reverse;
-  }
+    .card-brand::before {
+      left: 2px;
+      text-shadow: -2px 0 #ff00ff;
+      clip-path: inset(44% 0 61% 0);
+      animation: glitch-anim 2.5s infinite linear alternate-reverse;
+    }
 
-  .card-brand::after {
-    left: -2px;
-    text-shadow: -1px 0 #00E5EE; /* Glitch Cian */
-    clip-path: inset(0 0 0 0);
-    animation: glitch-2 2s infinite linear alternate-reverse;
-  }
+    .card-brand::after {
+      left: -2px;
+      text-shadow: -2px 0 #00E5EE;
+      clip-path: inset(12% 0 58% 0);
+      animation: glitch-anim 3s infinite linear alternate-reverse;
+    }
 
-  /* Animaciones del Glitch */
-  @keyframes glitch-1 {
-    0% { clip-path: inset(20% 0 80% 0); }
-    20% { clip-path: inset(60% 0 1% 0); }
-    40% { clip-path: inset(10% 0 50% 0); }
-    60% { clip-path: inset(40% 0 20% 0); }
-    80% { clip-path: inset(80% 0 5% 0); }
-    100% { clip-path: inset(30% 0 60% 0); }
-  }
+    @keyframes glitch-anim {
+      0% { clip-path: inset(40% 0 61% 0); }
+      20% { clip-path: inset(92% 0 1% 0); }
+      40% { clip-path: inset(10% 0 50% 0); }
+      60% { clip-path: inset(50% 0 25% 0); }
+      80% { clip-path: inset(15% 0 70% 0); }
+      100% { clip-path: inset(60% 0 10% 0); }
+    }
 
-  @keyframes glitch-2 {
-    0% { clip-path: inset(10% 0 60% 0); }
-    20% { clip-path: inset(30% 0 20% 0); }
-    40% { clip-path: inset(70% 0 10% 0); }
-    60% { clip-path: inset(20% 0 50% 0); }
-    80% { clip-path: inset(50% 0 30% 0); }
-    100% { clip-path: inset(0% 0 80% 0); }
-  }
+    .login-subtitle {
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 35px;
+    }
 
-  .login-subtitle {
-    color: #aaa;
-    font-size: 1rem;
-    margin-bottom: 35px;
-  }
+    /* Inputs */
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+      box-sizing: border-box;
+    }
+    .input-group input:focus {
+      border-color: #00E5EE;
+      box-shadow: 0 0 15px rgba(0, 229, 238, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
 
-  /* Inputs */
-  .input-group {
-    position: relative;
-    margin-bottom: 20px;
-    text-align: left;
-  }
-  .input-group input {
-    width: 100%;
-    padding: 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    color: #fff;
-    font-size: 1rem;
-    outline: none;
-    transition: 0.3s;
-    box-sizing: border-box;
-  }
-  .input-group input:focus {
-    border-color: #00E5EE;
-    box-shadow: 0 0 15px rgba(0, 229, 238, 0.2);
-    background: rgba(255, 255, 255, 0.08);
-  }
+    /* Botón Principal */
+    .btn-login-main {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #00E5EE;
+      color: #000;
+      box-shadow: 0 0 20px rgba(0, 229, 238, 0.4);
+      margin-bottom: 10px;
+    }
+    .btn-login-main:hover {
+      background: #fff;
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.6);
+      transform: translateY(-3px);
+    }
 
-  /* Botón Principal */
-  .btn-login-main {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 800;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: #00E5EE;
-    color: #000;
-    box-shadow: 0 0 20px rgba(0, 229, 238, 0.4);
-    margin-bottom: 10px;
-  }
-  .btn-login-main:hover {
-    background: #fff;
-    box-shadow: 0 0 35px rgba(255, 255, 255, 0.6);
-    transform: translateY(-3px);
-  }
+    /* Separador */
+    .divider {
+      margin: 35px 0 25px;
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+    }
+    .divider span {
+      position: absolute;
+      top: -12px; left: 50%; transform: translateX(-50%);
+      background: rgba(15, 15, 20, 1);
+      padding: 0 15px; 
+      color: #888; 
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
 
-  /* Separador */
-  .divider {
-    margin: 35px 0 25px;
-    border: 0;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    position: relative;
-  }
-  .divider span {
-    position: absolute;
-    top: -12px; left: 50%; transform: translateX(-50%);
-    background: rgba(15, 15, 20, 1);
-    padding: 0 15px; 
-    color: #888; 
-    font-size: 0.75rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+    /* Botón Google */
+    .btn-google {
+      width: 100%;
+      padding: 16px;
+      border: 1px solid #ff00ff;
+      border-radius: 12px;
+      background: transparent;
+      color: #ff00ff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.15);
+      margin-bottom: 20px;
+    }
+    .btn-google:hover {
+      background: rgba(255, 0, 255, 0.1);
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
+      transform: translateY(-3px);
+      color: #fff;
+    }
 
-  /* Botón Google */
-  .btn-google {
-    width: 100%;
-    padding: 16px;
-    border: 1px solid #ff00ff;
-    border-radius: 12px;
-    background: transparent;
-    color: #ff00ff;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    box-shadow: 0 0 10px rgba(255, 0, 255, 0.15);
-    margin-bottom: 20px;
-  }
-  .btn-google:hover {
-    background: rgba(255, 0, 255, 0.1);
-    box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
-    transform: translateY(-3px);
-    color: #fff;
-  }
-
-  .links-container {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.85rem;
-  }
-  .links-container a {
-    color: #aaa;
-    text-decoration: none;
-    transition: 0.2s;
-  }
-  .links-container a:hover {
-    color: #00E5EE;
-    text-shadow: 0 0 5px #00E5EE;
-  }
-</style>
-  <
+    .links-container {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+    }
+    .links-container a {
+      color: #aaa;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+    .links-container a:hover {
+      color: #00E5EE;
+      text-shadow: 0 0 5px #00E5EE;
+    }
+  </style>
 </head>
 <body>
 
@@ -286,8 +272,8 @@
   <!-- 💎 TARJETA LOGIN -->
   <div class="login-card">
     
-    <!-- ✅ Título: BARBER en blanco, HUB en Turquesa -->
-    <h2 class="card-brand">
+    <!-- ✅ Título con data-text para el glitch -->
+    <h2 class="card-brand" data-text="BARBERHUB">
       <span class="word-barber">BARBER</span><span class="word-hub">HUB</span>
     </h2>
     
@@ -338,7 +324,7 @@
         if (error) throw error;
         window.location.href = 'perfil-cliente.html';
       } catch (err) {
-        alert(' Error: ' + err.message);
+        alert('❌ Error: ' + err.message);
         btn.innerHTML = originalText;
       }
     });
@@ -352,7 +338,7 @@
         });
         if (error) throw error;
       } catch (err) {
-        alert('Error con Google: ' + err.message);
+        alert('❌ Error con Google: ' + err.message);
       }
     }
   </script>
