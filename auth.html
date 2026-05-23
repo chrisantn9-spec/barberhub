@@ -10,6 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
+    /* CONFIGURACIÓN BÁSICA */
     body {
       overflow: hidden;
       display: flex;
@@ -18,33 +19,59 @@
       min-height: 100vh;
       margin: 0;
       background: #050505;
+      font-family: 'Inter', sans-serif;
     }
 
-    /* 🌌 FONDO ANIMADO (Se mantiene igual porque te gustó) */
-    .cyber-bg {
+    /*  MURO DE PALABRAS EN EL FONDO (BarberHub repetido) */
+    .bg-text-layer {
+      position: fixed;
+      top: -10%; left: -10%;
+      width: 120%; height: 120%;
+      z-index: -2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      gap: 40px;
+      transform: rotate(-15deg);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    
+    .bg-text-layer span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4vw; /* Tamaño grande */
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(0, 242, 255, 0.3); /* Borde neón tenue */
+      white-space: nowrap;
+    }
+
+    /*  LUZ QUE RECORRE EL FONDO */
+    .bg-light-beam {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       z-index: -1;
-      background: #050505;
-      overflow: hidden;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        transparent 45%, 
+        rgba(0, 242, 255, 0.15) 50%, 
+        transparent 55%, 
+        transparent 100%);
+      animation: sweepLight 6s linear infinite;
+      pointer-events: none;
     }
-    .cyber-line {
-      position: absolute;
-      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
-      opacity: 0.25;
+    
+    @keyframes sweepLight {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
-    .cyber-line.h { height: 2px; width: 100%; left: 0; animation: moveH 5s linear infinite; }
-    .cyber-line.v { width: 2px; height: 100%; top: 0; animation: moveV 5s linear infinite; }
-    @keyframes moveH { 0% { top: -10%; opacity: 0; } 50% { opacity: 0.5; } 100% { top: 110%; opacity: 0; } }
-    @keyframes moveV { 0% { left: -10%; opacity: 0; } 50% { opacity: 0.5; } 100% { left: 110%; opacity: 0; } }
 
-    /* 💎 TARJETA (CARTEL) DE INICIO - FONDO NEUTRO ELEGANTE */
+    /* 💎 TARJETA (CARTEL) DE INICIO */
     .login-card {
-      /* ✅ Fondo neutro oscuro (Dark Glass) en lugar del morado */
-      background: rgba(18, 18, 24, 0.95); 
+      /* Fondo neutro oscuro */
+      background: rgba(15, 15, 20, 0.95);
       backdrop-filter: blur(20px);
-      
-      /* ✅ Borde neón sutil */
       border: 1px solid rgba(0, 242, 255, 0.3);
       border-radius: 20px;
       
@@ -53,10 +80,9 @@
       max-width: 420px;
       text-align: center;
       position: relative;
-      
-      /* Sombra suave para dar profundidad */
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 242, 255, 0.05);
       animation: floatCard 6s ease-in-out infinite;
+      z-index: 10;
     }
     
     @keyframes floatCard {
@@ -64,51 +90,45 @@
       50% { transform: translateY(-10px); }
     }
 
-    /* Brillo del borde (opcional, hace que parezca neón real) */
-    .login-card::before {
-      content: '';
-      position: absolute;
-      top: -1px; left: -1px; right: -1px; bottom: -1px;
-      background: linear-gradient(45deg, transparent, rgba(0, 242, 255, 0.5), transparent);
-      z-index: -1;
-      border-radius: 20px;
-      opacity: 0.3;
-    }
-
-    /* ✨ TÍTULO BARBERHUB DIVIDIDO */
+    /* ✨ TÍTULO DIVIDIDO: BARBER (Blanco) HUB (Neón) */
     .card-brand {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem; /* Grande */
+      font-size: 2.5rem;
       font-weight: 900;
-      letter-spacing: 4px;
-      margin: 0 0 10px 0;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
       display: inline-block;
       position: relative;
     }
     
-    /* Parte blanca */
-    .card-brand .white-part {
-      color: #ffffff;
+    .card-brand .word-barber {
+      color: #ffffff; /* Blanco puro */
     }
     
-    /* Parte Neón */
-    .card-brand .neon-part {
-      color: var(--neon-cyan);
-      /* ✅ Efecto de luz alrededor (Glow) */
-      text-shadow: 
-        0 0 10px var(--neon-cyan),
-        0 0 20px var(--neon-cyan),
-        0 0 40px rgba(0, 242, 255, 0.8);
+    .card-brand .word-hub {
+      color: var(--neon-cyan); /* Color neón */
+      text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
     }
 
-    /* ✨ TÍTULO BIENVENIDO */
-    .login-title {
-      font-family: 'Inter', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 400;
+    /* Efecto de luz brillante que pasa por el título */
+    .card-brand::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -50%;
+      width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      transform: skewX(-20deg);
+      animation: shineTitle 4s infinite;
+    }
+    @keyframes shineTitle {
+      0% { left: -50%; }
+      100% { left: 150%; }
+    }
+
+    .login-subtitle {
       color: #aaa;
-      margin: 0 0 40px;
-      letter-spacing: 1px;
+      font-size: 1rem;
+      margin-bottom: 35px;
     }
 
     /* Inputs */
@@ -119,7 +139,7 @@
     }
     .input-group input {
       width: 100%;
-      padding: 16px 16px;
+      padding: 16px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
@@ -172,7 +192,7 @@
     .divider span {
       position: absolute;
       top: -12px; left: 50%; transform: translateX(-50%);
-      background: rgba(18, 18, 24, 1); /* Mismo fondo que tarjeta */
+      background: rgba(15, 15, 20, 1);
       padding: 0 15px; 
       color: #888; 
       font-size: 0.75rem;
@@ -184,10 +204,10 @@
     .btn-google {
       width: 100%;
       padding: 16px;
-      border: 1px solid #ff00ff;
+      border: 1px solid var(--neon-pink);
       border-radius: 12px;
       background: transparent;
-      color: #ff00ff;
+      color: var(--neon-pink);
       font-weight: 700;
       font-size: 1rem;
       cursor: pointer;
@@ -226,23 +246,27 @@
 </head>
 <body>
 
-  <!-- 🌌 FONDO ANIMADO -->
-  <div class="cyber-bg">
-    <div class="cyber-line h" style="top: 20%;"></div>
-    <div class="cyber-line h" style="top: 60%; animation-delay: 2.5s;"></div>
-    <div class="cyber-line v" style="left: 30%;"></div>
-    <div class="cyber-line v" style="left: 80%; animation-delay: 1.5s;"></div>
+  <!-- 🌌 FONDO CON PALABRAS Y LUZ -->
+  <div class="bg-text-layer">
+    <!-- Repetimos la palabra varias veces para llenar el fondo -->
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
   </div>
+  <div class="bg-light-beam"></div>
 
   <!-- 💎 TARJETA LOGIN (SIN LOGO) -->
   <div class="login-card">
     
-    <!-- ✅ Título dividido: BARBER (blanco) HUB (neon) -->
+    <!-- ✅ Título: BARBER en blanco, HUB en neón -->
     <h2 class="card-brand">
-      <span class="white-part">BARBER</span><span class="neon-part">HUB</span>
+      <span class="word-barber">BARBER</span><span class="word-hub">HUB</span>
     </h2>
     
-    <h1 class="login-title">Bienvenido</h1>
+    <p class="login-subtitle">Bienvenido de nuevo</p>
 
     <form id="login-form">
       <div class="input-group">
