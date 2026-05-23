@@ -1,4 +1,4 @@
-// chat.js - SIN PROMPT, CON AUTH
+// chat.js - CORREGIDO
 const barberId = sessionStorage.getItem('chatBarberId');
 const barberName = sessionStorage.getItem('chatBarberName') || 'Barbería';
 
@@ -15,12 +15,10 @@ const chatBox = document.getElementById('chat-messages');
 let currentUser = null;
 let userName = '';
 
-// 🔥 OBTENER USUARIO AUTENTICADO
 async function initChat() {
   const { data: { user }, error } = await supabaseClient.auth.getUser();
   
   if (error || !user) {
-    alert('Debes iniciar sesión');
     window.location.href = 'auth.html';
     return;
   }
@@ -44,7 +42,7 @@ async function loadMessages() {
   if (error) return;
   chatBox.innerHTML = '';
   
-  if (!data?.length) {
+  if (!data || data.length === 0) {
     chatBox.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">💬 Inicia la conversación</p>';
     return;
   }
