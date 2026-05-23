@@ -132,21 +132,22 @@
     </style>
 </head>
 <body>
-
-    <!-- HEADER + NAVEGACIÓN -->
-    <div class="admin-header">
-        <div>
-            <h1>🔐 PANEL ADMIN</h1>
-            <p id="barber-name">Cargando...</p>
-        </div>
-        <div class="admin-nav">
-            <a href="editar-perfil.html" class="nav-btn">✏️ Editar</a>
-            <a href="horarios.html" class="nav-btn">🕐 Horarios</a>
-            <a href="index.html" class="nav-btn">🏠 Directorio</a>
-            <button onclick="cerrarSesion()" class="nav-btn btn-pink">🚪 Salir</button>
-        </div>
+<!-- ✅ MENÚ ORGANIZADO -->
+<div class="nav-wrapper">
+  <div class="nav-container">
+    <div>
+      <h1 class="nav-title">🔐 Panel <span>Admin</span></h1>
+      <p id="barber-name">Cargando...</p>
     </div>
-
+    <div class="nav-links">
+      <a href="editar-perfil.html" class="nav-btn">✏️ Editar</a>
+      <a href="horarios.html" class="nav-btn">🕐 Horarios</a>
+      <a href="pagos-barbero.html" class="nav-btn primary">💰 Pagos</a>
+      <a href="index.html" class="nav-btn">🏠 Directorio</a>
+      <button onclick="cerrarSesion()" class="nav-btn danger">🚪 Salir</button>
+    </div>
+  </div>
+</div>
     <!-- 🔥 Botón de Pagos (con estilo correcto) -->
     <div class="menu-item" onclick="window.location.href='pagos-barbero.html'">
         <i class="fas fa-wallet"></i>
