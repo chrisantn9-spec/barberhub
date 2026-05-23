@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagos - BarberHub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%);
+      min-height: 100vh;
+      color: #fff;
+      padding-bottom: 80px;
+    }
+    .header {
+      padding: 20px;
+      background: rgba(10,10,20,0.95);
+      border-bottom: 1px solid var(--neon-cyan);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header h1 {
+      margin: 0;
+      font-family: 'Orbitron';
+      color: var(--neon-cyan);
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: rgba(20,20,30,0.8);
+      border: 1px solid rgba(0,242,255,0.2);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-card h3 {
+      margin: 0 0 10px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+    .stat-card .value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--neon-cyan);
+    }
+    .stat-card.total .value {
+      color: var(--neon-pink);
+    }
+    .payment-card {
+      background: rgba(20,20,30,0.8);
+      border: 1px solid rgba(0,242,255,0.2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-left: 4px solid var(--neon-cyan);
+    }
+    .payment-card.pending { border-left-color: #ffaa00; }
+    .payment-card.completed { border-left-color: #00ff88; }
+    .payment-card.failed { border-left-color: #ff4444; }
+    .payment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .payment-amount {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--neon-cyan);
+    }
+    .payment-status {
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .status-pending { background: rgba(255,170,0,0.2); color: #ffaa00; }
+    .status-completed, .status-finished { background: rgba(0,255,136,0.2); color: #00ff88; }
+    .status-failed { background: rgba(255,68,68,0.2); color: #ff4444; }
+    .payment-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      font-size: 0.9rem;
+    }
+    .payment-info div {
+      color: #888;
+    }
+    .payment-info strong {
+      color: #fff;
+      display: block;
+    }
+    .payment-crypto {
+      background: rgba(0,242,255,0.1);
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .payment-crypto .crypto-amount {
+      font-size: 1.1rem;
+      color: var(--neon-cyan);
+      font-weight: bold;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+    }
+    .loading i {
+      font-size: 2rem;
+      color: var(--neon-cyan);
+      margin-bottom: 10px;
+    }
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    .back-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .back-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="admin.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    <h1>💰 Pagos Recibidos</h1>
+  </div>
+
+  <div class="container">
+    <!-- Estadísticas -->
+    <div class="stats">
+      <div class="stat-card">
+        <h3>Total Recibido</h3>
+        <div class="value" id="total-amount">$0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Pagos Hoy</h3>
+        <div class="value" id="today-count">0</div>
+      </div>
+      <div class="stat-card total">
+        <h3>Total Pagos</h3>
+        <div class="value" id="total-count">0</div>
+      </div>
+    </div>
+
+    <!-- Lista de Pagos -->
+    <div id="payments-list">
+      <div class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Cargando pagos...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    let currentBarberId = null;
+
+    async function loadBarberData() {
+      const { data: { user } } = await supabaseClient.auth.getUser();
+      if (!user) {
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      // Obtener ID del barbero
+      const { data: barber } = await supabaseClient
+        .from('barbers')
+        .select('id')
+        .eq('owner_id', user.id)
+        .single();
+
+      if (!barber) {
+        document.getElementById('payments-list').innerHTML = 
+          '<p class="no-data">❌ No se encontró tu barbería</p>';
+        return;
+      }
+
+      currentBarberId = barber.id;
+      loadPayments();
+    }
+
+    async function loadPayments() {
+      const container = document.getElementById('payments-list');
+      
+      try {
+        // Obtener pagos de las citas de esta barbería
+        const { data: appointments, error } = await supabaseClient
+          .from('appointments')
+          .select(`
+            *,
+            payments (*),
+            users (nombre, email)
+          `)
+          .eq('barber_id', currentBarberId)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // Filtrar solo las que tienen pago
+        const payments = appointments
+          .filter(apt => apt.payments && apt.payments.length > 0)
+          .map(apt => ({
+            ...apt.payments[0],
+            appointment: apt,
+            customer: apt.users
+          }));
+
+        if (payments.length === 0) {
+          container.innerHTML = `
+            <div class="no-data">
+              <i class="fas fa-wallet" style="font-size:3rem; color:#333; margin-bottom:15px;"></i>
+              <p>No hay pagos registrados aún</p>
+            </div>`;
+          updateStats([]);
+          return;
+        }
+
+        container.innerHTML = '';
+        
+        payments.forEach(payment => {
+          const div = document.createElement('div');
+          const statusClass = payment.payment_status === 'completed' || payment.payment_status === 'finished' 
+            ? 'completed' 
+            : payment.payment_status === 'failed' 
+            ? 'failed' 
+            : 'pending';
+          
+          const statusText = {
+            'pending': '⏳ Pendiente',
+            'completed': '✅ Completado',
+            'finished': '✅ Completado',
+            'failed': '❌ Fallido',
+            'expired': ' Expirado'
+          }[payment.payment_status] || payment.payment_status;
+
+          const appointmentDate = payment.appointment?.appointment_date 
+            ? new Date(payment.appointment.appointment_date).toLocaleDateString('es-ES')
+            : 'N/A';
+
+          div.className = `payment-card ${statusClass}`;
+          div.innerHTML = `
+            <div class="payment-header">
+              <div class="payment-amount">$${payment.amount || payment.appointment?.price || '0'}</div>
+              <div class="payment-status status-${payment.payment_status}">${statusText}</div>
+            </div>
+            <div class="payment-info">
+              <div>
+                <strong>Cliente</strong>
+                ${payment.customer?.nombre || 'N/A'}
+              </div>
+              <div>
+                <strong>Fecha Cita</strong>
+                ${appointmentDate}
+              </div>
+              <div>
+                <strong>Servicio</strong>
+                ${payment.appointment?.service || 'N/A'}
+              </div>
+              <div>
+                <strong>ID Pago</strong>
+                ${payment.payment_id?.substring(0, 8) || 'N/A'}...
+              </div>
+            </div>
+            ${payment.crypto_currency ? `
+              <div class="payment-crypto">
+                <div style="color:#888; font-size:0.85rem;">Crypto Recibido</div>
+                <div class="crypto-amount">
+                  ${payment.crypto_amount} ${payment.crypto_currency}
+                </div>
+                <div style="font-size:0.75rem; color:#666; margin-top:5px;">
+                  ${payment.outcome_amount} ${payment.outcome_currency || 'USD'}
+                </div>
+              </div>
+            ` : ''}
+            <div style="margin-top:10px; font-size:0.8rem; color:#666; text-align:right;">
+              ${new Date(payment.created_at).toLocaleString('es-ES')}
+            </div>
+          `;
+          container.appendChild(div);
+        });
+
+        updateStats(payments);
+
+      } catch (err) {
+        console.error('Error cargando pagos:', err);
+        container.innerHTML = '<p class="no-data" style="color:#ff4444;">Error cargando pagos</p>';
+      }
+    }
+
+    function updateStats(payments) {
+      const completed = payments.filter(p => 
+        p.payment_status === 'completed' || p.payment_status === 'finished'
+      );
+      
+      const total = completed.reduce((sum, p) => 
+        sum + (parseFloat(p.amount) || parseFloat(p.appointment?.price) || 0), 0
+      );
+
+      const today = new Date().toDateString();
+      const todayCount = completed.filter(p => 
+        new Date(p.created_at).toDateString() === today
+      ).length;
+
+      document.getElementById('total-amount').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('today-count').textContent = todayCount;
+      document.getElementById('total-count').textContent = completed.length;
+    }
+
+    // Cargar al iniciar
+    loadBarberData();
+  </script>
+</body>
+</html>
