@@ -3,106 +3,545 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro - BarberHub</title>
-  <!-- 1. Supabase CDN PRIMERO -->
+  <title>Registro | BarberHub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    body { background:#0a0a1a; color:#fff; font-family:sans-serif; padding:20px; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; }
-    form { background:#111; padding:30px; border-radius:12px; border:1px solid #00f2ff; width:100%; max-width:380px; }
-    h2 { text-align:center; color:#00f2ff; margin:0 0 20px; }
-    input, select { width:100%; padding:12px; margin:8px 0; background:#222; border:1px solid #444; color:#fff; border-radius:6px; box-sizing:border-box; font-size:1rem; }
-    input:focus, select:focus { outline:none; border-color:#00f2ff; }
+    /* CONFIGURACIÓN BÁSICA */
+    body {
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #050505;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* 🌌 MURO DE PALABRAS EN EL FONDO */
+    .bg-text-layer {
+      position: fixed;
+      top: -10%; left: -10%;
+      width: 120%; height: 120%;
+      z-index: -2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      gap: 40px;
+      transform: rotate(-15deg);
+      pointer-events: none;
+      opacity: 0.4;
+    }
     
-    /* 🔥 SELECTOR BARBERO/CLIENTE VISIBLE */
-    .role-selector { display:flex; gap:8px; margin:15px 0; background:#0a0a1a; padding:4px; border-radius:8px; }
-    .role-btn { flex:1; padding:10px; border:none; border-radius:6px; cursor:pointer; background:transparent; color:#888; font-weight:600; transition:0.2s; }
-    .role-btn.active { background:#00f2ff; color:#000; }
+    .bg-text-layer span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4vw;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(0, 229, 238, 0.2);
+      white-space: nowrap;
+    }
+
+    /* 💡 LUZ QUE RECORRE EL FONDO */
+    .bg-light-beam {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        transparent 45%, 
+        rgba(0, 229, 238, 0.1) 50%, 
+        transparent 55%, 
+        transparent 100%);
+      animation: sweepLight 6s linear infinite;
+      pointer-events: none;
+    }
     
-    button { width:100%; padding:14px; background:#00f2ff; color:#000; border:none; border-radius:6px; font-weight:bold; cursor:pointer; margin-top:15px; font-size:1rem; }
-    button:disabled { opacity:0.6; cursor:not-allowed; }
-    .msg { margin-top:12px; text-align:center; font-size:0.9rem; min-height:20px; display:none; padding:8px; border-radius:6px; }
-    .msg.ok { background:rgba(0,255,136,0.15); color:#00ff88; }
-    .msg.err { background:rgba(255,68,68,0.15); color:#ff4444; }
-    .link { text-align:center; margin-top:15px; font-size:0.85rem; }
-    .link a { color:#00f2ff; text-decoration:none; }
+    @keyframes sweepLight {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* 💎 TARJETA DE REGISTRO */
+    .register-card {
+      background: rgba(15, 15, 20, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 229, 238, 0.3);
+      border-radius: 20px;
+      padding: 40px 30px;
+      width: 90%;
+      max-width: 480px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 229, 238, 0.05);
+      animation: floatCard 6s ease-in-out infinite;
+      z-index: 10;
+    }
+    
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* ✨ TÍTULO CYBERPUNK */
+    .card-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .word-barber {
+      color: #ffffff;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .word-hub {
+      color: #00E5EE;
+      text-shadow: 
+        0 0 10px #00E5EE,
+        0 0 20px #00E5EE,
+        0 0 40px rgba(0, 229, 238, 0.8);
+      display: inline-block;
+      animation: hubPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes hubPulse {
+      0%, 100% { 
+        text-shadow: 0 0 10px #00E5EE, 0 0 20px #00E5EE, 0 0 40px rgba(0, 229, 238, 0.8);
+      }
+      50% { 
+        text-shadow: 0 0 15px #00E5EE, 0 0 30px #00E5EE, 0 0 60px rgba(0, 229, 238, 1);
+      }
+    }
+
+    .card-brand::before,
+    .card-brand::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(15, 15, 20, 0.95);
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .card-brand::before {
+      left: 2px;
+      text-shadow: -2px 0 #ff00ff;
+      clip-path: inset(44% 0 61% 0);
+      animation: glitch-anim 2.5s infinite linear alternate-reverse;
+    }
+
+    .card-brand::after {
+      left: -2px;
+      text-shadow: -2px 0 #00E5EE;
+      clip-path: inset(12% 0 58% 0);
+      animation: glitch-anim 3s infinite linear alternate-reverse;
+    }
+
+    @keyframes glitch-anim {
+      0% { clip-path: inset(40% 0 61% 0); }
+      20% { clip-path: inset(92% 0 1% 0); }
+      40% { clip-path: inset(10% 0 50% 0); }
+      60% { clip-path: inset(50% 0 25% 0); }
+      80% { clip-path: inset(15% 0 70% 0); }
+      100% { clip-path: inset(60% 0 10% 0); }
+    }
+
+    .register-subtitle {
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 25px;
+    }
+
+    /* 🔘 SELECTOR DE ROL (Barbero/Cliente) */
+    .role-selector {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 5px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .role-btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: #888;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .role-btn.active {
+      background: #00E5EE;
+      color: #000;
+      box-shadow: 0 0 15px rgba(0, 229, 238, 0.5);
+      font-weight: 700;
+    }
+    
+    .role-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+    }
+
+    /* Inputs */
+    .input-group {
+      position: relative;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    
+    .input-group label {
+      display: block;
+      color: #aaa;
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+      margin-left: 4px;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+      box-sizing: border-box;
+    }
+    
+    .input-group input:focus {
+      border-color: #00E5EE;
+      box-shadow: 0 0 15px rgba(0, 229, 238, 0.2);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Campos extra para barbero (ocultos por defecto) */
+    .barber-fields {
+      display: none;
+      margin-top: 10px;
+      padding-top: 15px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+    
+    .barber-fields.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Botón Principal */
+    .btn-register-main {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #00E5EE;
+      color: #000;
+      box-shadow: 0 0 20px rgba(0, 229, 238, 0.4);
+      margin: 20px 0 10px;
+    }
+    
+    .btn-register-main:hover {
+      background: #fff;
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.6);
+      transform: translateY(-3px);
+    }
+    
+    .btn-register-main:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Mensajes */
+    .msg {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin: 10px 0;
+      display: none;
+    }
+    .msg.ok {
+      background: rgba(0, 255, 136, 0.15);
+      color: #00ff88;
+      border: 1px solid #00ff88;
+    }
+    .msg.err {
+      background: rgba(255, 68, 68, 0.15);
+      color: #ff4444;
+      border: 1px solid #ff4444;
+    }
+
+    /* Separador */
+    .divider {
+      margin: 25px 0 20px;
+      border: 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      position: relative;
+    }
+    .divider span {
+      position: absolute;
+      top: -12px; left: 50%; transform: translateX(-50%);
+      background: rgba(15, 15, 20, 1);
+      padding: 0 15px; 
+      color: #888; 
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Botón Google */
+    .btn-google {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #ff00ff;
+      border-radius: 12px;
+      background: transparent;
+      color: #ff00ff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 0 10px rgba(255, 0, 255, 0.15);
+      margin-bottom: 15px;
+    }
+    .btn-google:hover {
+      background: rgba(255, 0, 255, 0.1);
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
+      transform: translateY(-3px);
+      color: #fff;
+    }
+
+    .login-link {
+      color: #aaa;
+      font-size: 0.85rem;
+      margin-top: 15px;
+    }
+    .login-link a {
+      color: #00E5EE;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .login-link a:hover {
+      text-shadow: 0 0 5px #00E5EE;
+    }
   </style>
 </head>
 <body>
-  <form id="registro-form">
-    <h2>✨ Crear Cuenta</h2>
+
+  <!-- 🌌 FONDO CON PALABRAS Y LUZ (Igual que auth.html) -->
+  <div class="bg-text-layer">
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+  </div>
+  <div class="bg-light-beam"></div>
+
+  <!-- 💎 TARJETA DE REGISTRO -->
+  <div class="register-card">
     
-    <!-- 🔥 SELECTOR DE ROL -->
+    <!-- Título Cyberpunk -->
+    <h2 class="card-brand" data-text="BARBERHUB">
+      <span class="word-barber">BARBER</span><span class="word-hub">HUB</span>
+    </h2>
+    
+    <p class="register-subtitle">Crea tu cuenta gratis</p>
+
+    <!-- 🔘 Selector de Rol -->
     <div class="role-selector">
-      <button type="button" class="role-btn" id="btn-barbero" onclick="setRole('barbero')">💈 Barbero</button>
       <button type="button" class="role-btn active" id="btn-cliente" onclick="setRole('cliente')">👤 Cliente</button>
+      <button type="button" class="role-btn" id="btn-barbero" onclick="setRole('barbero')">💈 Barbero</button>
     </div>
 
-    <input type="email" id="email" placeholder="📧 Email" required>
-    <input type="password" id="password" placeholder="🔑 Contraseña (mín 6)" required minlength="6">
-    <input type="text" id="nombre" placeholder="👤 Tu Nombre" required>
-    
-    <!-- Campos extra para barbero (ocultos por defecto) -->
-    <div id="campos-barbero" style="display:none; margin-top:10px; border-top:1px dashed #444; padding-top:10px;">
-      <input type="text" id="barberia" placeholder="✂️ Nombre de tu Barbería">
-      <input type="text" id="direccion" placeholder="📍 Dirección del Local">
-    </div>
+    <form id="register-form">
+      <div class="input-group">
+        <label>Nombre completo</label>
+        <input type="text" id="nombre" placeholder="Tu nombre" required>
+      </div>
+      
+      <div class="input-group">
+        <label>Correo electrónico</label>
+        <input type="email" id="email" placeholder="tu@email.com" required>
+      </div>
+      
+      <div class="input-group">
+        <label>Contraseña</label>
+        <input type="password" id="password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+      </div>
 
-    <button type="submit" id="btn">REGISTRARSE</button>
-    <div id="msg" class="msg"></div>
-    <div class="link"><a href="auth.html">¿Ya tienes cuenta? Inicia sesión</a></div>
-  </form>
+      <!-- Campos extra para Barbero -->
+      <div id="barber-fields" class="barber-fields">
+        <div class="input-group">
+          <label>Nombre de tu barbería</label>
+          <input type="text" id="barberia" placeholder="Ej: CyberCuts Studio">
+        </div>
+        <div class="input-group">
+          <label>Dirección del local</label>
+          <input type="text" id="direccion" placeholder="Ciudad, Dirección">
+        </div>
+      </div>
+      
+      <button type="submit" class="btn-register-main" id="btn-register">
+        <i class="fas fa-user-plus"></i> CREAR CUENTA
+      </button>
+      
+      <div id="msg" class="msg"></div>
+    </form>
 
-  <!-- 2. config.js → 3. Lógica -->
+    <hr class="divider"><span>O REGÍSTRATE CON</span>
+
+    <button onclick="registerGoogle()" class="btn-google">
+      <i class="fab fa-google"></i> Google
+    </button>
+
+    <p class="login-link">
+      ¿Ya tienes cuenta? <a href="auth.html">Inicia sesión</a>
+    </p>
+  </div>
+
   <script src="config.js"></script>
   <script>
+    // 🔘 Control del selector de rol
     let role = 'cliente';
+    
     window.setRole = (r) => {
       role = r;
       document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
       document.getElementById('btn-' + r).classList.add('active');
-      document.getElementById('campos-barbero').style.display = r === 'barbero' ? 'block' : 'none';
+      
+      const barberFields = document.getElementById('barber-fields');
+      if (r === 'barbero') {
+        barberFields.classList.add('active');
+      } else {
+        barberFields.classList.remove('active');
+      }
     };
 
-    document.getElementById('registro-form').addEventListener('submit', async (e) => {
+    // 📝 Registro con Email
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = document.getElementById('btn');
+      
+      const btn = document.getElementById('btn-register');
       const msg = document.getElementById('msg');
       
-      if (!window.supabaseClient) {
-        msg.textContent = '❌ Config error: API Key no cargada';
-        msg.className = 'msg err'; msg.style.display = 'block';
-        return;
-      }
-
-      btn.disabled = true; btn.textContent = 'Creando...';
+      const nombre = document.getElementById('nombre').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
       msg.style.display = 'none';
 
       try {
-        const { data, error } = await window.supabaseClient.auth.signUp({
-          email: document.getElementById('email').value,
-          password: document.getElementById('password').value,
-          options: { data: { nombre: document.getElementById('nombre').value, role: role } }
+        // 1. Crear usuario en Supabase Auth
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: {
+              nombre: nombre,
+              role: role
+            }
+          }
         });
+        
         if (error) throw error;
 
+        // 2. Si es barbero, crear entrada en tabla barbers
         if (role === 'barbero') {
-          await window.supabaseClient.from('barbers').insert([{
+          const barberia = document.getElementById('barberia').value || nombre + "'s Barbería";
+          const direccion = document.getElementById('direccion').value || 'Sin dirección';
+          
+          await supabaseClient.from('barbers').insert([{
             owner_id: data.user.id,
-            name: document.getElementById('barberia').value || document.getElementById('nombre').value + "'s Barbería",
-            location: document.getElementById('direccion').value || 'Sin dirección',
-            phone: '', lat: 0, lng: 0
+            name: barberia,
+            location: direccion,
+            phone: '',
+            lat: 0,
+            lng: 0
           }]);
         }
 
-        msg.textContent = '✅ Cuenta creada. Redirigiendo...';
-        msg.className = 'msg ok'; msg.style.display = 'block';
-        setTimeout(() => window.location.href = 'auth.html', 2000);
+        // ✅ Éxito
+        msg.textContent = '✅ Cuenta creada. Revisa tu email.';
+        msg.className = 'msg ok';
+        msg.style.display = 'block';
+        
+        setTimeout(() => {
+          window.location.href = 'auth.html';
+        }, 2500);
+
       } catch (err) {
-        msg.textContent = '❌ ' + err.message;
-        msg.className = 'msg err'; msg.style.display = 'block';
-        btn.disabled = false; btn.textContent = 'REGISTRARSE';
+        // ❌ Manejo de errores
+        if (err.message.includes('rate limit') || err.message.includes('too many requests')) {
+          msg.textContent = '⏳ Demasiados intentos. Espera 15 min o usa otro email.';
+        } else if (err.message.includes('already registered')) {
+          msg.textContent = 'ℹ️ Ese email ya está registrado.';
+        } else {
+          msg.textContent = '❌ ' + err.message;
+        }
+        msg.className = 'msg err';
+        msg.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> CREAR CUENTA';
       }
     });
+
+    // 🔵 Registro con Google
+    async function registerGoogle() {
+      try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: { 
+            redirectTo: window.location.origin + '/perfil-cliente.html',
+            queryParams: { access_type: 'offline', prompt: 'consent' }
+          }
+        });
+        if (error) throw error;
+      } catch (err) {
+        alert('❌ Error con Google: ' + err.message);
+      }
+    }
   </script>
 </body>
 </html>
