@@ -1,351 +1,199 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro | BarberHub</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro | BarberHub</title>
+  <!-- 1. Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- 2. Librería de teléfono internacional -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/css/intlTelInput.css">
+  <!-- 3. Supabase CDN (DEBE ir antes de config.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/intlTelInput.min.js"></script>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%);
+      min-height: 100vh;
+      color: #fff;
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 20px;
+    }
+    .container { max-width: 450px; margin: 0 auto; }
+    .back-link { display: inline-block; color: #888; text-decoration: none; margin-bottom: 20px; }
+    .back-link:hover { color: #00f2ff; }
     
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%);
-            min-height: 100vh;
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            padding: 20px;
-        }
-        .back-link {
-            display: inline-block;
-            color: #888;
-            text-decoration: none;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
-        }
-        .back-link:hover { color: var(--neon-cyan, #00f2ff); }
-        .register-box {
-            max-width: 450px;
-            margin: 0 auto;
-            padding: 30px;
-            background: rgba(20, 20, 30, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid #ff00ff;
-            border-radius: 15px;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
-        }
-        .register-box h2 {
-            color: #ff00ff;
-            margin-bottom: 20px;
-            font-family: 'Orbitron', sans-serif;
-            text-align: center;
-            font-size: 1.8rem;
-        }
-        .role-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 5px;
-            border-radius: 8px;
-        }
-        .role-btn {
-            flex: 1;
-            padding: 10px;
-            background: rgba(100, 100, 100, 0.3);
-            color: #ccc;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .role-btn.active {
-            background: #00f2ff;
-            color: #000;
-        }
-        .form-group { margin-bottom: 15px; }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #fff;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid #444;
-            color: #fff;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: #00f2ff;
-        }
-        .form-group small {
-            color: #888;
-            font-size: 0.75rem;
-            display: block;
-            margin-top: 4px;
-        }
-        .barber-fields {
-            display: none;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px dashed #444;
-        }
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #ff00ff, #ff66ff);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: transform 0.2s;
-        }
-        .btn-submit:hover { transform: translateY(-2px); }
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        .message {
-            margin-top: 15px;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            display: none;
-        }
-        .message.success {
-            background: rgba(0, 255, 136, 0.15);
-            border: 1px solid #00ff88;
-            color: #00ff88;
-        }
-        .message.error {
-            background: rgba(255, 68, 68, 0.15);
-            border: 1px solid #ff4444;
-            color: #ff4444;
-        }
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            color: #888;
-        }
-        .login-link a {
-            color: #00f2ff;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .login-link a:hover { text-decoration: underline; }
-    </style>
+    .card {
+      background: rgba(20, 20, 30, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid #ff00ff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.15);
+    }
+    h2 { color: #ff00ff; text-align: center; margin-bottom: 20px; font-size: 1.5rem; }
+    
+    .role-selector { display: flex; gap: 8px; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 4px; border-radius: 8px; }
+    .role-btn { flex: 1; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; background: transparent; color: #888; transition: 0.2s; }
+    .role-btn.active { background: #00f2ff; color: #000; }
+    
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: #ccc; }
+    
+    /* 🔧 FIX BANDERA DESORDENADA */
+    input[type="email"], input[type="password"], input[type="text"], input[type="tel"] {
+      width: 100%;
+      padding: 12px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid #444;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      box-sizing: border-box; /* CRÍTICO */
+    }
+    input:focus { outline: none; border-color: #00f2ff; }
+    
+    /* Estilos específicos para intl-tel-input */
+    .iti { width: 100%; }
+    .iti__flag-container { z-index: 10; }
+    .iti__country-list { background: #14141e; border: 1px solid #444; border-radius: 6px; }
+    .iti__country { color: #fff; padding: 6px 12px; }
+    .iti__country:hover { background: rgba(0,242,255,0.1); }
+    .iti__dial-code { color: #888; }
+    
+    .barber-fields { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #444; }
+    .btn-submit {
+      width: 100%; padding: 14px; background: linear-gradient(135deg, #ff00ff, #cc00cc);
+      border: none; border-radius: 8px; color: #fff; font-weight: bold; cursor: pointer; margin-top: 10px;
+    }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .msg { margin-top: 12px; padding: 10px; border-radius: 6px; text-align: center; display: none; font-size: 0.9rem; }
+    .msg.success { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; }
+    .msg.error { background: rgba(255,68,68,0.15); color: #ff4444; border: 1px solid #ff4444; }
+    .login-link { text-align: center; margin-top: 20px; color: #888; }
+    .login-link a { color: #00f2ff; text-decoration: none; }
+  </style>
 </head>
 <body>
-    <a href="index.html" class="back-link">← Volver al Directorio</a>
-    
-    <div class="register-box">
-        <h2>✨ CREAR CUENTA</h2>
-        
-        <div class="role-selector">
-            <button type="button" class="role-btn" id="btn-barbero" onclick="setRole('barbero')">💈 Barbero</button>
-            <button type="button" class="role-btn active" id="btn-cliente" onclick="setRole('cliente')">👤 Cliente</button>
+  <div class="container">
+    <a href="index.html" class="back-link">← Volver</a>
+    <div class="card">
+      <h2>✨ Crear Cuenta</h2>
+      
+      <div class="role-selector">
+        <button type="button" class="role-btn" onclick="setRole('barbero')">💈 Barbero</button>
+        <button type="button" class="role-btn active" onclick="setRole('cliente')">👤 Cliente</button>
+      </div>
+      
+      <form id="registro-form">
+        <div class="form-group">
+          <label>📧 Email</label>
+          <input type="email" id="email" placeholder="tu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>🔑 Contraseña</label>
+          <input type="password" id="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label>👤 Nombre</label>
+          <input type="text" id="nombre" placeholder="Tu nombre completo" required>
+        </div>
+        <div class="form-group">
+          <label>📱 Teléfono</label>
+          <input type="tel" id="telefono" placeholder="Selecciona país y escribe número">
         </div>
         
-        <form id="registro-form">
-            <div class="form-group">
-                <label>📧 Correo Electrónico</label>
-                <input type="email" id="email" placeholder="tu@email.com" required>
-            </div>
-            
-            <div class="form-group">
-                <label>🔑 Contraseña (mín 6 caracteres)</label>
-                <input type="password" id="password" placeholder="••••••••" required minlength="6">
-            </div>
-            
-            <div class="form-group">
-                <label>👤 Tu Nombre</label>
-                <input type="text" id="nombre" placeholder="Tu nombre completo" required>
-            </div>
-            
-            <div class="form-group">
-                <label>📱 Teléfono</label>
-                <input type="tel" id="telefono" placeholder="+34 612 345 678">
-                <small><i class="fas fa-info-circle"></i> Selecciona tu país e ingresa tu número</small>
-            </div>
-            
-            <div id="campos-barbero" class="barber-fields">
-                <div class="form-group">
-                    <label>✂️ Nombre de tu Barbería</label>
-                    <input type="text" id="barberia-name" placeholder="Nombre de tu local">
-                </div>
-                
-                <div class="form-group">
-                    <label>📍 Dirección del Local</label>
-                    <input type="text" id="location" placeholder="Calle/Barrio/Ciudad">
-                </div>
-                
-                <div class="form-group">
-                    <button type="button" onclick="getLocalCoords()" style="width:100%; padding:10px; background:transparent; border:1px dashed #00f2ff; color:#00f2ff; border-radius:6px; cursor:pointer;">
-                        📍 Detectar Ubicación (GPS)
-                    </button>
-                    <input type="hidden" id="shop-lat">
-                    <input type="hidden" id="shop-lng">
-                    <small id="geo-status" style="text-align:center; display:block; margin-top:5px;"></small>
-                </div>
-            </div>
-            
-            <button type="submit" class="btn-submit" id="btn-registro">CREAR CUENTA</button>
-            <div id="registro-msg" class="message"></div>
-        </form>
-        
-        <div class="login-link">
-            ¿Ya tienes cuenta? <a href="auth.html">Inicia sesión</a>
+        <div id="campos-barbero" class="barber-fields">
+          <div class="form-group">
+            <label>✂️ Nombre Barbería</label>
+            <input type="text" id="barberia-name" placeholder="Mi Barbería">
+          </div>
+          <div class="form-group">
+            <label>📍 Dirección</label>
+            <input type="text" id="location" placeholder="Calle, Ciudad">
+          </div>
         </div>
+        
+        <button type="submit" class="btn-submit" id="btn-registro">CREAR CUENTA</button>
+        <div id="registro-msg" class="msg"></div>
+      </form>
+      
+      <div class="login-link">¿Ya tienes cuenta? <a href="auth.html">Inicia sesión</a></div>
     </div>
-    
-    <script src="config.js"></script>
-    <script>
-        let userRole = 'cliente';
-        let phoneInputInstance = null;
-        
-        // Inicializar selector de teléfono
-        document.addEventListener('DOMContentLoaded', function() {
-            const phoneInput = document.getElementById('telefono');
-            if (phoneInput && typeof intlTelInput !== 'undefined') {
-                phoneInputInstance = intlTelInput(phoneInput, {
-                    initialCountry: 'auto',
-                    geoIpLookup: function(callback) {
-                        fetch('https://ipapi.co/json')
-                            .then(res => res.json())
-                            .then(data => callback(data.country_code))
-                            .catch(() => callback('es'));
-                    },
-                    preferredCountries: ['es', 'mx', 'co', 'ar', 'us'],
-                    separateDialCode: true,
-                    utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js'
-                });
-            }
+  </div>
+
+  <!-- ORDEN CRÍTICO: 1. Supabase CDN → 2. config.js → 3. Lógica -->
+  <script src="config.js"></script>
+  <script>
+    let userRole = 'cliente';
+    let phoneInputInstance = null;
+
+    // Inicializar selector de teléfono
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('telefono');
+      if (input && typeof intlTelInput !== 'undefined') {
+        phoneInputInstance = intlTelInput(input, {
+          initialCountry: 'auto',
+          geoIpLookup: cb => fetch('https://ipapi.co/json').then(r=>r.json()).then(d=>cb(d.country_code)).catch(()=>cb('es')),
+          preferredCountries: ['es','mx','co','ar','us'],
+          separateDialCode: true,
+          utilsScript: 'https://cdn.jsdelivr.net/npm/intl-tel-input@18.2.1/build/js/utils.js'
         });
-        
-        function setRole(role) {
-            userRole = role;
-            const btnBarbero = document.getElementById('btn-barbero');
-            const btnCliente = document.getElementById('btn-cliente');
-            const camposBarbero = document.getElementById('campos-barbero');
-            
-            if (role === 'barbero') {
-                btnBarbero.classList.add('active');
-                btnCliente.classList.remove('active');
-                camposBarbero.style.display = 'block';
-            } else {
-                btnCliente.classList.add('active');
-                btnBarbero.classList.remove('active');
-                camposBarbero.style.display = 'none';
-            }
-        }
-        
-        function getLocalCoords() {
-            const status = document.getElementById('geo-status');
-            if (navigator.geolocation) {
-                status.textContent = '📡 Buscando señal GPS...';
-                status.style.color = '#888';
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        document.getElementById('shop-lat').value = position.coords.latitude;
-                        document.getElementById('shop-lng').value = position.coords.longitude;
-                        status.textContent = '✅ Ubicación guardada';
-                        status.style.color = '#00ff88';
-                    },
-                    () => {
-                        status.textContent = '❌ Error: Activa el GPS';
-                        status.style.color = '#ff4444';
-                    }
-                );
-            }
-        }
-        
-        document.getElementById('registro-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btn-registro');
-            const msg = document.getElementById('registro-msg');
-            
-            btn.disabled = true;
-            btn.textContent = 'Creando cuenta...';
-            msg.style.display = 'none';
-            msg.className = 'message';
-            
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value;
-            const nombre = document.getElementById('nombre').value.trim();
-            
-            let telefono = '';
-            if (phoneInputInstance) {
-                telefono = phoneInputInstance.getNumber();
-            }
-            
-            try {
-                const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: {
-                            nombre: nombre,
-                            telefono: telefono,
-                            role: userRole
-                        }
-                    }
-                });
-                
-                if (authError) throw authError;
-                
-                if (userRole === 'barbero') {
-                    const barberiaName = document.getElementById('barberia-name').value.trim() || nombre;
-                    const location = document.getElementById('location').value.trim() || 'Sin ubicación';
-                    const lat = parseFloat(document.getElementById('shop-lat').value) || 0;
-                    const lng = parseFloat(document.getElementById('shop-lng').value) || 0;
-                    
-                    const { error: barberError } = await supabaseClient.from('barbers').insert([{
-                        owner_id: authData.user.id,
-                        name: barberiaName,
-                        location: location,
-                        phone: telefono,
-                        lat: lat,
-                        lng: lng,
-                        photos: null,
-                        created_at: new Date().toISOString()
-                    }]);
-                    
-                    if (barberError) throw barberError;
-                }
-                
-                msg.textContent = '✅ Cuenta creada. Redirigiendo...';
-                msg.classList.add('success');
-                msg.style.display = 'block';
-                
-                setTimeout(() => {
-                    window.location.href = 'auth.html';
-                }, 2000);
-                
-            } catch (err) {
-                msg.textContent = '❌ Error: ' + err.message;
-                msg.classList.add('error');
-                msg.style.display = 'block';
-                btn.disabled = false;
-                btn.textContent = 'CREAR CUENTA';
-            }
+      }
+    });
+
+    window.setRole = (role) => {
+      userRole = role;
+      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.role-btn[onclick="setRole('${role}')"]`).classList.add('active');
+      document.getElementById('campos-barbero').style.display = role === 'barbero' ? 'block' : 'none';
+    };
+
+    document.getElementById('registro-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('btn-registro');
+      const msg = document.getElementById('registro-msg');
+      
+      if (!window.supabaseClient) {
+        msg.textContent = '❌ Error de configuración: API Key inválida o CDN no cargado.';
+        msg.className = 'msg error'; msg.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Creando...';
+      msg.style.display = 'none';
+
+      const telefono = phoneInputInstance ? phoneInputInstance.getNumber() : document.getElementById('telefono').value;
+
+      try {
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value,
+          options: { data: { nombre: document.getElementById('nombre').value, telefono, role: userRole } }
         });
-        
-        setRole('cliente');
-    </script>
+        if (error) throw error;
+
+        if (userRole === 'barbero') {
+          await supabaseClient.from('barbers').insert([{
+            owner_id: data.user.id,
+            name: document.getElementById('barberia-name').value || 'Mi Barbería',
+            location: document.getElementById('location').value || 'Sin dirección',
+            phone: telefono,
+            lat: 0, lng: 0
+          }]);
+        }
+
+        msg.textContent = '✅ Cuenta creada. Redirigiendo...';
+        msg.className = 'msg success'; msg.style.display = 'block';
+        setTimeout(() => window.location.href = 'auth.html', 2000);
+      } catch (err) {
+        msg.textContent = '❌ ' + (err.message || 'Error desconocido');
+        msg.className = 'msg error'; msg.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'CREAR CUENTA';
+      }
+    });
+  </script>
 </body>
 </html>
