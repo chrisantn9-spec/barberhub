@@ -6,6 +6,8 @@
     <title>Chat | BarberHub</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 🔥 Cargar Supabase ANTES de config.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body style="background:linear-gradient(180deg,#050505 0%,#0a0a1a 100%); min-height:100vh; color:#fff; margin:0; display:flex; flex-direction:column;">
     
@@ -18,10 +20,10 @@
 
     <div style="position:fixed; bottom:0; left:0; right:0; padding:10px; background:rgba(10,10,20,0.95); backdrop-filter:blur(10px); border-top:1px solid var(--neon-cyan); display:flex; gap:10px;">
         <input type="text" id="msg-input" placeholder="Escribe un mensaje..." style="flex:1; padding:12px; border-radius:20px; border:1px solid var(--neon-cyan); background:rgba(0,0,0,0.5); color:#fff; outline:none;">
-        <!-- 🔥 CAMBIO CLAVE: type="button" evita el reset -->
         <button type="button" id="send-btn" style="padding:12px 20px; background:var(--neon-cyan); color:#000; border:none; border-radius:20px; font-weight:bold; cursor:pointer;">➤</button>
     </div>
 
+    <!-- 🔥 ORDEN CRÍTICO: Supabase → config → chat -->
     <script src="config.js"></script>
     <script src="chat.js"></script>
 </body>
