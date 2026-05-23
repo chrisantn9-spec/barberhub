@@ -1,64 +1,39 @@
-// chat-list.js - CORREGIDO
-document.addEventListener('DOMContentLoaded', async () => {
-  const { data: { user } } = await supabaseClient.auth.getUser();
-  if (!user) { 
-    window.location.href = 'auth.html'; 
-    return; 
-  }
-  loadChatList(user.id);
-});
-
-async function loadChatList(currentUserId) {
-  const container = document.getElementById('chat-list');
-  
-  const { data: messages, error } = await supabaseClient
-    .from('messages')
-    .select('barber_id, created_at, message')
-    .eq('user_id', currentUserId)
-    .order('created_at', { ascending: false });
-
-  if (error || !messages || messages.length === 0) {
-    container.innerHTML = '<p style="text-align:center; color:#888; padding:40px;">📭 No tienes conversaciones</p>';
-    return;
-  }
-
-  const chatMap = new Map();
-  messages.forEach(m => {
-    if (!chatMap.has(m.barber_id)) {
-      chatMap.set(m.barber_id, { last: m.message, time: m.created_at });
-    }
-  });
-
-  const { data: barbers } = await supabaseClient
-    .from('barbers')
-    .select('id, name, photos')
-    .in('id', Array.from(chatMap.keys()));
-
-  container.innerHTML = '';
-  if (!barbers) return;
-
-  barbers.sort((a,b) => new Date(chatMap.get(b.id).time) - new Date(chatMap.get(a.id).time));
-
-  barbers.forEach(b => {
-    const c = chatMap.get(b.id);
-    const div = document.createElement('div');
-    div.className = 'chat-item';
-    div.onclick = () => { 
-      sessionStorage.setItem('chatBarberId', b.id); 
-      sessionStorage.setItem('chatBarberName', b.name); 
-      window.location.href = 'chat.html'; 
-    };
-    
-    let img = b.photos ? JSON.parse(b.photos)[0] : null;
-    div.innerHTML = img 
-      ? `<img src="${img}" style="width:45px;height:45px;border-radius:50%;object-fit:cover;">`
-      : `<div class="chat-avatar">${b.name[0]}</div>`;
-    div.innerHTML += `
-      <div class="chat-info">
-        <div class="chat-name">${b.name}</div>
-        <div class="chat-preview">${c.last}</div>
-      </div>
-      <div class="chat-time">${new Date(c.time).toLocaleDateString()}</div>`;
-    container.appendChild(div);
-  });
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Chats | BarberHub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- 🔥 Supabase CDN primero -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%); min-height: 100vh; color: #fff; margin: 0; padding: 20px; }
+    .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+    .header a { color: var(--neon-cyan); text-decoration: none; font-size: 1.2rem; }
+    .header h1 { margin: 0; font-family: 'Orbitron'; flex: 1; }
+    #chat-list { display: flex; flex-direction: column; gap: 12px; }
+    .chat-item { display: flex; align-items: center; gap: 12px; padding: 15px; background: rgba(20,20,30,0.8); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+    .chat-item:hover { background: rgba(0,242,255,0.1); border-color: var(--neon-cyan); }
+    .chat-avatar { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink)); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; flex-shrink: 0; }
+    .chat-info { flex: 1; min-width: 0; }
+    .chat-name { font-weight: 600; margin-bottom: 4px; }
+    .chat-preview { color: #888; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .chat-time { color: #555; font-size: 0.8rem; }
+    .new-chat-btn { display: block; margin-top: 30px; padding: 15px; background: rgba(0,242,255,0.1); border: 1px dashed var(--neon-cyan); color: var(--neon-cyan); text-align: center; border-radius: 12px; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <a href="perfil-cliente.html">←</a>
+    <h1>💬 Mis Conversaciones</h1>
+  </div>
+  <div id="chat-list">
+    <p style="text-align:center; color:#666; margin-top:50px;">Cargando...</p>
+  </div>
+  <a href="perfil-cliente.html" class="new-chat-btn">🔍 Buscar Barberías</a>
+  <script src="config.js"></script>
+  <script src="chat-list.js"></script>
+</body>
+</html>
