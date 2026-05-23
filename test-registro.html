@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Registro</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="background:#0a0a1a; color:#fff; font-family:sans-serif; padding:20px;">
+  <h2>🧪 Test de Registro</h2>
+  <form id="form" style="display:flex; flex-direction:column; gap:10px; max-width:300px;">
+    <input id="email" type="email" placeholder="Email" required style="padding:10px;">
+    <input id="pass" type="password" placeholder="Contraseña (6+)" required minlength="6" style="padding:10px;">
+    <input id="nombre" type="text" placeholder="Nombre" required style="padding:10px;">
+    <button type="submit" style="padding:12px; background:#00f2ff; border:none; border-radius:6px; font-weight:bold;">Registrar</button>
+  </form>
+  <div id="msg" style="margin-top:15px; padding:10px; border-radius:6px;"></div>
+
+  <script src="config.js"></script>
+  <script>
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('msg');
+      msg.textContent = '⏳ Probando...';
+      msg.style.background = 'rgba(0,242,255,0.1)';
+      
+      try {
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: document.getElementById('email').value,
+          password: document.getElementById('pass').value,
+          options: { data: { nombre: document.getElementById('nombre').value } }
+        });
+        
+        if (error) throw error;
+        msg.textContent = '✅ Registro exitoso. Revisa tu email.';
+        msg.style.background = 'rgba(0,255,136,0.1)';
+        msg.style.color = '#00ff88';
+      } catch (err) {
+        msg.textContent = '❌ Error: ' + err.message;
+        msg.style.background = 'rgba(255,68,68,0.1)';
+        msg.style.color = '#ff4444';
+        console.error('Detalle:', err);
+      }
+    });
+  </script>
+</body>
+</html>
