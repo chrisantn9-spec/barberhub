@@ -1,28 +1,27 @@
-// chat.js - VERSIÓN CORREGIDA
+// chat.js - CORREGIDO: Usa usuario autenticado
 const barberId = sessionStorage.getItem('chatBarberId');
 let barberName = sessionStorage.getItem('chatBarberName') || 'Barbería';
 
 if (!barberId || barberId === 'undefined' || barberId === 'null') {
-  console.warn('No hay barbería seleccionada, redirigiendo...');
-  window.location.href = 'perfil-cliente.html';
+  console.warn('No hay barbería seleccionada');
+  window.location.href = 'index.html';
 }
 
 const chatTitle = document.getElementById('chat-title');
-if (chatTitle) {
-  chatTitle.textContent = `💬 Chat con ${barberName}`;
-}
+if (chatTitle) chatTitle.textContent = `💬 Chat con ${barberName}`;
 
 const msgInput = document.getElementById('msg-input');
 const sendBtn = document.getElementById('send-btn');
 const chatBox = document.getElementById('chat-messages');
 
-// 🔥 OBTENER USUARIO AUTENTICADO
+// 🔥 OBTENER USUARIO AUTENTICADO (NO USAR PROMPT)
 let currentUser = null;
 let userName = '';
 
 async function initChat() {
   try {
     const { data: { user }, error } = await supabaseClient.auth.getUser();
+    
     if (error || !user) {
       alert('❌ Debes iniciar sesión para chatear');
       window.location.href = 'auth.html';
@@ -30,7 +29,10 @@ async function initChat() {
     }
     
     currentUser = user;
+    // Obtener nombre de user_metadata (del registro)
     userName = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Cliente';
+    
+    console.log('✅ Usuario autenticado:', userName, user.id);
     
     // Cargar mensajes
     loadMessages();
@@ -39,12 +41,11 @@ async function initChat() {
     setInterval(loadMessages, 3000);
     
   } catch (err) {
-    console.error('Error inicializando chat:', err);
+    console.error('Error:', err);
     window.location.href = 'auth.html';
   }
 }
 
-// 📥 Cargar mensajes desde Supabase
 async function loadMessages() {
   if (!chatBox || !currentUser) return;
   
@@ -53,7 +54,6 @@ async function loadMessages() {
       .from('messages')
       .select('*')
       .eq('barber_id', barberId)
-      .or(`user_id.eq.${currentUser.id},barber_owner_id.eq.${currentUser.id}`)
       .order('created_at', { ascending: true });
 
     if (error) throw error;
@@ -61,11 +61,12 @@ async function loadMessages() {
     chatBox.innerHTML = '';
     
     if (!data || data.length === 0) {
-      chatBox.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px; font-size:0.9rem;">💬 Inicia la conversación</p>';
+      chatBox.innerHTML = '<p style="text-align:center; color:#666; margin-top:50px;">💬 Inicia la conversación</p>';
       return;
     }
 
     data.forEach(msg => {
+      // 🔥 Comparar por user_id, no por user_name
       const isMe = msg.user_id === currentUser.id;
       const div = document.createElement('div');
       div.className = `msg ${isMe ? 'client' : 'barber'}`;
@@ -91,7 +92,6 @@ async function loadMessages() {
   }
 }
 
-// 🔒 Escapar HTML
 function escapeHtml(text) {
   if (!text) return '';
   const div = document.createElement('div');
@@ -99,7 +99,6 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// 📤 Enviar mensaje
 async function sendMessage() {
   const text = msgInput?.value.trim();
   if (!text || !currentUser) return;
@@ -109,7 +108,7 @@ async function sendMessage() {
       .from('messages')
       .insert([{
         barber_id: barberId,
-        user_id: currentUser.id, // 🔥 AHORA SÍ GUARDAMOS EL USER_ID
+        user_id: currentUser.id, // 🔥 GUARDAR USER_ID REAL
         user_name: userName,
         message: text,
         created_at: new Date().toISOString()
@@ -121,15 +120,12 @@ async function sendMessage() {
     loadMessages();
     
   } catch (err) {
-    console.error('Error enviando mensaje:', err);
-    alert('❌ No se pudo enviar: ' + err.message);
+    console.error('Error:', err);
+    alert('❌ Error: ' + err.message);
   }
 }
 
-// Event listeners
-if (sendBtn) {
-  sendBtn.onclick = sendMessage;
-}
+if (sendBtn) sendBtn.onclick = sendMessage;
 
 if (msgInput) {
   msgInput.addEventListener('keypress', (e) => {
@@ -138,12 +134,11 @@ if (msgInput) {
   msgInput.focus();
 }
 
-// Inicializar
+// Inicializar solo si existe chatBox
 if (chatBox) {
-  initChat();
+  initChat(); // 🔥 AHORA OBTIENE USUARIO AUTENTICADO
 }
 
-// Manejar offline/online
 window.addEventListener('offline', () => {
   if (chatBox) {
     const notice = document.createElement('p');
