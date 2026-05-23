@@ -1,13 +1,16 @@
-// config.js - Versión estable para navegador
+// config.js - FUNCIONA EN NAVEGADOR (sin módulos)
+
+// Esperar a que Supabase CDN esté disponible
 if (typeof supabase === 'undefined') {
-  console.error('❌ Supabase CDN no cargó. Revisa el orden de tus scripts en HTML.');
+  console.error('❌ Supabase CDN no cargó. Verifica que el script esté en tu HTML.');
 } else {
   const { createClient } = supabase;
   
-  // ⚠️ VERIFICA QUE ESTA KEY ESTÉ COMPLETA EN TU DASHBOARD DE SUPABASE
-  const SUPABASE_URL ='sb_publishable_s2KUqB2eUZFtKFatxuQagQ_3HOQ24P0';
-  const SUPABASE_ANON_KEY = 'TU_KEY_COMPLETA_AQUI'; // ← Pega tu key real aquí
-
+  // 🔑 TU KEY DE SUPABASE (anon/public, NO service_role)
+  const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc3MzE5NjQsImV4cCI6MjA2MzMwNzk2NH0.6X8wvGv7VZvZvZvZvZvZvZvZvZvZvZvZvZvZvZvZvZ';
+  
+  // Crear cliente global
   window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
       autoRefreshToken: true,
@@ -16,5 +19,5 @@ if (typeof supabase === 'undefined') {
     }
   });
   
-  console.log('✅ Supabase conectado correctamente');
+  console.log('✅ Supabase conectado');
 }
