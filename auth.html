@@ -27,14 +27,13 @@
             align-items: center;
         }
 
-        /* 🔥 FONDO */
+        /* 🔥 FONDO: 100% Visible */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: 
-                linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(10,5,20,0.05) 100%), /* Oscurecido casi nulo */
-                url('./fondobarber.png'); 
+            /* Sin degradado oscuro para ver tu imagen al máximo */
+            background: url('./fondobarber.png'); 
             background-size: cover;
             background-position: center;
             z-index: -3;
@@ -65,78 +64,95 @@
             100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
         }
 
-        /*  CAJA CRISTAL (El cambio clave) */
+        /* 📦 CAJA INVISIBLE (Solo borde de cristal) */
         .auth-card {
             width: 90%;
             max-width: 420px;
-            /* Fondo transparente al 99% */
-            background: rgba(255, 255, 255, 0.02); 
-            /* Efecto de vidrio esmerilado */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            /* Bordes de cristal brillante */
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            border-top: 1px solid rgba(255, 255, 255, 0.6); /* Borde superior más brillante (luz) */
-            border-left: 1px solid rgba(255, 255, 255, 0.6); /* Borde izquierdo más brillante */
-            border-radius: 25px;
+            background: transparent; /* 0% opacidad */
+            backdrop-filter: none;   /* Sin desenfoque */
+            /* Borde cristalino con luz en bordes superior e izquierdo */
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            border-top: 1.5px solid rgba(255, 255, 255, 0.5);
+            border-left: 1.5px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
             padding: 45px 35px;
             text-align: center;
             position: relative;
             z-index: 10;
-            /* Sombra externa para dar profundidad 3D */
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            /* Resplandor sutil para acentuar la forma de tarjeta */
+            box-shadow: 0 0 25px rgba(0, 229, 238, 0.12), inset 0 0 20px rgba(255, 255, 255, 0.02);
+            transition: box-shadow 0.4s ease;
+        }
+        .auth-card:hover {
+            box-shadow: 0 0 35px rgba(0, 229, 238, 0.25), inset 0 0 25px rgba(255, 255, 255, 0.04);
         }
 
-        /* Logo */
+        /* 🏷️ TEXTOS FLOTANTES */
         .logo-small {
             font-family: 'Orbitron', sans-serif;
             font-size: 2rem;
             font-weight: 900;
             margin-bottom: 30px;
             color: #fff;
-            /* Sombra fuerte para que se lea sobre el fondo transparente */
-            text-shadow: 0 0 10px rgba(0, 229, 238, 0.8), 0 3px 6px rgba(0,0,0,1);
+            /* Efecto flotante + brillo neón */
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
+            text-shadow: 0 0 12px rgba(0, 229, 238, 0.7);
         }
         .logo-small span { color: var(--neon-cyan); }
 
-        /* Inputs */
-        .input-group {
+        #formTitle {
             margin-bottom: 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.8));
+            text-shadow: 0 0 10px var(--neon-cyan);
+            letter-spacing: 1px;
+        }
+
+        /*  INPUTS FLOTANTES */
+        .input-group {
+            margin-bottom: 22px;
             text-align: left;
         }
         .input-group label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #fff;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,1); /* Texto flotando */
+            letter-spacing: 1.5px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
         .input-group input {
             width: 100%;
-            padding: 14px 15px;
-            /* El input sí necesita un fondo oscuro para saber dónde escribes */
-            background: rgba(0, 0, 0, 0.4); 
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 13px 15px;
+            background: rgba(0, 0, 0, 0.25); /* Muy sutil para saber dónde escribes */
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 12px;
             color: #fff;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             outline: none;
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Efecto flotante base */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .input-group input:focus {
+            transform: translateY(-2px);
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 15px rgba(0, 229, 238, 0.3);
-            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 20px rgba(0, 229, 238, 0.25), 0 0 15px rgba(0, 229, 238, 0.15);
+            background: rgba(0, 0, 0, 0.35);
         }
+        .input-group input::placeholder { color: rgba(255,255,255,0.35); }
 
-        /* Botón Enviar */
+        /* 🔘 BOTÓN FLOTANTE */
         .btn-submit {
             width: 100%;
             padding: 15px;
-            margin-top: 10px;
+            margin-top: 15px;
             border: none;
             border-radius: 12px;
             background: var(--neon-cyan);
@@ -146,52 +162,56 @@
             font-size: 1rem;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(0, 229, 238, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 5px 15px rgba(0, 229, 238, 0.35);
         }
         .btn-submit:hover {
-            box-shadow: 0 0 40px rgba(0, 229, 238, 0.8);
-            transform: translateY(-2px);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 229, 238, 0.6);
         }
+        .btn-submit:active { transform: translateY(0) scale(0.98); }
 
-        /* Links Toggle */
+        /* 🔗 TOGGLE LINKS */
         .toggle-text {
             margin-top: 25px;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.9);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.85);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
         }
         .toggle-text a {
             color: var(--neon-pink);
             text-decoration: none;
             font-weight: 700;
             cursor: pointer;
-            text-shadow: 0 0 8px rgba(255, 0, 255, 0.6);
+            text-shadow: 0 0 8px rgba(255, 0, 255, 0.5);
+            transition: 0.2s;
         }
+        .toggle-text a:hover { text-decoration: underline; filter: drop-shadow(0 0 5px var(--neon-pink)); }
 
-        /* Mensajes */
+        /* 💬 MENSAJES */
         .message {
             margin-top: 15px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: bold;
             min-height: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,1);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
         }
-        .error { color: #ff4444; }
-        .success { color: var(--neon-cyan); }
+        .error { color: #ff4444; text-shadow: 0 0 6px rgba(255, 68, 68, 0.6); }
+        .success { color: var(--neon-cyan); text-shadow: 0 0 6px var(--neon-cyan); }
 
         .hidden { display: none; }
         
-        /* Footer */
+        /* 🦶 FOOTER */
         .footer {
             position: fixed;
-            bottom: 10px;
+            bottom: 12px;
             width: 100%;
             text-align: center;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.6);
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.5);
             z-index: 10;
-            text-shadow: 0 1px 4px rgba(0,0,0,1);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
+            letter-spacing: 1px;
         }
         .footer span { color: var(--neon-pink); font-family: 'Orbitron'; font-weight: bold; }
     </style>
@@ -200,12 +220,12 @@
     <div class="cyber-bg"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- Caja Cristal Invisible -->
+    <!-- Tarjeta 100% Transparente -->
     <div class="auth-card">
         <h1 class="logo-small">BARBER<span>HUB</span></h1>
         
         <form id="authForm">
-            <h2 id="formTitle" style="margin-bottom: 25px; font-family: 'Orbitron'; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan);">INICIAR SESIÓN</h2>
+            <h2 id="formTitle">INICIAR SESIÓN</h2>
             
             <div class="input-group hidden" id="nameGroup">
                 <label>NOMBRE</label>
@@ -278,7 +298,7 @@
                 formTitle.style.textShadow = '0 0 10px var(--neon-pink)';
                 submitBtn.textContent = 'CREAR CUENTA';
                 submitBtn.style.background = 'var(--neon-pink)';
-                submitBtn.style.boxShadow = '0 0 15px rgba(255, 0, 255, 0.5)';
+                submitBtn.style.boxShadow = '0 5px 15px rgba(255, 0, 255, 0.35)';
                 toggleLabel.textContent = '¿Ya tienes cuenta?';
                 toggleLink.textContent = 'Inicia Sesión';
             } else {
@@ -288,7 +308,7 @@
                 formTitle.style.textShadow = '0 0 10px var(--neon-cyan)';
                 submitBtn.textContent = 'ENTRAR';
                 submitBtn.style.background = 'var(--neon-cyan)';
-                submitBtn.style.boxShadow = '0 0 15px rgba(0, 229, 238, 0.5)';
+                submitBtn.style.boxShadow = '0 5px 15px rgba(0, 229, 238, 0.35)';
                 toggleLabel.textContent = '¿No tienes cuenta?';
                 toggleLink.textContent = 'Regístrate';
             }
