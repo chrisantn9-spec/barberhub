@@ -3,69 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BarberHub</title>
+  <title>Inicio | BarberHub</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-
-  <!-- Header -->
   <header class="app-header">
-    <div class="header-inner">
-      <h1 class="logo">Barber<span>Hub</span></h1>
-      <a href="auth.html" class="btn btn-outline">Entrar</a>
+    <div class="header-top">
+      <h1 class="logo-text">Barber<span class="cyan">Hub</span></h1>
+      <button class="icon-btn" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" id="search-input" placeholder="Buscar barbero, estilo o ubicación...">
     </div>
   </header>
 
-  <!-- Búsqueda -->
-  <div class="search-wrapper">
-    <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input type="text" placeholder="Buscar barbería o servicio...">
-    </div>
+  <div class="filter-scroller">
+    <div class="chip active">🔥 Tendencias</div>
+    <div class="chip">✂️ Cortes</div>
+    <div class="chip">🪒 Barba</div>
+    <div class="chip">📍 Cerca de ti</div>
+    <div class="chip">⭐ Mejor valorados</div>
   </div>
 
-  <!-- Contenido -->
-  <main class="container">
-    <h2 class="section-title">🔥 Barberías destacadas</h2>
-    <div class="grid" id="barbers-grid">
-      <!-- Tarjeta ejemplo -->
-      <div class="card">
-        <img src="https://placehold.co/400x300/111/00f2ff?text=CyberCuts" class="card-img" alt="Barbería">
-        <div class="card-body">
-          <h3 class="card-title">CyberCuts Studio</h3>
-          <p class="card-subtitle">Centro, Madrid • 0.8 km</p>
-          <div class="card-footer">
-            <span class="card-rating"><i class="fas fa-star"></i> 4.9</span>
-            <span class="card-price">$15</span>
-          </div>
-        </div>
+  <main class="feed-container">
+    <section class="prices-section">
+      <div class="section-header"><i class="fas fa-coins" style="color:var(--neon-pink)"></i><h3>Precios Base</h3></div>
+      <div class="prices-grid">
+        <div class="price-item-cyber"><span class="price-name">Corte Clásico</span><span class="price-value">$15</span></div>
+        <div class="price-item-cyber"><span class="price-name">Barba Completa</span><span class="price-value">$10</span></div>
+        <div class="price-item-cyber"><span class="price-name">Corte + Barba</span><span class="price-value">$22</span></div>
+        <div class="price-item-cyber"><span class="price-name">Afeitado Clásico</span><span class="price-value">$12</span></div>
+        <div class="price-item-cyber"><span class="price-name">Cejas</span><span class="price-value">$5</span></div>
       </div>
-      <!-- Duplica tarjetas para probar el grid -->
-      <div class="card">
-        <img src="https://placehold.co/400x300/111/ff00ff?text=Neon" class="card-img" alt="Barbería">
-        <div class="card-body">
-          <h3 class="card-title">Neon Barber Shop</h3>
-          <p class="card-subtitle">Malasaña, Madrid • 1.2 km</p>
-          <div class="card-footer">
-            <span class="card-rating"><i class="fas fa-star"></i> 4.8</span>
-            <span class="card-price">$18</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    </section>
+
+    <h2 class="section-title-cyber"><i class="fas fa-fire" style="color:#ff6600"></i> Barberos Destacados</h2>
+    <div class="barber-grid" id="barbers-list"></div>
   </main>
 
-  <!-- Menú inferior -->
   <nav class="bottom-nav">
-    <a href="index.html" class="nav-item active"><i class="fas fa-home"></i> Inicio</a>
-    <a href="#" class="nav-item"><i class="fas fa-compass"></i> Explorar</a>
-    <a href="#" class="nav-item"><i class="fas fa-calendar"></i> Citas</a>
-    <a href="#" class="nav-item"><i class="fas fa-user"></i> Perfil</a>
+    <a href="index.html" class="nav-link active"><i class="fas fa-home"></i><span>Inicio</span></a>
+    <a href="explorar.html" class="nav-link"><i class="fas fa-compass"></i><span>Explorar</span></a>
+    <a href="mis-citas.html" class="nav-link"><i class="fas fa-calendar-check"></i><span>Citas</span></a>
+    <a href="mi-perfil.html" class="nav-link"><i class="fas fa-user"></i><span>Perfil</span></a>
   </nav>
-<!-- Aviso de responsabilidad -->
-<div style="position: fixed; bottom: 75px; left: 0; right: 0; text-align: center; color: #555; font-size: 0.7rem; padding: 8px; background: rgba(5,5,5,0.6); backdrop-filter: blur(4px); z-index: 999;">
-  Al usar BarberHub, aceptas que eres responsable de tus interacciones y transacciones dentro de la plataforma.
-</div>
+
+  <script src="config.js"></script>
+  <script>
+    const barbers = [
+      { id: 1, name: "CyberCuts Studio", location: "Centro, Madrid", rating: 4.9, price: "$15", img: "https://placehold.co/400x300/111/00f2ff?text=CyberCuts", services: ["Corte","Barba","Cejas"] },
+      { id: 2, name: "Neon Barber Shop", location: "Malasaña, Madrid", rating: 4.8, price: "$18", img: "https://placehold.co/400x300/111/ff00ff?text=Neon", services: ["Corte Fade","Barba Completa"] },
+      { id: 3, name: "Urban Blade", location: "Lavapiés, Madrid", rating: 4.7, price: "$14", img: "https://placehold.co/400x300/111/00ff88?text=Urban", services: ["Corte Clásico","Afeitado"] },
+      { id: 4, name: "Razor & Code", location: "Chueca, Madrid", rating: 5.0, price: "$20", img: "https://placehold.co/400x300/111/ffaa00?text=Razor", services: ["Corte Premium","Barba"] }
+    ];
+
+    function renderBarbers(list) {
+      const c = document.getElementById('barbers-list');
+      if(!c) return;
+      c.innerHTML = '';
+      list.forEach((b,i) => {
+        const card = document.createElement('div');
+        card.className = 'barber-card';
+        card.style.animationDelay = `${i*0.1}s`;
+        card.innerHTML = `
+          <div class="card-image-wrapper"><img src="${b.img}" alt="${b.name}" class="card-image"><button class="fav-btn"><i class="far fa-heart"></i></button></div>
+          <div class="card-content">
+            <div class="card-header"><h3 class="barber-name">${b.name}</h3><div class="rating"><i class="fas fa-star"></i> ${b.rating}</div></div>
+            <p class="location"><i class="fas fa-map-marker-alt"></i> ${b.location}</p>
+            <div class="services-tags">${b.services.map(s=>`<span class="service-tag">${s}</span>`).join('')}</div>
+            <div class="card-footer"><span class="price">Desde ${b.price}</span><button class="btn-book">Reservar</button></div>
+          </div>`;
+        c.appendChild(card);
+      });
+    }
+
+    document.getElementById('search-input')?.addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      renderBarbers(barbers.filter(b => b.name.toLowerCase().includes(q) || b.location.toLowerCase().includes(q)));
+    });
+
+    // 🔒 Verificación segura (sin bucles)
+    (async () => {
+      try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) { window.location.href = 'auth.html'; return; }
+        if (user.user_metadata?.role === 'barbero') { window.location.href = 'admin.html'; return; }
+      } catch { window.location.href = 'auth.html'; }
+    })();
+
+    window.cerrarSesion = async () => { if(confirm('¿Cerrar sesión?')) { await supabaseClient.auth.signOut(); window.location.href = 'auth.html'; } };
+    document.addEventListener('DOMContentLoaded', () => renderBarbers(barbers));
+  </script>
 </body>
 </html>
