@@ -108,68 +108,79 @@
       <div id="msg"></div>
     </form>
   </div>
+<script src="config.js"></script>
+<script>
+  let selectedRole = 'cliente';
+  
+  window.setRole = (role) => {
+    selectedRole = role;
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + role).classList.add('active');
+    const fields = document.getElementById('barber-fields');
+    if (role === 'barbero') fields.classList.add('active');
+    else fields.classList.remove('active');
+  };
 
-  <script src="config.js"></script>
-  <script>
-    let selectedRole = 'cliente';
-    
-    window.setRole = (role) => {
-      selectedRole = role;
-      document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('btn-' + role).classList.add('active');
-      
-      const fields = document.getElementById('barber-fields');
-      if (role === 'barbero') fields.classList.add('active');
-      else fields.classList.remove('active');
-    };
-    
-    document.getElementById('complete-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('btn-save');
-      const msg = document.getElementById('msg');
-      
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
-      
-      try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) throw new Error('No hay sesión activa');
-        
-        // Actualizar metadata con el rol
-        const { error: updateError } = await supabaseClient.auth.updateUser({
-          data: { role: selectedRole }
-        });
-        if (updateError) throw updateError;
-        
-        // Si es barbero, crear entrada en tabla barbers
-        if (selectedRole === 'barbero') {
-          const barberia = document.getElementById('barberia').value || user.user_metadata?.nombre + "'s Barbería";
-          const direccion = document.getElementById('direccion').value || 'Sin dirección';
-          
-          await supabaseClient.from('barbers').insert([{
-            owner_id: user.id,
-            name: barberia,
-            location: direccion,
-            phone: '',
-            lat: 0,
-            lng: 0
-          }]);
-        }
-        
-        msg.textContent = '✅ Perfil completado. Redirigiendo...';
+  (async () => {
+    try {
+      const { data: { user }, error } = await supabaseClient.auth.getUser();
+      if (error || !user) {
+        window.location.href = 'auth.html';
+        return;
+      }
+
+      // ✅ SI YA TIENE ROL, REDIRIGE DIRECTO (NO MUESTRA FORMULARIO)
+      if (user.user_metadata?.role) {
+        const msg = document.getElementById('msg');
+        msg.textContent = '✅ Bienvenido de vuelta. Redirigiendo...';
         msg.className = 'ok'; msg.style.display = 'block';
         
         setTimeout(() => {
-          window.location.href = selectedRole === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
-        }, 1500);
-        
-      } catch (err) {
-        msg.textContent = '❌ Error: ' + err.message;
-        msg.className = 'err'; msg.style.display = 'block';
-        btn.disabled = false;
-        btn.innerHTML = '✅ Guardar y Continuar';
+          window.location.href = user.user_metadata.role === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+        }, 1000);
+        return;
       }
-    });
-  </script>
+
+      // ❌ SI NO TIENE ROL, MUESTRA EL FORMULARIO DE REGISTRO
+      document.getElementById('complete-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-save');
+        const msg = document.getElementById('msg');
+        
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        
+        try {
+          const { error: updateError } = await supabaseClient.auth.updateUser({
+            data: { role: selectedRole }
+          });
+          if (updateError) throw updateError;
+          
+          if (selectedRole === 'barbero') {
+            const barberia = document.getElementById('barberia').value || user.user_metadata?.nombre + "'s Barbería";
+            const direccion = document.getElementById('direccion').value || 'Sin dirección';
+            await supabaseClient.from('barbers').insert([{
+              owner_id: user.id, name: barberia, location: direccion, phone: '', lat: 0, lng: 0
+            }]);
+          }
+          
+          msg.textContent = '✅ Perfil completado. Redirigiendo...';
+          msg.className = 'ok'; msg.style.display = 'block';
+          setTimeout(() => {
+            window.location.href = selectedRole === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+          }, 1500);
+        } catch (err) {
+          msg.textContent = '❌ Error: ' + err.message;
+          msg.className = 'err'; msg.style.display = 'block';
+          btn.disabled = false; btn.innerHTML = '✅ Guardar y Continuar';
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      window.location.href = 'auth.html';
+    }
+  })();
+</script>
+ 
 </body>
 </html>
