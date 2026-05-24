@@ -61,14 +61,14 @@
       if (session) {
         // Si hay sesión, te mandamos directo a la página del cliente.
         // (Si eres barbero, el script de perfil-cliente te redirigirá a admin.html)
-        window.location.href = 'inicio.html'; 
+        
       }
     });
 
     // También escuchamos cambios en la autenticación en tiempo real
     supabaseClient.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        window.location.href = 'perfil-cliente.html';
+        window.location.href = 'index.html'; // ← cambia 'inicio.html' por esto
       }
     });
 
