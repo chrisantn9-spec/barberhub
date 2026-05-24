@@ -27,7 +27,6 @@
             align-items: center;
         }
 
-        /* 🔥 FONDO */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
@@ -38,7 +37,6 @@
             z-index: -3;
         }
 
-        /* ✨ BURBUJAS */
         .particles {
             position: fixed;
             top: 0; left: 0;
@@ -63,7 +61,6 @@
             100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
         }
 
-        /* 📦 CAJA TRANSPARENTE */
         .auth-card {
             width: 90%;
             max-width: 440px;
@@ -83,7 +80,6 @@
             box-shadow: 0 0 35px rgba(0, 229, 238, 0.25), inset 0 0 25px rgba(255, 255, 255, 0.04);
         }
 
-        /* ️ LOGO */
         .logo-small {
             font-family: 'Orbitron', sans-serif;
             font-size: 2rem;
@@ -95,7 +91,6 @@
         }
         .logo-small span { color: var(--neon-cyan); }
 
-        /* 📝 TÍTULO */
         #formTitle {
             margin-bottom: 25px;
             font-family: 'Orbitron', sans-serif;
@@ -107,36 +102,40 @@
             letter-spacing: 1px;
         }
 
-        /* 🟦 INPUTS CON CONTORNO NEÓN */
         .input-group {
             margin-bottom: 20px;
             text-align: left;
         }
+
+        /* 🏷️ LABELS CON FONDO OSCURO (PASTILLA) */
         .input-group label {
-            display: block;
+            display: inline-block; /* Para que el fondo se ajuste al texto */
             font-size: 0.75rem;
             color: #fff;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-family: 'Orbitron', sans-serif;
             letter-spacing: 1.5px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
+            /* Fondo oscuro visible */
+            background: rgba(0, 0, 0, 0.7);
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
         
-        /* INPUT: Contorno neón + texto neón fuerte */
         .input-group input {
             width: 100%;
             padding: 14px 16px;
             background: rgba(0, 0, 0, 0.3);
-            border: 2px solid var(--neon-cyan); /* Contorno neón base */
+            border: 2px solid var(--neon-cyan);
             border-radius: 12px;
-            color: var(--neon-cyan); /* TEXTO NEÓN FUERTE */
+            color: var(--neon-cyan);
             font-family: 'Rajdhani', sans-serif;
             font-size: 1.1rem;
-            font-weight: 600; /* Texto más grueso */
+            font-weight: 600;
             outline: none;
             transition: all 0.3s ease;
-            box-shadow: 0 0 8px rgba(0, 229, 238, 0.3), inset 0 0 8px rgba(0, 229, 238, 0.1); /* Brillo neón */
-            /* Placeholder neón también */
+            box-shadow: 0 0 8px rgba(0, 229, 238, 0.3), inset 0 0 8px rgba(0, 229, 238, 0.1);
         }
         .input-group input::placeholder {
             color: rgba(0, 229, 238, 0.35);
@@ -144,7 +143,7 @@
         }
         .input-group input:focus {
             transform: translateY(-2px);
-            border-color: #fff; /* Blanco al enfocar */
+            border-color: #fff;
             box-shadow: 
                 0 0 15px rgba(0, 229, 238, 0.6), 
                 0 0 30px rgba(0, 229, 238, 0.3),
@@ -159,7 +158,6 @@
                 inset 0 0 8px rgba(0, 229, 238, 0.15);
         }
 
-        /* 🔘 BOTÓN ENTRAR */
         .btn-submit {
             width: 100%;
             padding: 15px;
@@ -181,7 +179,6 @@
             box-shadow: 0 10px 30px rgba(0, 229, 238, 0.6);
         }
 
-        /* 🔀 SEPARADOR */
         .divider {
             display: flex;
             align-items: center;
@@ -203,7 +200,6 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
 
-        /* 🔵 BOTÓN GOOGLE */
         .btn-google {
             width: 100%;
             padding: 13px 15px;
@@ -230,12 +226,8 @@
             box-shadow: 0 0 15px rgba(0, 229, 238, 0.3);
             transform: translateY(-2px);
         }
-        .btn-google img {
-            width: 20px;
-            height: 20px;
-        }
+        .btn-google img { width: 20px; height: 20px; }
 
-        /* 🔗 TOGGLE */
         .toggle-text {
             margin-top: 25px;
             font-size: 0.85rem;
@@ -252,7 +244,6 @@
         }
         .toggle-text a:hover { text-decoration: underline; }
 
-        /* 💬 MENSAJES */
         .message {
             margin-top: 12px;
             font-size: 0.85rem;
@@ -265,7 +256,6 @@
 
         .hidden { display: none; }
         
-        /* 🦶 FOOTER */
         .footer {
             position: fixed;
             bottom: 12px;
@@ -279,7 +269,6 @@
         }
         .footer span { color: var(--neon-pink); font-family: 'Orbitron'; font-weight: bold; }
 
-        /* 📱 RESPONSIVE */
         @media (max-width: 480px) {
             .auth-card { padding: 35px 20px; max-width: 95%; }
             .logo-small { font-size: 1.6rem; }
@@ -313,10 +302,8 @@
 
             <button type="submit" class="btn-submit" id="submitBtn">ENTRAR</button>
             
-            <!-- SEPARADOR -->
             <div class="divider"><span>o continúa con</span></div>
             
-            <!-- 🔵 BOTÓN GOOGLE -->
             <button type="button" class="btn-google" id="googleBtn">
                 <svg width="20" height="20" viewBox="0 0 48 48">
                     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -342,7 +329,6 @@
 
     <script src="config.js"></script>
     <script>
-        // 1. Burbujas
         function createParticles() {
             const c = document.getElementById('particles');
             for(let i=0; i<40; i++){
@@ -356,7 +342,6 @@
         }
         createParticles();
 
-        // 2. Lógica Auth
         const form = document.getElementById('authForm');
         const nameGroup = document.getElementById('nameGroup');
         const formTitle = document.getElementById('formTitle');
@@ -405,7 +390,6 @@
             window.history.pushState({}, '', `?mode=${newMode}`);
         });
 
-        // 3. Supabase - Email/Password
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('emailInput').value;
@@ -441,18 +425,12 @@
             }
         });
 
-        // 4.  GOOGLE SIGN IN
         document.getElementById('googleBtn').addEventListener('click', async () => {
             messageBox.textContent = 'Conectando con Google...';
             messageBox.className = 'message';
-            
             try {
-                const { data, error } = await supabaseClient.auth.signInWithOAuth({
-                    provider: 'google'
-                });
-                
+                const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
                 if (error) throw error;
-                // Supabase redirige automáticamente a Google
             } catch (err) {
                 messageBox.textContent = err.message;
                 messageBox.classList.add('error');
