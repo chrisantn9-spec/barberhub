@@ -473,6 +473,17 @@
 
   <script src="config.js"></script>
   <script>
+    // Verificar si viene de suscripción exitosa
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('subscription') === 'active') {
+  // Mostrar mensaje de bienvenida premium (opcional)
+  setTimeout(() => {
+    alert('🎉 ¡Bienvenido a Premium! Tus beneficios están activos.');
+  }, 1000);
+  
+  // Limpiar URL para que no se muestre siempre
+  window.history.replaceState({}, document.title, window.location.pathname);
+}
     // ✅ VERIFICACIÓN INMEDIATA DE SESIÓN Y ROL (ANTI-FLASH)
     (async () => {
       try {
