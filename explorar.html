@@ -74,7 +74,7 @@
             pointer-events: none;
         }
 
-        /* 📰 HEADER */
+        /* 📰 HEADER - ACTUALIZADO */
         .header {
             position: fixed;
             top: 0;
@@ -97,6 +97,38 @@
             text-shadow: 0 0 10px var(--neon-cyan);
         }
         .header-logo span { color: var(--neon-cyan); }
+        
+        /* Botones del header */
+        .header-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        /* Botón Mi Perfil */
+        .btn-perfil {
+            padding: 8px 20px;
+            background: transparent;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-perfil:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-cyan);
+            transform: translateY(-2px);
+        }
+        
         .user-info {
             display: flex;
             align-items: center;
@@ -162,19 +194,15 @@
 
         /* 🎴 TARJETA TOTALMENTE TRANSPARENTE */
         .card {
-            /* Fondo 100% transparente */
             background: transparent;
-            /* Borde cristalino opaco */
             border: 1.5px solid rgba(0, 229, 238, 0.4);
             border-radius: 15px;
             overflow: hidden;
             transition: all 0.3s ease;
-            /* Sin backdrop-filter para ver el fondo completamente */
         }
         .card:hover {
             transform: translateY(-5px);
             border-color: var(--neon-cyan);
-            /* Resplandor neón al pasar el mouse */
             box-shadow: 
                 0 0 20px rgba(0, 229, 238, 0.4),
                 0 0 40px rgba(0, 229, 238, 0.2),
@@ -189,27 +217,23 @@
         .card-content {
             padding: 20px;
         }
-        /* 📝 TÍTULO DE TARJETA - TEXTO BRILLANTE */
         .card-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 10px;
             color: #fff;
-            /* Texto blanco con sombra neón cian fuerte */
             text-shadow: 
                 0 0 5px rgba(0, 229, 238, 0.8),
                 0 0 10px rgba(0, 229, 238, 0.6),
                 0 0 20px rgba(0, 229, 238, 0.4),
                 0 2px 4px rgba(0,0,0,0.9);
         }
-        /* 📄 TEXTO DE DESCRIPCIÓN - LEGIBLE */
         .card-text {
             color: rgba(255, 255, 255, 0.95);
             font-size: 0.9rem;
             line-height: 1.6;
             margin-bottom: 15px;
-            /* Sombra oscura para contraste máximo */
             text-shadow: 
                 0 1px 3px rgba(0,0,0,0.95),
                 0 2px 6px rgba(0,0,0,0.8);
@@ -220,7 +244,6 @@
             align-items: center;
             font-size: 0.8rem;
         }
-        /* 🏷️ TAG CON FONDO NEÓN */
         .card-tag {
             background: rgba(0, 229, 238, 0.25);
             color: var(--neon-cyan);
@@ -232,7 +255,6 @@
             border: 1px solid rgba(0, 229, 238, 0.5);
             text-shadow: 0 0 8px rgba(0, 229, 238, 0.6);
         }
-        /* ❤️ ICONOS Y METADATOS */
         .card-meta span {
             color: rgba(255, 255, 255, 0.85);
             text-shadow: 0 1px 3px rgba(0,0,0,0.9);
@@ -243,7 +265,7 @@
             text-shadow: 0 0 8px rgba(255, 0, 255, 0.6);
         }
 
-        /* 🏆 CARD DESTACADA (TENDENCIA) */
+        /* 🏆 CARD DESTACADA */
         .card.featured {
             grid-column: span 2;
             border: 2px solid rgba(255, 0, 255, 0.6);
@@ -285,7 +307,8 @@
         /* 📱 RESPONSIVE */
         @media (max-width: 768px) {
             .header { padding: 15px 20px; }
-            .main-content { padding: 20px; margin-top: 90px; }
+            .header-nav { flex-wrap: wrap; }
+            .main-content { padding: 20px; margin-top: 110px; }
             .cards-grid { grid-template-columns: 1fr; }
             .card.featured { grid-column: span 1; }
             .section-title { font-size: 1.4rem; }
@@ -308,14 +331,19 @@
     <div class="cyber-grid"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- HEADER -->
+    <!-- HEADER CON BOTÓN MI PERFIL -->
     <header class="header">
         <div class="header-logo">BARBER<span>HUB</span></div>
-        <div class="user-info">
-            <span class="user-name" id="userName">Cargando...</span>
-            <button class="btn-logout" onclick="cerrarSesion()">
-                <i class="fas fa-sign-out-alt"></i> Salir
-            </button>
+        <div class="header-nav">
+            <a href="mi-perfil.html" class="btn-perfil">
+                <i class="fas fa-user"></i> Mi Perfil
+            </a>
+            <div class="user-info">
+                <span class="user-name" id="userName">Cargando...</span>
+                <button class="btn-logout" onclick="cerrarSesion()">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
+            </div>
         </div>
     </header>
 
