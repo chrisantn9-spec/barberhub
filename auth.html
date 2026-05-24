@@ -409,7 +409,7 @@
                     if (error) throw error;
                     messageBox.textContent = '¡Cuenta creada! Redirigiendo...';
                     messageBox.classList.add('success');
-                    setTimeout(() => window.location.href = 'index.html', 2000);
+                        setTimeout(() => window.location.href = 'explorar.html', 1000);
                 } else {
                     const { data, error } = await supabaseClient.auth.signInWithPassword({
                         email, password
