@@ -3,540 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio - BarberHub</title>
+  <title>Inicio | BarberHub</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <style>
-    /* 🔒 ANTI-FLASH: Contenido oculto hasta verificar rol */
-    #app-content {
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-    #app-content.visible {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
-
-    /* Header cyberpunk mejorado */
-    .app-header {
-      background: rgba(5, 5, 15, 0.95);
-      backdrop-filter: blur(16px);
-      border-bottom: 2px solid var(--neon-cyan);
-      box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-      padding: 16px 20px;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    
-    .logo-text {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
-      letter-spacing: 2px;
-      animation: logo-glow 3s ease-in-out infinite;
-    }
-    
-    @keyframes logo-glow {
-      0%, 100% { filter: brightness(1); }
-      50% { filter: brightness(1.3); }
-    }
-    
-    .user-welcome {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin-top: 4px;
-    }
-    
-    .user-welcome span {
-      color: var(--neon-cyan);
-      font-weight: 600;
-    }
-    
-    .header-actions {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    
-    .icon-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: rgba(0, 242, 255, 0.1);
-      border: 1px solid var(--neon-cyan);
-      color: var(--neon-cyan);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 1.1rem;
-    }
-    
-    .icon-btn:hover {
-      background: rgba(0, 242, 255, 0.2);
-      box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
-      transform: translateY(-2px) rotate(5deg);
-    }
-    
-    .logout-btn-cyber {
-      padding: 10px 20px;
-      background: rgba(255, 68, 68, 0.15);
-      border: 1px solid #ff4444;
-      color: #ff4444;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .logout-btn-cyber:hover {
-      background: rgba(255, 68, 68, 0.25);
-      box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
-      transform: translateY(-2px);
-    }
-    
-    /* Search bar cyberpunk */
-    .search-container {
-      max-width: 800px;
-      margin: 24px auto;
-      padding: 0 20px;
-    }
-    
-    .search-bar-cyber {
-      display: flex;
-      align-items: center;
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(0, 242, 255, 0.3);
-      border-radius: 50px;
-      padding: 14px 24px;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
-    }
-    
-    .search-bar-cyber:focus-within {
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
-      background: rgba(255, 255, 255, 0.08);
-    }
-    
-    .search-bar-cyber i {
-      color: var(--neon-cyan);
-      font-size: 1.2rem;
-      margin-right: 12px;
-    }
-    
-    .search-bar-cyber input {
-      flex: 1;
-      background: transparent;
-      border: none;
-      outline: none;
-      color: #fff;
-      font-size: 1rem;
-    }
-    
-    .search-bar-cyber input::placeholder {
-      color: #666;
-    }
-    
-    /* Sección de precios cyberpunk */
-    .prices-section {
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 30px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0, 242, 255, 0.15);
-    }
-    
-    .section-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
-      padding-bottom: 16px;
-      border-bottom: 2px solid rgba(255, 0, 255, 0.3);
-    }
-    
-    .section-header h3 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
-      color: var(--neon-pink);
-      margin: 0;
-      text-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
-    }
-    
-    .prices-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-    }
-    
-    .price-item-cyber {
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: all 0.3s ease;
-    }
-    
-    .price-item-cyber:hover {
-      background: rgba(0, 242, 255, 0.08);
-      border-color: var(--neon-cyan);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0, 242, 255, 0.2);
-    }
-    
-    .price-name {
-      color: #fff;
-      font-weight: 600;
-      font-size: 1rem;
-    }
-    
-    .price-value {
-      color: var(--neon-cyan);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 700;
-      text-shadow: 0 0 10px rgba(0, 242, 255, 0.4);
-    }
-    
-    /* Grid de barberos */
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px 100px;
-    }
-    
-    .section-title-cyber {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.6rem;
-      color: var(--neon-cyan);
-      margin: 40px 0 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
-    }
-    
-    .barber-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 24px;
-    }
-    
-    .barber-card-cyber {
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-    }
-    
-    .barber-card-cyber::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(0, 242, 255, 0.1), rgba(255, 0, 255, 0.1));
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-    
-    .barber-card-cyber:hover::before {
-      opacity: 1;
-    }
-    
-    .barber-card-cyber:hover {
-      transform: translateY(-8px);
-      border-color: var(--neon-cyan);
-      box-shadow: 0 12px 40px rgba(0, 242, 255, 0.3);
-    }
-    
-    .barber-img-wrapper {
-      position: relative;
-      height: 220px;
-      overflow: hidden;
-    }
-    
-    .barber-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    
-    .barber-card-cyber:hover .barber-img {
-      transform: scale(1.1);
-    }
-    
-    .barber-badge {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: rgba(255, 204, 0, 0.9);
-      color: #000;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      box-shadow: 0 4px 15px rgba(255, 204, 0, 0.4);
-    }
-    
-    .barber-info-cyber {
-      padding: 20px;
-    }
-    
-    .barber-name {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #fff;
-      margin: 0 0 8px;
-    }
-    
-    .barber-location {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      margin: 0 0 12px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .barber-location i {
-      color: var(--neon-pink);
-    }
-    
-    .barber-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    .barber-rating {
-      color: #ffcc00;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .barber-price {
-      color: var(--neon-cyan);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 700;
-    }
-    
-    .btn-book-cyber {
-      width: 100%;
-      margin-top: 16px;
-      padding: 14px;
-      background: linear-gradient(135deg, var(--neon-cyan), #00b8d4);
-      border: none;
-      border-radius: 10px;
-      color: #000;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .btn-book-cyber:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 242, 255, 0.5);
-    }
-  </style>
 </head>
 <body>
 
-  <!-- ✅ CONTENIDO OCULTO HASTA VERIFICAR ROL -->
-  <div id="app-content">
+  <!-- 🔝 HEADER STICKY -->
+  <header class="app-header">
+    <div class="header-top">
+      <h1 class="logo-text">Barber<span class="cyan">Hub</span></h1>
+      <button class="icon-btn" onclick="cerrarSesion()" title="Cerrar sesión">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" id="search-input" placeholder="Buscar barbero, estilo o ubicación...">
+    </div>
+  </header>
 
-    <!-- Header Cyberpunk -->
-    <header class="app-header">
-      <div class="header-top">
-        <div>
-          <h1 class="logo-text">BarberHub</h1>
-          <p class="user-welcome">👋 Hola, <span id="user-name">Cargando...</span></p>
-        </div>
-        <div class="header-actions">
-          <button class="icon-btn" title="Notificaciones">
-            <i class="fas fa-bell"></i>
-          </button>
-          <a href="auth.html" class="logout-btn-cyber" onclick="cerrarSesion(event)">
-            <i class="fas fa-sign-out-alt"></i> Salir
-          </a>
-        </div>
-      </div>
-    </header>
+  <!-- 🏷️ FILTROS RÁPIDOS (Chips deslizables) -->
+  <div class="filter-scroller">
+    <div class="chip active">🔥 Tendencias</div>
+    <div class="chip">✂️ Cortes</div>
+    <div class="chip">🪒 Barba</div>
+    <div class="chip">📍 Cerca de ti</div>
+    <div class="chip">⭐ Mejor valorados</div>
+  </div>
 
-    <!-- Search Bar -->
-    <div class="search-container">
-      <div class="search-bar-cyber">
-        <i class="fas fa-search"></i>
-        <input type="text" id="search-input" placeholder="Buscar barbero o servicio...">
+  <!-- 📱 CONTENIDO PRINCIPAL -->
+  <main class="feed-container">
+    
+    <!-- 💰 SECCIÓN DE PRECIOS (Mantenida como la tenías) -->
+    <section class="prices-section">
+      <div class="section-header">
+        <i class="fas fa-coins" style="color: var(--neon-pink);"></i>
+        <h3>Precios Base</h3>
       </div>
+      <div class="prices-grid">
+        <div class="price-item-cyber"><span class="price-name">Corte Clásico</span><span class="price-value">$15</span></div>
+        <div class="price-item-cyber"><span class="price-name">Barba Completa</span><span class="price-value">$10</span></div>
+        <div class="price-item-cyber"><span class="price-name">Corte + Barba</span><span class="price-value">$22</span></div>
+        <div class="price-item-cyber"><span class="price-name">Cejas</span><span class="price-value">$5</span></div>
+      </div>
+    </section>
+
+    <!-- 🔥 GRID DE BARBEROS DESTACADOS -->
+    <h2 class="section-title-cyber" style="padding-left:4px; margin:24px 0 16px;">
+      <i class="fas fa-fire" style="color:#ff6600;"></i> Barberos Destacados
+    </h2>
+    
+    <div class="barber-grid" id="barbers-list">
+      <!-- Las tarjetas se generan automáticamente con JS -->
     </div>
 
-    <!-- Main Content -->
-    <main class="container">
-      <!-- Precios -->
-      <section class="prices-section">
-        <div class="section-header">
-          <i class="fas fa-coins" style="color: var(--neon-pink); font-size: 1.5rem;"></i>
-          <h3>Precios</h3>
-        </div>
-        <div class="prices-grid">
-          <div class="price-item-cyber">
-            <span class="price-name">Corte Clásico</span>
-            <span class="price-value">$15</span>
-          </div>
-          <div class="price-item-cyber">
-            <span class="price-name">Barba Completa</span>
-            <span class="price-value">$10</span>
-          </div>
-          <div class="price-item-cyber">
-            <span class="price-name">Corte + Barba</span>
-            <span class="price-value">$22</span>
-          </div>
-          <div class="price-item-cyber">
-            <span class="price-name">Afeitado Clásico</span>
-            <span class="price-value">$12</span>
-          </div>
-          <div class="price-item-cyber">
-            <span class="price-name">Cejas</span>
-            <span class="price-value">$5</span>
-          </div>
-        </div>
-      </section>
+  </main>
 
-      <!-- Barberos Destacados -->
-      <h2 class="section-title-cyber">
-        <i class="fas fa-fire" style="color: #ff6600;"></i>
-        Barberos Destacados
-      </h2>
-      <div class="barber-grid" id="barbers-list">
-        <!-- Se llena con JS -->
-      </div>
-    </main>
+  <!-- 📍 MENÚ INFERIOR (SOLO 2 BOTONES) -->
+  <nav class="bottom-nav">
+    <a href="perfil-cliente.html" class="nav-link active">
+      <i class="fas fa-home"></i>
+      <span>Inicio</span>
+    </a>
+    <a href="explorar.html" class="nav-link">
+      <i class="fas fa-compass"></i>
+      <span>Explorar</span>
+    </a>
+  </nav>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-      <a href="perfil-cliente.html" class="nav-link active">
-        <i class="fas fa-home"></i>
-        <span>Inicio</span>
-      </a>
-      <a href="explorar.html" class="nav-link">
-        <i class="fas fa-compass"></i>
-        <span>Explorar</span>
-      </a>
-      <a href="mis-citas.html" class="nav-link">
-        <i class="fas fa-calendar-check"></i>
-        <span>Citas</span>
-      </a>
-      <a href="mi-perfil.html" class="nav-link">
-        <i class="fas fa-user"></i>
-        <span>Perfil</span>
-      </a>
-    </nav>
-
-  </div> <!-- ✅ FIN DE #app-content -->
-
+  <!-- ⚡ LÓGICA -->
   <script src="config.js"></script>
   <script>
-    // ✅ VERIFICACIÓN INMEDIATA DE SESIÓN Y ROL (ANTI-FLASH)
+    // 1️⃣ Verificar sesión al cargar
     (async () => {
       try {
-        if (!window.supabaseClient) {
-          window.location.href = 'auth.html';
-          return;
-        }
-
+        if (!window.supabaseClient) { window.location.href = 'auth.html'; return; }
         const { data: { user }, error } = await supabaseClient.auth.getUser();
+        if (error || !user) { window.location.href = 'auth.html'; return; }
         
-        // Si no hay sesión, redirigir al login
-        if (error || !user) {
-          window.location.href = 'auth.html';
-          return;
-        }
-
-        // 🔍 Si es barbero, redirigir INMEDIATAMENTE (antes de mostrar nada)
+        // Si es barbero, redirigir a su panel
         if (user.user_metadata?.role === 'barbero') {
           window.location.href = 'admin.html';
           return;
         }
-
-        // ✅ Si es cliente: mostrar nombre y hacer visible el contenido
-        const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario';
-        document.getElementById('user-name').textContent = nombre;
-        
-        // Mostrar contenido con transición suave
-        document.getElementById('app-content').classList.add('visible');
-
       } catch (err) {
-        console.error('Error de autenticación:', err);
+        console.error('Error auth:', err);
         window.location.href = 'auth.html';
       }
     })();
-    
-    // Cerrar sesión
-    async function cerrarSesion(e) {
-      e.preventDefault();
+
+    // 2️⃣ Cerrar sesión
+    async function cerrarSesion() {
       if (!confirm('¿Cerrar sesión?')) return;
       await supabaseClient.auth.signOut();
       window.location.href = 'auth.html';
     }
-    
-    // Barberos de ejemplo
+
+    // 3️⃣ Datos de ejemplo para las tarjetas
     const barbers = [
       { id: 1, name: "CyberCuts Studio", location: "Centro, Madrid", rating: 4.9, price: "$15", img: "https://placehold.co/400x300/111/00f2ff?text=CyberCuts" },
       { id: 2, name: "Neon Barber Shop", location: "Malasaña, Madrid", rating: 4.8, price: "$18", img: "https://placehold.co/400x300/111/ff00ff?text=Neon" },
       { id: 3, name: "Urban Blade", location: "Lavapiés, Madrid", rating: 4.7, price: "$14", img: "https://placehold.co/400x300/111/00ff88?text=Urban" },
       { id: 4, name: "Razor & Code", location: "Chueca, Madrid", rating: 5.0, price: "$20", img: "https://placehold.co/400x300/111/ffaa00?text=Razor" }
     ];
-    
-    // Renderizar barberos
+
+    // 4️⃣ Renderizar tarjetas estilo Airbnb + Cyberpunk
     function renderBarbers(list) {
       const container = document.getElementById('barbers-list');
       if (!container) return;
@@ -544,39 +117,37 @@
       container.innerHTML = '';
       list.forEach((b, index) => {
         const card = document.createElement('div');
-        card.className = 'barber-card-cyber';
+        card.className = 'barber-card';
         card.style.animationDelay = `${index * 0.1}s`;
         card.onclick = () => {
           sessionStorage.setItem('chatBarberId', b.id);
           sessionStorage.setItem('chatBarberName', b.name);
-          window.location.href = 'chat.html';
+          window.location.href = 'chat.html'; // Ajusta si tu chat tiene otro nombre
         };
+        
         card.innerHTML = `
-          <div class="barber-img-wrapper">
-            <img src="${b.img}" alt="${b.name}" class="barber-img">
-            <div class="barber-badge">
-              <i class="fas fa-star"></i> ${b.rating}
-            </div>
+          <div class="card-image-wrapper">
+            <img src="${b.img}" alt="${b.name}" class="card-image">
+            <div class="card-overlay"></div>
+            <button class="fav-btn"><i class="far fa-heart"></i></button>
           </div>
-          <div class="barber-info-cyber">
-            <h3 class="barber-name">${b.name}</h3>
-            <p class="barber-location">
-              <i class="fas fa-map-marker-alt"></i> ${b.location}
-            </p>
-            <div class="barber-footer">
-              <div class="barber-rating">
-                <i class="fas fa-star"></i> ${b.rating}
-              </div>
-              <div class="barber-price">${b.price}</div>
+          <div class="card-content">
+            <div class="card-header">
+              <h3 class="barber-name">${b.name}</h3>
+              <div class="rating"><i class="fas fa-star"></i> ${b.rating}</div>
             </div>
-            <button class="btn-book-cyber">Reservar Cita</button>
+            <p class="location"><i class="fas fa-map-marker-alt"></i> ${b.location}</p>
+            <div class="card-footer">
+              <span class="price">Desde ${b.price}</span>
+              <button class="btn-book">Reservar</button>
+            </div>
           </div>
         `;
         container.appendChild(card);
       });
     }
-    
-    // Búsqueda en tiempo real
+
+    // 5️⃣ Búsqueda en tiempo real
     document.getElementById('search-input')?.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase();
       const filtered = barbers.filter(b => 
@@ -585,8 +156,8 @@
       );
       renderBarbers(filtered.length ? filtered : barbers);
     });
-    
-    // Inicializar lista de barberos
+
+    // 6️⃣ Inicializar
     renderBarbers(barbers);
   </script>
 </body>
