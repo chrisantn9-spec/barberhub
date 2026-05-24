@@ -21,19 +21,16 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            background: #030303; /* Color base si no carga imagen */
-            display: flex;
-            flex-direction: column;
+            background: #030303;
         }
 
-        /* 🔥 FONDO: Imagen visible (menor oscuridad) */
+        /* 🔥 FONDO VISIBLE */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            /* Menos opacidad para ver tu fondo.jpeg claramente */
             background: 
-                linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(10,5,20,0.4) 100%),
+                linear-gradient(135deg, rgba(0,0,0,0.35) 0%, rgba(10,5,20,0.3) 100%),
                 url('./fondo.jpeg');
             background-size: cover;
             background-position: center;
@@ -51,8 +48,7 @@
         }
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
+            width: 4px; height: 4px;
             background: var(--neon-cyan);
             border-radius: 50%;
             box-shadow: 0 0 8px var(--neon-cyan), 0 0 15px var(--neon-cyan);
@@ -60,21 +56,10 @@
             opacity: 0;
         }
         @keyframes rise {
-            0% {
-                transform: translateY(110vh) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.8;
-                transform: translateY(100vh) scale(1);
-            }
-            90% {
-                opacity: 0.8;
-            }
-            100% {
-                transform: translateY(-10vh) scale(0.5);
-                opacity: 0;
-            }
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            10% { opacity: 0.8; transform: translateY(100vh) scale(1); }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
         }
 
         /* 🔲 REJILLA SUTIL */
@@ -83,43 +68,41 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 229, 238, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 229, 238, 0.05) 1px, transparent 1px);
+                linear-gradient(rgba(0, 229, 238, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 238, 0.04) 1px, transparent 1px);
             background-size: 60px 60px;
             z-index: -2;
             pointer-events: none;
         }
 
-        /*  CONTENIDO PRINCIPAL */
+        /*  CONTENIDO REPOSICIONADO (Esquina inferior izquierda) */
         .hero {
-            flex: 1;
+            position: absolute;
+            bottom: 110px;
+            left: 40px;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 40px 20px;
+            align-items: flex-start;
+            text-align: left;
             z-index: 10;
-            padding-bottom: 80px; /* Espacio para el footer */
+            max-width: 90%;
         }
 
-        /*  LOGO CON CONTORNO NEÓN */
+        /*  LOGO COMPACTO */
         .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-size: clamp(1.8rem, 4.5vw, 3.2rem);
             font-weight: 900;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
             position: relative;
             display: inline-block;
-            color: #fff; /* Barber blanco */
-            /* Sombra base para legibilidad sobre imagen */
-            text-shadow: 0 0 10px rgba(0,0,0,0.8); 
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
         }
-        
         .logo span { 
-            color: var(--neon-cyan); /* Hub turquesa */
-            text-shadow: 0 0 15px var(--neon-cyan);
+            color: var(--neon-cyan);
+            text-shadow: 0 0 12px var(--neon-cyan), 0 2px 8px rgba(0,0,0,0.8);
         }
 
         /* Luz recorriendo el contorno */
@@ -129,7 +112,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             color: transparent;
-            -webkit-text-stroke: 2px transparent;
+            -webkit-text-stroke: 1.5px transparent;
             background: linear-gradient(90deg, transparent 40%, #fff 50%, transparent 60%);
             background-size: 200% 100%;
             -webkit-background-clip: text;
@@ -137,7 +120,6 @@
             animation: traceOutline 3s linear infinite;
             pointer-events: none;
         }
-
         @keyframes traceOutline {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
@@ -146,95 +128,105 @@
         /* 🔘 BOTONES */
         .btn-group {
             display: flex;
-            gap: 20px;
-            justify-content: center;
+            gap: 15px;
             flex-wrap: wrap;
         }
         .btn {
-            padding: 12px 30px;
-            border-radius: 5px;
+            padding: 10px 24px;
+            border-radius: 4px;
             text-decoration: none;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s ease;
             border: 2px solid var(--neon-cyan);
-            background: rgba(0, 229, 238, 0.1); /* Fondo semitransparente */
-            backdrop-filter: blur(5px);
+            background: rgba(0, 229, 238, 0.08);
+            backdrop-filter: blur(4px);
             color: var(--neon-cyan);
             cursor: pointer;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
         }
         .btn:hover {
             background: var(--neon-cyan);
             color: #000;
-            box-shadow: 0 0 20px var(--neon-cyan);
+            box-shadow: 0 0 15px var(--neon-cyan);
             transform: translateY(-2px);
         }
-        .btn i { margin-right: 8px; }
+        .btn i { margin-right: 6px; }
 
-        /*  FOOTER TRANSPARENTE (Sin franja negra) */
+        /*  FOOTER TRANSPARENTE (Alineado al contenido) */
         .footer {
+            position: fixed;
+            bottom: 0; left: 0;
             width: 100%;
-            padding: 20px;
-            text-align: center;
+            padding: 18px 40px;
             z-index: 10;
-            position: absolute; /* Flota al fondo */
-            bottom: 0;
-            left: 0;
-            background: transparent; /* Sin fondo negro */
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
         }
         .footer-text {
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.8);
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.85);
             font-family: 'Rajdhani', sans-serif;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8); /* Sombra para leerse bien */
+            text-shadow: 0 1px 5px rgba(0,0,0,0.9);
         }
-        /* By B-U4ALL Neon Flash */
         .byline-flash {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 700;
             color: var(--neon-cyan);
             text-transform: uppercase;
             letter-spacing: 2px;
-            margin-top: 5px;
             animation: neonFlash 1.5s infinite alternate;
-            text-shadow: 0 0 5px var(--neon-cyan);
+            text-shadow: 0 0 6px var(--neon-cyan);
         }
         @keyframes neonFlash {
             0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
                 opacity: 1;
-                text-shadow: 0 0 5px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+                text-shadow: 0 0 6px var(--neon-cyan), 0 0 15px var(--neon-cyan);
             }
             20%, 24%, 55% {
-                opacity: 0.4;
+                opacity: 0.35;
                 text-shadow: none;
             }
+        }
+
+        /* 📱 RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero {
+                left: 50%;
+                transform: translateX(-50%);
+                align-items: center;
+                text-align: center;
+                bottom: 100px;
+            }
+            .footer {
+                align-items: center;
+                padding: 15px 20px;
+            }
+            .btn-group { justify-content: center; }
         }
     </style>
 </head>
 <body>
-    <!-- Fondo -->
     <div class="cyber-bg"></div>
     <div class="cyber-grid"></div>
-    
-    <!-- Burbujas generadas por JS -->
     <div class="particles" id="particles"></div>
 
-    <!-- Contenido Central -->
+    <!-- Contenido reposicionado a la izquierda -->
     <main class="hero">
         <h1 class="logo">
             BARBER<span>HUB</span>
         </h1>
-        
-        <div id="auth-container">
-            <!-- Se carga dinámicamente -->
-        </div>
+        <div id="auth-container"></div>
     </main>
 
-    <!-- Pie de Página Transparente -->
+    <!-- Footer transparente -->
     <footer class="footer">
         <p class="footer-text">© 2026 Todos los derechos reservados</p>
         <p class="byline-flash">by B-U4ALL</p>
@@ -242,17 +234,16 @@
 
     <script src="config.js"></script>
     <script>
-        // ✨ Crear Burbujas / Partículas
+        // ✨ Burbujas
         function createParticles() {
-            const container = document.getElementById('particles');
-            // Aumentamos cantidad de burbujas para que se vea "vivo"
-            for(let i = 0; i < 40; i++) {
+            const c = document.getElementById('particles');
+            for(let i=0; i<45; i++){
                 const p = document.createElement('div');
                 p.className = 'particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.animationDelay = Math.random() * 10 + 's';
-                p.style.animationDuration = (8 + Math.random() * 7) + 's'; // Velocidad variada
-                container.appendChild(p);
+                p.style.left = Math.random()*100 + '%';
+                p.style.animationDelay = Math.random()*10 + 's';
+                p.style.animationDuration = (7 + Math.random()*8) + 's';
+                c.appendChild(p);
             }
         }
         createParticles();
@@ -265,7 +256,7 @@
                 if(session?.user) {
                     const name = session.user.user_metadata?.nombre || session.user.email?.split('@')[0] || 'Usuario';
                     box.innerHTML = `
-                        <p style="font-size:1.2rem; margin-bottom:20px; text-shadow:0 0 10px black;">👋 Hola, <strong style="color:var(--neon-cyan)">${name}</strong></p>
+                        <p style="font-size:1.1rem; margin-bottom:15px; text-shadow:0 1px 6px rgba(0,0,0,0.9);">👋 Hola, <strong style="color:var(--neon-cyan)">${name}</strong></p>
                         <div class="btn-group">
                             <a href="mi-perfil.html" class="btn"><i class="fas fa-user"></i> Mi Perfil</a>
                             <a href="explorar.html" class="btn"><i class="fas fa-compass"></i> Explorar</a>
