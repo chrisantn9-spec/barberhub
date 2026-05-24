@@ -24,14 +24,14 @@
             overflow-x: hidden;
         }
 
-        /* 🔥 FONDO - ACTUALIZADO */
+        /* 🔥 FONDO */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: 
                 linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(10,5,20,0.4) 100%),
-                url('./fondoexplorar.jpg'); /* ✅ NUEVO FONDO */
+                url('./fondoexplorar.jpg');
             background-size: cover;
             background-position: center;
             z-index: -3;
@@ -160,71 +160,104 @@
             gap: 25px;
         }
 
-        /* 🎴 TARJETA CYBERPUNK */
+        /* 🎴 TARJETA TOTALMENTE TRANSPARENTE */
         .card {
-            background: rgba(10, 10, 25, 0.6);
-            border: 1px solid rgba(0, 229, 238, 0.2);
+            /* Fondo 100% transparente */
+            background: transparent;
+            /* Borde cristalino opaco */
+            border: 1.5px solid rgba(0, 229, 238, 0.4);
             border-radius: 15px;
             overflow: hidden;
             transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+            /* Sin backdrop-filter para ver el fondo completamente */
         }
         .card:hover {
             transform: translateY(-5px);
             border-color: var(--neon-cyan);
-            box-shadow: 0 10px 30px rgba(0, 229, 238, 0.3), 0 0 60px rgba(0, 229, 238, 0.1);
+            /* Resplandor neón al pasar el mouse */
+            box-shadow: 
+                0 0 20px rgba(0, 229, 238, 0.4),
+                0 0 40px rgba(0, 229, 238, 0.2),
+                inset 0 0 20px rgba(0, 229, 238, 0.05);
         }
         .card-image {
             width: 100%;
             height: 220px;
             object-fit: cover;
-            border-bottom: 2px solid rgba(0, 229, 238, 0.3);
+            border-bottom: 2px solid rgba(0, 229, 238, 0.4);
         }
         .card-content {
             padding: 20px;
         }
+        /* 📝 TÍTULO DE TARJETA - TEXTO BRILLANTE */
         .card-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.1rem;
             font-weight: 700;
             margin-bottom: 10px;
             color: #fff;
+            /* Texto blanco con sombra neón cian fuerte */
+            text-shadow: 
+                0 0 5px rgba(0, 229, 238, 0.8),
+                0 0 10px rgba(0, 229, 238, 0.6),
+                0 0 20px rgba(0, 229, 238, 0.4),
+                0 2px 4px rgba(0,0,0,0.9);
         }
+        /* 📄 TEXTO DE DESCRIPCIÓN - LEGIBLE */
         .card-text {
-            color: rgba(255,255,255,0.7);
+            color: rgba(255, 255, 255, 0.95);
             font-size: 0.9rem;
             line-height: 1.6;
             margin-bottom: 15px;
+            /* Sombra oscura para contraste máximo */
+            text-shadow: 
+                0 1px 3px rgba(0,0,0,0.95),
+                0 2px 6px rgba(0,0,0,0.8);
         }
         .card-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.8rem;
-            color: rgba(255,255,255,0.5);
         }
+        /* 🏷️ TAG CON FONDO NEÓN */
         .card-tag {
-            background: rgba(0, 229, 238, 0.15);
+            background: rgba(0, 229, 238, 0.25);
             color: var(--neon-cyan);
-            padding: 4px 10px;
-            border-radius: 4px;
+            padding: 4px 12px;
+            border-radius: 6px;
             font-family: 'Orbitron', sans-serif;
             font-size: 0.7rem;
-            border: 1px solid rgba(0, 229, 238, 0.3);
+            font-weight: 700;
+            border: 1px solid rgba(0, 229, 238, 0.5);
+            text-shadow: 0 0 8px rgba(0, 229, 238, 0.6);
+        }
+        /* ❤️ ICONOS Y METADATOS */
+        .card-meta span {
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
+        .card-meta i {
+            color: var(--neon-pink);
+            margin-right: 5px;
+            text-shadow: 0 0 8px rgba(255, 0, 255, 0.6);
         }
 
         /* 🏆 CARD DESTACADA (TENDENCIA) */
         .card.featured {
             grid-column: span 2;
-            border: 2px solid var(--neon-pink);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
+            border: 2px solid rgba(255, 0, 255, 0.6);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.15);
         }
         .card.featured .card-image {
             height: 280px;
             border-bottom: 2px solid var(--neon-pink);
         }
         .card.featured:hover {
-            box-shadow: 0 10px 40px rgba(255, 0, 255, 0.4), 0 0 80px rgba(255, 0, 255, 0.2);
+            box-shadow: 
+                0 0 30px rgba(255, 0, 255, 0.5),
+                0 0 60px rgba(255, 0, 255, 0.3),
+                inset 0 0 25px rgba(255, 0, 255, 0.1);
         }
         .trending-badge {
             position: absolute;
@@ -238,8 +271,11 @@
             font-size: 0.75rem;
             font-weight: 700;
             text-transform: uppercase;
-            box-shadow: 0 0 15px var(--neon-pink);
+            box-shadow: 
+                0 0 15px var(--neon-pink),
+                0 0 30px rgba(255, 0, 255, 0.4);
             animation: pulse 2s infinite;
+            text-shadow: 0 0 10px rgba(255,255,255,0.8);
         }
         @keyframes pulse {
             0%, 100% { opacity: 1; }
