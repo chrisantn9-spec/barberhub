@@ -359,13 +359,18 @@
 
     // Login con Google
   async function loginGoogle() {
-  try {
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-      provider: 'google',
-      options: { 
-        redirectTo: window.location.origin + '/complete-profile.html', // 👈 Redirige a completar perfil
-        queryParams: { access_type: 'offline', prompt: 'consent' }
-      }
+ try {
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) {
+    if (error.message.includes('Invalid login credentials')) {
+      throw new Error('Correo o contraseña incorrectos. ¿Te registraste con Google? Usa ese botón.');
+    }
+    throw error;
+  }
+  window.location.href = 'complete-profile.html';
+} catch (err) {
+  alert('⚠️ ' + err.message);
+}
     });
     if (error) throw error;
   } catch (err) {
