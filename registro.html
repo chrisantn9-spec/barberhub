@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro | BarberHub</title>
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -15,182 +16,70 @@
     }
     .card {
       background: rgba(15,15,25,0.9); backdrop-filter: blur(20px);
-      border: 1px solid var(--neon-cyan); border-radius: 20px;
-      padding: 40px 30px; max-width: 450px; width: 90%;
-      box-shadow: 0 0 40px rgba(0,229,238,0.2);
+      border: 2px solid var(--neon-cyan); border-radius: 20px;
+      padding: 40px 30px; max-width: 480px; width: 90%;
+      box-shadow: 0 0 40px rgba(0,229,238,0.3);
+      animation: floatCard 6s ease-in-out infinite;
     }
+    @keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    
     .brand { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: 900; letter-spacing: 3px; margin-bottom: 10px; text-align: center; }
     .brand .b { color: #fff; } .brand .h { color: var(--neon-cyan); text-shadow: 0 0 15px var(--neon-cyan); }
-    .subtitle { color: #aaa; margin-bottom: 30px; text-align: center; }
+    .subtitle { color: #aaa; margin-bottom: 30px; text-align: center; font-size: 0.95rem; }
     
-    .role-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+    /* SELECTOR DE ROL - MUY VISIBLE */
+    .role-selector { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 15px; 
+      margin-bottom: 30px;
+      background: rgba(0,0,0,0.3);
+      padding: 15px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
     .role-btn {
-      padding: 20px; border: 2px solid rgba(255,255,255,0.1); border-radius: 16px;
-      background: rgba(255,255,255,0.03); color: #fff; cursor: pointer;
-      transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px;
+      padding: 25px 15px; 
+      border: 2px solid rgba(255,255,255,0.1); 
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03); 
+      color: #fff; 
+      cursor: pointer;
+      transition: all 0.3s; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      gap: 12px;
+      font-size: 1rem;
     }
-    .role-btn:hover, .role-btn.active {
-      border-color: var(--neon-cyan); background: rgba(0,229,238,0.1);
-      box-shadow: 0 0 20px rgba(0,229,238,0.3); transform: translateY(-3px);
+    .role-btn:hover {
+      border-color: var(--neon-cyan); 
+      background: rgba(0,229,238,0.1);
+      transform: translateY(-3px);
     }
-    .role-btn i { font-size: 2rem; color: var(--neon-cyan); }
-    .role-btn span { font-weight: 600; font-size: 1rem; }
+    .role-btn.active {
+      border-color: var(--neon-cyan); 
+      background: rgba(0,229,238,0.15);
+      box-shadow: 0 0 25px rgba(0,229,238,0.4);
+      transform: translateY(-3px);
+    }
+    .role-btn i { font-size: 2.5rem; color: var(--neon-cyan); }
+    .role-btn span { font-weight: 700; font-size: 1.05rem; }
+    .role-btn small { color: #888; font-size: 0.8rem; font-weight: 400; }
     
-    .input-group { margin-bottom: 15px; }
+    .input-group { margin-bottom: 18px; }
+    .input-group label {
+      display: block;
+      color: #aaa;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
     .input-group input {
-      width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05); color: #fff; font-size: 1rem; box-sizing: border-box;
-    }
-    .input-group input:focus { border-color: var(--neon-cyan); outline: none; box-shadow: 0 0 15px rgba(0,229,238,0.2); }
-    
-    .btn-register {
-      width: 100%; padding: 16px; border: none; border-radius: 12px;
-      background: var(--neon-cyan); color: #000; font-weight: 700; font-size: 1rem;
-      cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;
-    }
-    .btn-register:hover { background: #fff; box-shadow: 0 0 30px rgba(255,255,255,0.6); transform: translateY(-2px); }
-    .btn-register:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-    
-    #msg { margin-top: 15px; padding: 10px; border-radius: 8px; font-size: 0.9rem; display: none; }
-    #msg.err { background: rgba(255,0,0,0.1); color: #ff5555; border: 1px solid #ff5555; }
-    #msg.ok { background: rgba(0,255,0,0.1); color: #00ff88; border: 1px solid #00ff88; }
-    
-    .divider { margin: 20px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1); position: relative; }
-    .divider span {
-      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-      background: rgba(15,15,25,0.9); padding: 0 15px; color: #888; font-size: 0.8rem;
-    }
-    
-    .btn-google {
-      width: 100%; padding: 14px; border: 1px solid var(--neon-pink); border-radius: 12px;
-      background: transparent; color: var(--neon-pink); font-weight: 700; cursor: pointer;
-      transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
-    }
-    .btn-google:hover { background: rgba(255,0,255,0.1); box-shadow: 0 0 20px rgba(255,0,255,0.4); }
-    
-    .login-link { margin-top: 20px; text-align: center; font-size: 0.9rem; color: #888; }
-    .login-link a { color: var(--neon-cyan); text-decoration: none; }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
-    <p class="subtitle">Crea tu cuenta gratis</p>
-    
-    <!-- SELECTOR DE ROL - OBLIGATORIO -->
-    <div class="role-selector">
-      <button type="button" class="role-btn active" id="btn-cliente" onclick="setRole('cliente')">
-        <i class="fas fa-user"></i>
-        <span>Cliente</span>
-      </button>
-      <button type="button" class="role-btn" id="btn-barbero" onclick="setRole('barbero')">
-        <i class="fas fa-scissors"></i>
-        <span>Barbero</span>
-      </button>
-    </div>
-    
-    <form id="register-form">
-      <div class="input-group">
-        <input type="text" id="nombre" placeholder="Tu nombre completo" required>
-      </div>
-      <div class="input-group">
-        <input type="email" id="email" placeholder="tu@email.com" required>
-      </div>
-      <div class="input-group">
-        <input type="password" id="password" placeholder="Contraseña (mínimo 6 caracteres)" minlength="6" required>
-      </div>
-      
-      <button type="submit" class="btn-register" id="btn-register">
-        <i class="fas fa-user-plus"></i> CREAR CUENTA
-      </button>
-      <div id="msg"></div>
-    </form>
-    
-    <hr class="divider"><span>O REGÍSTRATE CON</span>
-    <button onclick="registerGoogle()" class="btn-google">
-      <i class="fab fa-google"></i> Google
-    </button>
-    
-    <div class="login-link">
-      ¿Ya tienes cuenta? <a href="auth.html">Inicia sesión</a>
-    </div>
-  </div>
-
-  <script src="config.js"></script>
-  <script>
-    let selectedRole = 'cliente';
-    
-    window.setRole = (role) => {
-      selectedRole = role;
-      document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById('btn-' + role).classList.add('active');
-    };
-    
-    document.getElementById('register-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const msg = document.getElementById('msg');
-      const btn = document.getElementById('btn-register');
-      const nombre = document.getElementById('nombre').value;
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
-      
-      try {
-        const { data, error } = await supabaseClient.auth.signUp({
-          email: email,
-          password: password,
-          options: {
-            data: {
-              nombre: nombre,
-              role: selectedRole // ✅ GUARDAMOS EL ROL AQUÍ
-            }
-          }
-        });
-        
-        if (error) throw error;
-        
-        // Si es barbero, crear entrada en tabla barbers
-        if (selectedRole === 'barbero') {
-          await supabaseClient.from('barbers').insert([{
-            owner_id: data.user.id,
-            name: nombre + "'s Barbería",
-            location: 'Sin dirección',
-            phone: '',
-            lat: 0,
-            lng: 0
-          }]);
-        }
-        
-        msg.textContent = '✅ Cuenta creada. Inicia sesión...';
-        msg.className = 'ok'; msg.style.display = 'block';
-        
-        setTimeout(() => {
-          window.location.href = 'auth.html';
-        }, 2000);
-        
-      } catch (err) {
-        msg.textContent = '❌ ' + err.message;
-        msg.className = 'err'; msg.style.display = 'block';
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-user-plus"></i> CREAR CUENTA';
-      }
-    });
-    
-    window.registerGoogle = async () => {
-      try {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: { 
-            redirectTo: window.location.origin + '/complete-profile.html' // Redirige a completar perfil
-          }
-        });
-        if (error) throw error;
-      } catch (err) {
-        alert('Error con Google: ' + err.message);
-      }
-    };
-  </script>
-</body>
-</html>
+      width: 100%; 
+      padding: 14px 16px; 
+      border-radius: 12px; 
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05); 
+      color: #fff; 
+      font-size: 
