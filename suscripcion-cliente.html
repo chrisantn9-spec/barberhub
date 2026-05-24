@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suscripción Premium | BarberHub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    :root {
+      --neon-cyan: #00E5EE;
+      --neon-pink: #ff00ff;
+      --neon-gold: #FFD700;
+      --dark-bg: #050505;
+      --card-bg: rgba(15, 15, 25, 0.95);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--dark-bg);
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-text-layer {
+      position: fixed; top: -10%; left: -10%; width: 120%; height: 120%;
+      z-index: -2; display: flex; flex-wrap: wrap; justify-content: center;
+      align-content: center; gap: 40px; transform: rotate(-15deg);
+      pointer-events: none; opacity: 0.2;
+    }
+    .bg-text-layer span {
+      font-family: 'Orbitron', sans-serif; font-size: 4vw; font-weight: 900;
+      color: transparent; -webkit-text-stroke: 1px rgba(0, 229, 238, 0.2);
+      white-space: nowrap;
+    }
+    .bg-light-beam {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+      background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(0, 229, 238, 0.08) 50%, transparent 55%, transparent 100%);
+      animation: sweepLight 6s linear infinite; pointer-events: none;
+    }
+    @keyframes sweepLight { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+    .client-card {
+      background: var(--card-bg); backdrop-filter: blur(20px);
+      border: 2px solid var(--neon-cyan); border-radius: 24px;
+      padding: 40px 30px; max-width: 500px; width: 100%;
+      box-shadow: 0 0 50px rgba(0, 229, 238, 0.2), inset 0 0 30px rgba(0, 229, 238, 0.05);
+      animation: floatCard 6s ease-in-out infinite; text-align: center; position: relative; overflow: hidden;
+    }
+    @keyframes floatCard { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .client-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-cyan));
+      animation: glowLine 3s ease-in-out infinite;
+    }
+    @keyframes glowLine { 0%,100%{opacity:0.5} 50%{opacity:1} }
+
+    .page-brand { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; margin-bottom: 10px; color: #fff; }
+    .page-brand .cyan { color: var(--neon-cyan); text-shadow: 0 0 15px rgba(0, 229, 238, 0.8); }
+    .client-title { font-size: 2rem; font-weight: 800; margin: 10px 0 5px; color: #fff; }
+    .client-subtitle { color: #aaa; font-size: 0.95rem; margin-bottom: 25px; }
+
+    .price-display {
+      background: rgba(0, 229, 238, 0.1); border: 1px solid var(--neon-cyan);
+      border-radius: 16px; padding: 20px; margin-bottom: 25px;
+    }
+    .price-amount { font-family: 'Orbitron', sans-serif; font-size: 2.5rem; font-weight: 900; color: var(--neon-cyan); }
+    .price-period { color: #888; font-size: 1rem; margin-top: 5px; }
+
+    .benefits-list { text-align: left; margin-bottom: 30px; }
+    .benefits-list h4 { color: var(--neon-cyan); margin-bottom: 15px; font-family: 'Orbitron', sans-serif; font-size: 1rem; }
+    .benefits-list ul { list-style: none; padding: 0; margin: 0; }
+    .benefits-list li { padding: 8px 0; color: #ccc; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; }
+    .benefits-list li i { color: #00ff88; font-size: 1rem; }
+
+    .crypto-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .crypto-btn {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px; padding: 16px 12px; color: #fff; cursor: pointer;
+      transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center;
+    }
+    .crypto-btn:hover, .crypto-btn.selected {
+      background: rgba(0, 229, 238, 0.15); border-color: var(--neon-cyan);
+      transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0, 229, 238, 0.3);
+    }
+    .crypto-btn i { font-size: 1.8rem; color: var(--neon-cyan); }
+    .crypto-btn .crypto-name { font-weight: 700; font-size: 0.95rem; }
+    .crypto-btn .crypto-fee { font-size: 0.75rem; color: #888; }
+
+    .btn-pay {
+      width: 100%; padding: 16px; border: none; border-radius: 14px;
+      background: linear-gradient(135deg, var(--neon-cyan), #00b8d4);
+      color: #000; font-weight: 800; font-size: 1.1rem; cursor: pointer;
+      transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;
+      display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;
+    }
+    .btn-pay:hover { background: #fff; box-shadow: 0 0 30px rgba(255, 255, 255, 0.6); transform: translateY(-3px); }
+    .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    #msg { padding: 12px; border-radius: 10px; font-size: 0.9rem; margin-bottom: 15px; display: none; }
+    #msg.err { background: rgba(255, 68, 68, 0.15); color: #ff4444; border: 1px solid #ff4444; }
+    #msg.ok { background: rgba(0, 255, 136, 0.15); color: #00ff88; border: 1px solid #00ff88; }
+
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: #888; text-decoration: none; font-size: 0.9rem; transition: color 0.2s; margin-top: 10px; }
+    .back-link:hover { color: var(--neon-cyan); }
+
+    .loading-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(5, 5, 5, 0.95); backdrop-filter: blur(10px);
+      display: none; justify-content: center; align-items: center;
+      z-index: 9999; flex-direction: column; gap: 20px;
+    }
+    .loading-overlay.active { display: flex; }
+    .loading-overlay i { font-size: 3rem; color: var(--neon-cyan); animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-overlay p { color: #fff; font-size: 1.1rem; }
+
+    @media (max-width: 500px) {
+      .crypto-options { grid-template-columns: 1fr; }
+      .client-card { padding: 30px 20px; }
+      .price-amount { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-text-layer">
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+  </div>
+  <div class="bg-light-beam"></div>
+
+  <div class="client-card">
+    <h1 class="page-brand">Barber<span class="cyan">Hub</span></h1>
+    <h2 class="client-title">Cliente Premium</h2>
+    <p class="client-subtitle">Mejora tu experiencia de reserva con beneficios exclusivos</p>
+
+    <div class="price-display">
+      <div class="price-amount">$4.99</div>
+      <div class="price-period">por mes • Cancela cuando quieras</div>
+    </div>
+
+    <div class="benefits-list">
+      <h4><i class="fas fa-check-circle"></i> Incluye:</h4>
+      <ul>
+        <li><i class="fas fa-check"></i> 10% descuento en todas las citas</li>
+        <li><i class="fas fa-check"></i> Acceso prioritario a horarios</li>
+        <li><i class="fas fa-check"></i> Puntos de fidelidad (1 pt = $1 USD)</li>
+        <li><i class="fas fa-check"></i> Notificaciones de ofertas exclusivas</li>
+        <li><i class="fas fa-check"></i> Historial de citas ilimitado</li>
+      </ul>
+    </div>
+
+    <div style="margin-bottom: 10px; color: #888; font-size: 0.85rem;">Paga con criptomoneda:</div>
+    
+    <div class="crypto-options">
+      <button class="crypto-btn selected" onclick="selectCrypto('USDT', 4.99)" data-crypto="USDT">
+        <i class="fas fa-coins"></i>
+        <span class="crypto-name">USDT</span>
+        <span class="crypto-fee">~$0.50 fee</span>
+      </button>
+      
+      <button class="crypto-btn" onclick="selectCrypto('USDC', 4.99)" data-crypto="USDC">
+        <i class="fas fa-dollar-sign"></i>
+        <span class="crypto-name">USDC</span>
+        <span class="crypto-fee">~$0.01 fee</span>
+      </button>
+      
+      <button class="crypto-btn" onclick="selectCrypto('SOL', 0.04)" data-crypto="SOL">
+        <i class="fab fa-solana"></i>
+        <span class="crypto-name">SOL</span>
+        <span class="crypto-fee">~$0.00025</span>
+      </button>
+      
+      <button class="crypto-btn" onclick="selectCrypto('BTC', 0.00007)" data-crypto="BTC">
+        <i class="fab fa-bitcoin"></i>
+        <span class="crypto-name">BTC</span>
+        <span class="crypto-fee">~$5-15 fee</span>
+      </button>
+    </div>
+
+    <div id="msg"></div>
+
+    <button class="btn-pay" id="btn-pay" onclick="processClientSubscription()">
+      <i class="fas fa-lock"></i> Pagar $4.99 con <span id="selected-crypto">USDT</span>
+    </button>
+
+    <a href="mi-perfil.html" class="back-link">
+      <i class="fas fa-arrow-left"></i> Volver a mi perfil
+    </a>
+  </div>
+
+  <div class="loading-overlay" id="loading">
+    <i class="fas fa-circle-notch"></i>
+    <p>Procesando pago seguro...</p>
+    <small style="color:#666">No cierres esta ventana</small>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    let selectedCrypto = 'USDT';
+    let cryptoAmount = 4.99;
+    const subscriptionPrice = 4.99;
+
+    window.selectCrypto = (crypto, amount) => {
+      selectedCrypto = crypto;
+      cryptoAmount = amount;
+      document.querySelectorAll('.crypto-btn').forEach(btn => {
+        btn.classList.remove('selected');
+        if (btn.dataset.crypto === crypto) btn.classList.add('selected');
+      });
+      document.getElementById('selected-crypto').textContent = crypto;
+      document.getElementById('btn-pay').innerHTML = `<i class="fas fa-lock"></i> Pagar $${subscriptionPrice} con ${crypto}`;
+      document.getElementById('msg').style.display = 'none';
+    };
+
+    window.processClientSubscription = async () => {
+      const msg = document.getElementById('msg');
+      const btn = document.getElementById('btn-pay');
+      const loading = document.getElementById('loading');
+
+      try {
+        const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+        if (authError || !user) throw new Error('Debes iniciar sesión para suscribirte');
+        if (user.user_metadata?.role === 'barbero') throw new Error('La suscripción Cliente es solo para usuarios finales');
+
+        btn.disabled = true;
+        loading.classList.add('active');
+
+        const { data: payment, error: dbError } = await supabaseClient
+          .from('subscriptions')
+          .insert({
+            client_id: user.id,
+            amount_usd: subscriptionPrice,
+            currency_paid: selectedCrypto,
+            crypto_amount: cryptoAmount,
+            payment_status: 'pending',
+            subscription_type: 'client_premium',
+            starts_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 30*24*60*60*1000).toISOString()
+          })
+          .select()
+          .single();
+
+        if (dbError) throw dbError;
+
+        // Simulación de éxito (reemplazar con webhook real)
+        setTimeout(async () => {
+          await supabaseClient.from('subscriptions').update({
+            payment_status: 'completed',
+            confirmed_at: new Date().toISOString(),
+            transaction_hash: '0xCLIENT_' + Date.now()
+          }).eq('id', payment.id);
+
+          msg.textContent = '✅ ¡Suscripción Cliente activada! Redirigiendo...';
+          msg.className = 'ok'; msg.style.display = 'block';
+          setTimeout(() => {
+            window.location.href = 'mi-perfil.html?subscription=client_active';
+          }, 2000);
+        }, 3000);
+
+      } catch (err) {
+        console.error('Error suscripción cliente:', err);
+        msg.textContent = '❌ ' + err.message;
+        msg.className = 'err'; msg.style.display = 'block';
+        btn.disabled = false;
+        loading.classList.remove('active');
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => selectCrypto('USDT', 4.99));
+  </script>
+</body>
+</html>
