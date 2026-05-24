@@ -1,34 +1,488 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Explorar - BarberHub</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorar | BarberHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --neon-cyan: #00E5EE;
+            --neon-pink: #ff00ff;
+            --neon-purple: #bc13fe;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            background: #030303;
+            overflow-x: hidden;
+        }
+
+        /* 🔥 FONDO */
+        .cyber-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(10,5,20,0.4) 100%),
+                url('./fondobarber.png');
+            background-size: cover;
+            background-position: center;
+            z-index: -3;
+        }
+
+        /* ✨ BURBUJAS */
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -2;
+        }
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-cyan);
+            animation: rise 10s infinite linear;
+            opacity: 0;
+        }
+        @keyframes rise {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+        }
+
+        /* 🔲 REJILLA */
+        .cyber-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 229, 238, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 238, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 📰 HEADER */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 40px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 229, 238, 0.2);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+        .header-logo span { color: var(--neon-cyan); }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-name {
+            color: rgba(255,255,255,0.9);
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+        .btn-logout {
+            padding: 8px 20px;
+            background: transparent;
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+        .btn-logout:hover {
+            background: var(--neon-pink);
+            color: #fff;
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        /* 📦 CONTENIDO PRINCIPAL */
+        .main-content {
+            margin-top: 100px;
+            padding: 40px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /*  SECCIONES */
+        .section {
+            margin-bottom: 60px;
+        }
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title i {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        /* 📰 GRID DE TARJETAS */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        /* 🎴 TARJETA CYBERPUNK */
+        .card {
+            background: rgba(10, 10, 25, 0.6);
+            border: 1px solid rgba(0, 229, 238, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 10px 30px rgba(0, 229, 238, 0.3), 0 0 60px rgba(0, 229, 238, 0.1);
+        }
+        .card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 2px solid rgba(0, 229, 238, 0.3);
+        }
+        .card-content {
+            padding: 20px;
+        }
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .card-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+        }
+        .card-tag {
+            background: rgba(0, 229, 238, 0.15);
+            color: var(--neon-cyan);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            border: 1px solid rgba(0, 229, 238, 0.3);
+        }
+
+        /* 🏆 CARD DESTACADA (TENDENCIA) */
+        .card.featured {
+            grid-column: span 2;
+            border: 2px solid var(--neon-pink);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.2);
+        }
+        .card.featured .card-image {
+            height: 280px;
+            border-bottom: 2px solid var(--neon-pink);
+        }
+        .card.featured:hover {
+            box-shadow: 0 10px 40px rgba(255, 0, 255, 0.4), 0 0 80px rgba(255, 0, 255, 0.2);
+        }
+        .trending-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--neon-pink);
+            color: #fff;
+            padding: 6px 15px;
+            border-radius: 6px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            box-shadow: 0 0 15px var(--neon-pink);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* 📱 RESPONSIVE */
+        @media (max-width: 768px) {
+            .header { padding: 15px 20px; }
+            .main-content { padding: 20px; margin-top: 90px; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .card.featured { grid-column: span 1; }
+            .section-title { font-size: 1.4rem; }
+        }
+
+        /* 🦶 FOOTER */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(0, 229, 238, 0.1);
+            margin-top: 60px;
+        }
+        .footer span { color: var(--neon-pink); font-family: 'Orbitron'; font-weight: bold; }
+    </style>
 </head>
 <body>
-  <header class="app-header">
-    <div class="header-top">
-      <h1 class="logo-text">EXPLORAR <span class="cyan">TRENDS</span></h1>
-    </div>
-  </header>
+    <div class="cyber-bg"></div>
+    <div class="cyber-grid"></div>
+    <div class="particles" id="particles"></div>
 
-  <main class="container feed-container">
-    <h2 style="margin-bottom:15px; font-size:1.2rem;">🔥 Top Cortes de la Semana</h2>
-    <div id="explore-grid" class="explore-grid">
-      <!-- Las fotos se cargan con JS -->
-    </div>
-  </main>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-logo">BARBER<span>HUB</span></div>
+        <div class="user-info">
+            <span class="user-name" id="userName">Cargando...</span>
+            <button class="btn-logout" onclick="cerrarSesion()">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </button>
+        </div>
+    </header>
 
-  <!-- MENÚ INFERIOR (Mismo menú, 'Explorar' activo) -->
-  <nav class="bottom-nav">
-    <a href="perfil-cliente.html" class="nav-link"><i class="fas fa-home"></i><span>Inicio</span></a>
-    <a href="explorar.html" class="nav-link active"><i class="fas fa-compass"></i><span>Explorar</span></a>
-    <a href="mis-citas.html" class="nav-link"><i class="fas fa-calendar-check"></i><span>Citas</span></a>
-    <a href="mi-perfil.html" class="nav-link"><i class="fas fa-user"></i><span>Perfil</span></a>
-  </nav>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+        
+        <!-- 🔥 CORTES EN TENDENCIA -->
+        <section class="section">
+            <h2 class="section-title">
+                <i class="fas fa-fire"></i>
+                Cortes en Tendencia
+            </h2>
+            <div class="cards-grid">
+                <!-- Card Destacada -->
+                <div class="card featured" style="position: relative;">
+                    <span class="trending-badge">🔥 #1 Trending</span>
+                    <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800" alt="Corte" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Fade Degradé con Diseño</h3>
+                        <p class="card-text">El corte más solicitado del 2026. Degradé perfecto desde los lados con diseños geométricos personalizados en la parte superior.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-heart"></i> 2.4k</span>
+                            <span class="card-tag">TRENDING</span>
+                        </div>
+                    </div>
+                </div>
 
-  <script src="explorar.js"></script>
+                <!-- Cards normales -->
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600" alt="Corte" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Pompadour Moderno</h3>
+                        <p class="card-text">Volumen clásico con toque contemporáneo. Ideal para eventos formales.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-heart"></i> 1.8k</span>
+                            <span class="card-tag">CLÁSICO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1622286342621-4bd444595b23?w=600" alt="Corte" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Buzz Cut Minimalista</h3>
+                        <p class="card-text">Limpio, práctico y siempre en estilo. El favorito de los minimalistas.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-heart"></i> 956</span>
+                            <span class="card-tag">MINIMAL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600" alt="Corte" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Texturizado con Capas</h3>
+                        <p class="card-text">Movimiento y volumen natural. Perfecto para cabello medio a largo.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-heart"></i> 1.2k</span>
+                            <span class="card-tag">MODERNO</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 💈 BARBERÍAS DESTACADAS -->
+        <section class="section">
+            <h2 class="section-title">
+                <i class="fas fa-store"></i>
+                Barberías Destacadas
+            </h2>
+            <div class="cards-grid">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600" alt="Barbería" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Neon Cuts Studio</h3>
+                        <p class="card-text">📍 Downtown | ⭐ 4.9 (523 reseñas)<br>Especialistas en fades y diseños personalizados. Ambiente cyberpunk.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-clock"></i> Abierto ahora</span>
+                            <span class="card-tag">PREMIUM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1633681926022-84c23e8cb4d6?w=600" alt="Barbería" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Blade & Fade Co.</h3>
+                        <p class="card-text">📍 Midtown | ⭐ 4.8 (389 reseñas)<br>Barberos de élite con 10+ años de experiencia. Cita recomendada.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-clock"></i> Cierra 8PM</span>
+                            <span class="card-tag">TOP RATED</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600" alt="Barbería" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Urban Style Barbers</h3>
+                        <p class="card-text">📍 Uptown | ⭐ 4.7 (267 reseñas)<br>Estilo urbano y cortes modernos. Precios accesibles.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-clock"></i> Abierto 24/7</span>
+                            <span class="card-tag">POPULAR</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 📰 NOTICIAS DE MODA -->
+        <section class="section">
+            <h2 class="section-title">
+                <i class="fas fa-newspaper"></i>
+                Noticias de Moda
+            </h2>
+            <div class="cards-grid">
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600" alt="Noticia" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Tendencias 2026: Vuelve el Mullet</h3>
+                        <p class="card-text">El corte de los 80s regresa con fuerza. Versiones modernas con degradés y texturas actualizadas.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-calendar"></i> Hace 2 días</span>
+                            <span class="card-tag">MODA</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1521369909029-2afed882baee?w=600" alt="Noticia" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Colores Neón: La Nueva Ola</h3>
+                        <p class="card-text">Tintes en azul eléctrico, rosa neón y verde cian dominan las pasarelas urbanas.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-calendar"></i> Hace 5 días</span>
+                            <span class="card-tag">COLOR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <img src="https://images.unsplash.com/photo-1493256338651-d82f7acb2b38?w=600" alt="Noticia" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">Barba Perfecta: Guía 2026</h3>
+                        <p class="card-text">Los expertos revelan los secretos para mantener una barba saludable y con estilo.</p>
+                        <div class="card-meta">
+                            <span><i class="fas fa-calendar"></i> Hace 1 semana</span>
+                            <span class="card-tag">GROOMING</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>© 2026 All Rights Reserved | by <span>B-U4ALL</span></p>
+    </footer>
+
+    <script src="config.js"></script>
+    <script>
+        // ✨ Burbujas
+        function createParticles() {
+            const c = document.getElementById('particles');
+            for(let i=0; i<30; i++){
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random()*100 + '%';
+                p.style.animationDelay = Math.random()*10 + 's';
+                p.style.animationDuration = (8 + Math.random()*7) + 's';
+                c.appendChild(p);
+            }
+        }
+        createParticles();
+
+        // 🔐 Verificar sesión
+        (async () => {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) {
+                    window.location.href = 'auth.html';
+                    return;
+                }
+                
+                const user = session.user;
+                const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario';
+                document.getElementById('userName').textContent = `Hola, ${nombre}`;
+            } catch (err) {
+                console.error('Error:', err);
+                window.location.href = 'auth.html';
+            }
+        })();
+
+        // 🚪 Cerrar sesión
+        window.cerrarSesion = async () => {
+            if (confirm('¿Cerrar sesión?')) {
+                await supabaseClient.auth.signOut();
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
 </body>
 </html>
