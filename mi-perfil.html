@@ -1,93 +1,319 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi Perfil | BarberHub</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root { --neon-cyan: #00E5EE; --neon-pink: #ff00ff; --dark-bg: #050505; --card-bg: rgba(15,15,25,0.9); --glass-border: rgba(0,229,238,0.3); }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { min-height: 100vh; background: var(--dark-bg); font-family: 'Inter', sans-serif; color: #fff; overflow-x: hidden; position: relative; padding-bottom: 80px; }
-    .bg-text-layer { position: fixed; top: -10%; left: -10%; width: 120%; height: 120%; z-index: -2; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 40px; transform: rotate(-15deg); pointer-events: none; opacity: 0.25; }
-    .bg-text-layer span { font-family: 'Orbitron', sans-serif; font-size: 4vw; font-weight: 900; color: transparent; -webkit-text-stroke: 1px rgba(0,229,238,0.2); white-space: nowrap; }
-    .bg-light-beam { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(0,229,238,0.1) 50%, transparent 55%, transparent 100%); animation: sweep 6s linear infinite; pointer-events: none; }
-    @keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-    .app-container { max-width: 600px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
-    .card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 20px; padding: 25px; margin-bottom: 20px; box-shadow: 0 0 30px rgba(0,229,238,0.15); }
-    .brand { font-family: 'Orbitron', sans-serif; font-size: 2rem; font-weight: 900; letter-spacing: 2px; text-align: center; margin-bottom: 15px; }
-    .brand .b { color: #fff; } .brand .h { color: var(--neon-cyan); text-shadow: 0 0 15px var(--neon-cyan); }
-    .avatar-section { text-align: center; margin-bottom: 20px; }
-    .avatar-wrap { width: 90px; height: 90px; margin: 0 auto 12px; border-radius: 50%; overflow: hidden; border: 3px solid var(--neon-cyan); box-shadow: 0 0 20px rgba(0,229,238,0.5); }
-    .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-    .user-name { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; margin: 0 0 4px; }
-    .user-email { color: var(--neon-cyan); font-size: 0.9rem; margin: 0; }
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-    .stat { background: rgba(0,229,238,0.08); border: 1px solid rgba(0,229,238,0.3); border-radius: 12px; padding: 12px; text-align: center; }
-    .stat-num { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: var(--neon-cyan); margin-bottom: 2px; }
-    .stat-lbl { color: #aaa; font-size: 0.75rem; text-transform: uppercase; }
-    .menu-grid { display: grid; gap: 10px; }
-    .menu-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: #fff; text-decoration: none; transition: 0.3s; }
-    .menu-item:hover { background: rgba(0,229,238,0.1); border-color: var(--neon-cyan); transform: translateX(4px); }
-    .menu-item i { font-size: 1.1rem; color: var(--neon-cyan); width: 22px; text-align: center; }
-    .menu-item .arrow { margin-left: auto; color: #555; }
-    .menu-item.danger { border-color: rgba(255,68,68,0.3); }
-    .menu-item.danger i { color: #ff4444; }
-    .menu-item.danger:hover { background: rgba(255,68,68,0.1); border-color: #ff4444; }
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: rgba(10,10,20,0.95); backdrop-filter: blur(16px); border-top: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-    .nav-link { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.7rem; padding: 8px; transition: 0.2s; border-radius: 10px; }
-    .nav-link i { font-size: 1.4rem; margin-bottom: 4px; }
-    .nav-link.active, .nav-link:hover { color: var(--neon-cyan); background: rgba(0,229,238,0.1); }
-    @media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | BarberHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --neon-cyan: #00E5EE;
+            --neon-pink: #ff00ff;
+            --dark-bg: #050505;
+            --card-bg: rgba(15,15,25,0.9);
+            --glass-border: rgba(0,229,238,0.3);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: var(--dark-bg);
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+            padding-bottom: 80px;
+        }
+        .bg-text-layer {
+            position: fixed;
+            top: -10%;
+            left: -10%;
+            width: 120%;
+            height: 120%;
+            z-index: -2;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: center;
+            gap: 40px;
+            transform: rotate(-15deg);
+            pointer-events: none;
+            opacity: 0.25;
+        }
+        .bg-text-layer span {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4vw;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(0,229,238,0.2);
+            white-space: nowrap;
+        }
+        .bg-light-beam {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(0,229,238,0.1) 50%, transparent 55%, transparent 100%);
+            animation: sweep 6s linear infinite;
+            pointer-events: none;
+        }
+        @keyframes sweep {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(0,229,238,0.15);
+        }
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .brand .b { color: #fff; }
+        .brand .h {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+        }
+        .avatar-section { text-align: center; margin-bottom: 20px; }
+        .avatar-wrap {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0,229,238,0.5);
+        }
+        .avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .user-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            margin: 0 0 4px;
+        }
+        .user-email {
+            color: var(--neon-cyan);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat {
+            background: rgba(0,229,238,0.08);
+            border: 1px solid rgba(0,229,238,0.3);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+        .stat-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            color: var(--neon-cyan);
+            margin-bottom: 2px;
+        }
+        .stat-lbl {
+            color: #aaa;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        .menu-grid { display: grid; gap: 10px; }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            color: #fff;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .menu-item:hover {
+            background: rgba(0,229,238,0.1);
+            border-color: var(--neon-cyan);
+            transform: translateX(4px);
+        }
+        .menu-item i {
+            font-size: 1.1rem;
+            color: var(--neon-cyan);
+            width: 22px;
+            text-align: center;
+        }
+        .menu-item .arrow {
+            margin-left: auto;
+            color: #555;
+        }
+        .menu-item.danger { border-color: rgba(255,68,68,0.3); }
+        .menu-item.danger i { color: #ff4444; }
+        .menu-item.danger:hover {
+            background: rgba(255,68,68,0.1);
+            border-color: #ff4444;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(10,10,20,0.95);
+            backdrop-filter: blur(16px);
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+        }
+        .nav-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #666;
+            font-size: 0.7rem;
+            padding: 8px;
+            transition: 0.2s;
+            border-radius: 10px;
+        }
+        .nav-link i {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: var(--neon-cyan);
+            background: rgba(0,229,238,0.1);
+        }
+        @media (max-width: 500px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-  <div class="bg-text-layer"><span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span></div>
-  <div class="bg-light-beam"></div>
-
-  <div class="app-container">
-    <div class="card">
-      <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
-      <div class="avatar-section">
-        <div class="avatar-wrap"><img src="https://placehold.co/150x150/111/00E5EE?text=👤" alt="Avatar"></div>
-        <h2 class="user-name" id="display-name">Cargando...</h2>
-        <p class="user-email" id="display-email">email@ejemplo.com</p>
-      </div>
-      <div class="stats-grid">
-        <div class="stat"><div class="stat-num">12</div><div class="stat-lbl">Citas</div></div>
-        <div class="stat"><div class="stat-num">$340</div><div class="stat-lbl">Gastado</div></div>
-        <div class="stat"><div class="stat-num">5</div><div class="stat-lbl">Favoritos</div></div>
-      </div>
-      <div class="menu-grid">
-        <a href="mis-citas.html" class="menu-item"><i class="fas fa-calendar-check"></i><span>Mis Citas</span><i class="fas fa-chevron-right arrow"></i></a>
-        <a href="pagos.html" class="menu-item"><i class="fas fa-wallet"></i><span>Mis Pagos</span><i class="fas fa-chevron-right arrow"></i></a>
-        <a href="suscripcion-cliente.html" class="menu-item"><i class="fas fa-crown" style="color:var(--neon-cyan)"></i><span>💎 Premium</span><i class="fas fa-chevron-right arrow"></i></a>
-        <a href="configuracion.html" class="menu-item"><i class="fas fa-cog"></i><span>Configuración</span><i class="fas fa-chevron-right arrow"></i></a>
-        <button onclick="cerrarSesion()" class="menu-item danger" style="width:100%; text-align:left; background:none; border:none; cursor:pointer;"><i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span><i class="fas fa-chevron-right arrow"></i></button>
-      </div>
+    <div class="bg-text-layer">
+        <span>BARBERHUB</span>
+        <span>BARBERHUB</span>
+        <span>BARBERHUB</span>
+        <span>BARBERHUB</span>
+        <span>BARBERHUB</span>
+        <span>BARBERHUB</span>
     </div>
-  </div>
-
-  <nav class="bottom-nav">
-    <a href="index.html" class="nav-link"><i class="fas fa-home"></i><span>Inicio</span></a>
-    <a href="explorar.html" class="nav-link"><i class="fas fa-compass"></i><span>Explorar</span></a>
-    <a href="mis-citas.html" class="nav-link"><i class="fas fa-calendar-check"></i><span>Citas</span></a>
-    <a href="mi-perfil.html" class="nav-link active"><i class="fas fa-user"></i><span>Perfil</span></a>
-  </nav>
-
-  <script src="config.js"></script>
-  <script>
-    (async () => {
-      try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) { window.location.href = 'auth.html'; return; }
-        if (user.user_metadata?.role === 'barbero') { window.location.href = 'admin.html'; return; }
-        document.getElementById('display-name').textContent = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario';
-        document.getElementById('display-email').textContent = user.email || '';
-      } catch { window.location.href = 'auth.html'; }
-    })();
-    window.cerrarSesion = async () => { if(confirm('¿Cerrar sesión?')) { await supabaseClient.auth.signOut(); window.location.href = 'auth.html'; } };
-  </script>
+    <div class="bg-light-beam"></div>
+    
+    <div class="app-container">
+        <div class="card">
+            <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
+            
+            <div class="avatar-section">
+                <div class="avatar-wrap">
+                    <img src="https://placehold.co/150x150/111/00E5EE?text=👤" alt="Avatar">
+                </div>
+                <h2 class="user-name" id="display-name">Cargando...</h2>
+                <p class="user-email" id="display-email">email@ejemplo.com</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-num">12</div>
+                    <div class="stat-lbl">Citas</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">$340</div>
+                    <div class="stat-lbl">Gastado</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">5</div>
+                    <div class="stat-lbl">Favoritos</div>
+                </div>
+            </div>
+            
+            <div class="menu-grid">
+                <a href="mis-citas.html" class="menu-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Mis Citas</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <a href="pagos.html" class="menu-item">
+                    <i class="fas fa-wallet"></i>
+                    <span>Mis Pagos</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <a href="suscripcion-cliente.html" class="menu-item">
+                    <i class="fas fa-crown" style="color:var(--neon-cyan)"></i>
+                    <span>💎 Premium</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <a href="configuracion.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <button onclick="cerrarSesion()" class="menu-item danger" style="width:100%; text-align:left; background:none; border:none; cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-link"><i class="fas fa-home"></i><span>Inicio</span></a>
+        <a href="explorar.html" class="nav-link"><i class="fas fa-compass"></i><span>Explorar</span></a>
+        <a href="mis-citas.html" class="nav-link"><i class="fas fa-calendar-check"></i><span>Citas</span></a>
+        <a href="mi-perfil.html" class="nav-link active"><i class="fas fa-user"></i><span>Perfil</span></a>
+    </nav>
+    
+    <script src="config.js"></script>
+    <script>
+        (async () => {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) {
+                    window.location.href = 'auth.html';
+                    return;
+                }
+                if (user.user_metadata?.role === 'barbero') {
+                    window.location.href = 'admin.html';
+                    return;
+                }
+                document.getElementById('display-name').textContent = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario';
+                document.getElementById('display-email').textContent = user.email || '';
+            } catch {
+                window.location.href = 'auth.html';
+            }
+        })();
+        
+        window.cerrarSesion = async () => {
+            if (confirm('¿Cerrar sesión?')) {
+                await supabaseClient.auth.signOut();
+                window.location.href = 'auth.html';
+            }
+        };
+    </script>
 </body>
 </html>
