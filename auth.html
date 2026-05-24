@@ -27,16 +27,20 @@
             align-items: center;
         }
 
+        /* 🔥 FONDO */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: url('./fondobarber.png'); 
+            background: 
+                linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(10,5,20,0.4) 100%),
+                url('./fondobarber.png');
             background-size: cover;
             background-position: center;
             z-index: -3;
         }
 
+        /* ✨ BURBUJAS */
         .particles {
             position: fixed;
             top: 0; left: 0;
@@ -61,6 +65,7 @@
             100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
         }
 
+        /* 📦 CAJA TRANSPARENTE */
         .auth-card {
             width: 90%;
             max-width: 440px;
@@ -74,10 +79,6 @@
             position: relative;
             z-index: 10;
             box-shadow: 0 0 25px rgba(0, 229, 238, 0.12), inset 0 0 20px rgba(255, 255, 255, 0.02);
-            transition: box-shadow 0.4s ease;
-        }
-        .auth-card:hover {
-            box-shadow: 0 0 35px rgba(0, 229, 238, 0.25), inset 0 0 25px rgba(255, 255, 255, 0.04);
         }
 
         .logo-small {
@@ -86,7 +87,6 @@
             font-weight: 900;
             margin-bottom: 25px;
             color: #fff;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
             text-shadow: 0 0 12px rgba(0, 229, 238, 0.7);
         }
         .logo-small span { color: var(--neon-cyan); }
@@ -97,7 +97,6 @@
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--neon-cyan);
-            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.8));
             text-shadow: 0 0 10px var(--neon-cyan);
             letter-spacing: 1px;
         }
@@ -107,20 +106,17 @@
             text-align: left;
         }
 
-        /* 🏷️ LABELS CON FONDO OSCURO (PASTILLA) */
         .input-group label {
-            display: inline-block; /* Para que el fondo se ajuste al texto */
+            display: inline-block;
             font-size: 0.75rem;
             color: #fff;
             margin-bottom: 8px;
             font-family: 'Orbitron', sans-serif;
             letter-spacing: 1.5px;
-            /* Fondo oscuro visible */
             background: rgba(0, 0, 0, 0.7);
             padding: 5px 12px;
             border-radius: 6px;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
         
         .input-group input {
@@ -135,27 +131,13 @@
             font-weight: 600;
             outline: none;
             transition: all 0.3s ease;
-            box-shadow: 0 0 8px rgba(0, 229, 238, 0.3), inset 0 0 8px rgba(0, 229, 238, 0.1);
         }
-        .input-group input::placeholder {
-            color: rgba(0, 229, 238, 0.35);
-            font-weight: 500;
-        }
+        .input-group input::placeholder { color: rgba(0, 229, 238, 0.35); font-weight: 500; }
         .input-group input:focus {
             transform: translateY(-2px);
             border-color: #fff;
-            box-shadow: 
-                0 0 15px rgba(0, 229, 238, 0.6), 
-                0 0 30px rgba(0, 229, 238, 0.3),
-                0 0 50px rgba(0, 229, 238, 0.15),
-                inset 0 0 12px rgba(0, 229, 238, 0.2);
+            box-shadow: 0 0 15px rgba(0, 229, 238, 0.6), 0 0 30px rgba(0, 229, 238, 0.3);
             background: rgba(0, 0, 0, 0.45);
-        }
-        .input-group input:hover {
-            box-shadow: 
-                0 0 10px rgba(0, 229, 238, 0.4), 
-                0 0 20px rgba(0, 229, 238, 0.2),
-                inset 0 0 8px rgba(0, 229, 238, 0.15);
         }
 
         .btn-submit {
@@ -179,6 +161,24 @@
             box-shadow: 0 10px 30px rgba(0, 229, 238, 0.6);
         }
 
+        /* 🔗 LINKS */
+        .forgot-password {
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+        .forgot-password a {
+            color: var(--neon-pink);
+            text-decoration: none;
+            font-weight: 600;
+            text-shadow: 0 0 8px rgba(255, 0, 255, 0.5);
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .forgot-password a:hover {
+            text-decoration: underline;
+            text-shadow: 0 0 15px var(--neon-pink);
+        }
+
         .divider {
             display: flex;
             align-items: center;
@@ -197,7 +197,6 @@
             color: rgba(255,255,255,0.5);
             letter-spacing: 2px;
             text-transform: uppercase;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
 
         .btn-google {
@@ -218,7 +217,6 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         .btn-google:hover {
             border-color: var(--neon-cyan);
@@ -226,13 +224,11 @@
             box-shadow: 0 0 15px rgba(0, 229, 238, 0.3);
             transform: translateY(-2px);
         }
-        .btn-google img { width: 20px; height: 20px; }
 
         .toggle-text {
             margin-top: 25px;
             font-size: 0.85rem;
             color: rgba(255,255,255,0.85);
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
         }
         .toggle-text a {
             color: var(--neon-pink);
@@ -240,7 +236,6 @@
             font-weight: 700;
             cursor: pointer;
             text-shadow: 0 0 8px rgba(255, 0, 255, 0.5);
-            transition: 0.2s;
         }
         .toggle-text a:hover { text-decoration: underline; }
 
@@ -249,13 +244,13 @@
             font-size: 0.85rem;
             font-weight: bold;
             min-height: 20px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
         }
         .error { color: #ff4444; text-shadow: 0 0 6px rgba(255, 68, 68, 0.6); }
         .success { color: var(--neon-cyan); text-shadow: 0 0 6px var(--neon-cyan); }
 
-        .hidden { display: none; }
-        
+        .hidden { display: none !important; }
+
+        /* 🦶 FOOTER */
         .footer {
             position: fixed;
             bottom: 12px;
@@ -264,15 +259,8 @@
             font-size: 0.65rem;
             color: rgba(255,255,255,0.5);
             z-index: 10;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.9));
-            letter-spacing: 1px;
         }
         .footer span { color: var(--neon-pink); font-family: 'Orbitron'; font-weight: bold; }
-
-        @media (max-width: 480px) {
-            .auth-card { padding: 35px 20px; max-width: 95%; }
-            .logo-small { font-size: 1.6rem; }
-        }
     </style>
 </head>
 <body>
@@ -282,6 +270,7 @@
     <div class="auth-card">
         <h1 class="logo-small">BARBER<span>HUB</span></h1>
         
+        <!-- FORMULARIO LOGIN/REGISTRO -->
         <form id="authForm">
             <h2 id="formTitle">INICIAR SESIÓN</h2>
             
@@ -302,6 +291,11 @@
 
             <button type="submit" class="btn-submit" id="submitBtn">ENTRAR</button>
             
+            <!-- 🔗 RECUPERAR CONTRASEÑA (Solo en login) -->
+            <div class="forgot-password" id="forgotPasswordLink">
+                <a onclick="showRecovery()">¿Olvidaste tu contraseña?</a>
+            </div>
+            
             <div class="divider"><span>o continúa con</span></div>
             
             <button type="button" class="btn-google" id="googleBtn">
@@ -321,6 +315,31 @@
                 <a id="toggleLink">Regístrate</a>
             </p>
         </form>
+
+        <!-- FORMULARIO RECUPERACIÓN -->
+        <form id="recoveryForm" class="hidden">
+            <h2 id="recoveryTitle" style="margin-bottom: 20px; font-family: 'Orbitron'; color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);">
+                RECUPERAR CONTRASEÑA
+            </h2>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 20px; font-size: 0.9rem;">
+                Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña.
+            </p>
+            
+            <div class="input-group">
+                <label>EMAIL</label>
+                <input type="email" id="recoveryEmail" placeholder="tu@email.com" required>
+            </div>
+
+            <button type="submit" class="btn-submit" style="background: var(--neon-pink);">
+                ENVIAR ENLACE
+            </button>
+            
+            <div class="message" id="recoveryMessage"></div>
+            
+            <p class="toggle-text" style="margin-top: 20px;">
+                <a onclick="showLogin()">← Volver al inicio</a>
+            </p>
+        </form>
     </div>
 
     <div class="footer">
@@ -329,6 +348,7 @@
 
     <script src="config.js"></script>
     <script>
+        // ✨ Burbujas
         function createParticles() {
             const c = document.getElementById('particles');
             for(let i=0; i<40; i++){
@@ -342,6 +362,19 @@
         }
         createParticles();
 
+        // 🔀 MOSTRAR/OCULTAR FORMULARIOS
+        function showRecovery() {
+            document.getElementById('authForm').classList.add('hidden');
+            document.getElementById('recoveryForm').classList.remove('hidden');
+        }
+        
+        function showLogin() {
+            document.getElementById('recoveryForm').classList.add('hidden');
+            document.getElementById('authForm').classList.remove('hidden');
+            document.getElementById('recoveryMessage').textContent = '';
+        }
+
+        //  Lógica Auth
         const form = document.getElementById('authForm');
         const nameGroup = document.getElementById('nameGroup');
         const formTitle = document.getElementById('formTitle');
@@ -349,6 +382,7 @@
         const toggleLabel = document.getElementById('toggleLabel');
         const toggleLink = document.getElementById('toggleLink');
         const messageBox = document.getElementById('messageBox');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
         
         let isRegister = false;
 
@@ -369,6 +403,7 @@
                 submitBtn.style.boxShadow = '0 5px 15px rgba(255, 0, 255, 0.35)';
                 toggleLabel.textContent = '¿Ya tienes cuenta?';
                 toggleLink.textContent = 'Inicia Sesión';
+                forgotPasswordLink.classList.add('hidden');
             } else {
                 nameGroup.classList.add('hidden');
                 formTitle.textContent = 'INICIAR SESIÓN';
@@ -379,6 +414,7 @@
                 submitBtn.style.boxShadow = '0 5px 15px rgba(0, 229, 238, 0.35)';
                 toggleLabel.textContent = '¿No tienes cuenta?';
                 toggleLink.textContent = 'Regístrate';
+                forgotPasswordLink.classList.remove('hidden');
             }
             messageBox.textContent = '';
         }
@@ -390,6 +426,7 @@
             window.history.pushState({}, '', `?mode=${newMode}`);
         });
 
+        //  Submit Login/Registro
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('emailInput').value;
@@ -409,7 +446,7 @@
                     if (error) throw error;
                     messageBox.textContent = '¡Cuenta creada! Redirigiendo...';
                     messageBox.classList.add('success');
-                        setTimeout(() => window.location.href = 'explorar.html', 1000);
+                    setTimeout(() => window.location.href = 'explorar.html', 2000);
                 } else {
                     const { data, error } = await supabaseClient.auth.signInWithPassword({
                         email, password
@@ -425,6 +462,34 @@
             }
         });
 
+        //  RECUPERACIÓN DE CONTRASEÑA
+        document.getElementById('recoveryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('recoveryEmail').value;
+            const messageBox = document.getElementById('recoveryMessage');
+
+            messageBox.textContent = 'Enviando enlace...';
+            messageBox.className = 'message';
+
+            try {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/auth.html'
+                });
+                
+                if (error) throw error;
+                
+                messageBox.textContent = '✅ Enlace enviado. Revisa tu correo (y spam).';
+                messageBox.classList.add('success');
+                document.getElementById('recoveryEmail').value = '';
+                
+                setTimeout(() => showLogin(), 3000);
+            } catch (err) {
+                messageBox.textContent = 'Error: ' + err.message;
+                messageBox.classList.add('error');
+            }
+        });
+
+        // 🔵 Google Sign In
         document.getElementById('googleBtn').addEventListener('click', async () => {
             messageBox.textContent = 'Conectando con Google...';
             messageBox.className = 'message';
