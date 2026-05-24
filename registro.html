@@ -82,4 +82,253 @@
       border: 1px solid rgba(255,255,255,0.1);
       background: rgba(255,255,255,0.05); 
       color: #fff; 
-      font-size: 
+      font-size: 1rem; 
+      box-sizing: border-box;
+    }
+    .input-group input:focus { 
+      border-color: var(--neon-cyan); 
+      outline: none; 
+      box-shadow: 0 0 15px rgba(0,229,238,0.3); 
+    }
+    
+    .btn-register {
+      width: 100%; 
+      padding: 16px; 
+      border: none; 
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--neon-cyan), #00b8d4); 
+      color: #000; 
+      font-weight: 800; 
+      font-size: 1.05rem;
+      cursor: pointer; 
+      transition: all 0.3s; 
+      text-transform: uppercase; 
+      letter-spacing: 1px;
+      margin-top: 10px;
+    }
+    .btn-register:hover { 
+      background: #fff; 
+      box-shadow: 0 0 30px rgba(255,255,255,0.6); 
+      transform: translateY(-2px); 
+    }
+    .btn-register:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    
+    #msg { 
+      margin-top: 15px; 
+      padding: 12px; 
+      border-radius: 10px; 
+      font-size: 0.9rem; 
+      display: none;
+      text-align: center;
+    }
+    #msg.err { background: rgba(255,68,68,0.15); color: #ff4444; border: 1px solid #ff4444; }
+    #msg.ok { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; }
+    
+    .divider { 
+      margin: 25px 0; 
+      border: 0; 
+      border-top: 1px solid rgba(255,255,255,0.1); 
+      position: relative; 
+    }
+    .divider span {
+      position: absolute; 
+      top: -10px; 
+      left: 50%; 
+      transform: translateX(-50%);
+      background: rgba(15,15,25,0.9); 
+      padding: 0 15px; 
+      color: #888; 
+      font-size: 0.8rem;
+    }
+    
+    .btn-google {
+      width: 100%; 
+      padding: 14px; 
+      border: 2px solid var(--neon-pink); 
+      border-radius: 12px;
+      background: transparent; 
+      color: var(--neon-pink); 
+      font-weight: 700; 
+      cursor: pointer;
+      transition: all 0.3s; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 10px;
+      font-size: 1rem;
+    }
+    .btn-google:hover { 
+      background: rgba(255,0,255,0.1); 
+      box-shadow: 0 0 25px rgba(255,0,255,0.4);
+      transform: translateY(-2px);
+    }
+    
+    .login-link { 
+      margin-top: 25px; 
+      text-align: center; 
+      font-size: 0.9rem; 
+      color: #888; 
+    }
+    .login-link a { color: var(--neon-cyan); text-decoration: none; font-weight: 600; }
+    .login-link a:hover { text-shadow: 0 0 8px var(--neon-cyan); }
+    
+    @media (max-width: 480px) {
+      .role-selector { grid-template-columns: 1fr; }
+      .card { padding: 30px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
+    <p class="subtitle">Crea tu cuenta gratis • Elige tu tipo de cuenta</p>
+    
+    <!-- ✅ SELECTOR DE ROL - OBLIGATORIO Y VISIBLE -->
+    <div class="role-selector">
+      <button type="button" class="role-btn active" id="btn-cliente" onclick="setRole('cliente')">
+        <i class="fas fa-user"></i>
+        <div>
+          <span>Cliente</span>
+          <small>Reservar citas</small>
+        </div>
+      </button>
+      <button type="button" class="role-btn" id="btn-barbero" onclick="setRole('barbero')">
+        <i class="fas fa-scissors"></i>
+        <div>
+          <span>Barbero</span>
+          <small>Gestionar barbería</small>
+        </div>
+      </button>
+    </div>
+    
+    <form id="register-form">
+      <div class="input-group">
+        <label> Nombre completo</label>
+        <input type="text" id="nombre" placeholder="Ej: Carlos Martínez" required>
+      </div>
+      <div class="input-group">
+        <label>📧 Correo electrónico</label>
+        <input type="email" id="email" placeholder="tu@email.com" required>
+      </div>
+      <div class="input-group">
+        <label>🔑 Contraseña (mínimo 6 caracteres)</label>
+        <input type="password" id="password" placeholder="••••••" minlength="6" required>
+      </div>
+      
+      <button type="submit" class="btn-register" id="btn-register">
+        <i class="fas fa-user-plus"></i> CREAR CUENTA
+      </button>
+      <div id="msg"></div>
+    </form>
+    
+    <hr class="divider"><span>O REGÍSTRATE CON</span>
+    <button onclick="registerGoogle()" class="btn-google">
+      <i class="fab fa-google"></i> Google
+    </button>
+    
+    <div class="login-link">
+      ¿Ya tienes cuenta? <a href="auth.html">Inicia sesión aquí</a>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    let selectedRole = 'cliente';
+    
+    // Función para seleccionar rol
+    window.setRole = (role) => {
+      selectedRole = role;
+      document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-' + role).classList.add('active');
+    };
+    
+    // Registro con email/password
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById('msg');
+      const btn = document.getElementById('btn-register');
+      const nombre = document.getElementById('nombre').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      
+      // Validación básica
+      if (!nombre || !email || !password) {
+        msg.textContent = '❌ Completa todos los campos';
+        msg.className = 'err'; msg.style.display = 'block';
+        return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
+      msg.style.display = 'none';
+      
+      try {
+        // 1️⃣ Crear usuario en Supabase Auth CON EL ROL
+        const { data, error } = await supabaseClient.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: {
+              nombre: nombre,
+              role: selectedRole // ✅ GUARDAMOS EL ROL AQUÍ
+            }
+          }
+        });
+        
+        if (error) throw error;
+        
+        // 2️⃣ Si es barbero, crear entrada en tabla barbers
+        if (selectedRole === 'barbero') {
+          const { error: barberError } = await supabaseClient.from('barbers').insert([{
+            owner_id: data.user.id,
+            name: nombre + "'s Barbería",
+            location: 'Sin dirección',
+            phone: '',
+            lat: 0,
+            lng: 0
+          }]);
+          
+          if (barberError) console.error('Error creando barbería:', barberError);
+        }
+        
+        // 3️⃣ Éxito
+        msg.textContent = '✅ Cuenta creada exitosamente. Redirigiendo...';
+        msg.className = 'ok'; msg.style.display = 'block';
+        
+        setTimeout(() => {
+          window.location.href = 'auth.html';
+        }, 2000);
+        
+      } catch (err) {
+        console.error('Error registro:', err);
+        let errorMsg = err.message;
+        if (errorMsg.includes('already registered')) {
+          errorMsg = 'Este correo ya está registrado. Inicia sesión.';
+        } else if (errorMsg.includes('weak password')) {
+          errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
+        }
+        
+        msg.textContent = '❌ ' + errorMsg;
+        msg.className = 'err'; msg.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> CREAR CUENTA';
+      }
+    });
+    
+    // Registro con Google
+    window.registerGoogle = async () => {
+      try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: { 
+            redirectTo: window.location.origin + '/complete-profile.html'
+          }
+        });
+        if (error) throw error;
+      } catch (err) {
+        alert('❌ Error con Google: ' + err.message);
+      }
+    };
+  </script>
+</body>
+</html>
