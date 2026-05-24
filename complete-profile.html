@@ -167,7 +167,7 @@
           msg.textContent = '✅ Perfil completado. Redirigiendo...';
           msg.className = 'ok'; msg.style.display = 'block';
           setTimeout(() => {
-            window.location.href = selectedRole === 'barbero' ? 'admin.html' : 'perfil-cliente.html';
+            window.location.href = 'inicio.html'; 
           }, 1500);
         } catch (err) {
           msg.textContent = '❌ Error: ' + err.message;
