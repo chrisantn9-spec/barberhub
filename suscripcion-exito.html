@@ -1,1 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Suscripción Activada! | BarberHub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <style>
+    :root {
+      --neon-cyan: #00E5EE;
+      --neon-pink: #ff00ff;
+      --neon-gold: #FFD700;
+      --dark-bg: #050505;
+      --card-bg: rgba(15, 15, 25, 0.95);
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      overflow-x: hidden;
+      min-height: 100vh;
+      background: var(--dark-bg);
+      font-family: 'Inter', sans-serif;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* 🌌 FONDO ANIMADO */
+    .bg-text-layer {
+      position: fixed;
+      top: -10%; left: -10%;
+      width: 120%; height: 120%;
+      z-index: -2;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      gap: 40px;
+      transform: rotate(-15deg);
+      pointer-events: none;
+      opacity: 0.25;
+    }
+    .bg-text-layer span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4vw;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255, 215, 0, 0.3);
+      white-space: nowrap;
+    }
+    .bg-light-beam {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(255, 215, 0, 0.1) 50%, transparent 55%, transparent 100%);
+      animation: sweepLight 6s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes sweepLight {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* 💎 TARJETA DE ÉXITO */
+    .success-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 2px solid var(--neon-gold);
+      border-radius: 24px;
+      padding: 50px 40px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 0 60px rgba(255, 215, 0, 0.3), inset 0 0 40px rgba(255, 215, 0, 0.1);
+      animation: floatCard 6s ease-in-out infinite, pulseGold 2s ease-in-out infinite;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulseGold {
+      0%, 100% { box-shadow: 0 0 60px rgba(255, 215, 0, 0.3); }
+      50% { box-shadow: 0 0 90px rgba(255, 215, 0, 0.6); }
+    }
+
+    .success-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--neon-gold), var(--neon-cyan), var(--neon-gold));
+      animation: glowLine 2s ease-in-out infinite;
+    }
+    @keyframes glowLine {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    /* ✨ ICONO DE ÉXITO ANIMADO */
+    .success-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 25px;
+      background: rgba(0, 255, 136, 0.15);
+      border: 3px solid #00ff88;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: successPop 0.6s ease-out, successGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes successPop {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes successGlow {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 136, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(0, 255, 136, 0.9); }
+    }
+    
+    .success-icon i {
+      font-size: 3rem;
+      color: #00ff88;
+      text-shadow: 0 0 15px rgba(0, 255, 136, 0.8);
+    }
+
+    /* ✨ TÍTULO */
+    .page-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+      color: #fff;
+    }
+    .page-brand .gold {
+      color: var(--neon-gold);
+      text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    }
+
+    .success-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 10px 0 10px;
+      background: linear-gradient(90deg, #00ff88, var(--neon-gold), #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-size: 200% auto;
+      animation: shineText 3s linear infinite;
+    }
+    @keyframes shineText {
+      to { background-position: 200% center; }
+    }
+
+    .success-subtitle {
+      color: #aaa;
+      font-size: 1rem;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    /* 💰 RESUMEN DE PAGO */
+    .payment-summary {
+      background: rgba(255, 215, 0, 0.08);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: left;
+    }
+    
+    .payment-summary h4 {
+      color: var(--neon-gold);
+      margin-bottom: 15px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .payment-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.9rem;
+    }
+    .payment-row:last-child { border-bottom: none; }
+    .payment-row .label { color: #888; }
+    .payment-row .value { color: #fff; font-weight: 600; }
+    .payment-row.total {
+      padding-top: 12px;
+      margin-top: 8px;
+      border-top: 2px solid var(--neon-gold);
+      font-size: 1.1rem;
+    }
+    .payment-row.total .value {
+      color: var(--neon-gold);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.3rem;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    }
+
+    /* ✅ BENEFICIOS DESBLOQUEADOS */
+    .benefits-unlocked {
+      text-align: left;
+      margin-bottom: 35px;
+    }
+    .benefits-unlocked h4 {
+      color: #00ff88;
+      margin-bottom: 15px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .benefits-unlocked ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .benefits-unlocked li {
+      padding: 10px 0;
+      color: #ccc;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeInUp 0.4s ease-out backwards;
+    }
+    .benefits-unlocked li:nth-child(1) { animation-delay: 0.1s; }
+    .benefits-unlocked li:nth-child(2) { animation-delay: 0.2s; }
+    .benefits-unlocked li:nth-child(3) { animation-delay: 0.3s; }
+    .benefits-unlocked li:nth-child(4) { animation-delay: 0.4s; }
+    .benefits-unlocked li:nth-child(5) { animation-delay: 0.5s; }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .benefits-unlocked li i {
+      color: #00ff88;
+      font-size: 1.1rem;
+      text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+    }
+
+    /* 🎁 BADGE DE ESTADO */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 255, 136, 0.15);
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 25px;
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+    @keyframes badgePulse {
+      0%, 100% { box-shadow: 0 0 15px rgba(0, 255, 136, 0.4); }
+      50% { box-shadow: 0 0 25px rgba(0, 255, 136, 0.8); }
+    }
+
+    /* 🔘 BOTONES */
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--neon-gold), #FFA500);
+      color: #000;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #fff, var(--neon-gold));
+      box-shadow: 0 0 35px rgba(255, 215, 0, 0.7);
+      transform: translateY(-3px);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      background: transparent;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.05);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+
+    /* 🕐 COUNTDOWN PARA REDIRECCIÓN */
+    .redirect-info {
+      margin-top: 20px;
+      color: #666;
+      font-size: 0.85rem;
+    }
+    .redirect-info span {
+      color: var(--neon-gold);
+      font-weight: 700;
+    }
+
+    @media (max-width: 500px) {
+      .success-card { padding: 40px 25px; }
+      .success-title { font-size: 1.6rem; }
+      .payment-summary { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 🌌 FONDO ANIMADO -->
+  <div class="bg-text-layer">
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+  </div>
+  <div class="bg-light-beam"></div>
+
+  <!-- 💎 TARJETA DE ÉXITO -->
+  <div class="success-card">
+    
+    <!-- Icono de éxito animado -->
+    <div class="success-icon">
+      <i class="fas fa-check"></i>
+    </div>
+
+    <!-- Título -->
+    <h1 class="page-brand">Barber<span class="gold">Hub</span></h1>
+    <h2 class="success-title">¡Suscripción Activada!</h2>
+    <p class="success-subtitle">Tu barbería ahora tiene acceso a todas las herramientas Premium</p>
+
+    <!-- Badge de estado -->
+    <div class="status-badge">
+      <i class="fas fa-crown"></i> Premium Activo
+    </div>
+
+    <!-- Resumen de pago -->
+    <div class="payment-summary">
+      <h4><i class="fas fa-receipt"></i> Resumen de Pago</h4>
+      <div class="payment-row">
+        <span class="label">Plan</span>
+        <span class="value">Premium Mensual</span>
+      </div>
+      <div class="payment-row">
+        <span class="label">Método</span>
+        <span class="value" id="payment-method">USDT</span>
+      </div>
+      <div class="payment-row">
+        <span class="label">Fecha</span>
+        <span class="value" id="payment-date">--/--/----</span>
+      </div>
+      <div class="payment-row total">
+        <span class="label">Total Pagado</span>
+        <span class="value">$9.99 USD</span>
+      </div>
+    </div>
+
+    <!-- Beneficios desbloqueados -->
+    <div class="benefits-unlocked">
+      <h4><i class="fas fa-unlock"></i> Beneficios Desbloqueados:</h4>
+      <ul>
+        <li><i class="fas fa-check-circle"></i> Citas ilimitadas sin restricciones</li>
+        <li><i class="fas fa-check-circle"></i> Panel de estadísticas avanzado</li>
+        <li><i class="fas fa-check-circle"></i> Soporte prioritario 24/7</li>
+        <li><i class="fas fa-check-circle"></i> Perfil destacado en el directorio</li>
+        <li><i class="fas fa-check-circle"></i> Integración con calendario externo</li>
+      </ul>
+    </div>
+
+    <!-- Botones de acción -->
+    <a href="admin.html?subscription=active" class="btn-primary">
+      <i class="fas fa-rocket"></i> Ir a mi Panel Premium
+    </a>
+    
+    <a href="admin.html" class="btn-secondary">
+      <i class="fas fa-home"></i> Volver al Inicio
+    </a>
+
+    <!-- Info de redirección automática -->
+    <p class="redirect-info">
+      Serás redirigido automáticamente en <span id="countdown">5</span> segundos...
+    </p>
+
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    // 🎯 Configurar fecha y método de pago (puedes obtenerlos de la URL si quieres)
+    document.addEventListener('DOMContentLoaded', () => {
+      // Fecha actual
+      const today = new Date();
+      const formattedDate = today.toLocaleDateString('es-ES', {
+        day: '2-digit', month: '2-digit', year: 'numeric'
+      });
+      document.getElementById('payment-date').textContent = formattedDate;
+
+      // Método de pago (puedes pasarlo por URL: ?crypto=USDT)
+      const urlParams = new URLSearchParams(window.location.search);
+      const crypto = urlParams.get('crypto') || 'USDT';
+      document.getElementById('payment-method').textContent = crypto;
+
+      // 🔁 Countdown para redirección automática
+      let seconds = 5;
+      const countdownEl = document.getElementById('countdown');
+      
+      const timer = setInterval(() => {
+        seconds--;
+        countdownEl.textContent = seconds;
+        
+        if (seconds <= 0) {
+          clearInterval(timer);
+          window.location.href = 'admin.html?subscription=active';
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
