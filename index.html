@@ -24,13 +24,14 @@
             background: #030303;
         }
 
-        /* 🔥 FONDO VISIBLE */
+        /* 🔥 FONDO: Tu imagen visible con filtro muy sutil */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
+            /* Oscurecimiento muy leve para que el texto blanco se lea, pero se ve el arte */
             background: 
-                linear-gradient(135deg, rgba(0,0,0,0.35) 0%, rgba(10,5,20,0.3) 100%),
+                linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(10,5,20,0.35) 100%),
                 url('./fondo.jpeg');
             background-size: cover;
             background-position: center;
@@ -75,34 +76,36 @@
             pointer-events: none;
         }
 
-        /*  CONTENIDO REPOSICIONADO (Esquina inferior izquierda) */
+        /*  CONTENIDO: Grande, Arriba, Derecha */
         .hero {
             position: absolute;
-            bottom: 110px;
-            left: 40px;
+            top: 0; right: 0;
+            width: 100%;
+            padding: 12vh 60px 20px 20px; /* Margen arriba y derecha */
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            text-align: left;
+            align-items: flex-end; /* Alinear todo a la derecha */
+            text-align: right;
             z-index: 10;
-            max-width: 90%;
+            pointer-events: none; /* Deja pasar clics en zonas vacías */
         }
+        .hero > * { pointer-events: auto; }
 
-        /*  LOGO COMPACTO */
+        /*  LOGO GRANDE */
         .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+            font-size: clamp(3rem, 9vw, 6rem); /* Más grande */
             font-weight: 900;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
             position: relative;
             display: inline-block;
             color: #fff;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            text-shadow: 0 4px 15px rgba(0,0,0,0.9); /* Sombra fuerte para leerse sobre el fondo */
         }
         .logo span { 
             color: var(--neon-cyan);
-            text-shadow: 0 0 12px var(--neon-cyan), 0 2px 8px rgba(0,0,0,0.8);
+            text-shadow: 0 0 15px var(--neon-cyan), 0 4px 15px rgba(0,0,0,0.9);
         }
 
         /* Luz recorriendo el contorno */
@@ -112,12 +115,12 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             color: transparent;
-            -webkit-text-stroke: 1.5px transparent;
+            -webkit-text-stroke: 2px transparent;
             background: linear-gradient(90deg, transparent 40%, #fff 50%, transparent 60%);
             background-size: 200% 100%;
             -webkit-background-clip: text;
             background-clip: text;
-            animation: traceOutline 3s linear infinite;
+            animation: traceOutline 3.5s linear infinite;
             pointer-events: none;
         }
         @keyframes traceOutline {
@@ -125,55 +128,60 @@
             100% { background-position: -200% 0; }
         }
 
-        /* 🔘 BOTONES */
+        /*  BOTONES */
         .btn-group {
             display: flex;
-            gap: 15px;
+            gap: 20px;
+            justify-content: flex-end; /* Botones a la derecha */
             flex-wrap: wrap;
         }
         .btn {
-            padding: 10px 24px;
+            padding: 14px 35px;
             border-radius: 4px;
             text-decoration: none;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s ease;
             border: 2px solid var(--neon-cyan);
-            background: rgba(0, 229, 238, 0.08);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 229, 238, 0.1);
+            backdrop-filter: blur(5px);
             color: var(--neon-cyan);
             cursor: pointer;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+            text-shadow: 0 1px 5px rgba(0,0,0,0.8);
         }
         .btn:hover {
             background: var(--neon-cyan);
             color: #000;
-            box-shadow: 0 0 15px var(--neon-cyan);
-            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--neon-cyan);
+            transform: translateY(-3px);
         }
-        .btn i { margin-right: 6px; }
+        .btn i { margin-right: 8px; }
 
-        /*  FOOTER TRANSPARENTE (Alineado al contenido) */
+        /*  FOOTER: Centrado, Blanco fuerte, Inglés, Transparente */
         .footer {
             position: fixed;
             bottom: 0; left: 0;
             width: 100%;
-            padding: 18px 40px;
+            padding: 20px;
             z-index: 10;
-            background: transparent;
+            text-align: center;
+            background: transparent; /* Sin fondo negro */
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 6px;
+            align-items: center;
+            gap: 5px;
         }
         .footer-text {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.85);
             font-family: 'Rajdhani', sans-serif;
-            text-shadow: 0 1px 5px rgba(0,0,0,0.9);
+            font-size: 0.9rem;
+            font-weight: 800; /* Blanco fuerte/negrita */
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(0,0,0,1); /* Sombra muy fuerte para contraste */
         }
         .byline-flash {
             font-family: 'Orbitron', sans-serif;
@@ -183,33 +191,22 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             animation: neonFlash 1.5s infinite alternate;
-            text-shadow: 0 0 6px var(--neon-cyan);
+            text-shadow: 0 0 8px var(--neon-cyan);
         }
         @keyframes neonFlash {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                opacity: 1;
-                text-shadow: 0 0 6px var(--neon-cyan), 0 0 15px var(--neon-cyan);
-            }
-            20%, 24%, 55% {
-                opacity: 0.35;
-                text-shadow: none;
-            }
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 8px var(--neon-cyan); }
+            20%, 24%, 55% { opacity: 0.4; text-shadow: none; }
         }
 
-        /* 📱 RESPONSIVE */
+        /*  RESPONSIVE */
         @media (max-width: 768px) {
             .hero {
-                left: 50%;
-                transform: translateX(-50%);
+                padding: 10vh 20px 20px 20px;
                 align-items: center;
                 text-align: center;
-                bottom: 100px;
-            }
-            .footer {
-                align-items: center;
-                padding: 15px 20px;
             }
             .btn-group { justify-content: center; }
+            .logo { font-size: clamp(2.5rem, 10vw, 4rem); }
         }
     </style>
 </head>
@@ -218,7 +215,7 @@
     <div class="cyber-grid"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- Contenido reposicionado a la izquierda -->
+    <!-- Contenido: Arriba a la derecha -->
     <main class="hero">
         <h1 class="logo">
             BARBER<span>HUB</span>
@@ -226,9 +223,9 @@
         <div id="auth-container"></div>
     </main>
 
-    <!-- Footer transparente -->
+    <!-- Footer: Centro abajo -->
     <footer class="footer">
-        <p class="footer-text">© 2026 Todos los derechos reservados</p>
+        <p class="footer-text">© 2026 All Rights Reserved</p>
         <p class="byline-flash">by B-U4ALL</p>
     </footer>
 
@@ -237,7 +234,7 @@
         // ✨ Burbujas
         function createParticles() {
             const c = document.getElementById('particles');
-            for(let i=0; i<45; i++){
+            for(let i=0; i<40; i++){
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = Math.random()*100 + '%';
@@ -256,7 +253,9 @@
                 if(session?.user) {
                     const name = session.user.user_metadata?.nombre || session.user.email?.split('@')[0] || 'Usuario';
                     box.innerHTML = `
-                        <p style="font-size:1.1rem; margin-bottom:15px; text-shadow:0 1px 6px rgba(0,0,0,0.9);">👋 Hola, <strong style="color:var(--neon-cyan)">${name}</strong></p>
+                        <p style="font-size:1.3rem; margin-bottom:15px; color:#fff; font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,0.9);">
+                            👋 Hola, <strong style="color:var(--neon-cyan)">${name}</strong>
+                        </p>
                         <div class="btn-group">
                             <a href="mi-perfil.html" class="btn"><i class="fas fa-user"></i> Mi Perfil</a>
                             <a href="explorar.html" class="btn"><i class="fas fa-compass"></i> Explorar</a>
