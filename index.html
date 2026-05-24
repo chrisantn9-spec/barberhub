@@ -29,9 +29,8 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            /* Oscurecimiento muy leve para que el texto blanco se lea, pero se ve el arte */
             background: 
-                linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(10,5,20,0.35) 100%),
+                linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(10,5,20,0.3) 100%),
                 url('./fondo.jpeg');
             background-size: cover;
             background-position: center;
@@ -81,49 +80,67 @@
             position: absolute;
             top: 0; right: 0;
             width: 100%;
-            padding: 12vh 60px 20px 20px; /* Margen arriba y derecha */
+            padding: 12vh 60px 20px 20px;
             display: flex;
             flex-direction: column;
-            align-items: flex-end; /* Alinear todo a la derecha */
+            align-items: flex-end;
             text-align: right;
             z-index: 10;
-            pointer-events: none; /* Deja pasar clics en zonas vacías */
+            pointer-events: none;
         }
         .hero > * { pointer-events: auto; }
 
-        /*  LOGO GRANDE */
+        /*  LOGO: TUBO DE NEÓN CIAN */
         .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(3rem, 9vw, 6rem); /* Más grande */
+            font-size: clamp(3rem, 9vw, 6rem);
             font-weight: 900;
             letter-spacing: 2px;
             margin-bottom: 20px;
             position: relative;
             display: inline-block;
-            color: #fff;
-            text-shadow: 0 4px 15px rgba(0,0,0,0.9); /* Sombra fuerte para leerse sobre el fondo */
+            color: #fff; /* Núcleo blanco (gas encendido) */
+            /* Efecto tubo de neón: múltiples capas de sombra para simular cristal y difusión */
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px #fff,
+                0 0 20px var(--neon-cyan),
+                0 0 40px var(--neon-cyan),
+                0 0 80px var(--neon-cyan),
+                0 0 120px rgba(0, 229, 238, 0.6);
+            animation: tubeFlicker 4s infinite alternate;
         }
         .logo span { 
             color: var(--neon-cyan);
-            text-shadow: 0 0 15px var(--neon-cyan), 0 4px 15px rgba(0,0,0,0.9);
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px var(--neon-cyan),
+                0 0 20px var(--neon-cyan),
+                0 0 40px var(--neon-cyan),
+                0 0 80px var(--neon-cyan);
         }
 
-        /* Luz recorriendo el contorno */
+        /* Luz recorriendo el tubo (efecto electricidad) */
         .logo::after {
             content: 'BARBERHUB';
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             color: transparent;
-            -webkit-text-stroke: 2px transparent;
-            background: linear-gradient(90deg, transparent 40%, #fff 50%, transparent 60%);
+            -webkit-text-stroke: 1px transparent;
+            background: linear-gradient(90deg, transparent 45%, rgba(255,255,255,0.9) 50%, transparent 55%);
             background-size: 200% 100%;
             -webkit-background-clip: text;
             background-clip: text;
-            animation: traceOutline 3.5s linear infinite;
+            animation: traceElectric 3.5s linear infinite;
             pointer-events: none;
         }
-        @keyframes traceOutline {
+
+        @keyframes tubeFlicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+            20%, 24%, 55% { opacity: 0.9; }
+        }
+        @keyframes traceElectric {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
         }
@@ -132,7 +149,7 @@
         .btn-group {
             display: flex;
             gap: 20px;
-            justify-content: flex-end; /* Botones a la derecha */
+            justify-content: flex-end;
             flex-wrap: wrap;
         }
         .btn {
@@ -168,34 +185,46 @@
             padding: 20px;
             z-index: 10;
             text-align: center;
-            background: transparent; /* Sin fondo negro */
+            background: transparent;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
         }
         .footer-text {
             font-family: 'Rajdhani', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 800; /* Blanco fuerte/negrita */
+            font-size: 0.95rem;
+            font-weight: 800;
             color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 1px;
-            text-shadow: 0 2px 8px rgba(0,0,0,1); /* Sombra muy fuerte para contraste */
+            text-shadow: 0 2px 10px rgba(0,0,0,1);
         }
+
+        /*  BYLINE: ROSA NEÓN */
         .byline-flash {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            color: var(--neon-cyan);
+            color: var(--neon-pink);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            animation: neonFlash 1.5s infinite alternate;
-            text-shadow: 0 0 8px var(--neon-cyan);
+            letter-spacing: 3px;
+            animation: neonFlashPink 1.5s infinite alternate;
+            text-shadow: 
+                0 0 5px #fff,
+                0 0 10px var(--neon-pink),
+                0 0 20px var(--neon-pink),
+                0 0 40px var(--neon-pink);
         }
-        @keyframes neonFlash {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 8px var(--neon-cyan); }
-            20%, 24%, 55% { opacity: 0.4; text-shadow: none; }
+        @keyframes neonFlashPink {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+                text-shadow: 0 0 5px #fff, 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink);
+            }
+            20%, 24%, 55% {
+                opacity: 0.5;
+                text-shadow: 0 0 2px var(--neon-pink);
+            }
         }
 
         /*  RESPONSIVE */
@@ -245,7 +274,7 @@
         }
         createParticles();
 
-        // 🔐 Auth Check
+        //  Auth Check
         (async () => {
             const box = document.getElementById('auth-container');
             try {
