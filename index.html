@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BarberHub | Cyberpunk Landing</title>
+    <title>BarberHub | Cyberpunk</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -11,7 +11,6 @@
         :root {
             --neon-cyan: #00E5EE;
             --neon-pink: #ff00ff;
-            --dark-bg: #030303;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,25 +21,63 @@
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
-            background: var(--dark-bg);
+            background: #030303; /* Color base si no carga imagen */
             display: flex;
             flex-direction: column;
         }
 
-        /* 🔥 FONDO */
+        /* 🔥 FONDO: Imagen visible (menor oscuridad) */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
+            /* Menos opacidad para ver tu fondo.jpeg claramente */
             background: 
-                linear-gradient(135deg, rgba(3,3,3,0.9) 0%, rgba(10,5,20,0.95) 100%),
+                linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(10,5,20,0.4) 100%),
                 url('./fondo.jpeg');
             background-size: cover;
             background-position: center;
             z-index: -3;
         }
 
-        /* Efectos de ambiente (Grid y Scanlines) */
+        /* ✨ BURBUJAS / PARTÍCULAS */
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+            animation: rise 10s infinite linear;
+            opacity: 0;
+        }
+        @keyframes rise {
+            0% {
+                transform: translateY(110vh) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+                transform: translateY(100vh) scale(1);
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* 🔲 REJILLA SUTIL */
         .cyber-grid {
             position: fixed;
             top: 0; left: 0;
@@ -48,20 +85,8 @@
             background-image: 
                 linear-gradient(rgba(0, 229, 238, 0.05) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 229, 238, 0.05) 1px, transparent 1px);
-            background-size: 80px 80px;
+            background-size: 60px 60px;
             z-index: -2;
-            pointer-events: none;
-            transform: perspective(500px) rotateX(20deg) scale(1.5);
-            opacity: 0.4;
-        }
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: repeating-linear-gradient(
-                0deg, rgba(0,0,0,0.2) 0px, rgba(0,0,0,0.2) 1px, transparent 1px, transparent 3px
-            );
-            z-index: -1;
             pointer-events: none;
         }
 
@@ -75,41 +100,42 @@
             text-align: center;
             padding: 40px 20px;
             z-index: 10;
+            padding-bottom: 80px; /* Espacio para el footer */
         }
 
-        /*  LOGO CON LUZ QUE RECORRE EL CONTORNO */
+        /*  LOGO CON CONTORNO NEÓN */
         .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-size: clamp(2.5rem, 8vw, 5rem);
             font-weight: 900;
             letter-spacing: 2px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             position: relative;
             display: inline-block;
-            color: #fff; /* Barber en blanco */
-            /* Contorno base sutil */
-            -webkit-text-stroke: 1px rgba(0, 229, 238, 0.3);
+            color: #fff; /* Barber blanco */
+            /* Sombra base para legibilidad sobre imagen */
+            text-shadow: 0 0 10px rgba(0,0,0,0.8); 
         }
         
-        .logo span { color: var(--neon-cyan); } /* Hub en turquesa */
+        .logo span { 
+            color: var(--neon-cyan); /* Hub turquesa */
+            text-shadow: 0 0 15px var(--neon-cyan);
+        }
 
-        /* La luz que recorre el contorno */
+        /* Luz recorriendo el contorno */
         .logo::after {
             content: 'BARBERHUB';
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             color: transparent;
-            /* Simula una luz viajando por el borde */
             -webkit-text-stroke: 2px transparent;
-            background: linear-gradient(90deg, transparent 40%, var(--neon-cyan) 50%, transparent 60%);
+            background: linear-gradient(90deg, transparent 40%, #fff 50%, transparent 60%);
             background-size: 200% 100%;
             -webkit-background-clip: text;
             background-clip: text;
-            animation: traceOutline 3.5s linear infinite;
+            animation: traceOutline 3s linear infinite;
             pointer-events: none;
-            /* Sombra extra para dar sensación de "luz" exterior */
-            text-shadow: 0 0 5px var(--neon-cyan);
         }
 
         @keyframes traceOutline {
@@ -117,18 +143,16 @@
             100% { background-position: -200% 0; }
         }
 
-        /* 🔘 BOTONES DE ACCIÓN */
+        /* 🔘 BOTONES */
         .btn-group {
             display: flex;
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 20px;
         }
         .btn {
-            position: relative;
-            padding: 14px 36px;
-            border-radius: 4px;
+            padding: 12px 30px;
+            border-radius: 5px;
             text-decoration: none;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
@@ -137,110 +161,80 @@
             letter-spacing: 1px;
             transition: all 0.3s ease;
             border: 2px solid var(--neon-cyan);
-            background: transparent;
+            background: rgba(0, 229, 238, 0.1); /* Fondo semitransparente */
+            backdrop-filter: blur(5px);
             color: var(--neon-cyan);
-            overflow: hidden;
             cursor: pointer;
         }
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 229, 238, 0.4), transparent);
-            transition: left 0.5s ease;
-        }
-        .btn:hover::before { left: 100%; }
-        .btn-primary {
+        .btn:hover {
             background: var(--neon-cyan);
             color: #000;
-            box-shadow: 0 0 20px rgba(0, 229, 238, 0.5);
-        }
-        .btn-primary:hover {
-            box-shadow: 0 0 40px rgba(0, 229, 238, 0.9), 0 0 80px rgba(0, 229, 238, 0.4);
-            transform: translateY(-3px);
-        }
-        .btn-secondary {
-            border-color: var(--neon-pink);
-            color: var(--neon-pink);
-        }
-        .btn-secondary:hover {
-            background: rgba(255, 0, 255, 0.15);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
-            transform: translateY(-3px);
+            box-shadow: 0 0 20px var(--neon-cyan);
+            transform: translateY(-2px);
         }
         .btn i { margin-right: 8px; }
 
-        /* Saludo usuario */
-        .user-greeting {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            color: rgba(255,255,255,0.9);
-        }
-        .user-greeting strong { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
-
-        /*  FOOTER / PIE DE PÁGINA */
+        /*  FOOTER TRANSPARENTE (Sin franja negra) */
         .footer {
             width: 100%;
-            padding: 25px 20px;
+            padding: 20px;
             text-align: center;
-            background: rgba(0, 0, 0, 0.85);
-            border-top: 1px solid rgba(0, 229, 238, 0.2);
             z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            position: absolute; /* Flota al fondo */
+            bottom: 0;
+            left: 0;
+            background: transparent; /* Sin fondo negro */
         }
         .footer-text {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.8);
             font-family: 'Rajdhani', sans-serif;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8); /* Sombra para leerse bien */
         }
-        /* By B-U4ALL con parpadeo neón */
+        /* By B-U4ALL Neon Flash */
         .byline-flash {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             color: var(--neon-cyan);
             text-transform: uppercase;
             letter-spacing: 2px;
-            animation: neonFlash 2s infinite alternate;
-            cursor: default;
+            margin-top: 5px;
+            animation: neonFlash 1.5s infinite alternate;
+            text-shadow: 0 0 5px var(--neon-cyan);
         }
         @keyframes neonFlash {
             0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
                 opacity: 1;
-                text-shadow: 0 0 5px var(--neon-cyan), 0 0 15px var(--neon-cyan), 0 0 30px rgba(0, 229, 238, 0.5);
+                text-shadow: 0 0 5px var(--neon-cyan), 0 0 15px var(--neon-cyan);
             }
             20%, 24%, 55% {
                 opacity: 0.4;
                 text-shadow: none;
             }
         }
-
-        @media (max-width: 600px) {
-            .btn-group { flex-direction: column; align-items: center; }
-            .btn { width: 100%; max-width: 280px; }
-        }
     </style>
 </head>
 <body>
+    <!-- Fondo -->
     <div class="cyber-bg"></div>
     <div class="cyber-grid"></div>
-    <div class="scanlines"></div>
+    
+    <!-- Burbujas generadas por JS -->
+    <div class="particles" id="particles"></div>
 
+    <!-- Contenido Central -->
     <main class="hero">
-        <!-- ✨ LOGO -->
         <h1 class="logo">
             BARBER<span>HUB</span>
         </h1>
         
-        <!--  CONTENIDO DINÁMICO (LOGIN/PERFIL) -->
-        <div id="auth-container"></div>
+        <div id="auth-container">
+            <!-- Se carga dinámicamente -->
+        </div>
     </main>
 
-    <!--  PIE DE PÁGINA -->
+    <!-- Pie de Página Transparente -->
     <footer class="footer">
         <p class="footer-text">© 2026 Todos los derechos reservados</p>
         <p class="byline-flash">by B-U4ALL</p>
@@ -248,7 +242,22 @@
 
     <script src="config.js"></script>
     <script>
-        // 🔐 Auth Check (Sin redirección forzada)
+        // ✨ Crear Burbujas / Partículas
+        function createParticles() {
+            const container = document.getElementById('particles');
+            // Aumentamos cantidad de burbujas para que se vea "vivo"
+            for(let i = 0; i < 40; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.animationDuration = (8 + Math.random() * 7) + 's'; // Velocidad variada
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+
+        // 🔐 Auth Check
         (async () => {
             const box = document.getElementById('auth-container');
             try {
@@ -256,20 +265,20 @@
                 if(session?.user) {
                     const name = session.user.user_metadata?.nombre || session.user.email?.split('@')[0] || 'Usuario';
                     box.innerHTML = `
-                        <p class="user-greeting">👋 Hola, <strong>${name}</strong></p>
+                        <p style="font-size:1.2rem; margin-bottom:20px; text-shadow:0 0 10px black;">👋 Hola, <strong style="color:var(--neon-cyan)">${name}</strong></p>
                         <div class="btn-group">
-                            <a href="mi-perfil.html" class="btn btn-primary"><i class="fas fa-user"></i> Mi Perfil</a>
-                            <a href="explorar.html" class="btn btn-secondary"><i class="fas fa-compass"></i> Explorar</a>
+                            <a href="mi-perfil.html" class="btn"><i class="fas fa-user"></i> Mi Perfil</a>
+                            <a href="explorar.html" class="btn"><i class="fas fa-compass"></i> Explorar</a>
                         </div>`;
                 } else {
                     box.innerHTML = `
                         <div class="btn-group">
-                            <a href="auth.html?mode=login" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
-                            <a href="auth.html?mode=register" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Registrarse</a>
+                            <a href="auth.html?mode=login" class="btn"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                            <a href="auth.html?mode=register" class="btn"><i class="fas fa-user-plus"></i> Registrarse</a>
                         </div>`;
                 }
             } catch(e) {
-                box.innerHTML = `<div class="btn-group"><a href="auth.html?mode=login" class="btn btn-primary">Iniciar Sesión</a><a href="auth.html?mode=register" class="btn btn-secondary">Registrarse</a></div>`;
+                console.error(e);
             }
         })();
     </script>
