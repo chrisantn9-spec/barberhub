@@ -94,48 +94,25 @@
   </nav>
 
   <script src="config.js"></script>
-  <script>
-    const barbers = [
-      { id: 1, name: "CyberCuts Studio", location: "Centro, Madrid", rating: 4.9, price: "$15", img: "https://placehold.co/400x300/111/00f2ff?text=CyberCuts", services: ["Corte","Barba","Cejas"] },
-      { id: 2, name: "Neon Barber Shop", location: "Malasaña, Madrid", rating: 4.8, price: "$18", img: "https://placehold.co/400x300/111/ff00ff?text=Neon", services: ["Fade","Barba"] },
-      { id: 3, name: "Urban Blade", location: "Lavapiés, Madrid", rating: 4.7, price: "$14", img: "https://placehold.co/400x300/111/00ff88?text=Urban", services: ["Clásico","Afeitado"] },
-      { id: 4, name: "Razor & Code", location: "Chueca, Madrid", rating: 5.0, price: "$20", img: "https://placehold.co/400x300/111/ffaa00?text=Razor", services: ["Premium","Barba"] }
-    ];
-
-    function render(list) {
-      const c = document.getElementById('barbers-list');
-      c.innerHTML = '';
-      list.forEach((b,i) => {
-        const card = document.createElement('div');
-        card.className = 'barber-card';
-        card.style.animationDelay = `${i*0.1}s`;
-        card.innerHTML = `
-          <div class="card-img-wrap"><img src="${b.img}" class="card-img"><button class="fav-btn" onclick="event.stopPropagation();this.querySelector('i').classList.toggle('fas');this.querySelector('i').classList.toggle('far');"><i class="far fa-heart"></i></button></div>
-          <div class="card-body">
-            <div class="card-head"><h3 class="barber-name">${b.name}</h3><div class="rating"><i class="fas fa-star"></i> ${b.rating}</div></div>
-            <p class="location"><i class="fas fa-map-marker-alt"></i> ${b.location}</p>
-            <div class="tags">${b.services.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
-            <div class="card-foot"><span class="price">Desde ${b.price}</span><button class="btn-book">Reservar</button></div>
-          </div>`;
-        c.appendChild(card);
-      });
-    }
-
-    document.getElementById('search-input')?.addEventListener('input', e => {
-      const q = e.target.value.toLowerCase();
-      render(barbers.filter(b => b.name.toLowerCase().includes(q) || b.location.toLowerCase().includes(q)));
-    });
-
+<script>
     (async () => {
-      try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) { window.location.href = 'auth.html'; return; }
-        if (user.user_metadata?.role === 'barbero') { window.location.href = 'admin.html'; return; }
-      } catch { window.location.href = 'auth.html'; }
+        try {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            
+            if (session?.user) {
+                // Si YA está logueado, lo enviamos a su panel según su rol
+                const role = session.user.user_metadata?.role;
+                window.location.href = role === 'barbero' ? 'admin.html' : 'mi-perfil.html';
+                return;
+            }
+            
+            // Si NO está logueado, NO redirigimos. 
+            // Se queda en index.html mostrando tu landing pública.
+        } catch (err) {
+            console.error("Error verificando sesión:", err);
+        }
     })();
-
-    window.cerrarSesion = async () => { if(confirm('¿Cerrar sesión?')) { await supabaseClient.auth.signOut(); window.location.href = 'auth.html'; } };
-    document.addEventListener('DOMContentLoaded', () => render(barbers));
-  </script>
+</script>
+  
 </body>
 </html>
