@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inicio - BarberHub</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- 🔝 HEADER -->
+  <header class="app-header">
+    <div class="header-top">
+      <h1 class="logo-text">Barber<span class="cyan">Hub</span></h1>
+      <button class="icon-btn" onclick="cerrarSesion()" title="Cerrar sesión">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+    <div class="search-bar">
+      <i class="fas fa-search"></i>
+      <input type="text" id="search-input" placeholder="Buscar barbero, estilo o ubicación...">
+    </div>
+  </header>
+
+  <!-- 🏷️ FILTROS -->
+  <div class="filter-scroller">
+    <div class="chip active">🔥 Tendencias</div>
+    <div class="chip">✂️ Cortes</div>
+    <div class="chip">🪒 Barba</div>
+    <div class="chip">📍 Cerca de ti</div>
+    <div class="chip">⭐ Mejor valorados</div>
+  </div>
+
+  <!-- 📱 CONTENIDO PRINCIPAL -->
+  <main class="feed-container">
+
+    <!-- 💰 PRECIOS -->
+    <section class="prices-section">
+      <div class="section-header">
+        <i class="fas fa-coins" style="color: var(--neon-pink);"></i>
+        <h3>Precios Base</h3>
+      </div>
+      <div class="prices-grid">
+        <div class="price-item-cyber"><span class="price-name">Corte Clásico</span><span class="price-value">$15</span></div>
+        <div class="price-item-cyber"><span class="price-name">Barba Completa</span><span class="price-value">$10</span></div>
+        <div class="price-item-cyber"><span class="price-name">Corte + Barba</span><span class="price-value">$22</span></div>
+        <div class="price-item-cyber"><span class="price-name">Afeitado Clásico</span><span class="price-value">$12</span></div>
+        <div class="price-item-cyber"><span class="price-name">Cejas</span><span class="price-value">$5</span></div>
+      </div>
+    </section>
+
+    <!-- 🔥 BARBEROS -->
+    <h2 class="section-title-cyber">
+      <i class="fas fa-fire" style="color: #ff6600;"></i> Barberos Destacados
+    </h2>
+    
+    <div class="barber-grid" id="barbers-list">
+      <!-- Se genera con JavaScript -->
+    </div>
+
+  </main>
+
+  <!-- 📍 MENÚ INFERIOR (4 BOTONES) -->
+  <nav class="bottom-nav">
+    <a href="inicio.html" class="nav-link active">
+      <i class="fas fa-home"></i>
+      <span>Inicio</span>
+    </a>
+    <a href="explorar.html" class="nav-link">
+      <i class="fas fa-compass"></i>
+      <span>Explorar</span>
+    </a>
+    <a href="mis-citas.html" class="nav-link">
+      <i class="fas fa-calendar-check"></i>
+      <span>Citas</span>
+    </a>
+    <a href="mi-perfil.html" class="nav-link">
+      <i class="fas fa-user"></i>
+      <span>Perfil</span>
+    </a>
+  </nav>
+
+  <!-- ⚡ LÓGICA -->
+  <script src="config.js"></script>
+  <script>
+    const barbers = [
+      { id: 1, name: "CyberCuts Studio", location: "Centro, Madrid", rating: 4.9, price: "$15", img: "https://placehold.co/400x300/111/00f2ff?text=CyberCuts", services: ["Corte", "Barba", "Cejas"] },
+      { id: 2, name: "Neon Barber Shop", location: "Malasaña, Madrid", rating: 4.8, price: "$18", img: "https://placehold.co/400x300/111/ff00ff?text=Neon", services: ["Corte Fade", "Barba Completa"] },
+      { id: 3, name: "Urban Blade", location: "Lavapiés, Madrid", rating: 4.7, price: "$14", img: "https://placehold.co/400x300/111/00ff88?text=Urban", services: ["Corte Clásico", "Afeitado"] },
+      { id: 4, name: "Razor & Code", location: "Chueca, Madrid", rating: 5.0, price: "$20", img: "https://placehold.co/400x300/111/ffaa00?text=Razor", services: ["Corte Premium", "Barba"] },
+      { id: 5, name: "Classic Cuts", location: "Salamanca, Madrid", rating: 4.6, price: "$16", img: "https://placehold.co/400x300/111/ff6666?text=Classic", services: ["Corte Tradicional", "Barba"] },
+      { id: 6, name: "Blade Masters", location: "Arganzuela, Madrid", rating: 4.9, price: "$17", img: "https://placehold.co/400x300/111/66ccff?text=Blade", services: ["Corte Moderno", "Barba", "Cejas"] }
+    ];
+
+    function renderBarbers(list) {
+      const container = document.getElementById('barbers-list');
+      if (!container) return;
+      container.innerHTML = '';
+      list.forEach((barber, index) => {
+        const card = document.createElement('div');
+        card.className = 'barber-card';
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.innerHTML = `
+          <div class="card-image-wrapper">
+            <img src="${barber.img}" alt="${barber.name}" class="card-image">
+            <button class="fav-btn" onclick="toggleFavorite(event)"><i class="far fa-heart"></i></button>
+          </div>
+          <div class="card-content">
+            <div class="card-header">
+              <h3 class="barber-name">${barber.name}</h3>
+              <div class="rating"><i class="fas fa-star"></i> ${barber.rating}</div>
+            </div>
+            <p class="location"><i class="fas fa-map-marker-alt"></i> ${barber.location}</p>
+            <div class="services-tags">
+              ${barber.services.map(s => `<span class="service-tag">${s}</span>`).join('')}
+            </div>
+            <div class="card-footer">
+              <span class="price">Desde ${barber.price}</span>
+              <button class="btn-book">Reservar</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    window.toggleFavorite = (event) => {
+      event.stopPropagation();
+      const icon = event.currentTarget.querySelector('i');
+      if (icon.classList.contains('far')) {
+        icon.classList.replace('far', 'fas');
+        icon.style.color = '#ff00ff';
+      } else {
+        icon.classList.replace('fas', 'far');
+        icon.style.color = '';
+      }
+    };
+
+    document.getElementById('search-input')?.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      const filtered = barbers.filter(b => b.name.toLowerCase().includes(q) || b.location.toLowerCase().includes(q));
+      renderBarbers(filtered);
+    });
+
+    // ✅ Verificar sesión limpia (sin bucles)
+    (async () => {
+      try {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) { window.location.href = 'auth.html'; return; }
+        if (user.user_metadata?.role === 'barbero') {
+          window.location.href = 'admin.html';
+        }
+      } catch (e) { window.location.href = 'auth.html'; }
+    })();
+
+    window.cerrarSesion = async () => {
+      if (confirm('¿Cerrar sesión?')) {
+        await supabaseClient.auth.signOut();
+        window.location.href = 'auth.html';
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => renderBarbers(barbers));
+  </script>
+</body>
+</html>
