@@ -11,7 +11,6 @@
         :root {
             --neon-cyan: #00E5EE;
             --neon-pink: #ff00ff;
-            --neon-purple: #bc13fe;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -74,13 +73,11 @@
             pointer-events: none;
         }
 
-        /* 📰 HEADER - ACTUALIZADO */
+        /* 📰 HEADER LIMPIO */
         .header {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 20px 40px;
+            top: 0; left: 0; right: 0;
+            padding: 18px 40px;
             background: rgba(0,0,0,0.6);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(0, 229, 238, 0.2);
@@ -98,14 +95,6 @@
         }
         .header-logo span { color: var(--neon-cyan); }
         
-        /* Botones del header */
-        .header-nav {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        /* Botón Mi Perfil */
         .btn-perfil {
             padding: 8px 20px;
             background: transparent;
@@ -128,47 +117,17 @@
             box-shadow: 0 0 20px var(--neon-cyan);
             transform: translateY(-2px);
         }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .user-name {
-            color: rgba(255,255,255,0.9);
-            font-weight: 600;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-        }
-        .btn-logout {
-            padding: 8px 20px;
-            background: transparent;
-            border: 1px solid var(--neon-pink);
-            color: var(--neon-pink);
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            transition: 0.3s;
-        }
-        .btn-logout:hover {
-            background: var(--neon-pink);
-            color: #fff;
-            box-shadow: 0 0 15px var(--neon-pink);
-        }
 
         /* 📦 CONTENIDO PRINCIPAL */
         .main-content {
-            margin-top: 100px;
+            margin-top: 90px;
             padding: 40px;
             max-width: 1400px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        /*  SECCIONES */
-        .section {
-            margin-bottom: 60px;
-        }
+        .section { margin-bottom: 60px; }
         .section-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.8rem;
@@ -180,19 +139,15 @@
             align-items: center;
             gap: 12px;
         }
-        .section-title i {
-            color: var(--neon-pink);
-            text-shadow: 0 0 10px var(--neon-pink);
-        }
+        .section-title i { color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink); }
 
-        /* 📰 GRID DE TARJETAS */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 25px;
         }
 
-        /* 🎴 TARJETA TOTALMENTE TRANSPARENTE */
+        /* 🎴 TARJETAS TRANSPARENTES */
         .card {
             background: transparent;
             border: 1.5px solid rgba(0, 229, 238, 0.4);
@@ -203,127 +158,88 @@
         .card:hover {
             transform: translateY(-5px);
             border-color: var(--neon-cyan);
-            box-shadow: 
-                0 0 20px rgba(0, 229, 238, 0.4),
-                0 0 40px rgba(0, 229, 238, 0.2),
-                inset 0 0 20px rgba(0, 229, 238, 0.05);
+            box-shadow: 0 0 20px rgba(0, 229, 238, 0.4), 0 0 40px rgba(0, 229, 238, 0.2), inset 0 0 20px rgba(0, 229, 238, 0.05);
         }
         .card-image {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
+            width: 100%; height: 220px; object-fit: cover;
             border-bottom: 2px solid rgba(0, 229, 238, 0.4);
         }
-        .card-content {
-            padding: 20px;
-        }
+        .card-content { padding: 20px; }
         .card-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #fff;
-            text-shadow: 
-                0 0 5px rgba(0, 229, 238, 0.8),
-                0 0 10px rgba(0, 229, 238, 0.6),
-                0 0 20px rgba(0, 229, 238, 0.4),
-                0 2px 4px rgba(0,0,0,0.9);
+            font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 700;
+            margin-bottom: 10px; color: #fff;
+            text-shadow: 0 0 5px rgba(0, 229, 238, 0.8), 0 0 10px rgba(0, 229, 238, 0.6), 0 0 20px rgba(0, 229, 238, 0.4), 0 2px 4px rgba(0,0,0,0.9);
         }
         .card-text {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            text-shadow: 
-                0 1px 3px rgba(0,0,0,0.95),
-                0 2px 6px rgba(0,0,0,0.8);
+            color: rgba(255, 255, 255, 0.95); font-size: 0.9rem; line-height: 1.6; margin-bottom: 15px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.95), 0 2px 6px rgba(0,0,0,0.8);
         }
-        .card-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-        }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
         .card-tag {
-            background: rgba(0, 229, 238, 0.25);
-            color: var(--neon-cyan);
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            font-weight: 700;
-            border: 1px solid rgba(0, 229, 238, 0.5);
-            text-shadow: 0 0 8px rgba(0, 229, 238, 0.6);
+            background: rgba(0, 229, 238, 0.25); color: var(--neon-cyan); padding: 4px 12px; border-radius: 6px;
+            font-family: 'Orbitron', sans-serif; font-size: 0.7rem; font-weight: 700;
+            border: 1px solid rgba(0, 229, 238, 0.5); text-shadow: 0 0 8px rgba(0, 229, 238, 0.6);
         }
-        .card-meta span {
-            color: rgba(255, 255, 255, 0.85);
-            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-        }
-        .card-meta i {
-            color: var(--neon-pink);
-            margin-right: 5px;
-            text-shadow: 0 0 8px rgba(255, 0, 255, 0.6);
-        }
+        .card-meta span { color: rgba(255, 255, 255, 0.85); text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
+        .card-meta i { color: var(--neon-pink); margin-right: 5px; text-shadow: 0 0 8px rgba(255, 0, 255, 0.6); }
 
-        /* 🏆 CARD DESTACADA */
         .card.featured {
-            grid-column: span 2;
-            border: 2px solid rgba(255, 0, 255, 0.6);
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.15);
+            grid-column: span 2; border: 2px solid rgba(255, 0, 255, 0.6); box-shadow: 0 0 20px rgba(255, 0, 255, 0.15);
         }
-        .card.featured .card-image {
-            height: 280px;
-            border-bottom: 2px solid var(--neon-pink);
-        }
-        .card.featured:hover {
-            box-shadow: 
-                0 0 30px rgba(255, 0, 255, 0.5),
-                0 0 60px rgba(255, 0, 255, 0.3),
-                inset 0 0 25px rgba(255, 0, 255, 0.1);
-        }
+        .card.featured .card-image { height: 280px; border-bottom: 2px solid var(--neon-pink); }
+        .card.featured:hover { box-shadow: 0 0 30px rgba(255, 0, 255, 0.5), 0 0 60px rgba(255, 0, 255, 0.3), inset 0 0 25px rgba(255, 0, 255, 0.1); }
         .trending-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--neon-pink);
-            color: #fff;
-            padding: 6px 15px;
-            border-radius: 6px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            box-shadow: 
-                0 0 15px var(--neon-pink),
-                0 0 30px rgba(255, 0, 255, 0.4);
-            animation: pulse 2s infinite;
-            text-shadow: 0 0 10px rgba(255,255,255,0.8);
+            position: absolute; top: 15px; right: 15px; background: var(--neon-pink); color: #fff;
+            padding: 6px 15px; border-radius: 6px; font-family: 'Orbitron', sans-serif; font-size: 0.75rem;
+            font-weight: 700; text-transform: uppercase; box-shadow: 0 0 15px var(--neon-pink), 0 0 30px rgba(255, 0, 255, 0.4);
+            animation: pulse 2s infinite; text-shadow: 0 0 10px rgba(255,255,255,0.8);
         }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
-        /* 📱 RESPONSIVE */
         @media (max-width: 768px) {
             .header { padding: 15px 20px; }
-            .header-nav { flex-wrap: wrap; }
-            .main-content { padding: 20px; margin-top: 110px; }
+            .main-content { padding: 20px; margin-top: 80px; }
             .cards-grid { grid-template-columns: 1fr; }
             .card.featured { grid-column: span 1; }
             .section-title { font-size: 1.4rem; }
         }
 
-        /* 🦶 FOOTER */
+        /* 🦶 FOOTER CON BOTÓN DE SALIDA */
         .footer {
             text-align: center;
-            padding: 30px;
-            color: rgba(255,255,255,0.4);
+            padding: 25px 20px;
+            color: rgba(255,255,255,0.5);
             font-size: 0.8rem;
             border-top: 1px solid rgba(0, 229, 238, 0.1);
             margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
         }
         .footer span { color: var(--neon-pink); font-family: 'Orbitron'; font-weight: bold; }
+        
+        .btn-logout-footer {
+            padding: 8px 22px;
+            background: transparent;
+            border: 1px solid rgba(255, 68, 68, 0.6);
+            color: #ff4444;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-logout-footer:hover {
+            background: #ff4444;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.5);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -331,47 +247,31 @@
     <div class="cyber-grid"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- HEADER CON BOTÓN MI PERFIL -->
+    <!-- HEADER LIMPIO: Solo Logo + Mi Perfil -->
     <header class="header">
         <div class="header-logo">BARBER<span>HUB</span></div>
-        <div class="header-nav">
-            <a href="mi-perfil.html" class="btn-perfil">
-                <i class="fas fa-user"></i> Mi Perfil
-            </a>
-            <div class="user-info">
-                <span class="user-name" id="userName">Cargando...</span>
-                <button class="btn-logout" onclick="cerrarSesion()">
-                    <i class="fas fa-sign-out-alt"></i> Salir
-                </button>
-            </div>
-        </div>
+        <a href="mi-perfil.html" class="btn-perfil">
+            <i class="fas fa-user"></i> Mi Perfil
+        </a>
     </header>
 
     <!-- CONTENIDO PRINCIPAL -->
     <main class="main-content">
-        
-        <!-- 🔥 CORTES EN TENDENCIA -->
         <section class="section">
-            <h2 class="section-title">
-                <i class="fas fa-fire"></i>
-                Cortes en Tendencia
-            </h2>
+            <h2 class="section-title"><i class="fas fa-fire"></i> Cortes en Tendencia</h2>
             <div class="cards-grid">
-                <!-- Card Destacada -->
                 <div class="card featured" style="position: relative;">
-                    <span class="trending-badge">🔥 #1 Trending</span>
+                    <span class="trending-badge"> #1 Trending</span>
                     <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800" alt="Corte" class="card-image">
                     <div class="card-content">
                         <h3 class="card-title">Fade Degradé con Diseño</h3>
-                        <p class="card-text">El corte más solicitado del 2026. Degradé perfecto desde los lados con diseños geométricos personalizados en la parte superior.</p>
+                        <p class="card-text">El corte más solicitado del 2026. Degradé perfecto desde los lados con diseños geométricos personalizados.</p>
                         <div class="card-meta">
                             <span><i class="fas fa-heart"></i> 2.4k</span>
                             <span class="card-tag">TRENDING</span>
                         </div>
                     </div>
                 </div>
-
-                <!-- Cards normales -->
                 <div class="card">
                     <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600" alt="Corte" class="card-image">
                     <div class="card-content">
@@ -383,7 +283,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="card">
                     <img src="https://images.unsplash.com/photo-1622286342621-4bd444595b23?w=600" alt="Corte" class="card-image">
                     <div class="card-content">
@@ -395,57 +294,39 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card">
-                    <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600" alt="Corte" class="card-image">
-                    <div class="card-content">
-                        <h3 class="card-title">Texturizado con Capas</h3>
-                        <p class="card-text">Movimiento y volumen natural. Perfecto para cabello medio a largo.</p>
-                        <div class="card-meta">
-                            <span><i class="fas fa-heart"></i> 1.2k</span>
-                            <span class="card-tag">MODERNO</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
-        <!-- 💈 BARBERÍAS DESTACADAS -->
         <section class="section">
-            <h2 class="section-title">
-                <i class="fas fa-store"></i>
-                Barberías Destacadas
-            </h2>
+            <h2 class="section-title"><i class="fas fa-store"></i> Barberías Destacadas</h2>
             <div class="cards-grid">
                 <div class="card">
                     <img src="https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600" alt="Barbería" class="card-image">
                     <div class="card-content">
                         <h3 class="card-title">Neon Cuts Studio</h3>
-                        <p class="card-text">📍 Downtown | ⭐ 4.9 (523 reseñas)<br>Especialistas en fades y diseños personalizados. Ambiente cyberpunk.</p>
+                        <p class="card-text"> Downtown | ⭐ 4.9<br>Especialistas en fades y diseños personalizados.</p>
                         <div class="card-meta">
                             <span><i class="fas fa-clock"></i> Abierto ahora</span>
                             <span class="card-tag">PREMIUM</span>
                         </div>
                     </div>
                 </div>
-
                 <div class="card">
                     <img src="https://images.unsplash.com/photo-1633681926022-84c23e8cb4d6?w=600" alt="Barbería" class="card-image">
                     <div class="card-content">
                         <h3 class="card-title">Blade & Fade Co.</h3>
-                        <p class="card-text">📍 Midtown | ⭐ 4.8 (389 reseñas)<br>Barberos de élite con 10+ años de experiencia. Cita recomendada.</p>
+                        <p class="card-text">📍 Midtown | ⭐ 4.8<br>Barberos de élite con 10+ años de experiencia.</p>
                         <div class="card-meta">
                             <span><i class="fas fa-clock"></i> Cierra 8PM</span>
                             <span class="card-tag">TOP RATED</span>
                         </div>
                     </div>
                 </div>
-
                 <div class="card">
                     <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600" alt="Barbería" class="card-image">
                     <div class="card-content">
                         <h3 class="card-title">Urban Style Barbers</h3>
-                        <p class="card-text">📍 Uptown | ⭐ 4.7 (267 reseñas)<br>Estilo urbano y cortes modernos. Precios accesibles.</p>
+                        <p class="card-text">📍 Uptown | ⭐ 4.7<br>Estilo urbano y cortes modernos.</p>
                         <div class="card-meta">
                             <span><i class="fas fa-clock"></i> Abierto 24/7</span>
                             <span class="card-tag">POPULAR</span>
@@ -455,42 +336,36 @@
             </div>
         </section>
 
-        <!-- 📰 NOTICIAS DE MODA -->
         <section class="section">
-            <h2 class="section-title">
-                <i class="fas fa-newspaper"></i>
-                Noticias de Moda
-            </h2>
+            <h2 class="section-title"><i class="fas fa-newspaper"></i> Noticias de Moda</h2>
             <div class="cards-grid">
                 <div class="card">
                     <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=600" alt="Noticia" class="card-image">
                     <div class="card-content">
                         <h3 class="card-title">Tendencias 2026: Vuelve el Mullet</h3>
-                        <p class="card-text">El corte de los 80s regresa con fuerza. Versiones modernas con degradés y texturas actualizadas.</p>
+                        <p class="card-text">El corte de los 80s regresa con fuerza. Versiones modernas actualizadas.</p>
                         <div class="card-meta">
                             <span><i class="fas fa-calendar"></i> Hace 2 días</span>
                             <span class="card-tag">MODA</span>
                         </div>
                     </div>
                 </div>
-
                 <div class="card">
                     <img src="https://images.unsplash.com/photo-1521369909029-2afed882baee?w=600" alt="Noticia" class="card-image">
                     <div class="card-content">
                         <h3 class="card-title">Colores Neón: La Nueva Ola</h3>
-                        <p class="card-text">Tintes en azul eléctrico, rosa neón y verde cian dominan las pasarelas urbanas.</p>
+                        <p class="card-text">Tintes en azul eléctrico, rosa neón y verde cian dominan la escena.</p>
                         <div class="card-meta">
                             <span><i class="fas fa-calendar"></i> Hace 5 días</span>
                             <span class="card-tag">COLOR</span>
                         </div>
                     </div>
                 </div>
-
                 <div class="card">
                     <img src="https://images.unsplash.com/photo-1493256338651-d82f7acb2b38?w=600" alt="Noticia" class="card-image">
                     <div class="card-content">
                         <h3 class="card-title">Barba Perfecta: Guía 2026</h3>
-                        <p class="card-text">Los expertos revelan los secretos para mantener una barba saludable y con estilo.</p>
+                        <p class="card-text">Secretos expertos para mantener una barba saludable y con estilo.</p>
                         <div class="card-meta">
                             <span><i class="fas fa-calendar"></i> Hace 1 semana</span>
                             <span class="card-tag">GROOMING</span>
@@ -499,11 +374,14 @@
                 </div>
             </div>
         </section>
-
     </main>
 
+    <!-- FOOTER CON CERRAR SESIÓN -->
     <footer class="footer">
         <p>© 2026 All Rights Reserved | by <span>B-U4ALL</span></p>
+        <button class="btn-logout-footer" onclick="cerrarSesion()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
     </footer>
 
     <script src="config.js"></script>
@@ -522,7 +400,7 @@
         }
         createParticles();
 
-        // 🔐 Verificar sesión
+        // 🔐 Verificar sesión (sin mostrar nombre)
         (async () => {
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
@@ -530,10 +408,6 @@
                     window.location.href = 'auth.html';
                     return;
                 }
-                
-                const user = session.user;
-                const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario';
-                document.getElementById('userName').textContent = `Hola, ${nombre}`;
             } catch (err) {
                 console.error('Error:', err);
                 window.location.href = 'auth.html';
