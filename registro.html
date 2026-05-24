@@ -6,499 +6,191 @@
   <title>Registro | BarberHub</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <style>
-    :root {
-      --neon-cyan: #00E5EE;
-    }
-
+    :root { --neon-cyan: #00E5EE; --neon-pink: #ff00ff; }
     body {
-      overflow-x: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      background: #050505;
-      font-family: 'Inter', sans-serif;
+      margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: #050505; font-family: 'Inter', sans-serif; color: #fff;
+      background-image: linear-gradient(180deg, rgba(5,5,5,0.95), rgba(10,10,20,0.98));
     }
-
-    /* 🌌 FONDO ANIMADO */
-    .bg-text-layer {
-      position: fixed;
-      top: -10%; left: -10%;
-      width: 120%; height: 120%;
-      z-index: -2;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-content: center;
-      gap: 40px;
-      transform: rotate(-15deg);
-      pointer-events: none;
-      opacity: 0.4;
+    .card {
+      background: rgba(15,15,25,0.9); backdrop-filter: blur(20px);
+      border: 1px solid var(--neon-cyan); border-radius: 20px;
+      padding: 40px 30px; max-width: 450px; width: 90%;
+      box-shadow: 0 0 40px rgba(0,229,238,0.2);
     }
+    .brand { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: 900; letter-spacing: 3px; margin-bottom: 10px; text-align: center; }
+    .brand .b { color: #fff; } .brand .h { color: var(--neon-cyan); text-shadow: 0 0 15px var(--neon-cyan); }
+    .subtitle { color: #aaa; margin-bottom: 30px; text-align: center; }
     
-    .bg-text-layer span {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 4vw;
-      font-weight: 900;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(0, 229, 238, 0.2);
-      white-space: nowrap;
-    }
-
-    .bg-light-beam {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1;
-      background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(0, 229, 238, 0.1) 50%, transparent 55%, transparent 100%);
-      animation: sweepLight 6s linear infinite;
-      pointer-events: none;
-    }
-    
-    @keyframes sweepLight {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-
-    /* 💎 TARJETA DE REGISTRO */
-    .register-card {
-      background: rgba(15, 15, 20, 0.95);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(0, 229, 238, 0.3);
-      border-radius: 20px;
-      padding: 40px 30px;
-      width: 90%;
-      max-width: 460px;
-      text-align: center;
-      position: relative;
-      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 229, 238, 0.05);
-      animation: floatCard 6s ease-in-out infinite;
-      z-index: 10;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    
-    .register-card::-webkit-scrollbar { width: 6px; }
-    .register-card::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 3px; }
-
-    @keyframes floatCard {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
-
-    /* ✨ TÍTULO SIMPLE (Sin efecto glitch) */
-    .card-brand {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
-      font-weight: 900;
-      letter-spacing: 3px;
-      margin-bottom: 10px;
-      display: inline-block;
-    }
-
-    .word-barber { 
-      color: #ffffff; 
-    }
-    
-    .word-hub {
-      color: var(--neon-cyan);
-      text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan), 0 0 40px rgba(0, 229, 238, 0.8);
-      animation: hubPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes hubPulse {
-      0%, 100% { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan); }
-      50% { text-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan); }
-    }
-
-    .register-subtitle { color: #aaa; font-size: 0.95rem; margin-bottom: 20px; }
-
-    /* 🔘 SELECTOR DE ROL */
-    .role-selector {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      padding: 4px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+    .role-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
     .role-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: transparent;
-      color: #888;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
+      padding: 20px; border: 2px solid rgba(255,255,255,0.1); border-radius: 16px;
+      background: rgba(255,255,255,0.03); color: #fff; cursor: pointer;
+      transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 10px;
     }
-    .role-btn.active {
-      background: var(--neon-cyan);
-      color: #000;
-      box-shadow: 0 0 15px rgba(0, 229, 238, 0.5);
+    .role-btn:hover, .role-btn.active {
+      border-color: var(--neon-cyan); background: rgba(0,229,238,0.1);
+      box-shadow: 0 0 20px rgba(0,229,238,0.3); transform: translateY(-3px);
     }
-
-    /* Inputs */
-    .input-group { text-align: left; margin-bottom: 15px; }
+    .role-btn i { font-size: 2rem; color: var(--neon-cyan); }
+    .role-btn span { font-weight: 600; font-size: 1rem; }
+    
+    .input-group { margin-bottom: 15px; }
     .input-group input {
-      width: 100%;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      color: #fff;
-      box-sizing: border-box;
+      width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05); color: #fff; font-size: 1rem; box-sizing: border-box;
     }
-    .input-group input:focus {
-      border-color: var(--neon-cyan);
-      outline: none;
-      box-shadow: 0 0 10px rgba(0, 229, 238, 0.2);
+    .input-group input:focus { border-color: var(--neon-cyan); outline: none; box-shadow: 0 0 15px rgba(0,229,238,0.2); }
+    
+    .btn-register {
+      width: 100%; padding: 16px; border: none; border-radius: 12px;
+      background: var(--neon-cyan); color: #000; font-weight: 700; font-size: 1rem;
+      cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;
     }
-
-    /* Campos de Barbero */
-    .barber-fields {
-      display: none;
-      animation: fadeIn 0.3s ease;
-      border-top: 1px dashed rgba(255,255,255,0.1);
-      padding-top: 15px;
-      margin-bottom: 15px;
+    .btn-register:hover { background: #fff; box-shadow: 0 0 30px rgba(255,255,255,0.6); transform: translateY(-2px); }
+    .btn-register:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    
+    #msg { margin-top: 15px; padding: 10px; border-radius: 8px; font-size: 0.9rem; display: none; }
+    #msg.err { background: rgba(255,0,0,0.1); color: #ff5555; border: 1px solid #ff5555; }
+    #msg.ok { background: rgba(0,255,0,0.1); color: #00ff88; border: 1px solid #00ff88; }
+    
+    .divider { margin: 20px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1); position: relative; }
+    .divider span {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      background: rgba(15,15,25,0.9); padding: 0 15px; color: #888; font-size: 0.8rem;
     }
-    .barber-fields.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* ✅ CASILLA DE TÉRMINOS */
-    .terms-container {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      text-align: left;
-      margin-bottom: 20px;
-      padding: 10px;
-      background: rgba(255,255,255,0.02);
-      border-radius: 8px;
+    
+    .btn-google {
+      width: 100%; padding: 14px; border: 1px solid var(--neon-pink); border-radius: 12px;
+      background: transparent; color: var(--neon-pink); font-weight: 700; cursor: pointer;
+      transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
     }
-    .terms-container input[type="checkbox"] {
-      margin-top: 4px;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--neon-cyan);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .terms-text {
-      font-size: 0.8rem;
-      color: #aaa;
-      line-height: 1.4;
-    }
-    .terms-text a { 
-      color: var(--neon-cyan); 
-      text-decoration: underline;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .terms-text a:hover { text-shadow: 0 0 8px var(--neon-cyan); }
-
-    /* Botón Principal */
-    .btn-register-main {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      background: var(--neon-cyan);
-      color: #000;
-      box-shadow: 0 0 20px rgba(0, 229, 238, 0.4);
-      transition: all 0.3s;
-      text-transform: uppercase;
-    }
-    .btn-register-main:hover { background: #fff; transform: translateY(-2px); }
-    .btn-register-main:disabled { opacity: 0.5; cursor: not-allowed; transform: none; background: #555; }
-
-    /* Mensajes */
-    #msg { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 0.85rem; display: none; }
-    #msg.err { background: rgba(255, 0, 0, 0.1); color: #ff5555; border: 1px solid #ff5555; }
-    #msg.ok { background: rgba(0, 255, 0, 0.1); color: #00ff88; border: 1px solid #00ff88; }
-
-    .login-link { margin-top: 20px; font-size: 0.9rem; color: #888; }
+    .btn-google:hover { background: rgba(255,0,255,0.1); box-shadow: 0 0 20px rgba(255,0,255,0.4); }
+    
+    .login-link { margin-top: 20px; text-align: center; font-size: 0.9rem; color: #888; }
     .login-link a { color: var(--neon-cyan); text-decoration: none; }
-
-    /* 📜 MODAL DE TÉRMINOS */
-    .terms-modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      backdrop-filter: blur(8px);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      animation: fadeInModal 0.3s ease;
-    }
-    .terms-modal.active { display: flex; }
-    @keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
-
-    .terms-modal-content {
-      background: rgba(15, 15, 20, 0.98);
-      border: 2px solid var(--neon-cyan);
-      border-radius: 20px;
-      max-width: 650px;
-      width: 100%;
-      max-height: 80vh;
-      overflow-y: auto;
-      position: relative;
-      box-shadow: 0 0 50px rgba(0, 229, 238, 0.3);
-      animation: slideUp 0.3s ease;
-    }
-    @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-    .terms-modal-content::-webkit-scrollbar { width: 8px; }
-    .terms-modal-content::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
-    .terms-modal-content::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; box-shadow: 0 0 10px var(--neon-cyan); }
-
-    .terms-modal-header {
-      background: linear-gradient(135deg, rgba(0, 229, 238, 0.2), rgba(0, 229, 238, 0.05));
-      padding: 25px;
-      border-bottom: 1px solid var(--neon-cyan);
-      position: sticky; top: 0; z-index: 10;
-    }
-    .terms-modal-header h2 {
-      font-family: 'Orbitron', sans-serif;
-      color: var(--neon-cyan);
-      margin: 0; font-size: 1.8rem;
-      text-shadow: 0 0 15px rgba(0, 229, 238, 0.6);
-    }
-    .terms-modal-body { padding: 25px; color: #ccc; line-height: 1.8; font-size: 0.95rem; }
-    .terms-modal-body h3 {
-      color: var(--neon-cyan); font-family: 'Orbitron', sans-serif;
-      margin-top: 25px; margin-bottom: 12px; font-size: 1.2rem;
-      border-left: 3px solid var(--neon-cyan); padding-left: 12px;
-    }
-    .terms-modal-body p { margin-bottom: 15px; text-align: justify; }
-    .terms-modal-body ul { margin: 15px 0; padding-left: 25px; }
-    .terms-modal-body li { margin-bottom: 10px; }
-    .terms-modal-body strong { color: #fff; font-weight: 600; }
-
-    .terms-modal-close {
-      position: absolute; top: 20px; right: 20px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid var(--neon-cyan);
-      color: var(--neon-cyan);
-      width: 40px; height: 40px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 1.2rem; transition: all 0.3s;
-    }
-    .terms-modal-close:hover { background: var(--neon-cyan); color: #000; box-shadow: 0 0 20px var(--neon-cyan); transform: rotate(90deg); }
-
-    .terms-modal-footer { padding: 20px 25px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; background: rgba(0,0,0,0.3); }
-    .terms-modal-footer button {
-      background: var(--neon-cyan); color: #000; border: none; padding: 12px 30px;
-      border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 1rem;
-      box-shadow: 0 0 15px rgba(0, 229, 238, 0.4); transition: all 0.3s;
-    }
-    .terms-modal-footer button:hover { background: #fff; box-shadow: 0 0 25px rgba(255, 255, 255, 0.6); transform: translateY(-2px); }
-
-    @media (max-width: 600px) {
-      .terms-modal-content { max-height: 90vh; margin: 10px; }
-      .terms-modal-header h2 { font-size: 1.4rem; }
-      .terms-modal-body { padding: 20px; font-size: 0.9rem; }
-    }
   </style>
 </head>
 <body>
-
-  <!-- 🌌 FONDO ANIMADO -->
-  <div class="bg-text-layer">
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-  </div>
-  <div class="bg-light-beam"></div>
-
-  <!-- 💎 TARJETA DE REGISTRO -->
-  <div class="register-card">
+  <div class="card">
+    <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
+    <p class="subtitle">Crea tu cuenta gratis</p>
     
-    <!-- ✅ Título simple sin glitch -->
-    <h2 class="card-brand">
-      <span class="word-barber">BARBER</span><span class="word-hub">HUB</span>
-    </h2>
-    <p class="register-subtitle">Crea tu cuenta gratis</p>
-
-    <!-- Selector de Rol -->
+    <!-- SELECTOR DE ROL - OBLIGATORIO -->
     <div class="role-selector">
-      <button type="button" class="role-btn active" id="btn-cliente" onclick="setRole('cliente')">👤 Cliente</button>
-      <button type="button" class="role-btn" id="btn-barbero" onclick="setRole('barbero')">💈 Barbero</button>
+      <button type="button" class="role-btn active" id="btn-cliente" onclick="setRole('cliente')">
+        <i class="fas fa-user"></i>
+        <span>Cliente</span>
+      </button>
+      <button type="button" class="role-btn" id="btn-barbero" onclick="setRole('barbero')">
+        <i class="fas fa-scissors"></i>
+        <span>Barbero</span>
+      </button>
     </div>
-
+    
     <form id="register-form">
       <div class="input-group">
         <input type="text" id="nombre" placeholder="Tu nombre completo" required>
       </div>
-      
       <div class="input-group">
         <input type="email" id="email" placeholder="tu@email.com" required>
       </div>
-      
       <div class="input-group">
-        <input type="password" id="password" placeholder="Contraseña (min 6)" minlength="6" required>
+        <input type="password" id="password" placeholder="Contraseña (mínimo 6 caracteres)" minlength="6" required>
       </div>
-
-      <!-- Campos Extra para Barbero -->
-      <div id="barber-fields" class="barber-fields">
-        <div class="input-group">
-          <input type="text" id="barberia" placeholder="Nombre de tu Barbería">
-        </div>
-        <div class="input-group">
-          <input type="text" id="direccion" placeholder="Dirección del Local">
-        </div>
-      </div>
-
-      <!-- ✅ CASILLA DE TÉRMINOS -->
-      <div class="terms-container">
-        <input type="checkbox" id="terms-check" required>
-        <span class="terms-text">
-          Acepto que soy el único responsable de mis interacciones, citas y transacciones dentro de BarberHub. La plataforma actúa únicamente como intermediario.
-          <br><br>
-          <a href="javascript:void(0)" onclick="openTermsModal()">📄 Leer Términos y Condiciones completos</a>
-        </span>
-      </div>
-
-      <button type="submit" class="btn-register-main" id="btn-register" disabled>
+      
+      <button type="submit" class="btn-register" id="btn-register">
         <i class="fas fa-user-plus"></i> CREAR CUENTA
       </button>
-      
       <div id="msg"></div>
     </form>
-
+    
+    <hr class="divider"><span>O REGÍSTRATE CON</span>
+    <button onclick="registerGoogle()" class="btn-google">
+      <i class="fab fa-google"></i> Google
+    </button>
+    
     <div class="login-link">
       ¿Ya tienes cuenta? <a href="auth.html">Inicia sesión</a>
     </div>
   </div>
 
-  <!-- 📜 MODAL DE TÉRMINOS -->
-  <div id="terms-modal" class="terms-modal">
-    <div class="terms-modal-content">
-      <div class="terms-modal-header">
-        <h2><i class="fas fa-file-contract"></i> Términos y Condiciones</h2>
-        <button class="terms-modal-close" onclick="closeTermsModal()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      
-      <div class="terms-modal-body">
-        <h3>1. Aceptación de los Términos</h3>
-        <p>Al registrarte y utilizar BarberHub, aceptas estar legalmente vinculado por estos Términos y Condiciones.</p>
-
-        <h3>2. Naturaleza de la Plataforma</h3>
-        <p>BarberHub es una <strong>plataforma digital de intermediación</strong>. <strong>No somos proveedores de servicios de peluquería</strong> ni empleadores de los barberos registrados.</p>
-        <ul>
-          <li>Los barberos son profesionales independientes.</li>
-          <li>BarberHub no controla ni garantiza la calidad del servicio prestado.</li>
-        </ul>
-
-        <h3>3. Responsabilidad del Usuario</h3>
-        <p><strong>Al usar BarberHub, aceptas que:</strong></p>
-        <ul>
-          <li>Eres <strong>únicamente responsable</strong> de tus interacciones, citas y transacciones.</li>
-          <li>BarberHub <strong>no se hace responsable</strong> por daños, lesiones o insatisfacción con el servicio del barbero.</li>
-          <li>Debes verificar la reputación y reseñas antes de reservar.</li>
-        </ul>
-
-        <h3>4. Limitación de Responsabilidad</h3>
-        <p>BarberHub opera bajo el principio de "tal cual" (as-is) sin garantías de ningún tipo. <strong>No nos hacemos responsables</strong> por daños directos o indirectos derivados del uso de la plataforma.</p>
-
-        <h3>5. Contacto</h3>
-        <p>Si tienes preguntas, contáctanos en: <strong>soporte@barberhub.com</strong></p>
-      </div>
-      
-      <div class="terms-modal-footer">
-        <button onclick="closeTermsModal()">
-          <i class="fas fa-check"></i> Entendido, cerrar
-        </button>
-      </div>
-    </div>
-  </div>
-
   <script src="config.js"></script>
   <script>
-    let currentRole = 'cliente';
+    let selectedRole = 'cliente';
+    
     window.setRole = (role) => {
-      currentRole = role;
+      selectedRole = role;
       document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById('btn-' + role).classList.add('active');
-      const barberFields = document.getElementById('barber-fields');
-      if (role === 'barbero') { barberFields.classList.add('active'); } else { barberFields.classList.remove('active'); }
     };
-
-    window.openTermsModal = () => {
-      document.getElementById('terms-modal').classList.add('active');
-      document.body.style.overflow = 'hidden';
-    };
-    window.closeTermsModal = () => {
-      document.getElementById('terms-modal').classList.remove('active');
-      document.body.style.overflow = 'auto';
-    };
-    document.getElementById('terms-modal')?.addEventListener('click', (e) => { if (e.target.id === 'terms-modal') closeTermsModal(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeTermsModal(); });
-
-    const termsCheck = document.getElementById('terms-check');
-    const btnReg = document.getElementById('btn-register');
-    if (termsCheck && btnReg) {
-      termsCheck.addEventListener('change', () => { btnReg.disabled = !termsCheck.checked; });
-    }
-
+    
     document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const msg = document.getElementById('msg');
+      const btn = document.getElementById('btn-register');
       const nombre = document.getElementById('nombre').value;
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-
-      if (!termsCheck.checked) {
-        msg.textContent = '⚠️ Debes aceptar los términos de responsabilidad.';
-        msg.className = 'err'; msg.style.display = 'block'; return;
-      }
-
-      btnReg.disabled = true;
-      btnReg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
-
+      
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
+      
       try {
         const { data, error } = await supabaseClient.auth.signUp({
-          email: email, password: password,
-          options: { data: { nombre: nombre, role: currentRole } }
+          email: email,
+          password: password,
+          options: {
+            data: {
+              nombre: nombre,
+              role: selectedRole // ✅ GUARDAMOS EL ROL AQUÍ
+            }
+          }
         });
+        
         if (error) throw error;
-
-        if (currentRole === 'barbero') {
-          const barberia = document.getElementById('barberia').value || nombre + "'s Barbería";
-          const direccion = document.getElementById('direccion').value || 'Sin dirección';
-          await supabaseClient.from('barbers').insert([{ owner_id: data.user.id, name: barberia, location: direccion, phone: '', lat: 0, lng: 0 }]);
+        
+        // Si es barbero, crear entrada en tabla barbers
+        if (selectedRole === 'barbero') {
+          await supabaseClient.from('barbers').insert([{
+            owner_id: data.user.id,
+            name: nombre + "'s Barbería",
+            location: 'Sin dirección',
+            phone: '',
+            lat: 0,
+            lng: 0
+          }]);
         }
-
-        msg.textContent = '✅ Cuenta creada. Revisa tu email.';
+        
+        msg.textContent = '✅ Cuenta creada. Inicia sesión...';
         msg.className = 'ok'; msg.style.display = 'block';
-        setTimeout(() => { window.location.href = 'auth.html'; }, 2500);
-
+        
+        setTimeout(() => {
+          window.location.href = 'auth.html';
+        }, 2000);
+        
       } catch (err) {
-        let errorText = 'Error desconocido';
-        if (err.message.includes('rate limit')) errorText = '⏳ Demasiados intentos. Espera 15 min.';
-        else if (err.message.includes('already registered')) errorText = 'ℹ️ Ese email ya está registrado.';
-        else errorText = '❌ ' + err.message;
-
-        msg.textContent = errorText;
+        msg.textContent = '❌ ' + err.message;
         msg.className = 'err'; msg.style.display = 'block';
-        btnReg.disabled = false;
-        btnReg.innerHTML = '<i class="fas fa-user-plus"></i> CREAR CUENTA';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-user-plus"></i> CREAR CUENTA';
       }
     });
+    
+    window.registerGoogle = async () => {
+      try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: 'google',
+          options: { 
+            redirectTo: window.location.origin + '/complete-profile.html' // Redirige a completar perfil
+          }
+        });
+        if (error) throw error;
+      } catch (err) {
+        alert('Error con Google: ' + err.message);
+      }
+    };
   </script>
 </body>
 </html>
