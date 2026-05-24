@@ -27,13 +27,13 @@
             align-items: center;
         }
 
-        /* 🔥 FONDO: Tu imagen fondobarber.png */
+        /* 🔥 FONDO */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: 
-                linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(5,5,15,0.1) 100%),
+                linear-gradient(135deg, rgba(0,0,0,0.05) 0%, rgba(10,5,20,0.05) 100%), /* Oscurecido casi nulo */
                 url('./fondobarber.png'); 
             background-size: cover;
             background-position: center;
@@ -65,21 +65,26 @@
             100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
         }
 
-        /* 📦 CAJA CRISTAL ULTRA TRANSPARENTE */
+        /*  CAJA CRISTAL (El cambio clave) */
         .auth-card {
             width: 90%;
-            max-width: 400px;
-            /* Solo 8% de oscuridad -> 92% transparente */
-            background: rgba(10, 10, 25, 0.08); 
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 24px;
-            padding: 40px 30px;
+            max-width: 420px;
+            /* Fondo transparente al 99% */
+            background: rgba(255, 255, 255, 0.02); 
+            /* Efecto de vidrio esmerilado */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            /* Bordes de cristal brillante */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.6); /* Borde superior más brillante (luz) */
+            border-left: 1px solid rgba(255, 255, 255, 0.6); /* Borde izquierdo más brillante */
+            border-radius: 25px;
+            padding: 45px 35px;
             text-align: center;
             position: relative;
             z-index: 10;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            /* Sombra externa para dar profundidad 3D */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         /* Logo */
@@ -87,52 +92,53 @@
             font-family: 'Orbitron', sans-serif;
             font-size: 2rem;
             font-weight: 900;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             color: #fff;
-            text-shadow: 0 0 10px rgba(0, 229, 238, 0.6), 0 2px 6px rgba(0,0,0,0.9);
+            /* Sombra fuerte para que se lea sobre el fondo transparente */
+            text-shadow: 0 0 10px rgba(0, 229, 238, 0.8), 0 3px 6px rgba(0,0,0,1);
         }
         .logo-small span { color: var(--neon-cyan); }
 
         /* Inputs */
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: left;
         }
         .input-group label {
             display: block;
             font-size: 0.8rem;
             color: #fff;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-family: 'Orbitron', sans-serif;
             letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+            text-shadow: 0 2px 4px rgba(0,0,0,1); /* Texto flotando */
         }
         .input-group input {
             width: 100%;
-            padding: 12px 15px;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
+            padding: 14px 15px;
+            /* El input sí necesita un fondo oscuro para saber dónde escribes */
+            background: rgba(0, 0, 0, 0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             color: #fff;
             font-family: 'Rajdhani', sans-serif;
             font-size: 1.1rem;
             outline: none;
             transition: 0.3s;
         }
-        .input-group input::placeholder { color: rgba(255,255,255,0.4); }
         .input-group input:focus {
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 12px rgba(0, 229, 238, 0.3);
-            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 15px rgba(0, 229, 238, 0.3);
+            background: rgba(0, 0, 0, 0.6);
         }
 
         /* Botón Enviar */
         .btn-submit {
             width: 100%;
-            padding: 14px;
+            padding: 15px;
             margin-top: 10px;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             background: var(--neon-cyan);
             color: #000;
             font-family: 'Orbitron', sans-serif;
@@ -141,18 +147,18 @@
             text-transform: uppercase;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 229, 238, 0.4);
+            box-shadow: 0 0 20px rgba(0, 229, 238, 0.4);
         }
         .btn-submit:hover {
-            box-shadow: 0 0 30px rgba(0, 229, 238, 0.8);
+            box-shadow: 0 0 40px rgba(0, 229, 238, 0.8);
             transform: translateY(-2px);
         }
 
         /* Links Toggle */
         .toggle-text {
-            margin-top: 20px;
+            margin-top: 25px;
             font-size: 0.9rem;
-            color: rgba(255,255,255,0.85);
+            color: rgba(255,255,255,0.9);
             text-shadow: 0 1px 3px rgba(0,0,0,0.8);
         }
         .toggle-text a {
@@ -160,7 +166,7 @@
             text-decoration: none;
             font-weight: 700;
             cursor: pointer;
-            text-shadow: 0 0 6px rgba(255, 0, 255, 0.4);
+            text-shadow: 0 0 8px rgba(255, 0, 255, 0.6);
         }
 
         /* Mensajes */
@@ -169,7 +175,7 @@
             font-size: 0.9rem;
             font-weight: bold;
             min-height: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+            text-shadow: 0 2px 4px rgba(0,0,0,1);
         }
         .error { color: #ff4444; }
         .success { color: var(--neon-cyan); }
@@ -185,7 +191,7 @@
             font-size: 0.7rem;
             color: rgba(255,255,255,0.6);
             z-index: 10;
-            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+            text-shadow: 0 1px 4px rgba(0,0,0,1);
         }
         .footer span { color: var(--neon-pink); font-family: 'Orbitron'; font-weight: bold; }
     </style>
@@ -194,12 +200,12 @@
     <div class="cyber-bg"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- Caja Cristal -->
+    <!-- Caja Cristal Invisible -->
     <div class="auth-card">
         <h1 class="logo-small">BARBER<span>HUB</span></h1>
         
         <form id="authForm">
-            <h2 id="formTitle" style="margin-bottom: 20px; font-family: 'Orbitron'; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan);">INICIAR SESIÓN</h2>
+            <h2 id="formTitle" style="margin-bottom: 25px; font-family: 'Orbitron'; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan);">INICIAR SESIÓN</h2>
             
             <div class="input-group hidden" id="nameGroup">
                 <label>NOMBRE</label>
