@@ -1,118 +1,108 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio | BarberHub</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root { --neon-cyan: #00E5EE; --neon-pink: #ff00ff; --dark-bg: #050505; --card-bg: rgba(15,15,25,0.9); --glass-border: rgba(0,229,238,0.3); }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { min-height: 100vh; background: var(--dark-bg); font-family: 'Inter', sans-serif; color: #fff; overflow-x: hidden; position: relative; padding-bottom: 80px; }
-    .bg-text-layer { position: fixed; top: -10%; left: -10%; width: 120%; height: 120%; z-index: -2; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 40px; transform: rotate(-15deg); pointer-events: none; opacity: 0.25; }
-    .bg-text-layer span { font-family: 'Orbitron', sans-serif; font-size: 4vw; font-weight: 900; color: transparent; -webkit-text-stroke: 1px rgba(0,229,238,0.2); white-space: nowrap; }
-    .bg-light-beam { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(0,229,238,0.1) 50%, transparent 55%, transparent 100%); animation: sweep 6s linear infinite; pointer-events: none; }
-    @keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-    .app-container { max-width: 900px; margin: 0 auto; padding: 20px; position: relative; z-index: 10; }
-    .app-header { background: rgba(5,5,15,0.95); backdrop-filter: blur(16px); border-bottom: 1px solid var(--glass-border); padding: 15px 20px; position: sticky; top: 0; z-index: 900; display: flex; flex-direction: column; gap: 10px; }
-    .header-top { display: flex; justify-content: space-between; align-items: center; }
-    .logo-text { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700; margin: 0; }
-    .logo-text .cyan { color: var(--neon-cyan); }
-    .icon-btn { background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); color: var(--neon-cyan); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.3s; }
-    .icon-btn:hover { background: var(--neon-cyan); color: #000; }
-    .search-bar { display: flex; align-items: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; padding: 8px 15px; }
-    .search-bar input { flex: 1; background: transparent; border: none; color: #fff; outline: none; font-size: 0.95rem; }
-    .search-bar i { color: var(--neon-cyan); margin-right: 8px; }
-    .filter-scroller { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
-    .filter-scroller::-webkit-scrollbar { display: none; }
-    .chip { padding: 8px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; white-space: nowrap; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
-    .chip.active { background: rgba(0,229,238,0.15); border-color: var(--neon-cyan); color: var(--neon-cyan); }
-    .section-title { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: var(--neon-cyan); margin: 30px 0 15px; display: flex; align-items: center; gap: 10px; }
-    .prices-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .price-item { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-    .price-val { color: var(--neon-cyan); font-weight: 700; }
-    .barber-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
-    .barber-card { background: var(--card-bg); border: 1px solid var(--glass-border); border-radius: 16px; overflow: hidden; transition: 0.3s; cursor: pointer; }
-    .barber-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,229,238,0.2); border-color: var(--neon-cyan); }
-    .card-img-wrap { position: relative; height: 160px; overflow: hidden; }
-    .card-img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-    .barber-card:hover .card-img { transform: scale(1.05); }
-    .fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
-    .card-body { padding: 15px; }
-    .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .barber-name { font-size: 1.05rem; margin: 0; }
-    .rating { color: #ffcc00; font-weight: 600; font-size: 0.85rem; }
-    .location { color: #aaa; font-size: 0.8rem; margin: 0 0 10px; }
-    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-    .tag { background: rgba(0,229,238,0.1); color: var(--neon-cyan); padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; }
-    .card-foot { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; }
-    .price { color: var(--neon-cyan); font-weight: 700; }
-    .btn-book { background: var(--neon-cyan); color: #000; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .btn-book:hover { background: #fff; }
-    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 70px; background: rgba(10,10,20,0.95); backdrop-filter: blur(16px); border-top: 1px solid var(--glass-border); display: flex; justify-content: space-around; align-items: center; z-index: 1000; }
-    .nav-link { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: #666; font-size: 0.7rem; padding: 8px; transition: 0.2s; border-radius: 10px; }
-    .nav-link i { font-size: 1.4rem; margin-bottom: 4px; }
-    .nav-link.active, .nav-link:hover { color: var(--neon-cyan); background: rgba(0,229,238,0.1); }
-    @media (max-width: 600px) { .barber-grid { grid-template-columns: 1fr; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarberHub - Tu estilo, tu momento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* ... tus estilos de landing ... */
+        :root {
+            --neon-cyan: #00E5EE;
+            --dark-bg: #050505;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--dark-bg);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        .hero {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        .hero h1 span { color: var(--neon-cyan); }
+        .hero p {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 40px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            border: 2px solid var(--neon-cyan);
+        }
+        .btn-primary {
+            background: var(--neon-cyan);
+            color: #000;
+        }
+        .btn-primary:hover {
+            box-shadow: 0 0 30px var(--neon-cyan);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--neon-cyan);
+        }
+        .btn-secondary:hover {
+            background: rgba(0,229,238,0.1);
+        }
+    </style>
 </head>
 <body>
-  <div class="bg-text-layer"><span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span></div>
-  <div class="bg-light-beam"></div>
-
-  <header class="app-header">
-    <div class="header-top">
-      <h1 class="logo-text">Barber<span class="cyan">Hub</span></h1>
-      <button class="icon-btn" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i></button>
-    </div>
-    <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="search-input" placeholder="Buscar barbero, estilo o ubicación..."></div>
-  </header>
-
-  <div class="app-container">
-    <div class="filter-scroller">
-      <div class="chip active">🔥 Tendencias</div><div class="chip">✂️ Cortes</div><div class="chip">🪒 Barba</div><div class="chip">📍 Cerca de ti</div><div class="chip">⭐ Mejor valorados</div>
+    <div class="hero">
+        <h1><span>BARBER</span>HUB</h1>
+        <p>Reserva tu cita con los mejores barberos de la ciudad</p>
+        <div class="btn-group" id="auth-buttons">
+            <!-- Los botones se cargan dinámicamente con JS -->
+        </div>
     </div>
 
-    <div class="prices-grid">
-      <div class="price-item"><span>Corte Clásico</span><span class="price-val">$15</span></div>
-      <div class="price-item"><span>Barba Completa</span><span class="price-val">$10</span></div>
-      <div class="price-item"><span>Corte + Barba</span><span class="price-val">$22</span></div>
-      <div class="price-item"><span>Afeitado</span><span class="price-val">$12</span></div>
-      <div class="price-item"><span>Cejas</span><span class="price-val">$5</span></div>
-    </div>
-
-    <h2 class="section-title"><i class="fas fa-fire" style="color:#ff6600"></i> Barberos Destacados</h2>
-    <div class="barber-grid" id="barbers-list"></div>
-  </div>
-
-  <nav class="bottom-nav">
-    <a href="index.html" class="nav-link active"><i class="fas fa-home"></i><span>Inicio</span></a>
-    <a href="explorar.html" class="nav-link"><i class="fas fa-compass"></i><span>Explorar</span></a>
-    <a href="mis-citas.html" class="nav-link"><i class="fas fa-calendar-check"></i><span>Citas</span></a>
-    <a href="mi-perfil.html" class="nav-link"><i class="fas fa-user"></i><span>Perfil</span></a>
-  </nav>
-
-  <script src="config.js"></script>
-<script>
-    (async () => {
-        try {
+    <script src="config.js"></script>
+    <script>
+        // Verificar sesión y mostrar botones apropiados
+        (async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
+            const authButtons = document.getElementById('auth-buttons');
             
             if (session?.user) {
-                // Si YA está logueado, lo enviamos a su panel según su rol
-                const role = session.user.user_metadata?.role;
-                window.location.href = role === 'barbero' ? 'admin.html' : 'mi-perfil.html';
-                return;
+                // Usuario logueado: mostrar botón a perfil
+                authButtons.innerHTML = `
+                    <a href="mi-perfil.html" class="btn btn-primary">
+                        <i class="fas fa-user"></i> Mi Perfil
+                    </a>
+                    <a href="explorar.html" class="btn btn-secondary">
+                        <i class="fas fa-compass"></i> Explorar Barberos
+                    </a>
+                `;
+            } else {
+                // Usuario NO logueado: mostrar login/registro
+                authButtons.innerHTML = `
+                    <a href="auth.html?mode=login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                    </a>
+                    <a href="auth.html?mode=register" class="btn btn-secondary">
+                        <i class="fas fa-user-plus"></i> Registrarse
+                    </a>
+                `;
             }
-            
-            // Si NO está logueado, NO redirigimos. 
-            // Se queda en index.html mostrando tu landing pública.
-        } catch (err) {
-            console.error("Error verificando sesión:", err);
-        }
-    })();
-</script>
-  
+        })();
+    </script>
 </body>
 </html>
