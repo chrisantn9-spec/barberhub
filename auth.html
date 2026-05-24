@@ -3,118 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inicio de Sesión | BarberHub</title>
+  <title>Iniciar Sesión | BarberHub</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- 1. SIEMPRE INICIALIZAR SUPABASE PRIMERO -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <style>
-    /* Estilos rápidos para que se vea bien si falla el style.css */
-    body { background: #050505; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: sans-serif; }
-    .card { background: #111; padding: 40px; border-radius: 20px; border: 1px solid #00E5EE; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 20px rgba(0,229,238,0.2); }
-    h1 { color: #00E5EE; margin-bottom: 10px; font-size: 2rem; }
-    input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: #fff; border-radius: 8px; box-sizing: border-box; }
-    button { width: 100%; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; margin-top: 10px; transition: 0.3s; }
-    .btn-primary { background: #00E5EE; color: #000; }
-    .btn-primary:hover { background: #fff; }
-    .btn-google { background: transparent; border: 1px solid #ff00ff; color: #ff00ff; display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .btn-google:hover { background: rgba(255,0,255,0.1); }
-    .divider { margin: 20px 0; color: #666; font-size: 0.8rem; }
-    .links { margin-top: 20px; font-size: 0.9rem; }
-    .links a { color: #00E5EE; text-decoration: none; margin: 0 10px; }
-  </style>
 </head>
 <body>
-
-  <div class="card">
-    <h1>BARBERHUB</h1>
-    <p style="color: #aaa; margin-bottom: 20px;">Bienvenido de nuevo</p>
-
-    <!-- Formulario Email -->
+  <div class="login-card">
+    <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
+    <p class="subtitle">Bienvenido de nuevo</p>
     <form id="login-form">
-      <input type="email" id="email" placeholder="📧 Correo electrónico" required>
-      <input type="password" id="password" placeholder="🔑 Contraseña" required>
-      <button type="submit" class="btn-primary">INICIAR SESIÓN</button>
+      <div class="input-group"><input type="email" id="email" placeholder="📧 Correo electrónico" required></div>
+      <div class="input-group"><input type="password" id="password" placeholder="🔑 Contraseña" required></div>
+      <button type="submit" class="btn-login-main"><i class="fas fa-bolt"></i> INICIAR SESIÓN</button>
     </form>
-
-    <div class="divider">O CONTINÚA CON</div>
-
-    <!-- Botón Google -->
-    <button onclick="loginGoogle()" class="btn-google">
-      <i class="fab fa-google"></i> Google
-    </button>
-
-    <div class="links">
-      <a href="registro.html">Registrarse</a>
+    <hr class="divider"><span>O CONTINÚA CON</span>
+    <button onclick="loginGoogle()" class="btn-google"><i class="fab fa-google"></i> Google</button>
+    <div class="links-container">
       <a href="recuperar-password.html">¿Olvidaste contraseña?</a>
+      <a href="registro.html">Registrarse</a>
     </div>
   </div>
 
-  <!-- SCRIPT DE CONEXIÓN -->
   <script src="config.js"></script>
   <script>
-    // 1. VERIFICAR SI YA HAY SESIÓN ACTIVA (Ej: justo después de volver de Google)
-    // Esto evita que te quedes pegado en el login si ya iniciaste sesión con Google.
-    supabaseClient.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        // Si hay sesión, te mandamos directo a la página del cliente.
-        // (Si eres barbero, el script de perfil-cliente te redirigirá a admin.html)
-        
-      }
-    });
-
-    // También escuchamos cambios en la autenticación en tiempo real
-    supabaseClient.auth.onAuthStateChange((_event, session) => {
-      if (session) {
-        window.location.href = 'index.html'; // ← cambia 'inicio.html' por esto
-      }
-    });
-
-    // 2. FUNCIÓN PARA GOOGLE
-    window.loginGoogle = async function() {
+    // Redirigir si ya hay sesión
+    (async () => {
       try {
-        const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            // IMPORTANTE: Redirige de vuelta a ESTA misma página (auth.html)
-            // para que el script de arriba pueda atrapar la sesión.
-            redirectTo: window.location.origin + '/auth.html' 
-          }
-        });
-        if (error) throw error;
-      } catch (err) {
-        alert('Error al conectar con Google: ' + err.message);
-      }
-    };
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+          if (user.user_metadata?.role === 'barbero') window.location.href = 'admin.html';
+          else window.location.href = 'index.html';
+        }
+      } catch {}
+    })();
 
-    // 3. FUNCIÓN PARA EMAIL
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
+    document.getElementById('login-form').addEventListener('submit', async e => {
       e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const btn = document.querySelector('.btn-primary');
-
-      btn.innerText = 'Cargando...';
-
+      const btn = document.querySelector('.btn-login-main');
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cargando...';
       try {
         const { error } = await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value
         });
-
-        if (error) {
-          alert('❌ Error: ' + error.message);
-          btn.innerText = 'INICIAR SESIÓN';
-        } else {
-          // Si entra con email, vamos al perfil cliente
-          window.location.href = 'perfil-cliente.html';
-        }
+        if (error) throw error;
+        window.location.href = 'index.html';
       } catch (err) {
-        alert('Error inesperado: ' + err.message);
+        alert('❌ ' + err.message);
+        btn.innerHTML = '<i class="fas fa-bolt"></i> INICIAR SESIÓN';
       }
     });
+
+    window.loginGoogle = async () => {
+      try {
+        await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/index.html' } });
+      } catch (err) { alert('❌ Error Google: ' + err.message); }
+    };
   </script>
 </body>
 </html>
