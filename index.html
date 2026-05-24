@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BarberHub - Tu estilo, tu momento</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* ... tus estilos de landing ... */
         :root {
             --neon-cyan: #00E5EE;
             --dark-bg: #050505;
+            --card-bg: rgba(15,15,25,0.9);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -18,42 +19,51 @@
             color: #fff;
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
-        }
-        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 100px 20px;
+            padding: 20px;
         }
-        .hero h1 {
+        .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
+            font-size: 3.5rem;
+            font-weight: 900;
             margin-bottom: 20px;
+            letter-spacing: 2px;
         }
-        .hero h1 span { color: var(--neon-cyan); }
-        .hero p {
-            font-size: 1.2rem;
+        .logo span { color: var(--neon-cyan); }
+        .subtitle {
+            font-size: 1.3rem;
             color: #aaa;
             margin-bottom: 40px;
+            max-width: 500px;
         }
         .btn-group {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
         }
         .btn {
-            padding: 15px 40px;
+            padding: 14px 35px;
             border-radius: 30px;
             text-decoration: none;
             font-weight: 600;
-            transition: 0.3s;
+            font-size: 1rem;
+            transition: all 0.3s ease;
             border: 2px solid var(--neon-cyan);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         .btn-primary {
             background: var(--neon-cyan);
             color: #000;
         }
         .btn-primary:hover {
-            box-shadow: 0 0 30px var(--neon-cyan);
+            box-shadow: 0 0 25px var(--neon-cyan);
             transform: translateY(-2px);
         }
         .btn-secondary {
@@ -63,43 +73,64 @@
         .btn-secondary:hover {
             background: rgba(0,229,238,0.1);
         }
+        .user-greeting {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        .user-greeting strong { color: var(--neon-cyan); }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1><span>BARBER</span>HUB</h1>
-        <p>Reserva tu cita con los mejores barberos de la ciudad</p>
-        <div class="btn-group" id="auth-buttons">
-            <!-- Los botones se cargan dinámicamente con JS -->
-        </div>
+    <div class="logo">BARBER<span>HUB</span></div>
+    <p class="subtitle">Reserva tu cita con los mejores barberos de la ciudad. Estilo y precisión en un solo lugar.</p>
+    
+    <div id="dynamic-content">
+        <!-- Se llena con JS según el estado de sesión -->
     </div>
 
     <script src="config.js"></script>
     <script>
-        // Verificar sesión y mostrar botones apropiados
         (async () => {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            const authButtons = document.getElementById('auth-buttons');
+            const container = document.getElementById('dynamic-content');
             
-            if (session?.user) {
-                // Usuario logueado: mostrar botón a perfil
-                authButtons.innerHTML = `
-                    <a href="mi-perfil.html" class="btn btn-primary">
-                        <i class="fas fa-user"></i> Mi Perfil
-                    </a>
-                    <a href="explorar.html" class="btn btn-secondary">
-                        <i class="fas fa-compass"></i> Explorar Barberos
-                    </a>
-                `;
-            } else {
-                // Usuario NO logueado: mostrar login/registro
-                authButtons.innerHTML = `
-                    <a href="auth.html?mode=login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                    </a>
-                    <a href="auth.html?mode=register" class="btn btn-secondary">
-                        <i class="fas fa-user-plus"></i> Registrarse
-                    </a>
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                
+                if (session?.user) {
+                    // Usuario logueado: saludo + botones de navegación
+                    const nombre = session.user.user_metadata?.nombre || session.user.email?.split('@')[0] || 'Usuario';
+                    container.innerHTML = `
+                        <p class="user-greeting">👋 Hola, <strong>${nombre}</strong></p>
+                        <div class="btn-group">
+                            <a href="mi-perfil.html" class="btn btn-primary">
+                                <i class="fas fa-user"></i> Mi Perfil
+                            </a>
+                            <a href="explorar.html" class="btn btn-secondary">
+                                <i class="fas fa-compass"></i> Explorar
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    // Usuario NO logueado: botones de auth
+                    container.innerHTML = `
+                        <div class="btn-group">
+                            <a href="auth.html?mode=login" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                            </a>
+                            <a href="auth.html?mode=register" class="btn btn-secondary">
+                                <i class="fas fa-user-plus"></i> Registrarse
+                            </a>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error("Error cargando landing:", err);
+                // Fallback: mostrar botones de auth siempre
+                container.innerHTML = `
+                    <div class="btn-group">
+                        <a href="auth.html?mode=login" class="btn btn-primary">Iniciar Sesión</a>
+                        <a href="auth.html?mode=register" class="btn btn-secondary">Registrarse</a>
+                    </div>
                 `;
             }
         })();
