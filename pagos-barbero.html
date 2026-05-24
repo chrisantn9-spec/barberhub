@@ -3,185 +3,484 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pagos - BarberHub</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Pagos Crypto | BarberHub</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
   <style>
+    :root {
+      --neon-cyan: #00E5EE;
+      --neon-pink: #ff00ff;
+      --dark-bg: #050505;
+      --card-bg: rgba(15, 15, 25, 0.85);
+      --glass-border: rgba(0, 229, 238, 0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
-      background: linear-gradient(180deg, #050505 0%, #0a0a1a 100%);
+      overflow-x: hidden;
       min-height: 100vh;
+      background: var(--dark-bg);
+      font-family: 'Inter', sans-serif;
       color: #fff;
+      position: relative;
       padding-bottom: 80px;
     }
-    .header {
-      padding: 20px;
-      background: rgba(10,10,20,0.95);
-      border-bottom: 1px solid var(--neon-cyan);
+
+    /* 🔒 ANTI-FLASH */
+    #app-content {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    #app-content.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* 🌌 FONDO ANIMADO CYBERPUNK */
+    .bg-text-layer {
+      position: fixed;
+      top: -10%; left: -10%;
+      width: 120%; height: 120%;
+      z-index: -2;
       display: flex;
-      align-items: center;
-      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-content: center;
+      gap: 40px;
+      transform: rotate(-15deg);
+      pointer-events: none;
+      opacity: 0.3;
     }
-    .header h1 {
-      margin: 0;
-      font-family: 'Orbitron';
-      color: var(--neon-cyan);
+    .bg-text-layer span {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 4vw;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(0, 229, 238, 0.2);
+      white-space: nowrap;
     }
-    .container {
-      max-width: 800px;
+    .bg-light-beam {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: -1;
+      background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(0, 229, 238, 0.1) 50%, transparent 55%, transparent 100%);
+      animation: sweepLight 6s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes sweepLight {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* 💎 TARJETAS FLOTANTES */
+    .profile-wrapper {
+      max-width: 900px;
       margin: 0 auto;
       padding: 20px;
+      position: relative;
+      z-index: 10;
     }
-    .stats {
+
+    .profile-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 30px;
+      margin-bottom: 24px;
+      box-shadow: 0 0 40px rgba(0, 229, 238, 0.15), inset 0 0 20px rgba(0, 229, 238, 0.05);
+      animation: floatCard 6s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink), var(--neon-cyan));
+      animation: glowLine 3s ease-in-out infinite;
+    }
+    @keyframes glowLine {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* ✨ TÍTULO */
+    .page-brand {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #fff;
+    }
+    .page-brand .word-hub {
+      color: var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+    }
+
+    /* 📊 STATS */
+    .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 15px;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
     .stat-card {
-      background: rgba(20,20,30,0.8);
-      border: 1px solid rgba(0,242,255,0.2);
-      border-radius: 15px;
-      padding: 20px;
+      background: rgba(0, 229, 238, 0.08);
+      border: 1px solid rgba(0, 229, 238, 0.3);
+      border-radius: 16px;
+      padding: 20px 15px;
       text-align: center;
+      transition: all 0.3s ease;
     }
-    .stat-card h3 {
-      margin: 0 0 10px;
-      color: #888;
-      font-size: 0.9rem;
+    .stat-card:hover {
+      background: rgba(0, 229, 238, 0.15);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 229, 238, 0.3);
     }
-    .stat-card .value {
+    .stat-card.total {
+      background: rgba(255, 0, 255, 0.08);
+      border-color: rgba(255, 0, 255, 0.3);
+    }
+    .stat-card.total:hover {
+      background: rgba(255, 0, 255, 0.15);
+      box-shadow: 0 8px 25px rgba(255, 0, 255, 0.3);
+    }
+    .stat-number {
+      font-family: 'Orbitron', sans-serif;
       font-size: 1.8rem;
-      font-weight: bold;
+      font-weight: 700;
       color: var(--neon-cyan);
+      margin-bottom: 5px;
     }
-    .stat-card.total .value {
-      color: var(--neon-pink);
+    .stat-card.total .stat-number { color: var(--neon-pink); }
+    .stat-label {
+      color: #aaa;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
+
+    /* 💰 LISTA DE PAGOS */
+    .payment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
     .payment-card {
-      background: rgba(20,20,30,0.8);
-      border: 1px solid rgba(0,242,255,0.2);
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
       padding: 20px;
-      margin-bottom: 15px;
       border-left: 4px solid var(--neon-cyan);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
+    
+    .payment-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, rgba(0,229,238,0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    
+    .payment-card:hover {
+      border-color: var(--neon-cyan);
+      transform: translateX(5px);
+      box-shadow: 0 6px 20px rgba(0, 229, 238, 0.2);
+    }
+    .payment-card:hover::before { opacity: 1; }
+    
     .payment-card.pending { border-left-color: #ffaa00; }
     .payment-card.completed { border-left-color: #00ff88; }
     .payment-card.failed { border-left-color: #ff4444; }
+
     .payment-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
+    
     .payment-amount {
+      font-family: 'Orbitron', sans-serif;
       font-size: 1.5rem;
-      font-weight: bold;
+      font-weight: 700;
       color: var(--neon-cyan);
     }
+    
     .payment-status {
-      padding: 5px 15px;
+      padding: 6px 14px;
       border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-    .status-pending { background: rgba(255,170,0,0.2); color: #ffaa00; }
-    .status-completed, .status-finished { background: rgba(0,255,136,0.2); color: #00ff88; }
-    .status-failed { background: rgba(255,68,68,0.2); color: #ff4444; }
+    
+    .status-pending { background: rgba(255,170,0,0.15); color: #ffaa00; border: 1px solid #ffaa00; }
+    .status-completed, .status-finished { background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; }
+    .status-failed { background: rgba(255,68,68,0.15); color: #ff4444; border: 1px solid #ff4444; }
+
     .payment-info {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
       font-size: 0.9rem;
     }
-    .payment-info div {
-      color: #888;
-    }
+    .payment-info div { color: #888; }
     .payment-info strong {
       color: #fff;
       display: block;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
     }
+
     .payment-crypto {
-      background: rgba(0,242,255,0.1);
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 10px;
+      background: rgba(0, 229, 238, 0.1);
+      border: 1px solid rgba(0, 229, 238, 0.3);
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 15px;
       text-align: center;
+    }
+    .payment-crypto .crypto-label {
+      color: #888;
+      font-size: 0.8rem;
+      margin-bottom: 5px;
     }
     .payment-crypto .crypto-amount {
+      font-family: 'Orbitron', sans-serif;
       font-size: 1.1rem;
       color: var(--neon-cyan);
-      font-weight: bold;
+      font-weight: 700;
     }
-    .loading {
+    .payment-crypto .crypto-fiat {
+      font-size: 0.75rem;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .payment-footer {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: right;
+      font-size: 0.75rem;
+      color: #555;
+    }
+
+    /* 📭 ESTADOS */
+    .loading, .no-data {
       text-align: center;
-      padding: 40px;
+      padding: 40px 20px;
       color: #888;
     }
     .loading i {
-      font-size: 2rem;
+      font-size: 2.5rem;
       color: var(--neon-cyan);
-      margin-bottom: 10px;
+      margin-bottom: 15px;
+      animation: spin 1s linear infinite;
     }
-    .no-data {
-      text-align: center;
-      padding: 40px;
-      color: #666;
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .no-data i {
+      font-size: 3rem;
+      color: #333;
+      margin-bottom: 15px;
+      display: block;
     }
+
+    /* 🔙 BOTÓN VOLVER */
     .back-btn {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      cursor: pointer;
     }
     .back-btn:hover {
-      background: rgba(255,255,255,0.2);
+      background: rgba(0, 229, 238, 0.1);
+      border-color: var(--neon-cyan);
+      transform: translateX(-3px);
+    }
+
+    /* 📱 BOTTOM NAV */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 70px;
+      background: rgba(10, 10, 20, 0.95);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+    .nav-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #666;
+      font-size: 0.7rem;
+      transition: color 0.2s;
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+    .nav-link i { font-size: 1.4rem; margin-bottom: 4px; }
+    .nav-link.active, .nav-link:hover {
+      color: var(--neon-cyan);
+      background: rgba(0, 229, 238, 0.1);
+      text-shadow: 0 0 8px var(--neon-cyan);
+    }
+
+    @media (max-width: 600px) {
+      .profile-card { padding: 24px 20px; }
+      .page-brand { font-size: 1.6rem; }
+      .payment-info { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <a href="admin.html" class="back-btn">
-      <i class="fas fa-arrow-left"></i> Volver
-    </a>
-    <h1>💰 Pagos Recibidos</h1>
-  </div>
 
-  <div class="container">
-    <!-- Estadísticas -->
-    <div class="stats">
-      <div class="stat-card">
-        <h3>Total Recibido</h3>
-        <div class="value" id="total-amount">$0</div>
+  <!-- 🌌 FONDO ANIMADO -->
+  <div class="bg-text-layer">
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
+  </div>
+  <div class="bg-light-beam"></div>
+
+  <!-- ✅ CONTENIDO OCULTO HASTA VERIFICAR -->
+  <div id="app-content">
+    
+    <div class="profile-wrapper">
+      
+      <!-- Título -->
+      <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+        <a href="admin.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i> Volver
+        </a>
+        <h1 class="page-brand" style="margin:0; text-align:left; flex:1;">
+          💰 Pagos <span class="word-hub">Crypto</span>
+        </h1>
       </div>
-      <div class="stat-card">
-        <h3>Pagos Hoy</h3>
-        <div class="value" id="today-count">0</div>
+
+      <!-- 📊 Estadísticas -->
+      <div class="profile-card">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="total-amount">$0</div>
+            <div class="stat-label">Total Recibido</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="today-count">0</div>
+            <div class="stat-label">Hoy</div>
+          </div>
+          <div class="stat-card total">
+            <div class="stat-number" id="total-count">0</div>
+            <div class="stat-label">Total Pagos</div>
+          </div>
+        </div>
       </div>
-      <div class="stat-card total">
-        <h3>Total Pagos</h3>
-        <div class="value" id="total-count">0</div>
+
+      <!-- 💰 Lista de Pagos -->
+      <div class="profile-card">
+        <h3 style="margin:0 0 20px; font-family:'Orbitron'; color:var(--neon-cyan);">
+          <i class="fas fa-list"></i> Historial de Pagos
+        </h3>
+        <div id="payments-list" class="payment-list">
+          <div class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Cargando pagos...</p>
+          </div>
+        </div>
       </div>
+
     </div>
 
-    <!-- Lista de Pagos -->
-    <div id="payments-list">
-      <div class="loading">
-        <i class="fas fa-spinner fa-spin"></i>
-        <p>Cargando pagos...</p>
-      </div>
-    </div>
-  </div>
+    <!-- 📱 Bottom Nav -->
+    <nav class="bottom-nav">
+      <a href="admin.html" class="nav-link">
+        <i class="fas fa-home"></i><span>Inicio</span>
+      </a>
+      <a href="gestionar-citas.html" class="nav-link">
+        <i class="fas fa-calendar"></i><span>Citas</span>
+      </a>
+      <a href="chat-list.html" class="nav-link">
+        <i class="fas fa-comments"></i><span>Chat</span>
+      </a>
+      <a href="pagos-barbero.html" class="nav-link active">
+        <i class="fas fa-wallet"></i><span>Pagos</span>
+      </a>
+    </nav>
+
+  </div> <!-- ✅ FIN DE #app-content -->
 
   <script src="config.js"></script>
   <script>
     let currentBarberId = null;
+
+    // ✅ VERIFICACIÓN DE SESIÓN (ANTI-FLASH)
+    (async () => {
+      try {
+        if (!window.supabaseClient) {
+          window.location.href = 'auth.html';
+          return;
+        }
+
+        const { data: { user }, error } = await supabaseClient.auth.getUser();
+        
+        if (error || !user) {
+          window.location.href = 'auth.html';
+          return;
+        }
+
+        // 🔒 Solo barberos pueden ver esta página
+        if (user.user_metadata?.role !== 'barbero') {
+          window.location.href = 'perfil-cliente.html';
+          return;
+        }
+
+        // Cargar datos del barbero y pagos
+        await loadBarberData();
+        
+        // ✨ Mostrar contenido
+        document.getElementById('app-content').classList.add('visible');
+
+      } catch (err) {
+        console.error('Error de autenticación:', err);
+        window.location.href = 'auth.html';
+      }
+    })();
 
     async function loadBarberData() {
       const { data: { user } } = await supabaseClient.auth.getUser();
@@ -190,16 +489,16 @@
         return;
       }
 
-      // Obtener ID del barbero
-      const { data: barber } = await supabaseClient
+      // Obtener ID del barbero desde tabla barbers
+      const { data: barber, error: barberError } = await supabaseClient
         .from('barbers')
         .select('id')
         .eq('owner_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (!barber) {
+      if (barberError || !barber) {
         document.getElementById('payments-list').innerHTML = 
-          '<p class="no-data">❌ No se encontró tu barbería</p>';
+          '<p class="no-data">❌ No se encontró tu barbería registrada</p>';
         return;
       }
 
@@ -211,7 +510,7 @@
       const container = document.getElementById('payments-list');
       
       try {
-        // Obtener pagos de las citas de esta barbería
+        // Obtener citas con pagos relacionados
         const { data: appointments, error } = await supabaseClient
           .from('appointments')
           .select(`
@@ -224,20 +523,23 @@
 
         if (error) throw error;
 
-        // Filtrar solo las que tienen pago
+        // Filtrar solo citas con pagos
         const payments = appointments
-          .filter(apt => apt.payments && apt.payments.length > 0)
+          ?.filter(apt => apt.payments && Array.isArray(apt.payments) && apt.payments.length > 0)
           .map(apt => ({
             ...apt.payments[0],
             appointment: apt,
             customer: apt.users
-          }));
+          })) || [];
 
         if (payments.length === 0) {
           container.innerHTML = `
             <div class="no-data">
-              <i class="fas fa-wallet" style="font-size:3rem; color:#333; margin-bottom:15px;"></i>
-              <p>No hay pagos registrados aún</p>
+              <i class="fas fa-wallet"></i>
+              <p>Aún no hay pagos registrados</p>
+              <small style="color:#555; margin-top:10px; display:block;">
+                Los pagos aparecerán aquí cuando los clientes completen una cita
+              </small>
             </div>`;
           updateStats([]);
           return;
@@ -247,34 +549,42 @@
         
         payments.forEach(payment => {
           const div = document.createElement('div');
-          const statusClass = payment.payment_status === 'completed' || payment.payment_status === 'finished' 
-            ? 'completed' 
-            : payment.payment_status === 'failed' 
-            ? 'failed' 
-            : 'pending';
+          
+          // Determinar estado y colores
+          const status = payment.payment_status || 'pending';
+          const statusClass = 
+            status === 'completed' || status === 'finished' ? 'completed' :
+            status === 'failed' ? 'failed' : 'pending';
           
           const statusText = {
             'pending': '⏳ Pendiente',
             'completed': '✅ Completado',
             'finished': '✅ Completado',
             'failed': '❌ Fallido',
-            'expired': ' Expirado'
-          }[payment.payment_status] || payment.payment_status;
+            'expired': '⏰ Expirado',
+            'refunded': '↩️ Reembolsado'
+          }[status] || status;
 
           const appointmentDate = payment.appointment?.appointment_date 
-            ? new Date(payment.appointment.appointment_date).toLocaleDateString('es-ES')
+            ? new Date(payment.appointment.appointment_date).toLocaleDateString('es-ES', {
+                day: '2-digit', month: 'short', year: 'numeric'
+              })
             : 'N/A';
+
+          const amount = payment.amount || payment.appointment?.price || 0;
+          const paymentId = payment.payment_id || payment.id || 'N/A';
 
           div.className = `payment-card ${statusClass}`;
           div.innerHTML = `
             <div class="payment-header">
-              <div class="payment-amount">$${payment.amount || payment.appointment?.price || '0'}</div>
-              <div class="payment-status status-${payment.payment_status}">${statusText}</div>
+              <div class="payment-amount">$${parseFloat(amount).toFixed(2)}</div>
+              <div class="payment-status status-${status}">${statusText}</div>
             </div>
+            
             <div class="payment-info">
               <div>
                 <strong>Cliente</strong>
-                ${payment.customer?.nombre || 'N/A'}
+                ${payment.customer?.nombre || payment.appointment?.client_name || 'N/A'}
               </div>
               <div>
                 <strong>Fecha Cita</strong>
@@ -285,23 +595,25 @@
                 ${payment.appointment?.service || 'N/A'}
               </div>
               <div>
-                <strong>ID Pago</strong>
-                ${payment.payment_id?.substring(0, 8) || 'N/A'}...
+                <strong>ID Transacción</strong>
+                ${String(paymentId).substring(0, 10)}...
               </div>
             </div>
+            
             ${payment.crypto_currency ? `
               <div class="payment-crypto">
-                <div style="color:#888; font-size:0.85rem;">Crypto Recibido</div>
+                <div class="crypto-label">💎 Crypto Recibido</div>
                 <div class="crypto-amount">
-                  ${payment.crypto_amount} ${payment.crypto_currency}
+                  ${payment.crypto_amount} ${payment.crypto_currency.toUpperCase()}
                 </div>
-                <div style="font-size:0.75rem; color:#666; margin-top:5px;">
-                  ${payment.outcome_amount} ${payment.outcome_currency || 'USD'}
+                <div class="crypto-fiat">
+                  ≈ $${parseFloat(payment.outcome_amount || amount).toFixed(2)} USD
                 </div>
               </div>
             ` : ''}
-            <div style="margin-top:10px; font-size:0.8rem; color:#666; text-align:right;">
-              ${new Date(payment.created_at).toLocaleString('es-ES')}
+            
+            <div class="payment-footer">
+              ${new Date(payment.created_at || payment.appointment?.created_at).toLocaleString('es-ES')}
             </div>
           `;
           container.appendChild(div);
@@ -311,31 +623,34 @@
 
       } catch (err) {
         console.error('Error cargando pagos:', err);
-        container.innerHTML = '<p class="no-data" style="color:#ff4444;">Error cargando pagos</p>';
+        container.innerHTML = '<p class="no-data" style="color:#ff4444;">⚠️ Error al cargar pagos</p>';
       }
     }
 
     function updateStats(payments) {
+      // Filtrar pagos completados
       const completed = payments.filter(p => 
         p.payment_status === 'completed' || p.payment_status === 'finished'
       );
       
-      const total = completed.reduce((sum, p) => 
-        sum + (parseFloat(p.amount) || parseFloat(p.appointment?.price) || 0), 0
-      );
+      // Calcular total
+      const total = completed.reduce((sum, p) => {
+        const amount = parseFloat(p.amount) || parseFloat(p.appointment?.price) || 0;
+        return sum + amount;
+      }, 0);
 
+      // Contar pagos de hoy
       const today = new Date().toDateString();
-      const todayCount = completed.filter(p => 
-        new Date(p.created_at).toDateString() === today
-      ).length;
+      const todayCount = completed.filter(p => {
+        const date = new Date(p.created_at || p.appointment?.created_at);
+        return date.toDateString() === today;
+      }).length;
 
+      // Actualizar DOM
       document.getElementById('total-amount').textContent = `$${total.toFixed(2)}`;
       document.getElementById('today-count').textContent = todayCount;
       document.getElementById('total-count').textContent = completed.length;
     }
-
-    // Cargar al iniciar
-    loadBarberData();
   </script>
 </body>
 </html>
