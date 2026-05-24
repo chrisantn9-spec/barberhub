@@ -270,7 +270,7 @@
     <div class="auth-card">
         <h1 class="logo-small">BARBER<span>HUB</span></h1>
         
-        <!-- FORMULARIO LOGIN/REGISTRO -->
+        <!-- 🔐 FORMULARIO LOGIN/REGISTRO -->
         <form id="authForm">
             <h2 id="formTitle">INICIAR SESIÓN</h2>
             
@@ -316,7 +316,7 @@
             </p>
         </form>
 
-        <!-- FORMULARIO RECUPERACIÓN -->
+        <!-- 📩 FORMULARIO SOLICITUD RECUPERACIÓN -->
         <form id="recoveryForm" class="hidden">
             <h2 id="recoveryTitle" style="margin-bottom: 20px; font-family: 'Orbitron'; color: var(--neon-pink); text-shadow: 0 0 10px var(--neon-pink);">
                 RECUPERAR CONTRASEÑA
@@ -339,6 +339,32 @@
             <p class="toggle-text" style="margin-top: 20px;">
                 <a onclick="showLogin()">← Volver al inicio</a>
             </p>
+        </form>
+
+        <!-- 🔑 FORMULARIO CAMBIAR CONTRASEÑA (Post-Link) -->
+        <form id="resetPasswordForm" class="hidden">
+            <h2 id="resetTitle" style="margin-bottom: 20px; font-family: 'Orbitron'; color: var(--neon-cyan); text-shadow: 0 0 10px var(--neon-cyan);">
+                NUEVA CONTRASEÑA
+            </h2>
+            <p style="color: rgba(255,255,255,0.7); margin-bottom: 20px; font-size: 0.9rem;">
+                Crea tu nueva contraseña de acceso.
+            </p>
+            
+            <div class="input-group">
+                <label>NUEVA CONTRASEÑA</label>
+                <input type="password" id="newPass" placeholder="••••••••" required>
+            </div>
+
+            <div class="input-group">
+                <label>CONFIRMAR</label>
+                <input type="password" id="confirmPass" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                ACTUALIZAR CONTRASEÑA
+            </button>
+            
+            <div class="message" id="resetMessage"></div>
         </form>
     </div>
 
@@ -374,7 +400,17 @@
             document.getElementById('recoveryMessage').textContent = '';
         }
 
-        //  Lógica Auth
+        function showResetPassword() {
+            document.getElementById('authForm').classList.add('hidden');
+            document.getElementById('recoveryForm').classList.add('hidden');
+            document.getElementById('resetPasswordForm').classList.remove('hidden');
+            // Ocultar elementos innecesarios en modo recuperación
+            document.querySelector('.divider')?.classList.add('hidden');
+            document.getElementById('forgotPasswordLink')?.classList.add('hidden');
+            document.getElementById('googleBtn')?.closest('.toggle-text')?.classList.add('hidden');
+        }
+
+        //  REFERENCIAS
         const form = document.getElementById('authForm');
         const nameGroup = document.getElementById('nameGroup');
         const formTitle = document.getElementById('formTitle');
@@ -462,7 +498,7 @@
             }
         });
 
-        //  RECUPERACIÓN DE CONTRASEÑA
+        //  RECUPERACIÓN: Solicitar enlace
         document.getElementById('recoveryForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('recoveryEmail').value;
@@ -489,6 +525,41 @@
             }
         });
 
+        // 🔑 RECUPERACIÓN: Actualizar contraseña (Post-Link)
+        document.getElementById('resetPasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPass = document.getElementById('newPass').value;
+            const confirmPass = document.getElementById('confirmPass').value;
+            const messageBox = document.getElementById('resetMessage');
+
+            // Validaciones
+            if (newPass.length < 6) {
+                messageBox.textContent = '❌ Mínimo 6 caracteres.';
+                messageBox.className = 'message error';
+                return;
+            }
+            if (newPass !== confirmPass) {
+                messageBox.textContent = '❌ Las contraseñas no coinciden.';
+                messageBox.className = 'message error';
+                return;
+            }
+
+            messageBox.textContent = 'Actualizando...';
+            messageBox.className = 'message';
+
+            try {
+                const { error } = await supabaseClient.auth.updateUser({ password: newPass });
+                if (error) throw error;
+                
+                messageBox.textContent = '✅ Contraseña actualizada. Redirigiendo...';
+                messageBox.classList.add('success');
+                setTimeout(() => window.location.href = 'explorar.html', 2000);
+            } catch (err) {
+                messageBox.textContent = 'Error: ' + err.message;
+                messageBox.classList.add('error');
+            }
+        });
+
         // 🔵 Google Sign In
         document.getElementById('googleBtn').addEventListener('click', async () => {
             messageBox.textContent = 'Conectando con Google...';
@@ -501,6 +572,28 @@
                 messageBox.classList.add('error');
             }
         });
+
+        // 🧩 DETECTOR AUTOMÁTICO DE RECUPERACIÓN (Post-Email Link)
+        (async () => {
+            try {
+                // Obtener sesión actual
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                
+                // Parsear hash de la URL (Supabase agrega #type=recovery&access_token=...)
+                const hash = window.location.hash.substring(1);
+                const hashParams = new URLSearchParams(hash);
+                const type = hashParams.get('type');
+                
+                // Si hay sesión Y el tipo es recovery → mostrar formulario de nueva contraseña
+                if (session && type === 'recovery') {
+                    showResetPassword();
+                    // Limpiar el hash para que no interfiera con otras acciones
+                    window.history.replaceState(null, null, window.location.pathname);
+                }
+            } catch (err) {
+                console.error('Error detectando recuperación:', err);
+            }
+        })();
     </script>
 </body>
 </html>
