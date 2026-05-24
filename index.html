@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BarberHub | Estilo Cyberpunk</title>
+    <title>BarberHub | Cyberpunk Landing</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --neon-cyan: #00f3ff;
+            --neon-cyan: #00E5EE; /* Mismo tono que tu app */
             --neon-pink: #ff00ff;
-            --neon-purple: #bc13fe;
             --dark-bg: #030303;
-            --glass: rgba(10, 10, 20, 0.7);
-            --border-glow: rgba(0, 243, 255, 0.6);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,50 +25,43 @@
             background: var(--dark-bg);
         }
 
-        /* 🔥 FONDO CYBERPUNK CON TU IMAGEN fondo.jpeg */
+        /* 🔥 FONDO CON TU IMAGEN fondo.jpeg */
         .cyber-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: 
                 linear-gradient(135deg, rgba(3,3,3,0.85) 0%, rgba(10,5,20,0.9) 50%, rgba(3,3,3,0.95) 100%),
-                url('./fondo.jpeg'); /* ✅ TU IMAGEN: fondo.jpeg */
+                url('./fondo.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             z-index: -3;
         }
 
-        /* Efecto de rejilla cyberpunk */
+        /* Rejilla 3D */
         .cyber-grid {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
+                linear-gradient(rgba(0, 229, 238, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 238, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
             z-index: -2;
             pointer-events: none;
-            animation: gridMove 20s linear infinite;
+            animation: gridMove 25s linear infinite;
         }
-
         @keyframes gridMove {
             0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(60px); }
         }
 
-        /* Efecto de scanlines */
+        /* Scanlines */
         .scanlines {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background: repeating-linear-gradient(
                 0deg,
                 rgba(0, 0, 0, 0.15) 0px,
@@ -81,10 +71,32 @@
             );
             z-index: -1;
             pointer-events: none;
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
-        /* Contenedor principal */
+        /* Partículas */
+        .particles {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
+        }
+        .particle {
+            position: absolute;
+            width: 3px; height: 3px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-cyan);
+            animation: float 15s infinite linear;
+            opacity: 0.6;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-50px) rotate(720deg); opacity: 0; }
+        }
+
+        /* 🎯 HERO CENTRADO */
         .hero {
             min-height: 100vh;
             display: flex;
@@ -97,97 +109,93 @@
             z-index: 10;
         }
 
-        /* Logo con efecto glitch */
+        /*  LOGO BARBERHUB */
         .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-size: clamp(2.8rem, 9vw, 5rem);
             font-weight: 900;
-            letter-spacing: 4px;
-            margin-bottom: 20px;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
             position: relative;
+            display: inline-block;
             text-transform: uppercase;
-            animation: flicker 2s infinite alternate;
+            /* Contorno base + brillo */
+            -webkit-text-stroke: 1.5px var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 25px rgba(0, 229, 238, 0.4);
         }
+        .logo-barber { color: #ffffff; }
+        .logo-hub { color: var(--neon-cyan); }
 
-        .logo .text {
-            position: relative;
-            color: #fff;
-        }
-
-        .logo .text::before,
-        .logo .text::after {
-            content: attr(data-text);
+        /*  Luz neón que recorre el contorno */
+        .logo::after {
+            content: 'BARBERHUB';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            color: transparent;
+            -webkit-text-stroke: 2px var(--neon-cyan);
+            background: linear-gradient(90deg, transparent 35%, var(--neon-cyan) 50%, transparent 65%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: traceLight 3s linear infinite;
+            pointer-events: none;
+            text-shadow: none;
+        }
+        @keyframes traceLight {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
-        .logo .text::before {
+        /* 🏷️ SUBTÍTULO */
+        .tagline {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.75rem, 2.2vw, 0.95rem);
+            color: rgba(255,255,255,0.9);
+            letter-spacing: 4px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        /* ⚡ BYLINE FLASH */
+        .byline {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 2.8vw, 1.2rem);
+            font-weight: 700;
             color: var(--neon-cyan);
-            animation: glitch-1 2s infinite linear alternate-reverse;
-            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
-            opacity: 0.8;
+            text-shadow: 0 0 5px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+            margin-bottom: 35px;
+            animation: flashNeon 2.5s infinite alternate;
+            letter-spacing: 2px;
+        }
+        @keyframes flashNeon {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                opacity: 1;
+                text-shadow: 0 0 5px var(--neon-cyan), 0 0 15px var(--neon-cyan), 0 0 30px var(--neon-cyan);
+            }
+            20%, 24%, 55% {
+                opacity: 0.3;
+                text-shadow: none;
+            }
         }
 
-        .logo .text::after {
-            color: var(--neon-pink);
-            animation: glitch-2 3s infinite linear alternate-reverse;
-            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
-            opacity: 0.8;
-        }
-
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan); }
-            20%, 24%, 55% { text-shadow: none; }
-        }
-
-        @keyframes glitch-1 {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
-        @keyframes glitch-2 {
-            0% { transform: translate(0); }
-            20% { transform: translate(2px, -2px); }
-            40% { transform: translate(-2px, 2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(-2px, -2px); }
-            100% { transform: translate(0); }
-        }
-
-        /* Subtítulo */
-        .subtitle {
-            font-size: clamp(1rem, 3vw, 1.4rem);
-            color: rgba(255,255,255,0.85);
-            max-width: 600px;
-            margin-bottom: 40px;
-            line-height: 1.6;
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-        }
-
-        /* Botones cyberpunk */
+        /* 🔘 BOTONES */
         .btn-group {
             display: flex;
             gap: 20px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 30px;
+            margin-top: 10px;
         }
-
         .btn {
             position: relative;
-            padding: 16px 40px;
-            border-radius: 5px;
+            padding: 14px 36px;
+            border-radius: 4px;
             text-decoration: none;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s ease;
@@ -197,172 +205,109 @@
             overflow: hidden;
             cursor: pointer;
         }
-
         .btn::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.4), transparent);
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 238, 0.4), transparent);
             transition: left 0.5s ease;
         }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
+        .btn:hover::before { left: 100%; }
         .btn-primary {
             background: var(--neon-cyan);
             color: #000;
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+            box-shadow: 0 0 20px rgba(0, 229, 238, 0.5);
         }
-
         .btn-primary:hover {
-            box-shadow: 0 0 40px rgba(0, 243, 255, 0.9), 0 0 80px rgba(0, 243, 255, 0.4);
-            transform: translateY(-3px);
+            box-shadow: 0 0 35px rgba(0, 229, 238, 0.8), 0 0 70px rgba(0, 229, 238, 0.3);
+            transform: translateY(-2px);
         }
-
         .btn-secondary {
             border-color: var(--neon-pink);
             color: var(--neon-pink);
         }
-
         .btn-secondary:hover {
-            background: rgba(255, 0, 255, 0.15);
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
-            transform: translateY(-3px);
+            background: rgba(255, 0, 255, 0.1);
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
+            transform: translateY(-2px);
         }
-
         .btn i { margin-right: 8px; }
 
-        /* Saludo para usuarios logueados */
+        /* Saludo usuario */
         .user-greeting {
-            font-size: 1.2rem;
-            margin-bottom: 25px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
             color: rgba(255,255,255,0.9);
         }
+        .user-greeting strong { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan); }
 
-        .user-greeting strong {
-            color: var(--neon-cyan);
-            text-shadow: 0 0 10px var(--neon-cyan);
-        }
-
-        /* Efecto de partículas flotantes */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--neon-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--neon-cyan);
-            animation: float 15s infinite linear;
-            opacity: 0.6;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
-        }
-
-        /* Responsive */
         @media (max-width: 600px) {
             .btn-group { flex-direction: column; align-items: center; }
-            .btn { width: 100%; max-width: 300px; }
+            .btn { width: 100%; max-width: 280px; }
         }
     </style>
 </head>
 <body>
-    <!-- Capas de fondo cyberpunk -->
     <div class="cyber-bg"></div>
     <div class="cyber-grid"></div>
     <div class="scanlines"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- Contenido principal -->
     <main class="hero">
+        <!-- ✨ LOGO CON EFECTOS -->
         <h1 class="logo">
-            <span class="text" data-text="BARBERHUB">BARBERHUB</span>
+            <span class="logo-barber">BARBER</span><span class="logo-hub">HUB</span>
         </h1>
-        <p class="subtitle">
-            Donde el estilo clásico se encuentra con el futuro. 
-            Reserva tu corte con barberos de élite en una experiencia inmersiva.
-        </p>
         
-        <div id="auth-container">
-            <!-- Se llena dinámicamente con JS -->
-        </div>
+        <!-- 🏷️ SUBTÍTULO -->
+        <p class="tagline">!! URBAN STYLE !!</p>
+        
+        <!-- ⚡ BYLINE FLASH -->
+        <p class="byline">by B-U4ALL</p>
+
+        <!-- 🔐 CONTENIDO DINÁMICO (LOGIN/PERFIL) -->
+        <div id="auth-container"></div>
     </main>
 
     <script src="config.js"></script>
     <script>
-        // ✨ Efecto de partículas flotantes
+        // ✨ Partículas
         function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 25; i++) {
+            const c = document.getElementById('particles');
+            for(let i=0; i<30; i++){
                 const p = document.createElement('div');
                 p.className = 'particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.animationDelay = Math.random() * 15 + 's';
-                p.style.animationDuration = (15 + Math.random() * 10) + 's';
-                container.appendChild(p);
+                p.style.left = Math.random()*100 + '%';
+                p.style.animationDelay = Math.random()*15 + 's';
+                p.style.animationDuration = (12 + Math.random()*8) + 's';
+                c.appendChild(p);
             }
         }
         createParticles();
 
-        // 🔐 Lógica de autenticación (NO redirige, solo muestra contenido)
+        // 🔐 Auth Check (Sin redirección forzada)
         (async () => {
-            const container = document.getElementById('auth-container');
-            
+            const box = document.getElementById('auth-container');
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
-                
-                if (session?.user) {
-                    const nombre = session.user.user_metadata?.nombre || session.user.email?.split('@')[0] || 'Usuario';
-                    container.innerHTML = `
-                        <p class="user-greeting">👋 Bienvenido, <strong>${nombre}</strong></p>
+                if(session?.user) {
+                    const name = session.user.user_metadata?.nombre || session.user.email?.split('@')[0] || 'Usuario';
+                    box.innerHTML = `
+                        <p class="user-greeting">👋 Hola, <strong>${name}</strong></p>
                         <div class="btn-group">
-                            <a href="mi-perfil.html" class="btn btn-primary">
-                                <i class="fas fa-user"></i> Mi Perfil
-                            </a>
-                            <a href="explorar.html" class="btn btn-secondary">
-                                <i class="fas fa-compass"></i> Explorar Barberos
-                            </a>
-                        </div>
-                    `;
+                            <a href="mi-perfil.html" class="btn btn-primary"><i class="fas fa-user"></i> Mi Perfil</a>
+                            <a href="explorar.html" class="btn btn-secondary"><i class="fas fa-compass"></i> Explorar</a>
+                        </div>`;
                 } else {
-                    container.innerHTML = `
+                    box.innerHTML = `
                         <div class="btn-group">
-                            <a href="auth.html?mode=login" class="btn btn-primary">
-                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                            </a>
-                            <a href="auth.html?mode=register" class="btn btn-secondary">
-                                <i class="fas fa-user-plus"></i> Registrarse
-                            </a>
-                        </div>
-                    `;
+                            <a href="auth.html?mode=login" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                            <a href="auth.html?mode=register" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Registrarse</a>
+                        </div>`;
                 }
-            } catch (err) {
-                console.error("Error auth:", err);
-                container.innerHTML = `
-                    <div class="btn-group">
-                        <a href="auth.html?mode=login" class="btn btn-primary">Iniciar Sesión</a>
-                        <a href="auth.html?mode=register" class="btn btn-secondary">Registrarse</a>
-                    </div>
-                `;
+            } catch(e) {
+                box.innerHTML = `<div class="btn-group"><a href="auth.html?mode=login" class="btn btn-primary">Iniciar Sesión</a><a href="auth.html?mode=register" class="btn btn-secondary">Registrarse</a></div>`;
             }
         })();
     </script>
