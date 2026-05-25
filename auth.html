@@ -320,7 +320,7 @@
             const msg = document.getElementById('recoveryMessage');
             msg.textContent = 'Enviando enlace...'; msg.className = 'message';
             try {
-                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/auth.html' });
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/completar-perfil.html'
                 if (error) throw error;
                 msg.textContent = '✅ Enlace enviado. Revisa tu correo.'; msg.classList.add('success');
                 document.getElementById('recoveryEmail').value = '';
