@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil Barbero | BarberHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --neon-cyan: #00E5EE;
+            --neon-pink: #ff00ff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            background: #030303;
+            overflow-x: hidden;
+        }
+
+        /* 🖼️ FONDO DINÁMICO (Solo en esta página) */
+        .cyber-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+            transition: background 0.5s ease;
+        }
+        
+        /* Overlay oscuro para que el texto siempre se lea bien */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(5,5,15,0.6) 0%, rgba(5,5,15,0.95) 100%);
+            z-index: -1;
+        }
+
+        .cyber-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0,229,238,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,229,238,0.03) 1px, transparent 1px);
+            background-size: 50px 50px; z-index: -1; pointer-events: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 👤 HERO: Info del Barbero */
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(0,229,238,0.3);
+        }
+        .barber-avatar {
+            width: 130px; height: 130px;
+            border-radius: 50%;
+            border: 4px solid var(--neon-cyan);
+            box-shadow: 0 0 30px rgba(0,229,238,0.5);
+            margin: 0 auto 20px;
+            overflow: hidden;
+            background: #000;
+        }
+        .barber-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .barber-name {
+            font-family: 'Orbitron';
+            font-size: 2.2rem;
+            text-shadow: 0 0 20px var(--neon-cyan);
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .barber-bio {
+            color: rgba(255,255,255,0.85);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 15px;
+            line-height: 1.5;
+        }
+        .barber-location {
+            color: var(--neon-pink);
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .cta-btn {
+            padding: 16px 40px;
+            background: var(--neon-cyan);
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Orbitron';
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 25px rgba(0,229,238,0.5);
+            text-transform: uppercase;
+        }
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px var(--neon-cyan);
+        }
+
+        /* TÍTULOS DE SECCIÓN */
+        .section-title {
+            font-family: 'Orbitron';
+            font-size: 1.4rem;
+            color: var(--neon-cyan);
+            margin: 40px 0 25px;
+            text-shadow: 0 0 10px var(--neon-cyan);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 4px solid var(--neon-pink);
+            padding-left: 15px;
+        }
+
+        /* 📸 PORTAFOLIO GRID */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        .portfolio-item {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(0,229,238,0.2);
+            transition: 0.3s;
+            aspect-ratio: 1/1;
+            position: relative;
+        }
+        .portfolio-item:hover {
+            border-color: var(--neon-cyan);
+            transform: scale(1.03);
+            box-shadow: 0 0 15px rgba(0,229,238,0.3);
+        }
+        .portfolio-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        /*  TIENDA GRID */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: rgba(10,10,20,0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,0,255,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: 0.3s;
+            position: relative;
+        }
+        .product-card:hover {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255,0,255,0.25);
+            transform: translateY(-5px);
+        }
+        .prod-img {
+            width: 80px; height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .prod-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        
+        .prod-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
+        .prod-price { color: var(--neon-pink); font-family: 'Orbitron'; font-weight: 700; font-size: 1.2rem; margin-bottom: 15px; }
+        
+        .buy-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Rajdhani';
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .buy-btn:hover { background: var(--neon-pink); color: #fff; box-shadow: 0 0 15px var(--neon-pink); }
+
+        @media (max-width: 600px) {
+            .portfolio-grid { grid-template-columns: 1fr 1fr; }
+            .shop-grid { grid-template-columns: 1fr; }
+            .barber-name { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- El fondo se cargará dinámicamente aquí -->
+    <div class="cyber-bg" id="coverBg"></div>
+    <div class="overlay"></div>
+    <div class="cyber-grid"></div>
+
+    <div class="container">
+        <!-- HERO BARBERO -->
+        <div class="hero">
+            <div class="barber-avatar"><img id="barberImg" src="https://placehold.co/150x150/111/00E5EE?text=✂️" alt="Barber"></div>
+            <h1 class="barber-name" id="barberName">Cargando...</h1>
+            <p class="barber-bio" id="barberBio">Cargando descripción...</p>
+            <p class="barber-location"><i class="fas fa-map-marker-alt"></i> <span id="barberLoc">Ubicación</span></p>
+            <button class="cta-btn" onclick="window.location.href='explorar.html'">
+                <i class="fas fa-search"></i> VER MÁS BARBEROS
+            </button>
+        </div>
+
+        <!-- 📸 PORTAFOLIO -->
+        <h2 class="section-title"><i class="fas fa-camera-retro"></i> MIS TRABAJOS</h2>
+        <div class="portfolio-grid" id="portfolioGrid">
+            <!-- Cargado por JS -->
+        </div>
+
+        <!-- 🛒 TIENDA -->
+        <h2 class="section-title"><i class="fas fa-store"></i> MIS PRODUCTOS</h2>
+        <div class="shop-grid" id="shopGrid">
+            <!-- Cargado por JS -->
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // 1. OBTENER ID DEL BARBERO DE LA URL (?id=...)
+        const barberId = new URLSearchParams(window.location.search).get('id');
+        if (!barberId) { window.location.href = 'explorar.html'; }
+
+        // 2. CARGAR DATOS DEL BARBERO
+        (async () => {
+            try {
+                // Datos del perfil
+                const { data: perfil } = await supabaseClient.from('perfiles').select('*').eq('id', barberId).single();
+                
+                if (perfil) {
+                    document.getElementById('barberName').textContent = perfil.nombre || 'Barbero';
+                    document.getElementById('barberBio').textContent = perfil.bio || 'Sin descripción disponible.';
+                    document.getElementById('barberLoc').textContent = perfil.ubicacion || 'Ciudad';
+                    
+                    if (perfil.avatar_url) document.getElementById('barberImg').src = perfil.avatar_url;
+                    
+                    //  AQUÍ ESTÁ LA MAGIA: Cargar el fondo personalizado del barbero
+                    if (perfil.cover_url) {
+                        document.getElementById('coverBg').style.backgroundImage = `url('${perfil.cover_url}')`;
+                    }
+                }
+
+                // Cargar Portafolio
+                const { data: portafolio } = await supabaseClient.from('portafolio').select('*').eq('barbero_id', barberId);
+                const pGrid = document.getElementById('portfolioGrid');
+                if (portafolio && portafolio.length > 0) {
+                    pGrid.innerHTML = portafolio.map(p => `
+                        <div class="portfolio-item">
+                            <img src="${p.imagen_url}" alt="Trabajo">
+                        </div>
+                    `).join('');
+                } else {
+                    pGrid.innerHTML = '<p style="color:rgba(255,255,255,0.5); grid-column: span 3;">Aún no hay trabajos publicados.</p>';
+                }
+
+                // Cargar Productos
+                const { data: productos } = await supabaseClient.from('productos').select('*').eq('barbero_id', barberId);
+                const sGrid = document.getElementById('shopGrid');
+                if (productos && productos.length > 0) {
+                    sGrid.innerHTML = productos.map(prod => `
+                        <div class="product-card">
+                            <div class="prod-img">${prod.imagen_url ? `<img src="${prod.imagen_url}">` : '✂️'}</div>
+                            <div class="prod-name">${prod.nombre}</div>
+                            <div class="prod-price">$${prod.precio}</div>
+                            <button class="buy-btn">COMPRAR</button>
+                        </div>
+                    `).join('');
+                } else {
+                    sGrid.innerHTML = '<p style="color:rgba(255,255,255,0.5); grid-column: span 2;">No hay productos en venta.</p>';
+                }
+
+            } catch (err) {
+                console.error('Error cargando perfil:', err);
+            }
+        })();
+    </script>
+</body>
+</html>
