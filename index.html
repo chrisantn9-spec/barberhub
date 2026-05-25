@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BarberHub | Neon Tubes</title>
+    <title>BarberHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -24,26 +24,26 @@
             background: #030303;
         }
 
-        /* 🔥 FONDO: Tu imagen de fondo */
+        /* 🔥 FONDO */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: 
-                linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(10,5,20,0.3) 100%),
+                linear-gradient(135deg, rgba(0,0,0,0.25) 0%, rgba(10,5,20,0.3) 100%),
                 url('./fondo.jpeg');
             background-size: cover;
             background-position: center;
             z-index: -3;
         }
 
-        /* ✨ BURBUJAS / PARTÍCULAS */
+        /* ✨ BURBUJAS */
         .particles {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
-            z-index: -1;
+            z-index: -2;
             overflow: hidden;
         }
         .particle {
@@ -62,173 +62,140 @@
             100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
         }
 
-        /* 🔲 REJILLA SUTIL */
+        /* 🔲 REJILLA */
         .cyber-grid {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 229, 238, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 229, 238, 0.04) 1px, transparent 1px);
+                linear-gradient(rgba(0, 229, 238, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 238, 0.03) 1px, transparent 1px);
             background-size: 60px 60px;
-            z-index: -2;
+            z-index: -1;
             pointer-events: none;
         }
 
-        /* 📍 CONTENIDO: Arriba a la Derecha */
+        /* 📍 CONTENIDO A LA IZQUIERDA */
         .hero {
             position: absolute;
-            top: 0; right: 0;
-            width: 100%;
-            padding: 12vh 60px 20px 20px;
+            top: 50%;
+            left: 60px;
+            transform: translateY(-50%);
             display: flex;
             flex-direction: column;
-            align-items: flex-end;
-            text-align: right;
+            align-items: flex-start;
+            text-align: left;
             z-index: 10;
-            pointer-events: none;
-        }
-        .hero > * { pointer-events: auto; }
-
-        /*  LOGO: EFECTO TUBO DE NEÓN (Vidrio Brillante) */
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(3rem, 9vw, 6rem);
-            font-weight: 900;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            position: relative;
-            display: inline-block;
-            
-            /* Truco CSS para Tubo de Vidrio: */
-            color: #ffffff; /* Centro blanco (Gas encendido) */
-            -webkit-text-stroke: 3px rgba(0, 229, 238, 0.6); /* Borde semitransparente (El cristal del tubo) */
-            
-            /* Sombras para simular la luz que emite el tubo */
-            text-shadow: 
-                0 0 5px #ffffff, /* Brillo interno extremo */
-                0 0 10px #ffffff, /* Brillo interno medio */
-                0 0 20px var(--neon-cyan), /* Luz del tubo cercano */
-                0 0 40px var(--neon-cyan), /* Resplandor medio */
-                0 0 80px var(--neon-cyan), /* Resplandor lejano */
-                0 0 120px rgba(0, 229, 238, 0.5); /* Ambiente neón */
-                
-            animation: tubePulse 3s infinite alternate;
-        }
-        
-        /* La palabra "HUB" en color neón directo */
-        .logo span { 
-            color: var(--neon-cyan);
-            -webkit-text-stroke: 0px;
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px var(--neon-cyan),
-                0 0 20px var(--neon-cyan),
-                0 0 40px var(--neon-cyan),
-                0 0 80px var(--neon-cyan);
+            max-width: 400px;
         }
 
-        /* Pequeño parpadeo tipo neón real */
-        @keyframes tubePulse {
-            0% { opacity: 0.95; }
-            50% { opacity: 1; text-shadow: 0 0 5px #fff, 0 0 15px var(--neon-cyan), 0 0 40px var(--neon-cyan); }
-            100% { opacity: 0.98; }
-        }
-
-        /*  BOTONES (Estilo Cristal) */
+        /* 🔘 BOTONES NEÓN */
         .btn-group {
             display: flex;
-            gap: 20px;
-            justify-content: flex-end;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
         }
         .btn {
-            padding: 14px 35px;
-            border-radius: 4px;
+            padding: 14px 28px;
+            border-radius: 8px;
             text-decoration: none;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s ease;
             border: 2px solid var(--neon-cyan);
             background: rgba(0, 229, 238, 0.1);
-            backdrop-filter: blur(5px);
             color: var(--neon-cyan);
             cursor: pointer;
-            text-shadow: 0 1px 5px rgba(0,0,0,0.8);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             box-shadow: 0 0 10px rgba(0, 229, 238, 0.2);
         }
         .btn:hover {
             background: var(--neon-cyan);
             color: #000;
             box-shadow: 0 0 25px var(--neon-cyan);
-            transform: translateY(-3px);
+            transform: translateX(4px);
         }
-        .btn i { margin-right: 8px; }
+        .btn-secondary {
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+            background: rgba(255, 0, 255, 0.1);
+        }
+        .btn-secondary:hover {
+            background: var(--neon-pink);
+            color: #fff;
+            box-shadow: 0 0 25px var(--neon-pink);
+        }
+        .btn i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+        }
 
-        /*  FOOTER: Blanco fuerte, Inglés, Centro */
+        /* Saludo usuario */
+        .user-greeting {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 229, 238, 0.6), 0 2px 4px rgba(0,0,0,0.9);
+        }
+        .user-greeting strong { color: var(--neon-cyan); }
+
+        /* 🦶 FOOTER */
         .footer {
             position: fixed;
             bottom: 0; left: 0;
             width: 100%;
-            padding: 20px;
+            padding: 20px 60px;
+            text-align: left;
             z-index: 10;
-            text-align: center;
             background: transparent;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
         }
         .footer-text {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
             font-family: 'Rajdhani', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #ffffff;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 10px rgba(0,0,0,1);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
         }
-
-        /* 🟥 BYLINE: TUBO DE NEÓN ROSA */
         .byline-flash {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            color: #fff; /* Núcleo blanco */
-            -webkit-text-stroke: 2px rgba(255, 0, 255, 0.6); /* Borde cristal rosa */
+            color: var(--neon-cyan);
             text-transform: uppercase;
-            letter-spacing: 4px;
-            animation: neonFlashPink 1.5s infinite alternate;
-            
-            text-shadow: 
-                0 0 5px #fff,
-                0 0 10px var(--neon-pink),
-                0 0 20px var(--neon-pink),
-                0 0 40px var(--neon-pink);
+            letter-spacing: 2px;
+            margin-top: 4px;
+            animation: neonFlash 1.5s infinite alternate;
+            text-shadow: 0 0 8px var(--neon-cyan);
         }
-        @keyframes neonFlashPink {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                opacity: 1;
-                text-shadow: 0 0 5px #fff, 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink);
-            }
-            20%, 24%, 55% {
-                opacity: 0.6;
-                text-shadow: 0 0 2px var(--neon-pink);
-            }
+        @keyframes neonFlash {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+            20%, 24%, 55% { opacity: 0.4; }
         }
 
-        /*  RESPONSIVE */
+        /* 📱 RESPONSIVE */
         @media (max-width: 768px) {
             .hero {
-                padding: 10vh 20px 20px 20px;
+                left: 50%;
+                transform: translate(-50%, -50%);
                 align-items: center;
                 text-align: center;
+                max-width: 90%;
             }
-            .btn-group { justify-content: center; }
-            .logo { font-size: clamp(2.5rem, 10vw, 4rem); }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .footer {
+                padding: 15px 20px;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -237,15 +204,14 @@
     <div class="cyber-grid"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- Contenido: Arriba a la derecha -->
+    <!-- CONTENIDO A LA IZQUIERDA -->
     <main class="hero">
-        <h1 class="logo">
-            BARBER<span>HUB</span>
-        </h1>
-        <div id="auth-container"></div>
+        <div id="auth-container">
+            <!-- Se llena dinámicamente con JS -->
+        </div>
     </main>
 
-    <!-- Footer: Centro abajo -->
+    <!-- FOOTER -->
     <footer class="footer">
         <p class="footer-text">© 2026 All Rights Reserved</p>
         <p class="byline-flash">by B-U4ALL</p>
@@ -256,12 +222,12 @@
         // ✨ Burbujas
         function createParticles() {
             const c = document.getElementById('particles');
-            for(let i=0; i<40; i++){
+            for(let i=0; i<35; i++){
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = Math.random()*100 + '%';
                 p.style.animationDelay = Math.random()*10 + 's';
-                p.style.animationDuration = (7 + Math.random()*8) + 's';
+                p.style.animationDuration = (8 + Math.random()*7) + 's';
                 c.appendChild(p);
             }
         }
@@ -269,28 +235,43 @@
 
         // 🔐 Auth Check
         (async () => {
-            const box = document.getElementById('auth-container');
+            const container = document.getElementById('auth-container');
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
-                if(session?.user) {
+                
+                if (session?.user) {
                     const name = session.user.user_metadata?.nombre || session.user.email?.split('@')[0] || 'Usuario';
-                    box.innerHTML = `
-                        <p style="font-size:1.3rem; margin-bottom:15px; color:#fff; font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,0.9);">
-                            👋 Hola, <strong style="color:var(--neon-cyan)">${name}</strong>
-                        </p>
+                    container.innerHTML = `
+                        <p class="user-greeting">👋 Hola, <strong>${name}</strong></p>
                         <div class="btn-group">
-                            <a href="mi-perfil.html" class="btn"><i class="fas fa-user"></i> Mi Perfil</a>
-                            <a href="explorar.html" class="btn"><i class="fas fa-compass"></i> Explorar</a>
-                        </div>`;
+                            <a href="mi-perfil.html" class="btn">
+                                <i class="fas fa-user"></i> Mi Perfil
+                            </a>
+                            <a href="explorar.html" class="btn btn-secondary">
+                                <i class="fas fa-compass"></i> Explorar
+                            </a>
+                        </div>
+                    `;
                 } else {
-                    box.innerHTML = `
+                    container.innerHTML = `
                         <div class="btn-group">
-                            <a href="auth.html?mode=login" class="btn"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
-                            <a href="auth.html?mode=register" class="btn"><i class="fas fa-user-plus"></i> Registrarse</a>
-                        </div>`;
+                            <a href="auth.html?mode=login" class="btn">
+                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                            </a>
+                            <a href="auth.html?mode=register" class="btn btn-secondary">
+                                <i class="fas fa-user-plus"></i> Registrarse
+                            </a>
+                        </div>
+                    `;
                 }
-            } catch(e) {
-                console.error(e);
+            } catch (err) {
+                console.error('Auth error:', err);
+                container.innerHTML = `
+                    <div class="btn-group">
+                        <a href="auth.html?mode=login" class="btn">Iniciar Sesión</a>
+                        <a href="auth.html?mode=register" class="btn btn-secondary">Registrarse</a>
+                    </div>
+                `;
             }
         })();
     </script>
