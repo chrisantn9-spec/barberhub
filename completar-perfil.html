@@ -41,6 +41,7 @@
         .loader-bar { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
         .loader-fill { width: 40%; height: 100%; background: var(--neon-cyan); border-radius: 2px; animation: load 1s infinite ease-in-out; }
         @keyframes load { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+        
         .card {
             display: none; background: rgba(10,10,20,0.85); backdrop-filter: blur(20px);
             border: 2px solid var(--neon-cyan); border-radius: 20px;
@@ -92,12 +93,12 @@
     <div class="particles" id="particles"></div>
     
     <div id="loader">
-        <div class="loader-text">VERIFICANDO SESIÓN...</div>
+        <div class="loader-text">PREPARANDO REGISTRO...</div>
         <div class="loader-bar"><div class="loader-fill"></div></div>
     </div>
 
     <div class="card" id="roleCard">
-        <h1><i class="fas fa-user-plus"></i> ELIGE TU ROL</h1>
+        <h1><i class="fas fa-user-plus"></i> COMPLETA TU REGISTRO</h1>
         <p>Para continuar, dinos cómo usarás BarberHub</p>
         
         <form id="roleForm">
@@ -129,7 +130,7 @@
 
     <script src="config.js"></script>
     <script>
-        // 1. Partículas
+        // Partículas
         const particlesContainer = document.getElementById('particles');
         for(let i=0; i<30; i++){
             const p = document.createElement('div'); p.className = 'particle';
@@ -137,41 +138,43 @@
             particlesContainer.appendChild(p);
         }
 
-        // 2. Diagnóstico y Flujo Principal
+        // 🔍 FLUJO PRINCIPAL - SIEMPRE MUESTRA LA TARJETA
         (async () => {
             const loader = document.getElementById('loader');
             const card = document.getElementById('roleCard');
             const errorBox = document.getElementById('errorBox');
 
             try {
-                // Verificar que config.js cargó correctamente
                 if (typeof supabaseClient === 'undefined') {
-                    throw new Error(' config.js no se cargó. Revisa que esté en la raíz y tenga tus credenciales.');
+                    throw new Error('config.js no se cargó correctamente');
                 }
 
-                console.log('🔍 Obteniendo sesión...');
+                console.log('🔍 Verificando sesión...');
                 const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
-                if (sessionError) throw sessionError;
+                
+                if (sessionError) {
+                    console.error('Error de sesión:', sessionError);
+                }
 
+                // ✅ SIEMPRE mostrar la tarjeta (incluso si hay sesión)
+                // Solo verificamos que haya un usuario logueado
                 if (!session) {
                     console.log('🚪 Sin sesión. Redirigiendo a auth.html');
-                    window.location.href = 'auth.html';
+                    // Esperamos 2 segundos para que el loader se vea
+                    setTimeout(() => {
+                        window.location.href = 'auth.html';
+                    }, 2000);
                     return;
                 }
 
-                const urlParams = new URLSearchParams(window.location.search);
-                const forceReset = urlParams.get('reset') === '1';
-                const existingRole = session.user.user_metadata?.role;
-
-                if (!forceReset && existingRole) {
-                    console.log('✅ Rol existente detectado:', existingRole);
-                    window.location.href = existingRole === 'barbero' ? 'admin.html' : 'explorar.html';
-                    return;
-                }
-
-                console.log('✨ Usuario sin rol. Mostrando tarjeta...');
-                loader.style.display = 'none';
-                card.style.display = 'block';
+                console.log('✅ Usuario logueado:', session.user.email);
+                console.log('✨ Mostrando selector de rol...');
+                
+                // Ocultar loader y mostrar tarjeta
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    card.style.display = 'block';
+                }, 1000); // Pequeña delay para que se vea profesional
 
             } catch (err) {
                 console.error('💥 Error crítico:', err);
@@ -179,14 +182,14 @@
                 card.style.display = 'block';
                 errorBox.style.display = 'block';
                 errorBox.innerHTML = `
-                    <strong>⚠️ Error de carga:</strong><br>
+                    <strong>⚠️ Error:</strong><br>
                     ${err.message}<br><br>
                     <a href="auth.html" style="color:#00E5EE; text-decoration:underline;">← Volver al login</a>
                 `;
             }
         })();
 
-        // 3. Guardar Selección
+        // 💾 GUARDAR SELECCIÓN DE ROL
         document.getElementById('roleForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
@@ -194,7 +197,7 @@
             
             if (!document.getElementById('acceptTerms').checked) {
                 errorBox.style.display = 'block';
-                errorBox.textContent = ' Debes aceptar los términos y condiciones.';
+                errorBox.textContent = '⚠️ Debes aceptar los términos y condiciones para continuar.';
                 return;
             }
 
@@ -205,12 +208,19 @@
             const selectedRole = document.querySelector('input[name="userRole"]:checked').value;
 
             try {
-                // Actualizar metadata
-                const { error: metaError } = await supabaseClient.auth.updateUser({ data: { role: selectedRole } });
+                console.log('💾 Guardando rol:', selectedRole);
+                
+                // Obtener usuario actual
+                const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+                if (userError) throw userError;
+
+                // Actualizar metadata con el rol
+                const { error: metaError } = await supabaseClient.auth.updateUser({
+                    data: { role: selectedRole }
+                });
                 if (metaError) throw metaError;
 
                 // Guardar en tabla perfiles
-                const { data: { user } } = await supabaseClient.auth.getUser();
                 const { error: dbError } = await supabaseClient.from('perfiles').upsert({
                     id: user.id,
                     nombre: user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario',
@@ -219,8 +229,14 @@
                 });
                 if (dbError) throw dbError;
 
-                console.log('✅ Rol guardado. Redirigiendo...');
-                window.location.href = selectedRole === 'barbero' ? 'admin.html' : 'explorar.html';
+                console.log('✅ Rol guardado exitosamente. Redirigiendo...');
+                
+                // Redirigir según el rol
+                const redirectUrl = selectedRole === 'barbero' ? 'admin.html' : 'explorar.html';
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 500);
+                
             } catch (err) {
                 console.error('❌ Error guardando rol:', err);
                 errorBox.style.display = 'block';
