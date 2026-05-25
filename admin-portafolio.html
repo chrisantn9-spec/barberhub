@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portafolio | BarberHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --neon-cyan: #00E5EE;
+            --neon-pink: #ff00ff;
+            --glass-bg: rgba(12, 12, 25, 0.85);
+            --glass-border: rgba(0, 229, 238, 0.25);
+            --text-main: #ffffff;
+            --text-muted: rgba(255,255,255,0.7);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Rajdhani', sans-serif; color: var(--text-main); background: #030303; overflow-x: hidden; min-height: 100vh; }
+        .cyber-bg { position: fixed; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(8,5,18,0.6)), url('./fondomiperfil.jpeg'); background-size: cover; background-position: center; z-index: -3; }
+        .particles { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-2; overflow:hidden; }
+        .particle { position:absolute; width:4px; height:4px; background:var(--neon-cyan); border-radius:50%; box-shadow:0 0 8px var(--neon-cyan), 0 0 15px var(--neon-cyan); animation:rise 10s infinite linear; opacity:0; }
+        @keyframes rise { 0%{transform:translateY(110vh) scale(0);opacity:0;} 10%{opacity:0.8;transform:translateY(100vh) scale(1);} 90%{opacity:0.8;} 100%{transform:translateY(-10vh) scale(0.5);opacity:0;} }
+        .cyber-grid { position:fixed; top:0; left:0; width:100%; height:100%; background-image:linear-gradient(rgba(0,229,238,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,238,0.03) 1px, transparent 1px); background-size:60px 60px; z-index:-1; pointer-events:none; }
+        .admin-wrapper { display:flex; min-height:100vh; position:relative; z-index:10; }
+        .sidebar { width:260px; position:fixed; top:0; left:0; height:100vh; background:var(--glass-bg); backdrop-filter:blur(20px); border-right:1px solid var(--glass-border); padding:30px 20px; display:flex; flex-direction:column; z-index:100; overflow-y:auto; }
+        .sidebar-logo { font-family:'Orbitron'; font-size:1.5rem; font-weight:900; color:#fff; text-align:center; margin-bottom:35px; padding-bottom:20px; border-bottom:1px solid var(--glass-border); }
+        .sidebar-logo span { color:var(--neon-cyan); }
+        .nav-menu { display:flex; flex-direction:column; gap:8px; flex:1; }
+        .nav-item { display:flex; align-items:center; gap:12px; padding:14px 18px; border-radius:12px; color:var(--text-muted); text-decoration:none; font-weight:600; font-size:1rem; transition:all 0.25s ease; border:1px solid transparent; background:transparent; width:100%; text-align:left; cursor:pointer; }
+        .nav-item i { width:22px; text-align:center; font-size:1.1rem; }
+        .nav-item:hover, .nav-item.active { background:rgba(0,229,238,0.12); border-color:var(--neon-cyan); color:var(--neon-cyan); transform:translateX(4px); box-shadow:0 0 12px rgba(0,229,238,0.15); }
+        .nav-item.premium { background:linear-gradient(135deg, rgba(255,204,0,0.08), rgba(255,0,255,0.08)); border:1px solid rgba(255,204,0,0.4); color:#ffcc00; }
+        .nav-item.premium:hover { box-shadow:0 0 15px rgba(255,204,0,0.2); }
+        .nav-item.danger { color:#ff4444; margin-top:auto; }
+        .nav-item.danger:hover { background:rgba(255,68,68,0.12); border-color:#ff4444; color:#ff4444; }
+        .main-content { margin-left:260px; flex:1; padding:40px; max-width:1100px; width:100%; }
+        .card { background:var(--glass-bg); backdrop-filter:blur(15px); border:1px solid var(--glass-border); border-radius:20px; padding:30px; margin-bottom:25px; box-shadow:0 8px 30px rgba(0,0,0,0.4); }
+        .card-title { font-family:'Orbitron'; font-size:1.3rem; color:var(--neon-cyan); margin-bottom:25px; display:flex; align-items:center; gap:10px; text-shadow:0 0 10px rgba(0,229,238,0.4); }
+        .stats-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:30px; }
+        .stat-box { text-align:center; padding:20px; border-radius:14px; background:rgba(0,0,0,0.3); border:1px solid var(--glass-border); transition:0.3s; }
+        .stat-box:hover { transform:translateY(-3px); box-shadow:0 5px 15px rgba(0,0,0,0.3); }
+        .stat-num { font-family:'Orbitron'; font-size:1.8rem; font-weight:700; margin-bottom:5px; }
+        .stat-lbl { color:var(--text-muted); font-size:0.85rem; text-transform:uppercase; }
+        .stat-cyan .stat-num { color:var(--neon-cyan); }
+        .stat-pink .stat-num { color:var(--neon-pink); }
+        .stat-gold .stat-num { color:#ffcc00; }
+        .portfolio-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:15px; }
+        .portfolio-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:20px; }
+        .portfolio-item { position:relative; border-radius:16px; overflow:hidden; border:1px solid var(--glass-border); background:rgba(0,0,0,0.4); transition:0.3s; }
+        .portfolio-item:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.5); border-color:var(--neon-cyan); }
+        .portfolio-item img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+        .portfolio-info { padding:15px; }
+        .portfolio-name { font-family:'Orbitron'; font-size:0.95rem; margin-bottom:5px; color:#fff; }
+        .portfolio-meta { display:flex; justify-content:space-between; align-items:center; font-size:0.85rem; color:var(--text-muted); }
+        .portfolio-price { color:var(--neon-pink); font-weight:700; }
+        .portfolio-revenue { color:#00ff88; font-size:0.8rem; }
+        .delete-btn { position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.7); border:none; color:#ff4444; width:32px; height:32px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; opacity:0; transition:0.2s; }
+        .portfolio-item:hover .delete-btn { opacity:1; }
+        .delete-btn:hover { background:#ff4444; color:#fff; }
+        .add-card { border:2px dashed var(--glass-border); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; cursor:pointer; min-height:280px; transition:0.3s; }
+        .add-card:hover { border-color:var(--neon-cyan); background:rgba(0,229,238,0.05); }
+        .add-card i { font-size:2.5rem; color:var(--neon-cyan); }
+        .add-card span { color:var(--text-muted); font-size:0.95rem; }
+        .tips-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:20px; margin-top:20px; }
+        .tip-card { background:rgba(0,0,0,0.3); border:1px solid var(--glass-border); border-radius:14px; padding:20px; }
+        .tip-card h4 { color:var(--neon-cyan); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+        .tip-card p { color:var(--text-muted); font-size:0.9rem; line-height:1.5; }
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:9999; justify-content:center; align-items:center; }
+        .modal-content { background:var(--glass-bg); border:1px solid var(--glass-border); border-radius:20px; padding:30px; max-width:450px; width:90%; }
+        .modal-title { font-family:'Orbitron'; color:var(--neon-cyan); margin-bottom:20px; text-align:center; }
+        .form-group { margin-bottom:15px; }
+        .form-group label { display:block; margin-bottom:8px; color:var(--text-muted); font-family:'Orbitron'; font-size:0.8rem; }
+        .form-group input, .form-group select { width:100%; padding:12px; background:rgba(0,0,0,0.4); border:1px solid var(--glass-border); border-radius:10px; color:#fff; font-family:'Rajdhani'; font-size:1rem; }
+        .form-group input:focus, .form-group select:focus { outline:none; border-color:var(--neon-cyan); box-shadow:0 0 10px rgba(0,229,238,0.2); }
+        .modal-btns { display:flex; gap:10px; margin-top:20px; }
+        .modal-btn { flex:1; padding:12px; border:none; border-radius:10px; font-family:'Orbitron'; font-weight:700; cursor:pointer; transition:0.2s; }
+        .modal-btn.cancel { background:transparent; border:1px solid var(--glass-border); color:#fff; }
+        .modal-btn.confirm { background:var(--neon-cyan); color:#000; }
+        .modal-btn:hover { transform:translateY(-2px); }
+        @media (max-width:900px) { .admin-wrapper{flex-direction:column;} .sidebar{position:relative;width:100%;height:auto;border-right:none;border-bottom:1px solid var(--glass-border);padding:20px;} .nav-menu{flex-direction:row;flex-wrap:wrap;justify-content:center;gap:10px;} .nav-item{padding:10px 14px;font-size:0.9rem;} .main-content{margin-left:0;padding:20px;} .portfolio-grid{grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));} }
+    </style>
+</head>
+<body>
+    <div class="cyber-bg"></div>
+    <div class="cyber-grid"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="admin-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-logo">BARBER<span>HUB</span></div>
+            <nav class="nav-menu">
+                <a href="admin-suscripciones.html" class="nav-item premium"><i class="fas fa-crown"></i> Suscripciones <span class="badge">PRO</span></a>
+                <a href="admin-citas.html" class="nav-item"><i class="fas fa-calendar-check"></i> Mis Citas</a>
+                <a href="admin.html#config" class="nav-item"><i class="fas fa-cog"></i> Configuración</a>
+                <a href="admin-portafolio.html" class="nav-item active"><i class="fas fa-images"></i> Portafolio</a>
+                <a href="barbero-perfil.html?id=preview" target="_blank" class="nav-item"><i class="fas fa-eye"></i> Vista Pública</a>
+                <a href="admin-productos.html" class="nav-item"><i class="fas fa-store"></i> Mis Productos</a>
+                <button onclick="cerrarSesion()" class="nav-item danger"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <!-- 📊 ESTADÍSTICAS DE INGRESOS -->
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-chart-line"></i> Rendimiento de tu Portafolio</h2>
+                <div class="stats-row">
+                    <div class="stat-box stat-cyan">
+                        <div class="stat-num" id="statTotalRevenue">$0</div>
+                        <div class="stat-lbl">Ingresos Generados</div>
+                    </div>
+                    <div class="stat-box stat-pink">
+                        <div class="stat-num" id="statBookings">0</div>
+                        <div class="stat-lbl">Reservas desde Portafolio</div>
+                    </div>
+                    <div class="stat-box stat-gold">
+                        <div class="stat-num" id="statTopStyle">--</div>
+                        <div class="stat-lbl">Estilo Más Rentable</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 📸 PORTAFOLIO -->
+            <div class="card">
+                <div class="portfolio-header">
+                    <h2 class="card-title" style="margin:0;"><i class="fas fa-camera"></i> Mis Trabajos</h2>
+                    <div style="color:var(--text-muted); font-size:0.9rem;">
+                        <i class="fas fa-info-circle"></i> Los estilos bien documentados aumentan tus reservas un 40%
+                    </div>
+                </div>
+                <div class="portfolio-grid" id="portfolioGrid">
+                    <div class="portfolio-item add-card" onclick="openModal()">
+                        <i class="fas fa-plus"></i>
+                        <span>Agregar Estilo</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 💡 QUÉ MÁS INCLUIR -->
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-lightbulb"></i> Potencia tu Portafolio Profesional</h2>
+                <div class="tips-grid">
+                    <div class="tip-card">
+                        <h4><i class="fas fa-star"></i> Reseñas de Clientes</h4>
+                        <p>Agrega 3-5 testimonios reales con nombre y foto. La confianza social aumenta conversiones.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4><i class="fas fa-video"></i> Videos / Reels</h4>
+                        <p>Sube clips cortos (15-30s) mostrando tu técnica. El video genera 3x más engagement que fotos.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4><i class="fas fa-arrows-alt-h"></i> Antes / Después</h4>
+                        <p>Usa sliders o comparativas lado a lado. Muestra la transformación real de tus clientes.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4><i class="fas fa-certificate"></i> Certificaciones</h4>
+                        <p>Muestra diplomas, cursos o marcas con las que trabajas. Validación profesional = clientes premium.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4><i class="fas fa-calendar-check"></i> Botón de Reserva Directa</h4>
+                        <p>Cada foto debe tener un CTA claro: "Reserva este estilo". Reduce fricción y aumenta ventas.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4><i class="fas fa-tags"></i> Categorías y Precios</h4>
+                        <p>Etiqueta cada trabajo (Fade, Barba, Diseño, etc.) y muestra el precio. Filtra por categoría.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL AGREGAR -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <h3 class="modal-title"><i class="fas fa-cloud-upload-alt"></i> Nuevo Estilo</h3>
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label>Imagen del Corte</label>
+                    <input type="file" id="fileInput" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label>Nombre del Estilo</label>
+                    <input type="text" id="styleName" placeholder="Ej: Fade Degradado + Diseño" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="styleCategory">
+                        <option value="fade">Fade / Degradado</option>
+                        <option value="barba">Barba / Afeitado</option>
+                        <option value="diseño">Diseño / Líneas</option>
+                        <option value="clasico">Corte Clásico</option>
+                        <option value="color">Color / Mechas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Precio Base ($)</label>
+                    <input type="number" id="stylePrice" placeholder="15.00" step="0.01" required>
+                </div>
+                <div class="modal-btns">
+                    <button type="button" class="modal-btn cancel" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="modal-btn confirm">Subir y Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // ✨ BURBUJAS
+        const pCont = document.getElementById('particles');
+        for(let i=0; i<35; i++){
+            const p = document.createElement('div'); p.className='particle';
+            p.style.left = Math.random()*100+'%'; p.style.animationDelay = Math.random()*10+'s';
+            p.style.animationDuration = (8+Math.random()*7)+'s'; pCont.appendChild(p);
+        }
+
+        let currentUser = null;
+
+        // 🔐 VERIFICAR SESIÓN
+        (async () => {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user || user.user_metadata?.role !== 'barbero') {
+                    window.location.href = user ? 'explorar.html' : 'auth.html';
+                    return;
+                }
+                currentUser = user;
+                await loadPortfolio();
+                await loadRevenueStats();
+            } catch (err) {
+                console.error(err); window.location.href = 'auth.html';
+            }
+        })();
+
+        //  CARGAR PORTAFOLIO
+        async function loadPortfolio() {
+            const { data, error } = await supabaseClient.from('portafolio').select('*').eq('barbero_id', currentUser.id).order('created_at', {ascending:false});
+            const grid = document.getElementById('portfolioGrid');
+            let html = `<div class="portfolio-item add-card" onclick="openModal()"><i class="fas fa-plus"></i><span>Agregar Estilo</span></div>`;
+            
+            if (data && data.length > 0) {
+                data.forEach(item => {
+                    html += `
+                        <div class="portfolio-item">
+                            <img src="${item.imagen_url}" alt="${item.nombre_estilo}">
+                            <button class="delete-btn" onclick="deleteItem('${item.id}')"><i class="fas fa-trash"></i></button>
+                            <div class="portfolio-info">
+                                <div class="portfolio-name">${item.nombre_estilo}</div>
+                                <div class="portfolio-meta">
+                                    <span class="portfolio-price">$${item.precio}</span>
+                                    <span class="portfolio-revenue"><i class="fas fa-chart-line"></i> +$${item.revenue_generado || 0}</span>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+            grid.innerHTML = html;
+        }
+
+        //  CARGAR ESTADÍSTICAS DE INGRESOS
+        async function loadRevenueStats() {
+            try {
+                // Simulación de datos reales (conectar a tabla 'reservas' o 'transacciones' cuando la tengas)
+                const totalRevenue = 1240;
+                const bookingsFromPortfolio = 38;
+                const topStyle = "Fade Degradado";
+                
+                document.getElementById('statTotalRevenue').textContent = `$${totalRevenue}`;
+                document.getElementById('statBookings').textContent = bookingsFromPortfolio;
+                document.getElementById('statTopStyle').textContent = topStyle;
+            } catch (err) {
+                console.error('Error cargando stats:', err);
+            }
+        }
+
+        // 🗑️ ELIMINAR ITEM
+        async function deleteItem(id) {
+            if (!confirm('¿Eliminar este estilo del portafolio?')) return;
+            try {
+                // Opcional: eliminar imagen de storage antes
+                const { error } = await supabaseClient.from('portafolio').delete().eq('id', id);
+                if (error) throw error;
+                await loadPortfolio();
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            }
+        }
+
+        // 📤 SUBIR NUEVO ESTILO
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('.confirm');
+            const originalText = btn.textContent;
+            btn.textContent = 'Subiendo...'; btn.disabled = true;
+
+            try {
+                const file = document.getElementById('fileInput').files[0];
+                const name = document.getElementById('styleName').value;
+                const category = document.getElementById('styleCategory').value;
+                const price = parseFloat(document.getElementById('stylePrice').value);
+
+                const fileName = `portafolio/${currentUser.id}/${Date.now()}_${file.name}`;
+                const { error: uploadError } = await supabaseClient.storage.from('uploads').upload(fileName, file, { upsert: true });
+                if (uploadError) throw uploadError;
+
+                const publicUrl = supabaseClient.storage.from('uploads').getPublicUrl(fileName).data.publicUrl;
+
+                const { error: dbError } = await supabaseClient.from('portafolio').insert({
+                    barbero_id: currentUser.id,
+                    imagen_url: publicUrl,
+                    nombre_estilo: name,
+                    categoria: category,
+                    precio: price,
+                    revenue_generado: 0
+                });
+                if (dbError) throw dbError;
+
+                closeModal();
+                await loadPortfolio();
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            } finally {
+                btn.textContent = originalText; btn.disabled = false;
+            }
+        });
+
+        function openModal() { document.getElementById('uploadModal').style.display = 'flex'; }
+        function closeModal() { 
+            document.getElementById('uploadModal').style.display = 'none'; 
+            document.getElementById('uploadForm').reset(); 
+        }
+        window.onclick = e => { if (e.target.id === 'uploadModal') closeModal(); };
+
+        window.cerrarSesion = async () => {
+            if (confirm('¿Cerrar sesión?')) {
+                await supabaseClient.auth.signOut();
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
+</body>
+</html>
