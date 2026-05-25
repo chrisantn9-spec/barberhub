@@ -1,480 +1,781 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel Admin | BarberHub</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
-  <style>
-    :root {
-      --neon-cyan: #00E5EE;
-      --neon-pink: #ff00ff;
-      --neon-gold: #FFD700;
-      --dark-bg: #050505;
-      --card-bg: rgba(15, 15, 25, 0.85);
-      --glass-border: rgba(0, 229, 238, 0.3);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Barbero | BarberHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --neon-cyan: #00E5EE;
+            --neon-pink: #ff00ff;
+            --neon-purple: #bc13fe;
+        }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      overflow-x: hidden;
-      min-height: 100vh;
-      background: var(--dark-bg);
-      font-family: 'Inter', sans-serif;
-      color: #fff;
-      position: relative;
-      padding-bottom: 80px;
-    }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* 🔒 ANTI-FLASH: Oculto hasta verificar rol */
-    #app-content {
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-    #app-content.visible {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-    }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            background: #050505;
+            overflow-x: hidden;
+        }
 
-    /* 🌌 FONDO ANIMADO */
-    .bg-text-layer {
-      position: fixed;
-      top: -10%; left: -10%;
-      width: 120%; height: 120%;
-      z-index: -2;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-content: center;
-      gap: 40px;
-      transform: rotate(-15deg);
-      pointer-events: none;
-      opacity: 0.3;
-    }
-    .bg-text-layer span {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 4vw;
-      font-weight: 900;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(0, 229, 238, 0.2);
-      white-space: nowrap;
-    }
-    .bg-light-beam {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      z-index: -1;
-      background: linear-gradient(90deg, transparent 0%, transparent 45%, rgba(0, 229, 238, 0.1) 50%, transparent 55%, transparent 100%);
-      animation: sweepLight 6s linear infinite;
-      pointer-events: none;
-    }
-    @keyframes sweepLight {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
+        /* 🔥 FONDO */
+        .cyber-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(5,5,20,0.8) 100%),
+                url('./fondobarber.png');
+            background-size: cover;
+            background-position: center;
+            z-index: -3;
+        }
 
-    /* 💎 LAYOUT PRINCIPAL */
-    .admin-wrapper {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-      position: relative;
-      z-index: 10;
-    }
+        /* ⚡ RAYOS DE NEÓN */
+        .rays {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: -2; overflow: hidden;
+        }
+        .ray {
+            position: absolute; width: 2px; height: 0;
+            background: linear-gradient(to bottom, transparent, var(--neon-cyan), transparent);
+            box-shadow: 0 0 10px var(--neon-cyan);
+            animation: riseRay 4s infinite linear; opacity: 0;
+        }
+        @keyframes riseRay {
+            0% { height: 0; top: 100%; opacity: 0; }
+            50% { height: 150px; }
+            100% { height: 0; top: -20%; opacity: 0; }
+        }
 
-    /* HEADER */
-    .admin-header {
-      background: var(--card-bg);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-      box-shadow: 0 0 30px rgba(0, 229, 238, 0.15);
-    }
-    .header-brand h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin: 0;
-    }
-    .header-brand h1 span { color: var(--neon-cyan); }
-    .header-brand p {
-      color: var(--neon-cyan);
-      font-weight: 600;
-      margin: 5px 0 0;
-      font-size: 0.95rem;
-    }
-    .header-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .nav-btn {
-      padding: 8px 14px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #ccc;
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .nav-btn:hover {
-      background: rgba(0, 229, 238, 0.1);
-      border-color: var(--neon-cyan);
-      color: #fff;
-      transform: translateY(-2px);
-    }
-    .nav-btn.premium {
-      border-color: var(--neon-gold);
-      background: rgba(255, 215, 0, 0.08);
-      color: var(--neon-gold);
-      position: relative;
-      overflow: hidden;
-    }
-    .nav-btn.premium::before {
-      content: '';
-      position: absolute;
-      top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.4), transparent);
-      transition: left 0.5s ease;
-    }
-    .nav-btn.premium:hover::before { left: 100%; }
-    .nav-btn.premium:hover {
-      background: rgba(255, 215, 0, 0.15);
-      box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-      transform: translateY(-2px);
-    }
-    .nav-btn.logout {
-      background: rgba(255, 68, 68, 0.1);
-      border-color: #ff4444;
-      color: #ff4444;
-    }
-    .nav-btn.logout:hover {
-      background: rgba(255, 68, 68, 0.2);
-      box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
-    }
+        /* 🔲 REJILLA */
+        .cyber-grid {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 229, 238, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 238, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1; pointer-events: none;
+        }
 
-    /* 📊 STATS GRID */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 15px;
-      margin-bottom: 24px;
-    }
-    .stat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 20px 15px;
-      text-align: center;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 25px rgba(0, 229, 238, 0.25);
-      border-color: var(--neon-cyan);
-    }
-    .stat-card.pink { border-color: rgba(255, 0, 255, 0.3); background: rgba(255, 0, 255, 0.08); }
-    .stat-card.pink:hover { box-shadow: 0 8px 25px rgba(255, 0, 255, 0.25); border-color: var(--neon-pink); }
-    
-    .stat-number {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: var(--neon-cyan);
-      margin-bottom: 5px;
-    }
-    .stat-card.pink .stat-number { color: var(--neon-pink); }
-    
-    .stat-label {
-      color: #aaa;
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+        /* 📦 CONTENEDOR PRINCIPAL */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
 
-    /* 📅 SECCIONES */
-    .section-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.3rem;
-      color: var(--neon-cyan);
-      margin: 30px 0 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--glass-border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .section-card {
-      background: var(--card-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .booking-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 12px;
-      margin-bottom: 10px;
-      border-left: 3px solid var(--neon-pink);
-    }
-    .booking-info strong { color: #fff; display: block; margin-bottom: 4px; }
-    .booking-info span { color: #888; font-size: 0.85rem; }
-    .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
-    .status-pending { background: rgba(255,170,0,0.15); color: #ffaa00; }
-    .status-confirmed { background: rgba(0,255,136,0.15); color: #00ff88; }
-    .btn-confirm {
-      background: var(--neon-cyan);
-      color: #000;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-confirm:hover { background: #fff; transform: scale(1.05); }
+        /* HEADER ADMIN */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(10,10,20,0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 229, 238, 0.3);
+            border-radius: 15px;
+        }
+        .admin-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 10px var(--neon-cyan);
+        }
+        .logout-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: 0.3s;
+        }
+        .logout-btn:hover {
+            background: var(--neon-pink);
+            color: #fff;
+            box-shadow: 0 0 15px var(--neon-pink);
+        }
 
-    /* ✂️ SERVICIOS */
-    .service-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; }
-    .service-tag {
-      background: rgba(0, 229, 238, 0.1);
-      border: 1px solid rgba(0, 229, 238, 0.3);
-      color: var(--neon-cyan);
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-    .add-form {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      background: rgba(0,0,0,0.3);
-      padding: 15px;
-      border-radius: 12px;
-    }
-    .add-form input {
-      flex: 1;
-      min-width: 120px;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05);
-      color: #fff;
-    }
-    .btn-add {
-      background: var(--neon-pink);
-      color: #fff;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-add:hover { background: #fff; color: #000; transform: translateY(-2px); }
+        /* 📊 TARJETAS DE ESTADÍSTICAS */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: rgba(10, 10, 25, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 229, 238, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 229, 238, 0.1);
+            transition: 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(0, 229, 238, 0.2);
+        }
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--neon-cyan);
+        }
+        .stat-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-    /* 📱 BOTTOM NAV */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: 70px;
-      background: rgba(10, 10, 20, 0.95);
-      backdrop-filter: blur(16px);
-      border-top: 1px solid var(--glass-border);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 1000;
-    }
-    .nav-link {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-decoration: none;
-      color: #666;
-      font-size: 0.7rem;
-      padding: 8px 12px;
-      border-radius: 10px;
-      transition: all 0.2s;
-    }
-    .nav-link i { font-size: 1.4rem; margin-bottom: 4px; }
-    .nav-link.active, .nav-link:hover {
-      color: var(--neon-cyan);
-      background: rgba(0, 229, 238, 0.1);
-      text-shadow: 0 0 8px var(--neon-cyan);
-    }
+        /* SECCIONES */
+        .section {
+            background: rgba(10,10,20,0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 229, 238, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--neon-cyan);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 0 0 8px rgba(0, 229, 238, 0.5);
+        }
+        .section-title i { color: var(--neon-pink); }
 
-    @media (max-width: 600px) {
-      .admin-header { flex-direction: column; align-items: stretch; text-align: center; }
-      .header-nav { justify-content: center; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .booking-item { flex-direction: column; align-items: flex-start; gap: 10px; }
-    }
-  </style>
+        /* 📅 LISTA DE CITAS */
+        .appointment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .appointment-card {
+            background: rgba(0, 229, 238, 0.05);
+            border: 1px solid rgba(0, 229, 238, 0.2);
+            border-left: 4px solid var(--neon-cyan);
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .appointment-card:hover {
+            background: rgba(0, 229, 238, 0.1);
+            transform: translateX(5px);
+        }
+        .client-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+        .client-info p {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+        .time-badge {
+            background: var(--neon-cyan);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            margin-right: 15px;
+        }
+        .action-btn {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: 0.2s;
+        }
+        .action-btn:hover {
+            border-color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+        .action-btn.complete {
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+        .action-btn.complete:hover {
+            background: #00ff88;
+            color: #000;
+        }
+
+        /* 🛒 TIENDA DE PRODUCTOS */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: rgba(255, 0, 255, 0.05);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: 0.3s;
+            position: relative;
+        }
+        .product-card:hover {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        .product-img {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            overflow: hidden;
+        }
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .product-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .product-price {
+            color: var(--neon-pink);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .delete-btn {
+            background: rgba(255, 68, 68, 0.2);
+            border: 1px solid #ff4444;
+            color: #ff4444;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .delete-btn:hover {
+            background: #ff4444;
+            color: #fff;
+        }
+        .add-product-btn {
+            background: rgba(255, 0, 255, 0.1);
+            border: 2px dashed rgba(255, 0, 255, 0.4);
+            color: var(--neon-pink);
+            border-radius: 12px;
+            padding: 40px 20px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .add-product-btn:hover {
+            background: rgba(255, 0, 255, 0.2);
+            border-color: var(--neon-pink);
+            transform: scale(1.02);
+        }
+        .add-product-btn i { font-size: 2.5rem; }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: rgba(10,10,20,0.95);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-cyan);
+            font-size: 1.3rem;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.8);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(0, 229, 238, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+        }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 238, 0.3);
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--neon-cyan);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .submit-btn:hover {
+            background: #fff;
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .stats-row { grid-template-columns: 1fr; }
+            .appointment-card { flex-direction: column; text-align: center; gap: 15px; }
+            .shop-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
 </head>
 <body>
+    <div class="cyber-bg"></div>
+    <div class="cyber-grid"></div>
+    <div class="rays" id="rays"></div>
 
-  <!-- 🌌 FONDO ANIMADO -->
-  <div class="bg-text-layer">
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-    <span>BARBERHUB</span><span>BARBERHUB</span><span>BARBERHUB</span>
-  </div>
-  <div class="bg-light-beam"></div>
+    <div class="dashboard-container">
+        <!-- HEADER -->
+        <header class="admin-header">
+            <div>
+                <h1 class="admin-title"><i class="fas fa-crown"></i> PANEL DE BARBERO</h1>
+                <p style="color: rgba(255,255,255,0.6); margin-top: 5px;">Gestiona tu negocio</p>
+            </div>
+            <button class="logout-btn" onclick="cerrarSesion()">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </button>
+        </header>
 
-  <!-- ✅ CONTENIDO OCULTO HASTA VERIFICAR ROL -->
-  <div id="app-content">
-    
-    <div class="admin-wrapper">
-      
-      <!-- HEADER -->
-      <header class="admin-header">
-        <div class="header-brand">
-          <h1>🔐 PANEL <span>ADMIN</span></h1>
-          <p id="barber-name">Cargando perfil...</p>
+        <!-- ESTADÍSTICAS -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                <div class="stat-value" id="statGanancias">$0</div>
+                <div class="stat-label">Ganancias Hoy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="stat-value" id="statCitas">0</div>
+                <div class="stat-label">Citas Hoy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-box-open"></i></div>
+                <div class="stat-value" id="statProductos">0</div>
+                <div class="stat-label">Productos</div>
+            </div>
         </div>
-        <nav class="header-nav">
-          <a href="editar-perfil.html" class="nav-btn"><i class="fas fa-user-edit"></i> Editar</a>
-          <a href="horarios.html" class="nav-btn"><i class="fas fa-clock"></i> Horarios</a>
-          
-          <!-- 💎 BOTÓN SUSCRIPCIÓN PREMIUM -->
-          <a href="pagar-suscripcion.html" class="nav-btn premium">
-            <i class="fas fa-crown"></i> 💎 Premium
-          </a>
-          <a href="inicio.html" class="nav-btn"><i class="fas fa-globe"></i> Ver Directorio</a>
-          <a href="pagos-barbero.html" class="nav-btn"><i class="fas fa-wallet"></i> Pagos</a>
-          <button onclick="cerrarSesion()" class="nav-btn logout"><i class="fas fa-sign-out-alt"></i> Salir</button>
-        </nav>
-      </header>
 
-      <!-- 📊 ESTADÍSTICAS -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number" id="stat-pending">0</div>
-          <div class="stat-label">Citas Pendientes</div>
-        </div>
-        <div class="stat-card pink">
-          <div class="stat-number" id="stat-confirmed">0</div>
-          <div class="stat-label">Confirmadas Hoy</div>
-        </div>
-      </div>
+        <!-- CITAS -->
+        <section class="section">
+            <h2 class="section-title">
+                <i class="fas fa-user-clock"></i>
+                PRÓXIMAS CITAS
+            </h2>
+            <div class="appointment-list" id="appointmentList">
+                <p style="color: rgba(255,255,255,0.5); text-align: center; padding: 40px;">
+                    Cargando citas...
+                </p>
+            </div>
+        </section>
 
-      <!-- 📅 CITAS -->
-      <h2 class="section-title"><i class="fas fa-calendar-alt"></i> Próximas Citas</h2>
-      <div class="section-card" id="bookings-list">
-        <p style="text-align:center; color:#888; padding:20px;">Cargando citas...</p>
-      </div>
-
-      <!-- ✂️ SERVICIOS -->
-      <h2 class="section-title"><i class="fas fa-cut"></i> Mis Servicios</h2>
-      <div class="section-card">
-        <div class="service-tags" id="services-list">
-          <span class="service-tag">Corte Clásico $15</span>
-          <span class="service-tag">Barba Completa $10</span>
-        </div>
-        <div class="add-form">
-          <input id="new-service-name" placeholder="Nombre (ej: Corte Fade)">
-          <input id="new-service-price" type="number" placeholder="Precio ($)">
-          <button onclick="addService()" class="btn-add">+ Agregar</button>
-        </div>
-      </div>
-
+        <!-- TIENDA -->
+        <section class="section">
+            <h2 class="section-title">
+                <i class="fas fa-store"></i>
+                MIS PRODUCTOS
+            </h2>
+            <div class="shop-grid" id="shopGrid">
+                <button class="add-product-btn" onclick="openProductModal()">
+                    <i class="fas fa-plus"></i>
+                    AGREGAR PRODUCTO
+                </button>
+            </div>
+        </section>
     </div>
 
-    <!-- 📱 BOTTOM NAV -->
-    <nav class="bottom-nav">
-      <a href="admin.html" class="nav-link active"><i class="fas fa-home"></i><span>Inicio</span></a>
-      <a href="citas-barbero.html" class="nav-link"><i class="fas fa-calendar"></i><span>Citas</span></a>
-      <a href="chat-list.html" class="nav-link"><i class="fas fa-comments"></i><span>Chats</span></a>
-      <a href="pagos-barbero.html" class="nav-link"><i class="fas fa-wallet"></i><span>Pagos</span></a>
-    </nav>
+    <!-- MODAL AGREGAR PRODUCTO -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-plus"></i> AGREGAR PRODUCTO</h3>
+                <button class="close-modal" onclick="closeProductModal()">&times;</button>
+            </div>
+            <form id="productForm">
+                <div class="form-group">
+                    <label>Nombre del Producto</label>
+                    <input type="text" id="prodName" placeholder="Ej: Cera Matte" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio ($)</label>
+                    <input type="number" id="prodPrice" placeholder="15.00" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="prodDesc" rows="3" placeholder="Descripción del producto..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-save"></i> GUARDAR PRODUCTO
+                </button>
+            </form>
+        </div>
+    </div>
 
-  </div> <!-- ✅ FIN DE #app-content -->
+    <script src="config.js"></script>
+    <script>
+        // ⚡ CREAR RAYOS
+        function createRays() {
+            const container = document.getElementById('rays');
+            for (let i = 0; i < 25; i++) {
+                const ray = document.createElement('div');
+                ray.className = 'ray';
+                ray.style.left = Math.random() * 100 + '%';
+                ray.style.animationDelay = Math.random() * 4 + 's';
+                ray.style.animationDuration = (3 + Math.random() * 3) + 's';
+                container.appendChild(ray);
+            }
+        }
+        createRays();
 
-  <script src="config.js"></script>
-  <script>
-    // ✅ VERIFICACIÓN INMEDIATA DE SESIÓN Y ROL (ANTI-FLASH)
-    (async () => {
-      try {
-        if (!window.supabaseClient) { window.location.href = 'auth.html'; return; }
+        let currentUser = null;
 
-        const { data: { user }, error } = await supabaseClient.auth.getUser();
-        
-        if (error || !user) { window.location.href = 'auth.html'; return; }
+        // 🔐 VERIFICAR SESIÓN Y ROL
+        (async () => {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                
+                if (!session) {
+                    window.location.href = 'auth.html';
+                    return;
+                }
 
-        // 🔒 Si NO es barbero, redirigir al cliente
-        if (user.user_metadata?.role !== 'barbero') {
-          window.location.href = 'perfil-cliente.html';
-          return;
+                // Verificar que sea barbero
+                if (session.user.user_metadata?.role !== 'barbero') {
+                    window.location.href = 'explorar.html';
+                    return;
+                }
+
+                currentUser = session.user;
+                console.log('✅ Barbero logueado:', currentUser.email);
+
+                // Cargar datos
+                await loadStats();
+                await loadAppointments();
+                await loadProducts();
+
+            } catch (err) {
+                console.error('Error:', err);
+                window.location.href = 'auth.html';
+            }
+        })();
+
+        // 📊 CARGAR ESTADÍSTICAS
+        async function loadStats() {
+            try {
+                // Aquí irían las consultas reales a la base de datos
+                // Por ahora usamos datos de ejemplo
+                document.getElementById('statGanancias').textContent = '$450';
+                document.getElementById('statCitas').textContent = '8';
+                document.getElementById('statProductos').textContent = '12';
+            } catch (err) {
+                console.error('Error cargando stats:', err);
+            }
         }
 
-        // ✅ Cargar nombre y mostrar contenido
-        const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Barbero';
-        document.getElementById('barber-name').textContent = `👋 Hola, ${nombre}`;
-        
-        // Verificar si viene de suscripción exitosa
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('subscription') === 'active') {
-          setTimeout(() => alert('🎉 ¡Bienvenido a Premium! Tus beneficios están activos.'), 1000);
-          window.history.replaceState({}, document.title, window.location.pathname);
+        // 📅 CARGAR CITAS
+        async function loadAppointments() {
+            try {
+                // Consulta real a la base de datos (cuando tengas la tabla citas)
+                /*
+                const { data, error } = await supabaseClient
+                    .from('citas')
+                    .select('*')
+                    .eq('barbero_id', currentUser.id)
+                    .eq('fecha', new Date().toISOString().split('T')[0])
+                    .order('hora', { ascending: true });
+                */
+
+                // Datos de ejemplo (eliminar cuando tengas la tabla)
+                const data = [
+                    { id: 1, cliente_nombre: 'Carlos Antnez', servicio: 'Corte + Barba', hora: '10:00', estado: 'pendiente' },
+                    { id: 2, cliente_nombre: 'Juan Pérez', servicio: 'Corte', hora: '11:30', estado: 'pendiente' },
+                    { id: 3, cliente_nombre: 'Pedro Gómez', servicio: 'Barba', hora: '14:00', estado: 'pendiente' }
+                ];
+
+                const container = document.getElementById('appointmentList');
+                
+                if (data && data.length > 0) {
+                    container.innerHTML = data.map(cita => `
+                        <div class="appointment-card">
+                            <div class="client-info">
+                                <h3>${cita.cliente_nombre}</h3>
+                                <p>${cita.servicio}</p>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span class="time-badge">${cita.hora}</span>
+                                <button class="action-btn complete" onclick="completarCita(${cita.id})">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button class="action-btn" onclick="cancelarCita(${cita.id})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center; padding: 40px;">No hay citas para hoy</p>';
+                }
+            } catch (err) {
+                console.error('Error cargando citas:', err);
+            }
         }
 
-        document.getElementById('app-content').classList.add('visible');
+        // 🛒 CARGAR PRODUCTOS
+        async function loadProducts() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('productos')
+                    .select('*')
+                    .eq('barbero_id', currentUser.id);
 
-      } catch (err) {
-        console.error('Error auth:', err);
-        window.location.href = 'auth.html';
-      }
-    })();
+                const container = document.getElementById('shopGrid');
+                
+                // Siempre mostrar el botón de agregar
+                let html = `
+                    <button class="add-product-btn" onclick="openProductModal()">
+                        <i class="fas fa-plus"></i>
+                        AGREGAR PRODUCTO
+                    </button>
+                `;
 
-    // 🚪 Cerrar sesión
-    async function cerrarSesion() {
-      if (!confirm('¿Cerrar sesión?')) return;
-      await supabaseClient.auth.signOut();
-      window.location.href = 'auth.html';
-    }
+                if (data && data.length > 0) {
+                    html += data.map(prod => `
+                        <div class="product-card">
+                            <div class="product-img">
+                                ${prod.imagen_url 
+                                    ? `<img src="${prod.imagen_url}" alt="${prod.nombre}">`
+                                    : '<i class="fas fa-box" style="color: var(--neon-pink);"></i>'
+                                }
+                            </div>
+                            <div class="product-name">${prod.nombre}</div>
+                            <div class="product-price">$${prod.precio}</div>
+                            <button class="delete-btn" onclick="eliminarProducto('${prod.id}')">
+                                <i class="fas fa-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    `).join('');
+                }
 
-    // ✂️ Agregar servicio (ejemplo)
-    function addService() {
-      const name = document.getElementById('new-service-name').value.trim();
-      const price = document.getElementById('new-service-price').value;
-      if (!name || !price) return alert('Completa nombre y precio');
-      
-      const container = document.getElementById('services-list');
-      const tag = document.createElement('span');
-      tag.className = 'service-tag';
-      tag.textContent = `${name} $${price}`;
-      container.appendChild(tag);
-      
-      document.getElementById('new-service-name').value = '';
-      document.getElementById('new-service-price').value = '';
-    }
-  </script>
+                container.innerHTML = html;
+            } catch (err) {
+                console.error('Error cargando productos:', err);
+            }
+        }
+
+        // 🛒 AGREGAR PRODUCTO
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('prodName').value;
+            const precio = parseFloat(document.getElementById('prodPrice').value);
+            const descripcion = document.getElementById('prodDesc').value;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('productos')
+                    .insert({
+                        barbero_id: currentUser.id,
+                        nombre: nombre,
+                        precio: precio,
+                        descripcion: descripcion
+                    });
+
+                if (error) throw error;
+
+                closeProductModal();
+                await loadProducts();
+                
+                // Actualizar contador
+                const currentCount = parseInt(document.getElementById('statProductos').textContent);
+                document.getElementById('statProductos').textContent = currentCount + 1;
+                
+                alert('✅ Producto agregado correctamente');
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            }
+        });
+
+        // 🗑️ ELIMINAR PRODUCTO
+        async function eliminarProducto(id) {
+            if (!confirm('¿Estás seguro de eliminar este producto?')) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('productos')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                await loadProducts();
+                
+                // Actualizar contador
+                const currentCount = parseInt(document.getElementById('statProductos').textContent);
+                document.getElementById('statProductos').textContent = Math.max(0, currentCount - 1);
+                
+                alert('✅ Producto eliminado');
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            }
+        }
+
+        // ✅ COMPLETAR CITA
+        async function completarCita(id) {
+            if (!confirm('¿Marcar cita como completada?')) return;
+            
+            try {
+                // Aquí iría la actualización real en la base de datos
+                /*
+                const { error } = await supabaseClient
+                    .from('citas')
+                    .update({ estado: 'completada' })
+                    .eq('id', id);
+                */
+                
+                await loadAppointments();
+                alert('✅ Cita completada');
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            }
+        }
+
+        // ❌ CANCELAR CITA
+        async function cancelarCita(id) {
+            if (!confirm('¿Cancelar esta cita?')) return;
+            
+            try {
+                // Aquí iría la actualización real
+                /*
+                const { error } = await supabaseClient
+                    .from('citas')
+                    .update({ estado: 'cancelada' })
+                    .eq('id', id);
+                */
+                
+                await loadAppointments();
+                alert('❌ Cita cancelada');
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            }
+        }
+
+        // 📦 MODAL FUNCTIONS
+        function openProductModal() {
+            document.getElementById('productModal').style.display = 'flex';
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            document.getElementById('productForm').reset();
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                closeProductModal();
+            }
+        }
+
+        // 🚪 CERRAR SESIÓN
+        window.cerrarSesion = async () => {
+            if (confirm('¿Cerrar sesión?')) {
+                await supabaseClient.auth.signOut();
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
 </body>
 </html>
