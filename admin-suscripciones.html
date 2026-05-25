@@ -1,0 +1,66 @@
+BARBERHUBBARBERHUBBARBERHUB BARBERHUBBARBERHUBBARBERHUB BARBERHUBBARBERHUBBARBERHUB 
+BarberHub
+Suscripción Premium
+Desbloquea todas las herramientas para tu barbería
+<!-- Precio -->
+<div class="price-display">
+  <div class="price-amount">$9.99</div>
+  <div class="price-period">por mes • Cancela cuando quieras</div>
+</div>
+
+<!-- Beneficios -->
+<div class="benefits-list">
+  <h4><i class="fas fa-check-circle"></i> Incluye:</h4>
+  <ul>
+    <li><i class="fas fa-check"></i> Citas ilimitadas</li>
+    <li><i class="fas fa-check"></i> Panel de estadísticas avanzado</li>
+    <li><i class="fas fa-check"></i> Soporte prioritario 24/7</li>
+    <li><i class="fas fa-check"></i> Perfil destacado en el directorio</li>
+    <li><i class="fas fa-check"></i> Integración con calendario externo</li>
+  </ul>
+</div>
+
+<!-- Métodos Crypto -->
+<div style="margin-bottom: 10px; color: #888; font-size: 0.85rem;">
+  Paga con criptomoneda:
+</div>
+
+<div class="crypto-options">
+  <button class="crypto-btn selected" onclick="selectCrypto('USDT', 9.99)" data-crypto="USDT">
+    <i class="fas fa-coins"></i>
+    <span class="crypto-name">USDT</span>
+    <span class="crypto-fee">~$0.50 fee</span>
+  </button>
+  
+  <button class="crypto-btn" onclick="selectCrypto('USDC', 9.99)" data-crypto="USDC">
+    <i class="fas fa-dollar-sign"></i>
+    <span class="crypto-name">USDC</span>
+    <span class="crypto-fee">~$0.01 fee</span>
+  </button>
+  
+  <button class="crypto-btn" onclick="selectCrypto('SOL', 0.08)" data-crypto="SOL">
+    <i class="fab fa-solana"></i>
+    <span class="crypto-name">SOL</span>
+    <span class="crypto-fee">~$0.00025</span>
+  </button>
+  
+  <button class="crypto-btn" onclick="selectCrypto('BTC', 0.00015)" data-crypto="BTC">
+    <i class="fab fa-bitcoin"></i>
+    <span class="crypto-name">BTC</span>
+    <span class="crypto-fee">~$5-15 fee</span>
+  </button>
+</div>
+
+<!-- Mensajes -->
+<div id="msg"></div>
+
+<!-- Botón Pagar -->
+<button class="btn-pay" id="btn-pay" onclick="processSubscription()">
+  <i class="fas fa-lock"></i> Pagar $9.99 con <span id="selected-crypto">USDT</span>
+</button>
+
+<a href="admin.html" class="back-link">
+  <i class="fas fa-arrow-left"></i> Volver al panel
+</a>
+Procesando pago seguro...
+No cierres esta ventana 
