@@ -80,7 +80,6 @@
         }
         .btn-submit:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 30px rgba(0, 229, 238, 0.6); }
         
-        /*  SELECTOR DE ROL (CLIENTE / BARBERO) */
         .role-selector { display: flex; gap: 10px; margin-top: 5px; }
         .role-selector input { display: none; }
         .role-option {
@@ -115,6 +114,7 @@
             border-radius: 12px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(5px);
             color: #fff; font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 1rem;
             cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;
+            /* 🔥 IMPORTANTE: type="button" para evitar submit del form */
         }
         .btn-google:hover { border-color: var(--neon-cyan); background: rgba(0, 229, 238, 0.08); box-shadow: 0 0 15px rgba(0, 229, 238, 0.3); transform: translateY(-2px); }
         .toggle-text { margin-top: 25px; font-size: 0.85rem; color: rgba(255,255,255,0.85); }
@@ -148,7 +148,6 @@
                 <div class="role-selector">
                     <input type="radio" name="userRole" id="roleCliente" value="cliente" checked>
                     <label for="roleCliente" class="role-option"><i class="fas fa-user"></i> Cliente</label>
-                    
                     <input type="radio" name="userRole" id="roleBarbero" value="barbero">
                     <label for="roleBarbero" class="role-option"><i class="fas fa-cut"></i> Barbero</label>
                 </div>
@@ -167,6 +166,8 @@
                 <a onclick="showRecovery()">¿Olvidaste tu contraseña?</a>
             </div>
             <div class="divider"><span>o continúa con</span></div>
+            
+            <!-- 🔵 BOTÓN GOOGLE (type="button" para evitar submit) -->
             <button type="button" class="btn-google" id="googleBtn">
                 <svg width="20" height="20" viewBox="0 0 48 48">
                     <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -176,6 +177,7 @@
                 </svg>
                 Sign in with Google
             </button>
+            
             <div class="message" id="messageBox"></div>
             <p class="toggle-text">
                 <span id="toggleLabel">¿No tienes cuenta?</span> 
@@ -257,14 +259,14 @@
             isRegister = register;
             if (register) {
                 nameGroup.classList.remove('hidden');
-                roleGroup.classList.remove('hidden'); // ✅ Mostrar selector de rol
+                roleGroup.classList.remove('hidden');
                 formTitle.textContent = 'REGISTRARSE'; formTitle.style.color = 'var(--neon-pink)'; formTitle.style.textShadow = '0 0 10px var(--neon-pink)';
                 submitBtn.textContent = 'CREAR CUENTA'; submitBtn.style.background = 'var(--neon-pink)';
                 toggleLabel.textContent = '¿Ya tienes cuenta?'; toggleLink.textContent = 'Inicia Sesión';
                 forgotPasswordLink.classList.add('hidden');
             } else {
                 nameGroup.classList.add('hidden');
-                roleGroup.classList.add('hidden'); // ✅ Ocultar selector de rol
+                roleGroup.classList.add('hidden');
                 formTitle.textContent = 'INICIAR SESIÓN'; formTitle.style.color = 'var(--neon-cyan)'; formTitle.style.textShadow = '0 0 10px var(--neon-cyan)';
                 submitBtn.textContent = 'ENTRAR'; submitBtn.style.background = 'var(--neon-cyan)';
                 toggleLabel.textContent = '¿No tienes cuenta?'; toggleLink.textContent = 'Regístrate';
@@ -284,9 +286,7 @@
             const email = document.getElementById('emailInput').value;
             const password = document.getElementById('passInput').value;
             const name = document.getElementById('nameInput').value;
-            
-            // ✅ Capturar rol seleccionado
-            const selectedRole = document.querySelector('input[name="userRole"]:checked').value;
+            const selectedRole = document.querySelector('input[name="userRole"]:checked')?.value || 'cliente';
 
             messageBox.textContent = 'Procesando...'; messageBox.className = 'message';
             try {
@@ -296,13 +296,11 @@
                     });
                     if (error) throw error;
                     messageBox.textContent = '¡Cuenta creada! Redirigiendo...'; messageBox.classList.add('success');
-                    // Redirigir según el rol
                     const redirectUrl = selectedRole === 'barbero' ? 'admin.html' : 'explorar.html';
                     setTimeout(() => window.location.href = redirectUrl, 2000);
                 } else {
                     const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
                     if (error) throw error;
-                    // Redirigir según el rol guardado en metadata
                     const userRole = data.user.user_metadata?.role || 'cliente';
                     const redirectUrl = userRole === 'barbero' ? 'admin.html' : 'explorar.html';
                     messageBox.textContent = 'Acceso concedido...'; messageBox.classList.add('success');
@@ -313,6 +311,46 @@
             }
         });
 
+        // 🔵 Google Sign In (BLINDADO)
+        const googleBtn = document.getElementById('googleBtn');
+        if (googleBtn) {
+            googleBtn.addEventListener('click', async (e) => {
+                e.preventDefault(); // ✅ Evita submit del form
+                console.log('👆 Click en Google detectado');
+                
+                if (typeof supabaseClient === 'undefined') {
+                    console.error('❌ supabaseClient no está definido. Revisa config.js');
+                    messageBox.textContent = 'Error de conexión. Revisa config.js';
+                    messageBox.className = 'message error';
+                    return;
+                }
+
+                messageBox.textContent = 'Conectando con Google...';
+                messageBox.className = 'message';
+
+                try {
+                    console.log('🔄 Iniciando OAuth con Google...');
+                    console.log('📍 Redirect URL:', window.location.origin + '/completar-perfil.html');
+                    
+                    const { error } = await supabaseClient.auth.signInWithOAuth({
+                        provider: 'google',
+                        options: {
+                            redirectTo: window.location.origin + '/completar-perfil.html'
+                        }
+                    });
+                    
+                    if (error) throw error;
+                    console.log('✅ Redirección a Google iniciada');
+                } catch (err) {
+                    console.error('❌ Error OAuth:', err);
+                    messageBox.textContent = 'Error: ' + err.message;
+                    messageBox.classList.add('error');
+                }
+            });
+        } else {
+            console.error('❌ No se encontró el botón con id="googleBtn"');
+        }
+
         // 📩 Solicitar recuperación
         document.getElementById('recoveryForm').addEventListener('submit', async e => {
             e.preventDefault();
@@ -320,7 +358,7 @@
             const msg = document.getElementById('recoveryMessage');
             msg.textContent = 'Enviando enlace...'; msg.className = 'message';
             try {
-                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/completar-perfil.html'
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/auth.html' });
                 if (error) throw error;
                 msg.textContent = '✅ Enlace enviado. Revisa tu correo.'; msg.classList.add('success');
                 document.getElementById('recoveryEmail').value = '';
@@ -345,32 +383,16 @@
             } catch (err) { msg.textContent = 'Error: ' + err.message; msg.classList.add('error'); }
         });
 
- // 🔵 Google Sign In (ACTUALIZADO)
-document.getElementById('googleBtn').addEventListener('click', async () => {
-    messageBox.textContent = 'Conectando...';
-    messageBox.className = 'message';
-    try {
-        const { error } = await supabaseClient.auth.signInWithOAuth({ 
-            provider: 'google',
-            options: {
-                redirectTo: window.location.origin + '/completar-perfil.html'
-            }
-        });
-        if (error) throw error;
-    } catch (err) { 
-        messageBox.textContent = err.message; 
-        messageBox.classList.add('error'); 
-    }
-});
-
         // 🧩 Detector de recuperación
         document.addEventListener('DOMContentLoaded', () => {
             const hash = window.location.hash.substring(1);
             const hashParams = new URLSearchParams(hash);
             const type = hashParams.get('type');
             if (type === 'recovery') {
+                console.log('🔍 Recovery link detectado');
                 supabaseClient.auth.onAuthStateChange((event, session) => {
                     if (event === 'SIGNED_IN' && type === 'recovery') {
+                        console.log('✅ Recovery session confirmed');
                         showResetPassword();
                         window.history.replaceState(null, null, window.location.pathname);
                     }
