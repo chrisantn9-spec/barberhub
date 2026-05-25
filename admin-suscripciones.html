@@ -1,66 +1,396 @@
-BARBERHUBBARBERHUBBARBERHUB BARBERHUBBARBERHUBBARBERHUB BARBERHUBBARBERHUBBARBERHUB 
-BarberHub
-Suscripción Premium
-Desbloquea todas las herramientas para tu barbería
-<!-- Precio -->
-<div class="price-display">
-  <div class="price-amount">$9.99</div>
-  <div class="price-period">por mes • Cancela cuando quieras</div>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suscripciones | BarberHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --neon-cyan: #00E5EE;
+            --neon-pink: #ff00ff;
+            --glass-bg: rgba(12, 12, 25, 0.85);
+            --glass-border: rgba(0, 229, 238, 0.25);
+            --text-main: #ffffff;
+            --text-muted: rgba(255,255,255,0.7);
+        }
 
-<!-- Beneficios -->
-<div class="benefits-list">
-  <h4><i class="fas fa-check-circle"></i> Incluye:</h4>
-  <ul>
-    <li><i class="fas fa-check"></i> Citas ilimitadas</li>
-    <li><i class="fas fa-check"></i> Panel de estadísticas avanzado</li>
-    <li><i class="fas fa-check"></i> Soporte prioritario 24/7</li>
-    <li><i class="fas fa-check"></i> Perfil destacado en el directorio</li>
-    <li><i class="fas fa-check"></i> Integración con calendario externo</li>
-  </ul>
-</div>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--text-main);
+            background: #030303;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
 
-<!-- Métodos Crypto -->
-<div style="margin-bottom: 10px; color: #888; font-size: 0.85rem;">
-  Paga con criptomoneda:
-</div>
+        /*  FONDOS */
+        .cyber-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(8,5,18,0.6)), url('./fondomiperfil.jpeg');
+            background-size: cover; background-position: center; z-index: -3;
+        }
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -2; overflow: hidden; }
+        .particle {
+            position: absolute; width: 4px; height: 4px; background: var(--neon-cyan);
+            border-radius: 50%; box-shadow: 0 0 8px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+            animation: rise 10s infinite linear; opacity: 0;
+        }
+        @keyframes rise {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            10% { opacity: 0.8; transform: translateY(100vh) scale(1); }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+        }
+        .cyber-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0,229,238,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,229,238,0.03) 1px, transparent 1px);
+            background-size: 60px 60px; z-index: -1; pointer-events: none;
+        }
 
-<div class="crypto-options">
-  <button class="crypto-btn selected" onclick="selectCrypto('USDT', 9.99)" data-crypto="USDT">
-    <i class="fas fa-coins"></i>
-    <span class="crypto-name">USDT</span>
-    <span class="crypto-fee">~$0.50 fee</span>
-  </button>
-  
-  <button class="crypto-btn" onclick="selectCrypto('USDC', 9.99)" data-crypto="USDC">
-    <i class="fas fa-dollar-sign"></i>
-    <span class="crypto-name">USDC</span>
-    <span class="crypto-fee">~$0.01 fee</span>
-  </button>
-  
-  <button class="crypto-btn" onclick="selectCrypto('SOL', 0.08)" data-crypto="SOL">
-    <i class="fab fa-solana"></i>
-    <span class="crypto-name">SOL</span>
-    <span class="crypto-fee">~$0.00025</span>
-  </button>
-  
-  <button class="crypto-btn" onclick="selectCrypto('BTC', 0.00015)" data-crypto="BTC">
-    <i class="fab fa-bitcoin"></i>
-    <span class="crypto-name">BTC</span>
-    <span class="crypto-fee">~$5-15 fee</span>
-  </button>
-</div>
+        /* 🧭 LAYOUT */
+        .admin-wrapper { display: flex; min-height: 100vh; position: relative; z-index: 10; }
+        
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px; position: fixed; top: 0; left: 0; height: 100vh;
+            background: var(--glass-bg); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border); padding: 30px 20px;
+            display: flex; flex-direction: column; z-index: 100; overflow-y: auto;
+        }
+        .sidebar-logo {
+            font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 900;
+            color: #fff; text-align: center; margin-bottom: 35px; padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .sidebar-logo span { color: var(--neon-cyan); }
+        .nav-menu { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+            border-radius: 12px; color: var(--text-muted); text-decoration: none;
+            font-weight: 600; font-size: 1rem; transition: all 0.25s ease;
+            border: 1px solid transparent; background: transparent; width: 100%;
+            text-align: left; cursor: pointer;
+        }
+        .nav-item i { width: 22px; text-align: center; font-size: 1.1rem; }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(0, 229, 238, 0.12); border-color: var(--neon-cyan);
+            color: var(--neon-cyan); transform: translateX(4px);
+            box-shadow: 0 0 12px rgba(0, 229, 238, 0.15);
+        }
+        .nav-item.premium {
+            background: linear-gradient(135deg, rgba(255,204,0,0.08), rgba(255,0,255,0.08));
+            border: 1px solid rgba(255,204,0,0.4); color: #ffcc00;
+        }
+        .nav-item.premium:hover { box-shadow: 0 0 15px rgba(255,204,0,0.2); }
+        .nav-item.danger { color: #ff4444; margin-top: auto; }
+        .nav-item.danger:hover {
+            background: rgba(255, 68, 68, 0.12); border-color: #ff4444; color: #ff4444;
+        }
+        .badge {
+            margin-left: auto; background: var(--neon-pink); color: #fff;
+            font-size: 0.65rem; padding: 2px 8px; border-radius: 10px;
+            font-family: 'Orbitron', sans-serif; font-weight: 700;
+        }
 
-<!-- Mensajes -->
-<div id="msg"></div>
+        /* ÁREA PRINCIPAL */
+        .main-content {
+            margin-left: 260px; flex: 1; padding: 40px;
+            max-width: 800px; width: 100%; display: flex; flex-direction: column; align-items: center;
+        }
 
-<!-- Botón Pagar -->
-<button class="btn-pay" id="btn-pay" onclick="processSubscription()">
-  <i class="fas fa-lock"></i> Pagar $9.99 con <span id="selected-crypto">USDT</span>
-</button>
+        /* TARJETA DE SUSCRIPCIÓN */
+        .sub-card {
+            background: var(--glass-bg); backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 40px 35px; width: 100%; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); position: relative; overflow: hidden;
+        }
+        .sub-card::before {
+            content: ''; position: absolute; top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0,229,238,0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sub-title {
+            font-family: 'Orbitron', sans-serif; font-size: 2rem; font-weight: 900;
+            color: #fff; margin-bottom: 10px; text-shadow: 0 0 15px rgba(0,229,238,0.5);
+        }
+        .sub-desc { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; }
 
-<a href="admin.html" class="back-link">
-  <i class="fas fa-arrow-left"></i> Volver al panel
-</a>
-Procesando pago seguro...
-No cierres esta ventana 
+        /* PRECIO */
+        .price-display { margin-bottom: 35px; }
+        .price-amount {
+            font-family: 'Orbitron', sans-serif; font-size: 3.5rem; font-weight: 900;
+            color: var(--neon-cyan); text-shadow: 0 0 20px var(--neon-cyan);
+            line-height: 1;
+        }
+        .price-period { color: var(--text-muted); font-size: 0.95rem; margin-top: 8px; }
+
+        /* BENEFICIOS */
+        .benefits-list {
+            text-align: left; background: rgba(0,0,0,0.3); border-radius: 16px;
+            padding: 20px 25px; margin-bottom: 30px; border: 1px solid var(--glass-border);
+        }
+        .benefits-list h4 {
+            font-family: 'Orbitron', sans-serif; color: #ffcc00; margin-bottom: 15px;
+            font-size: 1rem; display: flex; align-items: center; gap: 8px;
+        }
+        .benefits-list ul { list-style: none; }
+        .benefits-list li {
+            padding: 8px 0; color: var(--text-muted); display: flex; align-items: center; gap: 10px;
+            font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .benefits-list li:last-child { border-bottom: none; }
+        .benefits-list li i { color: var(--neon-cyan); width: 18px; }
+
+        /* CRIPTO OPTIONS */
+        .crypto-label { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px; }
+        .crypto-options {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px;
+        }
+        .crypto-btn {
+            background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 15px; cursor: pointer; transition: 0.25s;
+            display: flex; align-items: center; gap: 12px; text-align: left; color: #fff;
+        }
+        .crypto-btn:hover { border-color: var(--neon-cyan); background: rgba(0,229,238,0.08); }
+        .crypto-btn.selected {
+            border-color: #ffcc00; background: rgba(255,204,0,0.1);
+            box-shadow: 0 0 15px rgba(255,204,0,0.2);
+        }
+        .crypto-btn i { font-size: 1.4rem; color: var(--neon-cyan); width: 24px; text-align: center; }
+        .crypto-btn.selected i { color: #ffcc00; }
+        .crypto-info { flex: 1; }
+        .crypto-name { font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1rem; display: block; }
+        .crypto-fee { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* MENSAJES */
+        #msg {
+            min-height: 24px; margin-bottom: 15px; font-size: 0.95rem; font-weight: 600;
+        }
+        #msg.success { color: #00ff88; text-shadow: 0 0 8px rgba(0,255,136,0.5); }
+        #msg.error { color: #ff4444; text-shadow: 0 0 8px rgba(255,68,68,0.5); }
+
+        /* BOTÓN PAGAR */
+        .btn-pay {
+            width: 100%; padding: 16px; background: var(--neon-cyan); color: #000;
+            border: none; border-radius: 12px; font-family: 'Orbitron', sans-serif;
+            font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 0 20px rgba(0,229,238,0.3);
+        }
+        .btn-pay:hover:not(:disabled) {
+            transform: translateY(-2px); box-shadow: 0 0 30px var(--neon-cyan);
+        }
+        .btn-pay:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-pay.processing { background: #ffcc00; }
+
+        /* ENLACE VOLVER */
+        .back-link {
+            display: inline-flex; align-items: center; gap: 8px; margin-top: 25px;
+            color: var(--text-muted); text-decoration: none; font-size: 0.95rem;
+            transition: 0.2s;
+        }
+        .back-link:hover { color: var(--neon-cyan); transform: translateX(-3px); }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .admin-wrapper { flex-direction: column; }
+            .sidebar {
+                position: relative; width: 100%; height: auto; border-right: none;
+                border-bottom: 1px solid var(--glass-border); padding: 20px;
+            }
+            .nav-menu { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .nav-item { padding: 10px 14px; font-size: 0.9rem; }
+            .main-content { margin-left: 0; padding: 20px; }
+            .crypto-options { grid-template-columns: 1fr; }
+            .price-amount { font-size: 2.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-bg"></div>
+    <div class="cyber-grid"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="admin-wrapper">
+        <!-- 🧭 SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">BARBER<span>HUB</span></div>
+            <nav class="nav-menu">
+                <a href="admin-suscripciones.html" class="nav-item premium active">
+                    <i class="fas fa-crown"></i> Suscripciones <span class="badge">PRO</span>
+                </a>
+                <a href="admin-citas.html" class="nav-item">
+                    <i class="fas fa-calendar-check"></i> Mis Citas
+                </a>
+                <a href="admin.html#config" class="nav-item">
+                    <i class="fas fa-cog"></i> Configuración
+                </a>
+                <a href="admin-portafolio.html" class="nav-item">
+                    <i class="fas fa-images"></i> Portafolio
+                </a>
+                <a href="barbero-perfil.html?id=preview" target="_blank" class="nav-item">
+                    <i class="fas fa-eye"></i> Vista Pública
+                </a>
+                <a href="admin-productos.html" class="nav-item">
+                    <i class="fas fa-store"></i> Mis Productos
+                </a>
+                <button onclick="cerrarSesion()" class="nav-item danger">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </nav>
+        </aside>
+
+        <!--  CONTENIDO -->
+        <main class="main-content">
+            <div class="sub-card">
+                <h1 class="sub-title">Suscripción Premium</h1>
+                <p class="sub-desc">Desbloquea todas las herramientas para tu barbería</p>
+                
+                <div class="price-display">
+                    <div class="price-amount">$9.99</div>
+                    <div class="price-period">por mes • Cancela cuando quieras</div>
+                </div>
+
+                <div class="benefits-list">
+                    <h4><i class="fas fa-check-circle"></i> Incluye:</h4>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Citas ilimitadas</li>
+                        <li><i class="fas fa-check"></i> Panel de estadísticas avanzado</li>
+                        <li><i class="fas fa-check"></i> Soporte prioritario 24/7</li>
+                        <li><i class="fas fa-check"></i> Perfil destacado en el directorio</li>
+                        <li><i class="fas fa-check"></i> Integración con calendario externo</li>
+                    </ul>
+                </div>
+
+                <div class="crypto-label">Paga con criptomoneda:</div>
+                <div class="crypto-options">
+                    <button class="crypto-btn selected" onclick="selectCrypto('USDT', 9.99)" data-crypto="USDT">
+                        <i class="fas fa-coins"></i>
+                        <div class="crypto-info">
+                            <span class="crypto-name">USDT</span>
+                            <span class="crypto-fee">~$0.50 fee</span>
+                        </div>
+                    </button>
+                    
+                    <button class="crypto-btn" onclick="selectCrypto('USDC', 9.99)" data-crypto="USDC">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div class="crypto-info">
+                            <span class="crypto-name">USDC</span>
+                            <span class="crypto-fee">~$0.01 fee</span>
+                        </div>
+                    </button>
+                    
+                    <button class="crypto-btn" onclick="selectCrypto('SOL', 0.08)" data-crypto="SOL">
+                        <i class="fab fa-solana"></i>
+                        <div class="crypto-info">
+                            <span class="crypto-name">SOL</span>
+                            <span class="crypto-fee">~$0.00025</span>
+                        </div>
+                    </button>
+                    
+                    <button class="crypto-btn" onclick="selectCrypto('BTC', 0.00015)" data-crypto="BTC">
+                        <i class="fab fa-bitcoin"></i>
+                        <div class="crypto-info">
+                            <span class="crypto-name">BTC</span>
+                            <span class="crypto-fee">~$5-15 fee</span>
+                        </div>
+                    </button>
+                </div>
+
+                <div id="msg"></div>
+
+                <button class="btn-pay" id="btn-pay" onclick="processSubscription()">
+                    <i class="fas fa-lock"></i> Pagar $9.99 con <span id="selected-crypto">USDT</span>
+                </button>
+
+                <a href="admin.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Volver al panel
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // ✨ BURBUJAS
+        const pCont = document.getElementById('particles');
+        for(let i=0; i<35; i++){
+            const p = document.createElement('div'); p.className='particle';
+            p.style.left = Math.random()*100+'%'; p.style.animationDelay = Math.random()*10+'s';
+            p.style.animationDuration = (8+Math.random()*7)+'s'; pCont.appendChild(p);
+        }
+
+        // 🔐 VERIFICAR SESIÓN
+        (async () => {
+            try {
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user || user.user_metadata?.role !== 'barbero') {
+                    window.location.href = user ? 'explorar.html' : 'auth.html';
+                    return;
+                }
+            } catch (err) {
+                window.location.href = 'auth.html';
+            }
+        })();
+
+        let selectedCrypto = 'USDT';
+        let selectedAmount = 9.99;
+
+        function selectCrypto(crypto, amount) {
+            selectedCrypto = crypto;
+            selectedAmount = amount;
+            document.querySelectorAll('.crypto-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelector(`.crypto-btn[data-crypto="${crypto}"]`).classList.add('selected');
+            document.getElementById('selected-crypto').textContent = crypto;
+            document.getElementById('btn-pay').innerHTML = `<i class="fas fa-lock"></i> Pagar $${amount} con ${crypto}`;
+            document.getElementById('msg').textContent = '';
+        }
+
+        async function processSubscription() {
+            const btn = document.getElementById('btn-pay');
+            const msg = document.getElementById('msg');
+            
+            btn.disabled = true;
+            btn.classList.add('processing');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando pago seguro...';
+            msg.textContent = 'No cierres esta ventana';
+            msg.className = '';
+
+            try {
+                //  AQUÍ IRÍA LA INTEGRACIÓN REAL CON TU PASARELA CRYPTO
+                // Simulación de 3 segundos
+                await new Promise(res => setTimeout(res, 3000));
+                
+                // Éxito simulado
+                msg.textContent = '✅ ¡Pago confirmado! Tu suscripción está activa.';
+                msg.className = 'success';
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Suscripción Activa';
+                btn.style.background = '#00ff88';
+                
+                // Aquí podrías guardar en Supabase:
+                // await supabaseClient.from('suscripciones').insert({ user_id: currentUser.id, plan: 'premium', status: 'active' });
+                
+            } catch (err) {
+                msg.textContent = '❌ Error al procesar el pago. Intenta de nuevo.';
+                msg.className = 'error';
+                btn.disabled = false;
+                btn.classList.remove('processing');
+                btn.innerHTML = `<i class="fas fa-lock"></i> Pagar $${selectedAmount} con ${selectedCrypto}`;
+            }
+        }
+
+        window.cerrarSesion = async () => {
+            if (confirm('¿Cerrar sesión?')) {
+                await supabaseClient.auth.signOut();
+                window.location.href = 'index.html';
+            }
+        };
+    </script>
+</body>
+</html>
