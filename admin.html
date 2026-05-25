@@ -11,6 +11,8 @@
         :root {
             --neon-cyan: #00E5EE;
             --neon-pink: #ff00ff;
+            --glass-bg: rgba(15, 15, 30, 0.7);
+            --glass-border: rgba(0, 229, 238, 0.2);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,39 +23,19 @@
             min-height: 100vh;
             background: #030303;
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* 🔥 FONDO CON TU IMAGEN */
+        /* 🔥 FONDO CON BURBUJAS */
         .cyber-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: 
-                linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(10,5,20,0.4) 100%),
-                url('./fondomiperfil.jpeg');
-            background-size: cover;
-            background-position: center;
-            z-index: -3;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(10,5,20,0.5)), url('./fondomiperfil.jpeg');
+            background-size: cover; background-position: center; z-index: -3;
         }
-
-        /* ✨ BURBUJAS CYBERPUNK (Reemplaza los rayos) */
-        .particles {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: -2;
-            overflow: hidden;
-        }
+        .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -2; overflow: hidden; }
         .particle {
-            position: absolute;
-            width: 4px; height: 4px;
-            background: var(--neon-cyan);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--neon-cyan), 0 0 15px var(--neon-cyan);
-            animation: rise 10s infinite linear;
-            opacity: 0;
+            position: absolute; width: 4px; height: 4px; background: var(--neon-cyan);
+            border-radius: 50%; box-shadow: 0 0 8px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+            animation: rise 10s infinite linear; opacity: 0;
         }
         @keyframes rise {
             0% { transform: translateY(110vh) scale(0); opacity: 0; }
@@ -61,688 +43,520 @@
             90% { opacity: 0.8; }
             100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
         }
-
-        /* 🔲 REJILLA SUTIL */
         .cyber-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(0,229,238,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,229,238,0.03) 1px, transparent 1px);
+            background-size: 60px 60px; z-index: -1; pointer-events: none;
+        }
+
+        /* 🎨 LAYOUT PRINCIPAL */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+
+        /* 🧭 SIDEBAR - NUEVO ESTILO DE MENÚ */
+        .sidebar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            padding: 30px 20px;
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 229, 238, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 229, 238, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            z-index: -1;
-            pointer-events: none;
+            height: 100vh;
+            width: 260px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .sidebar-logo span { color: var(--neon-cyan); }
+        
+        .nav-menu { display: flex; flex-direction: column; gap: 8px; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .nav-item i { width: 22px; text-align: center; font-size: 1.1rem; }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(0, 229, 238, 0.15);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            transform: translateX(4px);
+            box-shadow: 0 0 15px rgba(0, 229, 238, 0.2);
+        }
+        .nav-item.danger { color: #ff4444; }
+        .nav-item.danger:hover {
+            background: rgba(255, 68, 68, 0.15);
+            border-color: #ff4444;
+            color: #ff4444;
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.2);
+        }
+        .nav-item.premium {
+            background: linear-gradient(135deg, rgba(255,204,0,0.1), rgba(255,0,255,0.1));
+            border: 1px solid #ffcc00;
+            color: #ffcc00;
+        }
+        .nav-item.premium:hover {
+            box-shadow: 0 0 20px rgba(255,204,0,0.3);
+        }
+        .nav-item .badge {
+            margin-left: auto;
+            background: var(--neon-pink);
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
         }
 
         /* 📦 CONTENIDO PRINCIPAL */
-        .app-container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 40px 20px 60px;
-            position: relative;
-            z-index: 10;
+        .main-content {
+            margin-left: 260px;
+            padding: 40px;
+            max-width: 1000px;
         }
 
-        /* 🎴 TARJETA TRANSPARENTE CON BORDE CRISTAL */
-        .card {
-            background: transparent;
-            border: 1.5px solid rgba(0, 229, 238, 0.4);
+        /* 🎴 TARJETAS DE CONTENIDO */
+        .content-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
             border-radius: 20px;
-            padding: 30px 25px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
-        .card:hover {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px rgba(0, 229, 238, 0.3), inset 0 0 20px rgba(0, 229, 238, 0.05);
-        }
-
-        /* 🏷️ LOGO */
-        .brand {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 900;
-            letter-spacing: 2px;
-            text-align: center;
+            padding: 30px;
             margin-bottom: 25px;
-            color: #fff;
-            text-shadow: 0 0 12px rgba(0, 229, 238, 0.7);
         }
-        .brand .b { color: #fff; }
-        .brand .h { color: var(--neon-cyan); }
+        .card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--neon-cyan);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-        /* 👤 AVATAR Y DATOS DE USUARIO */
-        .avatar-section { text-align: center; margin-bottom: 25px; }
-        .avatar-wrap {
-            width: 100px; height: 100px;
-            margin: 0 auto 15px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 3px solid var(--neon-cyan);
-            box-shadow: 0 0 20px rgba(0, 229, 238, 0.5);
-            cursor: pointer;
-            position: relative;
+        /* 👤 PERSONALIZACIÓN DE PERFIL PÚBLICO */
+        .profile-preview {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            border: 1px dashed var(--glass-border);
         }
-        .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .avatar-wrap::after {
-            content: '📷';
+        .profile-preview-img {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            border: 3px solid var(--neon-cyan);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .profile-preview-img img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-preview-img::after {
+            content: '✏️';
             position: absolute;
-            bottom: 0; right: 0;
+            bottom: 5px; right: 5px;
             background: var(--neon-cyan);
             color: #000;
             width: 28px; height: 28px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 0.8rem;
-            border: 2px solid #030303;
         }
-        .user-name {
+        .profile-preview-name {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.4rem;
-            margin: 0 0 5px;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(0, 229, 238, 0.6), 0 2px 4px rgba(0,0,0,0.9);
-        }
-        .user-email {
-            color: var(--neon-cyan);
-            font-size: 0.95rem;
-            margin: 0;
-            text-shadow: 0 0 8px rgba(0, 229, 238, 0.5);
-        }
-
-        /* 📊 ESTADÍSTICAS */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-        .stat {
-            background: rgba(0, 229, 238, 0.1);
-            border: 1px solid rgba(0, 229, 238, 0.3);
-            border-radius: 12px;
-            padding: 15px 10px;
-            text-align: center;
-        }
-        .stat-num {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            color: var(--neon-cyan);
-            margin-bottom: 3px;
-            text-shadow: 0 0 8px rgba(0, 229, 238, 0.6);
-        }
-        .stat-lbl {
-            color: rgba(255,255,255,0.8);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* 🧭 MENÚ DE OPCIONES - EXPANDIDO PARA BARBERO */
-        .menu-grid { display: grid; gap: 12px; }
-        .menu-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: transparent;
-            border: 1.5px solid rgba(0, 229, 238, 0.3);
-            border-radius: 12px;
-            color: #fff;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .menu-item:hover {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 15px rgba(0, 229, 238, 0.3);
-            transform: translateX(4px);
-        }
-        .menu-item i {
-            font-size: 1.2rem;
-            color: var(--neon-cyan);
-            width: 24px;
-            text-align: center;
-            text-shadow: 0 0 8px rgba(0, 229, 238, 0.6);
-        }
-        .menu-item .arrow {
-            margin-left: auto;
-            color: rgba(255,255,255,0.4);
-        }
-        .menu-item.danger {
-            border-color: rgba(255, 68, 68, 0.4);
-        }
-        .menu-item.danger i { color: #ff4444; text-shadow: 0 0 8px rgba(255, 68, 68, 0.6); }
-        .menu-item.danger:hover {
-            border-color: #ff4444;
-            box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
-        }
-        .menu-item.premium {
-            border-color: #ffcc00;
-        }
-        .menu-item.premium i { color: #ffcc00; text-shadow: 0 0 8px rgba(255,204,0,0.6); }
-        .menu-item.premium:hover {
-            border-color: #ffcc00;
-            box-shadow: 0 0 15px rgba(255,204,0,0.3);
-        }
-
-        /* 🗓️ CALENDARIO MINI */
-        .mini-calendar {
-            background: rgba(0, 229, 238, 0.05);
-            border: 1px solid rgba(0, 229, 238, 0.2);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .mini-calendar-title {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--neon-cyan);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-        .mini-calendar-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-            font-size: 0.75rem;
-        }
-        .mini-calendar-days div {
-            padding: 4px;
-            border-radius: 4px;
-        }
-        .mini-calendar-days .today {
-            background: var(--neon-pink);
-            color: #fff;
-            font-weight: bold;
-        }
-        .mini-calendar-days .has-cita {
-            background: rgba(0, 229, 238, 0.3);
-            color: #fff;
-        }
-
-        /* 📸 PORTAFOLIO MINI */
-        .portfolio-mini {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .portfolio-item {
-            aspect-ratio: 1/1;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid rgba(0, 229, 238, 0.2);
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .portfolio-item:hover {
-            border-color: var(--neon-cyan);
-            transform: scale(1.05);
-        }
-        .portfolio-item img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
-        .portfolio-add {
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(0, 229, 238, 0.1);
-            border: 2px dashed rgba(0, 229, 238, 0.4);
-            border-radius: 8px;
-            color: var(--neon-cyan);
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .portfolio-add:hover {
-            background: rgba(0, 229, 238, 0.2);
-            border-color: var(--neon-cyan);
-        }
-
-        /* 🛒 OFERTA DEL MES */
-        .offer-banner {
-            background: linear-gradient(135deg, rgba(255,204,0,0.1), rgba(255,0,255,0.1));
-            border: 2px solid #ffcc00;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: center;
-            position: relative;
-        }
-        .offer-banner::before {
-            content: '🔥';
-            position: absolute;
-            top: -10px; right: -10px;
-            background: #ffcc00;
-            color: #000;
-            width: 24px; height: 24px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
-        .offer-title {
-            font-family: 'Orbitron', sans-serif;
-            color: #ffcc00;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-        }
-        .offer-name {
-            font-weight: 700;
-            font-size: 1.1rem;
             margin-bottom: 5px;
         }
-        .offer-price {
+        .profile-preview-location {
             color: var(--neon-pink);
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 700;
-        }
-
-        /* MODAL PARA SUBIR IMAGEN */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(5px);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: rgba(10,10,20,0.95);
-            border: 2px solid var(--neon-cyan);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-        }
-        .modal-title {
-            font-family: 'Orbitron', sans-serif;
-            color: var(--neon-cyan);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .modal input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(0,229,238,0.3);
-            border-radius: 8px;
-            color: #fff;
+            font-size: 0.9rem;
             margin-bottom: 15px;
         }
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
+        .profile-preview-bio {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
-        .modal-btn {
-            flex: 1;
+
+        /* 📝 FORMULARIOS */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.8);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
             padding: 12px;
-            border: none;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--glass-border);
             border-radius: 8px;
+            color: #fff;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 238, 0.3);
+        }
+        .btn-save {
+            background: var(--neon-cyan);
+            color: #000;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
             cursor: pointer;
             transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
-        .modal-btn.cancel {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.3);
-            color: #fff;
+        .btn-save:hover {
+            box-shadow: 0 0 20px var(--neon-cyan);
+            transform: translateY(-2px);
         }
-        .modal-btn.confirm {
-            background: var(--neon-cyan);
-            color: #000;
+
+        /* 🎨 SELECTOR DE COLOR */
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
-        .modal-btn:hover { transform: translateY(-2px); }
+        .color-picker input[type="color"] {
+            width: 50px; height: 40px;
+            border: none; border-radius: 8px;
+            cursor: pointer; background: transparent;
+        }
 
         /* 📱 RESPONSIVE */
-        @media (max-width: 500px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .brand { font-size: 1.5rem; }
-            .portfolio-mini { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 900px) {
+            .dashboard { grid-template-columns: 1fr; }
+            .sidebar {
+                position: fixed; bottom: 0; left: 0; right: 0;
+                width: 100%; height: auto; max-height: 200px;
+                border-right: none; border-top: 1px solid var(--glass-border);
+                padding: 15px; overflow-x: auto;
+            }
+            .nav-menu { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .nav-item { padding: 10px 14px; font-size: 0.9rem; }
+            .main-content { margin-left: 0; padding: 20px; }
+            .form-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <!-- Fondo y efectos con BURBUJAS -->
     <div class="cyber-bg"></div>
     <div class="cyber-grid"></div>
     <div class="particles" id="particles"></div>
 
-    <!-- Contenido principal -->
-    <div class="app-container">
-        <div class="card">
-            <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
-            
-            <!-- 👤 AVATAR + DATOS -->
-            <div class="avatar-section">
-                <div class="avatar-wrap" id="avatarWrap">
-                    <img id="avatarImg" src="https://placehold.co/150x150/111/00E5EE?text=✂️" alt="Avatar">
-                    <input type="file" id="avatarInput" accept="image/*" style="display:none;">
-                </div>
-                <h2 class="user-name" id="display-name">Cargando...</h2>
-                <p class="user-email" id="display-email">email@ejemplo.com</p>
-            </div>
-            
-            <!-- 📊 ESTADÍSTICAS DEL BARBERO -->
-            <div class="stats-grid">
-                <div class="stat">
-                    <div class="stat-num" id="stat-citas-hoy">0</div>
-                    <div class="stat-lbl">Citas Hoy</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-num" id="stat-ganancias">$0</div>
-                    <div class="stat-lbl">Ganancias Mes</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-num" id="stat-productos">0</div>
-                    <div class="stat-lbl">Productos</div>
-                </div>
-            </div>
-
-            <!-- 🗓️ MINI CALENDARIO -->
-            <div class="mini-calendar">
-                <div class="mini-calendar-title">📅 PRÓXIMAS CITAS</div>
-                <div class="mini-calendar-days" id="miniCalendar"></div>
-            </div>
-
-            <!-- 🔥 OFERTA DEL MES -->
-            <div class="offer-banner" id="offerBanner">
-                <div class="offer-title">OFERTA DEL MES</div>
-                <div class="offer-name" id="offerName">Cargando...</div>
-                <div class="offer-price" id="offerPrice">$0.00</div>
-            </div>
-
-            <!-- 📸 PORTAFOLIO MINI -->
-            <div style="margin-bottom:15px; font-family:'Orbitron'; color:var(--neon-cyan); font-size:0.9rem;">
-                <i class="fas fa-camera"></i> MIS TRABAJOS
-            </div>
-            <div class="portfolio-mini" id="portfolioMini">
-                <div class="portfolio-add" id="addPortfolio">+</div>
-            </div>
-            
-            <!-- 🧭 MENÚ EXPANDIDO PARA BARBERO -->
-            <div class="menu-grid">
-                <a href="admin-citas.html" class="menu-item">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Gestionar Citas</span>
-                    <i class="fas fa-chevron-right arrow"></i>
+    <div class="dashboard">
+        <!-- 🧭 SIDEBAR - MENÚ PRINCIPAL -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">BARBER<span>HUB</span></div>
+            <nav class="nav-menu">
+                <a href="admin-suscripciones.html" class="nav-item premium">
+                    <i class="fas fa-crown"></i> Suscripciones <span class="badge">PRO</span>
                 </a>
-                <a href="admin-productos.html" class="menu-item">
-                    <i class="fas fa-store"></i>
-                    <span>Mis Productos</span>
-                    <i class="fas fa-chevron-right arrow"></i>
+                <a href="admin-citas.html" class="nav-item">
+                    <i class="fas fa-calendar-check"></i> Mis Citas
                 </a>
-                <a href="admin-portafolio.html" class="menu-item">
-                    <i class="fas fa-images"></i>
-                    <span>Portafolio</span>
-                    <i class="fas fa-chevron-right arrow"></i>
+                <a href="#configuracion" class="nav-item active" onclick="showSection('configuracion')">
+                    <i class="fas fa-cog"></i> Configuración
                 </a>
-                <div class="menu-item premium" onclick="alert('Función Premium: Estadísticas avanzadas')">
-                    <i class="fas fa-chart-line"></i>
-                    <span>📈 Analytics</span>
-                    <i class="fas fa-chevron-right arrow"></i>
-                </div>
-                <a href="admin-config.html" class="menu-item">
-                    <i class="fas fa-cog"></i>
-                    <span>Configuración</span>
-                    <i class="fas fa-chevron-right arrow"></i>
+                <a href="admin-portafolio.html" class="nav-item">
+                    <i class="fas fa-images"></i> Portafolio
                 </a>
-                <a href="barbero-perfil.html?id=preview" class="menu-item" target="_blank">
-                    <i class="fas fa-eye"></i>
-                    <span>Vista Pública</span>
-                    <i class="fas fa-external-link-alt arrow"></i>
+                <a href="barbero-perfil.html?id=preview" class="nav-item" target="_blank">
+                    <i class="fas fa-eye"></i> Vista Pública
                 </a>
-                <button onclick="cerrarSesion()" class="menu-item danger" style="width:100%; text-align:left; background:none; border:none; cursor:pointer;">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Cerrar Sesión</span>
-                    <i class="fas fa-chevron-right arrow"></i>
+                <a href="admin-productos.html" class="nav-item">
+                    <i class="fas fa-store"></i> Mis Productos
+                </a>
+                <button onclick="cerrarSesion()" class="nav-item danger" style="width:100%; text-align:left; background:none; border:none; cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                 </button>
-            </div>
-        </div>
-    </div>
+            </nav>
+        </aside>
 
-    <!-- MODAL PARA SUBIR IMAGEN -->
-    <div class="modal" id="imageModal">
-        <div class="modal-content">
-            <h3 class="modal-title">📷 SUBIR IMAGEN</h3>
-            <input type="file" id="modalFileInput" accept="image/*">
-            <div class="modal-buttons">
-                <button class="modal-btn cancel" onclick="closeModal()">Cancelar</button>
-                <button class="modal-btn confirm" onclick="confirmUpload()">Subir</button>
-            </div>
-        </div>
+        <!-- 📦 CONTENIDO PRINCIPAL -->
+        <main class="main-content">
+            
+            <!-- ⚙️ CONFIGURACIÓN DE PERFIL PÚBLICO -->
+            <section id="configuracion" class="content-card">
+                <h2 class="card-title"><i class="fas fa-paint-brush"></i> Personaliza tu Página Pública</h2>
+                
+                <!-- Vista previa en vivo -->
+                <div class="profile-preview">
+                    <div class="profile-preview-img" onclick="document.getElementById('logoInput').click()">
+                        <img id="previewLogo" src="https://placehold.co/150x150/111/00E5EE?text=✂️" alt="Logo">
+                        <input type="file" id="logoInput" accept="image/*" style="display:none;">
+                    </div>
+                    <h3 class="profile-preview-name" id="previewName">Tu Barbería</h3>
+                    <p class="profile-preview-location" id="previewLocation">📍 Ciudad</p>
+                    <p class="profile-preview-bio" id="previewBio">Tu descripción aparecerá aquí...</p>
+                </div>
+
+                <!-- Formulario de configuración -->
+                <form id="profileForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>🏪 Nombre de la Barbería</label>
+                            <input type="text" id="barberName" placeholder="Ej: Neon Cuts Studio" required>
+                        </div>
+                        <div class="form-group">
+                            <label>📍 Ubicación</label>
+                            <input type="text" id="barberLocation" placeholder="Ej: Downtown, Ciudad">
+                        </div>
+                        <div class="form-group full">
+                            <label>📝 Descripción / Bio</label>
+                            <textarea id="barberBio" rows="3" placeholder="Cuéntale a tus clientes sobre tu estilo..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>📷 Logo (cuadrado recomendado)</label>
+                            <input type="file" id="logoFile" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label>🖼️ Imagen de Fondo</label>
+                            <input type="file" id="coverFile" accept="image/*">
+                        </div>
+                        <div class="form-group">
+                            <label>📸 Instagram</label>
+                            <input type="text" id="instagram" placeholder="@tu_barberia">
+                        </div>
+                        <div class="form-group">
+                            <label>💬 WhatsApp</label>
+                            <input type="text" id="whatsapp" placeholder="+52 123 456 7890">
+                        </div>
+                        <div class="form-group">
+                            <label>🎨 Color Principal</label>
+                            <div class="color-picker">
+                                <input type="color" id="primaryColor" value="#00E5EE">
+                                <span style="color:rgba(255,255,255,0.7); font-size:0.9rem;">Cian Neón</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>🎨 Color Secundario</label>
+                            <div class="color-picker">
+                                <input type="color" id="secondaryColor" value="#ff00ff">
+                                <span style="color:rgba(255,255,255,0.7); font-size:0.9rem;">Rosa Neón</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-save">
+                        <i class="fas fa-save"></i> GUARDAR CAMBIOS
+                    </button>
+                </form>
+            </section>
+
+            <!-- 📊 RESUMEN RÁPIDO -->
+            <section class="content-card">
+                <h2 class="card-title"><i class="fas fa-chart-pie"></i> Resumen del Mes</h2>
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:15px;">
+                    <div style="text-align:center; padding:15px; background:rgba(0,229,238,0.1); border-radius:12px;">
+                        <div style="font-family:'Orbitron'; font-size:1.8rem; color:var(--neon-cyan);" id="statCitas">0</div>
+                        <div style="color:rgba(255,255,255,0.7); font-size:0.9rem;">Citas Completadas</div>
+                    </div>
+                    <div style="text-align:center; padding:15px; background:rgba(255,0,255,0.1); border-radius:12px;">
+                        <div style="font-family:'Orbitron'; font-size:1.8rem; color:var(--neon-pink);" id="statGanancias">$0</div>
+                        <div style="color:rgba(255,255,255,0.7); font-size:0.9rem;">Ganancias</div>
+                    </div>
+                    <div style="text-align:center; padding:15px; background:rgba(255,204,0,0.1); border-radius:12px;">
+                        <div style="font-family:'Orbitron'; font-size:1.8rem; color:#ffcc00;" id="statVisitas">0</div>
+                        <div style="color:rgba(255,255,255,0.7); font-size:0.9rem;">Visitas al Perfil</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
     </div>
 
     <script src="config.js"></script>
     <script>
-        // ✨ CREAR BURBUJAS (Reemplaza los rayos)
+        // ✨ BURBUJAS
         function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 35; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.animationDelay = Math.random() * 10 + 's';
-                p.style.animationDuration = (8 + Math.random() * 7) + 's';
-                container.appendChild(p);
+            const c = document.getElementById('particles');
+            for(let i=0; i<35; i++) {
+                const p = document.createElement('div'); p.className = 'particle';
+                p.style.left = Math.random()*100 + '%'; p.style.animationDelay = Math.random()*10 + 's';
+                p.style.animationDuration = (8 + Math.random()*7) + 's'; c.appendChild(p);
             }
         }
         createParticles();
 
         let currentUser = null;
-        let uploadType = null; // 'avatar' o 'portfolio'
 
-        // 🔐 VERIFICAR SESIÓN Y CARGAR DATOS
+        // 🔐 VERIFICAR SESIÓN
         (async () => {
             try {
                 const { data: { user } } = await supabaseClient.auth.getUser();
-                
-                if (!user) {
-                    window.location.href = 'auth.html';
+                if (!user || user.user_metadata?.role !== 'barbero') {
+                    window.location.href = user ? 'explorar.html' : 'auth.html';
                     return;
                 }
-                
-                // Solo barberos pueden ver esta página
-                if (user.user_metadata?.role !== 'barbero') {
-                    window.location.href = 'explorar.html';
-                    return;
-                }
-                
                 currentUser = user;
-                
-                // Mostrar datos del usuario
-                const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Barbero';
-                document.getElementById('display-name').textContent = nombre;
-                document.getElementById('display-email').textContent = user.email || '';
-                
-                // Cargar avatar si existe
-                const { data: perfil } = await supabaseClient.from('perfiles').select('avatar_url').eq('id', user.id).single();
-                if (perfil?.avatar_url) {
-                    document.getElementById('avatarImg').src = perfil.avatar_url;
-                }
-                
-                // Cargar estadísticas
+                await loadProfileSettings();
                 await loadStats();
-                await loadMiniCalendar();
-                await loadOffer();
-                await loadPortfolio();
-                
             } catch (err) {
-                console.error('Error cargando panel:', err);
-                window.location.href = 'auth.html';
+                console.error(err); window.location.href = 'auth.html';
             }
         })();
+
+        // 📥 CARGAR CONFIGURACIÓN DEL PERFIL
+        async function loadProfileSettings() {
+            const { data: perfil } = await supabaseClient.from('perfiles').select('*').eq('id', currentUser.id).single();
+            if (perfil) {
+                document.getElementById('barberName').value = perfil.nombre_barberia || '';
+                document.getElementById('barberLocation').value = perfil.ubicacion || '';
+                document.getElementById('barberBio').value = perfil.bio || '';
+                document.getElementById('instagram').value = perfil.instagram || '';
+                document.getElementById('whatsapp').value = perfil.whatsapp || '';
+                
+                if (perfil.logo_url) {
+                    document.getElementById('previewLogo').src = perfil.logo_url;
+                }
+                if (perfil.cover_url) {
+                    document.querySelector('.cyber-bg').style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.4), rgba(10,5,20,0.5)), url('${perfil.cover_url}')`;
+                }
+                
+                // Actualizar vista previa
+                updatePreview();
+            }
+        }
+
+        // 🔄 ACTUALIZAR VISTA PREVIA EN TIEMPO REAL
+        function updatePreview() {
+            document.getElementById('previewName').textContent = document.getElementById('barberName').value || 'Tu Barbería';
+            document.getElementById('previewLocation').textContent = `📍 ${document.getElementById('barberLocation').value || 'Ciudad'}`;
+            document.getElementById('previewBio').textContent = document.getElementById('barberBio').value || 'Tu descripción aparecerá aquí...';
+        }
+
+        // Escuchar cambios en los inputs para actualizar vista previa
+        ['barberName', 'barberLocation', 'barberBio'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updatePreview);
+        });
+
+        // 💾 GUARDAR CONFIGURACIÓN
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('.btn-save');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+            btn.disabled = true;
+
+            try {
+                let logoUrl = null, coverUrl = null;
+
+                // Subir logo si se seleccionó
+                const logoFile = document.getElementById('logoFile').files[0];
+                if (logoFile) {
+                    const fileName = `logos/${currentUser.id}/${Date.now()}_${logoFile.name}`;
+                    const { error } = await supabaseClient.storage.from('uploads').upload(fileName, logoFile, { upsert: true });
+                    if (error) throw error;
+                    logoUrl = supabaseClient.storage.from('uploads').getPublicUrl(fileName).data.publicUrl;
+                }
+
+                // Subir cover si se seleccionó
+                const coverFile = document.getElementById('coverFile').files[0];
+                if (coverFile) {
+                    const fileName = `covers/${currentUser.id}/${Date.now()}_${coverFile.name}`;
+                    const { error } = await supabaseClient.storage.from('uploads').upload(fileName, coverFile, { upsert: true });
+                    if (error) throw error;
+                    coverUrl = supabaseClient.storage.from('uploads').getPublicUrl(fileName).data.publicUrl;
+                }
+
+                // Actualizar perfil en BD
+                const { error } = await supabaseClient.from('perfiles').upsert({
+                    id: currentUser.id,
+                    nombre_barberia: document.getElementById('barberName').value,
+                    ubicacion: document.getElementById('barberLocation').value,
+                    bio: document.getElementById('barberBio').value,
+                    instagram: document.getElementById('instagram').value,
+                    whatsapp: document.getElementById('whatsapp').value,
+                    logo_url: logoUrl,
+                    cover_url: coverUrl,
+                    colores_tema: {
+                        primary: document.getElementById('primaryColor').value,
+                        secondary: document.getElementById('secondaryColor').value
+                    }
+                });
+
+                if (error) throw error;
+
+                // Actualizar vista previa con nuevas imágenes
+                if (logoUrl) document.getElementById('previewLogo').src = logoUrl;
+                if (coverUrl) document.querySelector('.cyber-bg').style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.4), rgba(10,5,20,0.5)), url('${coverUrl}')`;
+                
+                alert('✅ ¡Tu página pública ha sido actualizada!');
+                updatePreview();
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
 
         // 📊 CARGAR ESTADÍSTICAS
         async function loadStats() {
             try {
-                const today = new Date().toISOString().split('T')[0];
                 const startOfMonth = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}-01`;
                 
-                // Citas hoy
-                const { count: citasHoy } = await supabaseClient
-                    .from('citas')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('barbero_id', currentUser.id)
-                    .eq('fecha', today);
+                // Citas completadas
+                const { count: citas } = await supabaseClient.from('citas').select('*', {count:'exact',head:true}).eq('barbero_id', currentUser.id).eq('estado','completada').gte('fecha', startOfMonth);
                 
-                // Ganancias del mes (solo completadas)
-                const { data: gananciasData } = await supabaseClient
-                    .from('citas')
-                    .select('precio, estado')
-                    .eq('barbero_id', currentUser.id)
-                    .gte('fecha', startOfMonth)
-                    .eq('estado', 'completada');
+                // Ganancias
+                const { data: gananciasData } = await supabaseClient.from('citas').select('precio').eq('barbero_id', currentUser.id).eq('estado','completada').gte('fecha', startOfMonth);
+                const ganancias = (gananciasData||[]).reduce((sum,c)=>sum+(c.precio||0),0);
                 
-                const ganancias = (gananciasData || []).reduce((sum, c) => sum + (c.precio || 0), 0);
+                // Visitas (simulado - aquí conectarías con analytics real)
+                const visitas = Math.floor(Math.random() * 50) + 10;
                 
-                // Productos
-                const { count: productos } = await supabaseClient
-                    .from('productos')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('barbero_id', currentUser.id);
-                
-                document.getElementById('stat-citas-hoy').textContent = citasHoy || 0;
-                document.getElementById('stat-ganancias').textContent = `$${ganancias.toFixed(0)}`;
-                document.getElementById('stat-productos').textContent = productos || 0;
-                
-            } catch (err) {
-                console.error('Error cargando stats:', err);
-            }
+                document.getElementById('statCitas').textContent = citas || 0;
+                document.getElementById('statGanancias').textContent = `$${ganancias.toFixed(0)}`;
+                document.getElementById('statVisitas').textContent = visitas;
+            } catch (err) { console.error('Stats error:', err); }
         }
 
-        // 🗓️ MINI CALENDARIO (7 días)
-        async function loadMiniCalendar() {
-            const container = document.getElementById('miniCalendar');
-            const today = new Date();
-            let html = '';
-            
-            for (let i = 0; i < 7; i++) {
-                const date = new Date(today);
-                date.setDate(today.getDate() + i);
-                const dateStr = date.toISOString().split('T')[0];
-                const isToday = i === 0;
-                
-                // Verificar si hay cita ese día
-                const { count } = await supabaseClient
-                    .from('citas')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('barbero_id', currentUser.id)
-                    .eq('fecha', dateStr);
-                
-                const hasCita = count > 0;
-                
-                html += `<div class="${isToday?'today':''} ${hasCita?'has-cita':''}">${date.getDate()}</div>`;
-            }
-            container.innerHTML = html;
-        }
-
-        // 🔥 CARGAR OFERTA DEL MES
-        async function loadOffer() {
-            try {
-                const { data: oferta } = await supabaseClient
-                    .from('productos')
-                    .select('nombre, precio')
-                    .eq('barbero_id', currentUser.id)
-                    .eq('es_oferta_mes', true)
-                    .single();
-                
-                if (oferta) {
-                    document.getElementById('offerName').textContent = oferta.nombre;
-                    document.getElementById('offerPrice').textContent = `$${oferta.precio}`;
-                } else {
-                    document.getElementById('offerBanner').style.display = 'none';
-                }
-            } catch (err) {
-                console.error('Error cargando oferta:', err);
-            }
-        }
-
-        // 📸 CARGAR PORTAFOLIO MINI
-        async function loadPortfolio() {
-            try {
-                const { data: fotos } = await supabaseClient
-                    .from('portafolio')
-                    .select('imagen_url')
-                    .eq('barbero_id', currentUser.id)
-                    .limit(5);
-                
-                const container = document.getElementById('portfolioMini');
-                let html = '';
-                
-                if (fotos && fotos.length > 0) {
-                    html = fotos.map(f => `<div class="portfolio-item"><img src="${f.imagen_url}" alt="Trabajo"></div>`).join('');
-                }
-                html += `<div class="portfolio-add" id="addPortfolio">+</div>`;
-                
-                container.innerHTML = html;
-                document.getElementById('addPortfolio').onclick = () => openModal('portfolio');
-                
-            } catch (err) {
-                console.error('Error cargando portafolio:', err);
-            }
-        }
-
-        // 📷 SUBIR AVATAR
-        document.getElementById('avatarWrap').addEventListener('click', () => openModal('avatar'));
-        document.getElementById('avatarInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            await uploadImage(file, 'avatar');
-        });
-
-        // 🗂️ FUNCIONES DE MODAL
-        function openModal(type) {
-            uploadType = type;
-            document.getElementById('imageModal').style.display = 'flex';
-        }
-        function closeModal() {
-            document.getElementById('imageModal').style.display = 'none';
-            document.getElementById('modalFileInput').value = '';
-        }
-        async function confirmUpload() {
-            const file = document.getElementById('modalFileInput').files[0];
-            if (!file) { alert('Selecciona una imagen'); return; }
-            await uploadImage(file, uploadType);
-            closeModal();
-        }
-
-        // 📤 SUBIR IMAGEN A SUPABASE
-        async function uploadImage(file, type) {
-            try {
-                const fileName = `${type}s/${currentUser.id}/${Date.now()}_${file.name}`;
-                const { error: uploadError } = await supabaseClient.storage
-                    .from('uploads')
-                    .upload(fileName, file, { upsert: true });
-                
-                if (uploadError) throw uploadError;
-                
-                const { data: { publicUrl } } = supabaseClient.storage
-                    .from('uploads')
-                    .getPublicUrl(fileName);
-                
-                if (type === 'avatar') {
-                    // Actualizar avatar en perfil
-                    await supabaseClient.from('perfiles')
-                        .update({ avatar_url: publicUrl })
-                        .eq('id', currentUser.id);
-                    document.getElementById('avatarImg').src = publicUrl;
-                } else if (type === 'portfolio') {
-                    // Agregar al portafolio
-                    await supabaseClient.from('portafolio')
-                        .insert({ barbero_id: currentUser.id, imagen_url: publicUrl });
-                    await loadPortfolio();
-                }
-                
-                alert('✅ Imagen subida correctamente');
-            } catch (err) {
-                alert('❌ Error: ' + err.message);
-            }
+        // 🧭 NAVEGACIÓN ENTRE SECCIONES
+        function showSection(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            // Aquí podrías cargar contenido dinámico si tienes más secciones
         }
 
         // 🚪 CERRAR SESIÓN
@@ -753,10 +567,18 @@
             }
         };
 
-        // Cerrar modal al hacer clic fuera
-        window.onclick = (e) => {
-            if (e.target.id === 'imageModal') closeModal();
-        };
+        // 📷 Subir logo desde vista previa
+        document.getElementById('logoInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const fileName = `logos/${currentUser.id}/${Date.now()}_${file.name}`;
+            const { error } = await supabaseClient.storage.from('uploads').upload(fileName, file, { upsert: true });
+            if (error) { alert('Error: ' + error.message); return; }
+            const publicUrl = supabaseClient.storage.from('uploads').getPublicUrl(fileName).data.publicUrl;
+            document.getElementById('previewLogo').src = publicUrl;
+            await supabaseClient.from('perfiles').update({ logo_url: publicUrl }).eq('id', currentUser.id);
+            alert('✅ Logo actualizado');
+        });
     </script>
 </body>
 </html>
