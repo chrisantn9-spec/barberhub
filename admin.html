@@ -8,296 +8,755 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --neon-cyan: #00E5EE; --neon-pink: #ff00ff; --neon-purple: #bc13fe; }
+        :root {
+            --neon-cyan: #00E5EE;
+            --neon-pink: #ff00ff;
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Rajdhani', sans-serif; color: #fff; min-height: 100vh; background: #050505; overflow-x: hidden; }
-        
-        .cyber-bg { position: fixed; top:0; left:0; width:100%; height:100%; background: linear-gradient(135deg, rgba(0,0,0,0.5), rgba(5,5,20,0.7)), url('./fondomiperfil.jpeg'); background-size: cover; background-position: center; z-index: -3; }
-        .rays { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:-2; overflow:hidden; }
-        .ray { position:absolute; width:2px; height:0; background: linear-gradient(to bottom, transparent, var(--neon-cyan), transparent); box-shadow: 0 0 10px var(--neon-cyan); animation: riseRay 4s infinite linear; opacity:0; }
-        @keyframes riseRay { 0%{height:0;top:100%;opacity:0;} 50%{height:150px;} 100%{height:0;top:-20%;opacity:0;} }
-        .cyber-grid { position:fixed; top:0; left:0; width:100%; height:100%; background-image: linear-gradient(rgba(0,229,238,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,238,0.03) 1px, transparent 1px); background-size:50px 50px; z-index:-1; pointer-events:none; }
-        
-        .dashboard-container { max-width: 1200px; margin:0 auto; padding:20px; position:relative; z-index:10; }
-        .admin-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; padding:20px; background:rgba(10,10,20,0.8); backdrop-filter:blur(10px); border:1px solid rgba(0,229,238,0.3); border-radius:15px; }
-        .admin-title { font-family:'Orbitron'; font-size:1.5rem; color:var(--neon-cyan); text-shadow:0 0 10px var(--neon-cyan); }
-        .logout-btn { padding:10px 20px; background:transparent; border:1px solid var(--neon-pink); color:var(--neon-pink); border-radius:8px; cursor:pointer; font-family:'Orbitron'; transition:0.3s; }
-        .logout-btn:hover { background:var(--neon-pink); color:#fff; box-shadow:0 0 15px var(--neon-pink); }
-        
-        .stats-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:30px; }
-        .stat-card { background:rgba(10,10,25,0.6); backdrop-filter:blur(10px); border:1px solid rgba(0,229,238,0.3); border-radius:15px; padding:25px; text-align:center; box-shadow:0 0 15px rgba(0,229,238,0.1); transition:0.3s; }
-        .stat-card:hover { transform:translateY(-5px); box-shadow:0 0 25px rgba(0,229,238,0.2); }
-        .stat-icon { font-size:2.5rem; margin-bottom:10px; color:var(--neon-cyan); }
-        .stat-value { font-family:'Orbitron'; font-size:2rem; font-weight:700; color:#fff; margin-bottom:5px; }
-        .stat-label { color:rgba(255,255,255,0.6); font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; }
-        
-        .section { background:rgba(10,10,20,0.6); backdrop-filter:blur(10px); border:1px solid rgba(0,229,238,0.2); border-radius:15px; padding:25px; margin-bottom:30px; }
-        .section-title { font-family:'Orbitron'; font-size:1.3rem; color:var(--neon-cyan); margin-bottom:20px; display:flex; align-items:center; gap:10px; text-shadow:0 0 8px rgba(0,229,238,0.5); }
-        .section-title i { color:var(--neon-pink); }
-        
-        /* 📅 CALENDARIO VISUAL */
-        .calendar-grid { display:grid; grid-template-columns:repeat(7, 1fr); gap:8px; margin-bottom:20px; }
-        .cal-day { background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px; text-align:center; font-size:0.9rem; position:relative; min-height:50px; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-        .cal-day.has-cita { border-color:var(--neon-cyan); background:rgba(0,229,238,0.1); box-shadow:0 0 10px rgba(0,229,238,0.2); }
-        .cal-day.today { border-color:var(--neon-pink); background:rgba(255,0,255,0.1); }
-        .cal-day .day-num { font-family:'Orbitron'; font-weight:700; }
-        .cal-day .cita-dot { width:6px; height:6px; background:var(--neon-cyan); border-radius:50%; margin-top:4px; }
-        
-        .appointment-list { display:flex; flex-direction:column; gap:15px; }
-        .appointment-card { background:rgba(0,229,238,0.05); border:1px solid rgba(0,229,238,0.2); border-left:4px solid var(--neon-cyan); border-radius:10px; padding:20px; display:flex; justify-content:space-between; align-items:center; transition:0.3s; }
-        .appointment-card:hover { background:rgba(0,229,238,0.1); transform:translateX(5px); }
-        .client-info h3 { font-size:1.1rem; margin-bottom:5px; }
-        .client-info p { font-size:0.9rem; color:rgba(255,255,255,0.6); }
-        .time-badge { background:var(--neon-cyan); color:#000; padding:8px 15px; border-radius:6px; font-weight:bold; font-family:'Orbitron'; font-size:0.85rem; margin-right:15px; }
-        .action-btn { background:transparent; border:1px solid rgba(255,255,255,0.3); color:#fff; padding:8px 15px; border-radius:6px; cursor:pointer; margin-left:10px; transition:0.2s; }
-        .action-btn:hover { border-color:#fff; background:rgba(255,255,255,0.1); }
-        .action-btn.complete { border-color:#00ff88; color:#00ff88; }
-        .action-btn.complete:hover { background:#00ff88; color:#000; }
-        
-        .shop-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:20px; }
-        .product-card { background:rgba(255,0,255,0.05); border:1px solid rgba(255,0,255,0.3); border-radius:12px; padding:20px; text-align:center; transition:0.3s; position:relative; }
-        .product-card:hover { border-color:var(--neon-pink); box-shadow:0 0 20px rgba(255,0,255,0.2); transform:translateY(-5px); }
-        .product-card.is-offer { border:2px solid #ffcc00; box-shadow:0 0 25px rgba(255,204,0,0.3); }
-        .offer-badge { position:absolute; top:-10px; right:-10px; background:#ffcc00; color:#000; padding:4px 10px; border-radius:20px; font-size:0.7rem; font-weight:bold; font-family:'Orbitron'; }
-        .product-img { width:80px; height:80px; margin:0 auto 15px; border-radius:50%; background:rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center; font-size:2.5rem; overflow:hidden; }
-        .product-img img { width:100%; height:100%; object-fit:cover; }
-        .product-name { font-weight:700; font-size:1.1rem; margin-bottom:8px; }
-        .product-price { color:var(--neon-pink); font-family:'Orbitron'; font-weight:700; font-size:1.2rem; margin-bottom:15px; }
-        .delete-btn { background:rgba(255,68,68,0.2); border:1px solid #ff4444; color:#ff4444; padding:8px 15px; border-radius:6px; cursor:pointer; font-family:'Rajdhani'; font-weight:600; transition:0.3s; }
-        .delete-btn:hover { background:#ff4444; color:#fff; }
-        .add-product-btn { background:rgba(255,0,255,0.1); border:2px dashed rgba(255,0,255,0.4); color:var(--neon-pink); border-radius:12px; padding:40px 20px; cursor:pointer; font-family:'Orbitron'; font-weight:bold; transition:0.3s; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; }
-        .add-product-btn:hover { background:rgba(255,0,255,0.2); border-color:var(--neon-pink); transform:scale(1.02); }
-        .add-product-btn i { font-size:2.5rem; }
-        
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:9999; justify-content:center; align-items:center; }
-        .modal-content { background:rgba(10,10,20,0.95); border:2px solid var(--neon-cyan); border-radius:20px; padding:30px; max-width:500px; width:90%; max-height:90vh; overflow-y:auto; }
-        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-        .modal-title { font-family:'Orbitron'; color:var(--neon-cyan); font-size:1.3rem; }
-        .close-modal { background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer; }
-        .form-group { margin-bottom:20px; }
-        .form-group label { display:block; margin-bottom:8px; color:rgba(255,255,255,0.8); font-family:'Orbitron'; font-size:0.85rem; }
-        .form-group input, .form-group textarea, .form-group select { width:100%; padding:12px; background:rgba(0,0,0,0.4); border:1px solid rgba(0,229,238,0.3); border-radius:8px; color:#fff; font-family:'Rajdhani'; font-size:1rem; }
-        .form-group input:focus, .form-group textarea:focus { outline:none; border-color:var(--neon-cyan); box-shadow:0 0 10px rgba(0,229,238,0.3); }
-        .submit-btn { width:100%; padding:14px; background:var(--neon-cyan); border:none; border-radius:8px; color:#000; font-family:'Orbitron'; font-weight:700; cursor:pointer; transition:0.3s; }
-        .submit-btn:hover { background:#fff; box-shadow:0 0 20px var(--neon-cyan); }
-        .checkbox-group { display:flex; align-items:center; gap:10px; margin-top:10px; }
-        .checkbox-group input { width:auto; accent-color:var(--neon-cyan); }
-        
-        @media (max-width: 768px) { .stats-row { grid-template-columns: 1fr; } .appointment-card { flex-direction:column; text-align:center; gap:15px; } .shop-grid { grid-template-columns: 1fr 1fr; } }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            background: #030303;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 🔥 FONDO CON TU IMAGEN */
+        .cyber-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(10,5,20,0.4) 100%),
+                url('./fondomiperfil.jpeg');
+            background-size: cover;
+            background-position: center;
+            z-index: -3;
+        }
+
+        /* ✨ BURBUJAS CYBERPUNK (Reemplaza los rayos) */
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+            animation: rise 10s infinite linear;
+            opacity: 0;
+        }
+        @keyframes rise {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            10% { opacity: 0.8; transform: translateY(100vh) scale(1); }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+        }
+
+        /* 🔲 REJILLA SUTIL */
+        .cyber-grid {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 229, 238, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 238, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* 📦 CONTENIDO PRINCIPAL */
+        .app-container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px 60px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 🎴 TARJETA TRANSPARENTE CON BORDE CRISTAL */
+        .card {
+            background: transparent;
+            border: 1.5px solid rgba(0, 229, 238, 0.4);
+            border-radius: 20px;
+            padding: 30px 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 229, 238, 0.3), inset 0 0 20px rgba(0, 229, 238, 0.05);
+        }
+
+        /* 🏷️ LOGO */
+        .brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-align: center;
+            margin-bottom: 25px;
+            color: #fff;
+            text-shadow: 0 0 12px rgba(0, 229, 238, 0.7);
+        }
+        .brand .b { color: #fff; }
+        .brand .h { color: var(--neon-cyan); }
+
+        /* 👤 AVATAR Y DATOS DE USUARIO */
+        .avatar-section { text-align: center; margin-bottom: 25px; }
+        .avatar-wrap {
+            width: 100px; height: 100px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 229, 238, 0.5);
+            cursor: pointer;
+            position: relative;
+        }
+        .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-wrap::after {
+            content: '📷';
+            position: absolute;
+            bottom: 0; right: 0;
+            background: var(--neon-cyan);
+            color: #000;
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem;
+            border: 2px solid #030303;
+        }
+        .user-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            margin: 0 0 5px;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 229, 238, 0.6), 0 2px 4px rgba(0,0,0,0.9);
+        }
+        .user-email {
+            color: var(--neon-cyan);
+            font-size: 0.95rem;
+            margin: 0;
+            text-shadow: 0 0 8px rgba(0, 229, 238, 0.5);
+        }
+
+        /* 📊 ESTADÍSTICAS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .stat {
+            background: rgba(0, 229, 238, 0.1);
+            border: 1px solid rgba(0, 229, 238, 0.3);
+            border-radius: 12px;
+            padding: 15px 10px;
+            text-align: center;
+        }
+        .stat-num {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--neon-cyan);
+            margin-bottom: 3px;
+            text-shadow: 0 0 8px rgba(0, 229, 238, 0.6);
+        }
+        .stat-lbl {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 🧭 MENÚ DE OPCIONES - EXPANDIDO PARA BARBERO */
+        .menu-grid { display: grid; gap: 12px; }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: transparent;
+            border: 1.5px solid rgba(0, 229, 238, 0.3);
+            border-radius: 12px;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .menu-item:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 229, 238, 0.3);
+            transform: translateX(4px);
+        }
+        .menu-item i {
+            font-size: 1.2rem;
+            color: var(--neon-cyan);
+            width: 24px;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(0, 229, 238, 0.6);
+        }
+        .menu-item .arrow {
+            margin-left: auto;
+            color: rgba(255,255,255,0.4);
+        }
+        .menu-item.danger {
+            border-color: rgba(255, 68, 68, 0.4);
+        }
+        .menu-item.danger i { color: #ff4444; text-shadow: 0 0 8px rgba(255, 68, 68, 0.6); }
+        .menu-item.danger:hover {
+            border-color: #ff4444;
+            box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
+        }
+        .menu-item.premium {
+            border-color: #ffcc00;
+        }
+        .menu-item.premium i { color: #ffcc00; text-shadow: 0 0 8px rgba(255,204,0,0.6); }
+        .menu-item.premium:hover {
+            border-color: #ffcc00;
+            box-shadow: 0 0 15px rgba(255,204,0,0.3);
+        }
+
+        /* 🗓️ CALENDARIO MINI */
+        .mini-calendar {
+            background: rgba(0, 229, 238, 0.05);
+            border: 1px solid rgba(0, 229, 238, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .mini-calendar-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-cyan);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        .mini-calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            font-size: 0.75rem;
+        }
+        .mini-calendar-days div {
+            padding: 4px;
+            border-radius: 4px;
+        }
+        .mini-calendar-days .today {
+            background: var(--neon-pink);
+            color: #fff;
+            font-weight: bold;
+        }
+        .mini-calendar-days .has-cita {
+            background: rgba(0, 229, 238, 0.3);
+            color: #fff;
+        }
+
+        /* 📸 PORTAFOLIO MINI */
+        .portfolio-mini {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .portfolio-item {
+            aspect-ratio: 1/1;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 229, 238, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .portfolio-item:hover {
+            border-color: var(--neon-cyan);
+            transform: scale(1.05);
+        }
+        .portfolio-item img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .portfolio-add {
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0, 229, 238, 0.1);
+            border: 2px dashed rgba(0, 229, 238, 0.4);
+            border-radius: 8px;
+            color: var(--neon-cyan);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .portfolio-add:hover {
+            background: rgba(0, 229, 238, 0.2);
+            border-color: var(--neon-cyan);
+        }
+
+        /* 🛒 OFERTA DEL MES */
+        .offer-banner {
+            background: linear-gradient(135deg, rgba(255,204,0,0.1), rgba(255,0,255,0.1));
+            border: 2px solid #ffcc00;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .offer-banner::before {
+            content: '🔥';
+            position: absolute;
+            top: -10px; right: -10px;
+            background: #ffcc00;
+            color: #000;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.2);} }
+        .offer-title {
+            font-family: 'Orbitron', sans-serif;
+            color: #ffcc00;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .offer-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .offer-price {
+            color: var(--neon-pink);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+        }
+
+        /* MODAL PARA SUBIR IMAGEN */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: rgba(10,10,20,0.95);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+        }
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-cyan);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .modal input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(0,229,238,0.3);
+            border-radius: 8px;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .modal-btn.cancel {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+        }
+        .modal-btn.confirm {
+            background: var(--neon-cyan);
+            color: #000;
+        }
+        .modal-btn:hover { transform: translateY(-2px); }
+
+        /* 📱 RESPONSIVE */
+        @media (max-width: 500px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .brand { font-size: 1.5rem; }
+            .portfolio-mini { grid-template-columns: repeat(2, 1fr); }
+        }
     </style>
 </head>
 <body>
+    <!-- Fondo y efectos con BURBUJAS -->
     <div class="cyber-bg"></div>
     <div class="cyber-grid"></div>
-    <div class="rays" id="rays"></div>
+    <div class="particles" id="particles"></div>
 
-    <div class="dashboard-container">
-        <header class="admin-header">
-            <div>
-                <h1 class="admin-title"><i class="fas fa-crown"></i> PANEL DE BARBERO</h1>
-                <p style="color:rgba(255,255,255,0.6); margin-top:5px;">Gestiona tu negocio</p>
+    <!-- Contenido principal -->
+    <div class="app-container">
+        <div class="card">
+            <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
+            
+            <!-- 👤 AVATAR + DATOS -->
+            <div class="avatar-section">
+                <div class="avatar-wrap" id="avatarWrap">
+                    <img id="avatarImg" src="https://placehold.co/150x150/111/00E5EE?text=✂️" alt="Avatar">
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none;">
+                </div>
+                <h2 class="user-name" id="display-name">Cargando...</h2>
+                <p class="user-email" id="display-email">email@ejemplo.com</p>
             </div>
-            <button class="logout-btn" onclick="cerrarSesion()"><i class="fas fa-sign-out-alt"></i> Salir</button>
-        </header>
+            
+            <!-- 📊 ESTADÍSTICAS DEL BARBERO -->
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-num" id="stat-citas-hoy">0</div>
+                    <div class="stat-lbl">Citas Hoy</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="stat-ganancias">$0</div>
+                    <div class="stat-lbl">Ganancias Mes</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num" id="stat-productos">0</div>
+                    <div class="stat-lbl">Productos</div>
+                </div>
+            </div>
 
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
-                <div class="stat-value" id="statCitasHoy">0</div>
-                <div class="stat-label">Citas Hoy</div>
+            <!-- 🗓️ MINI CALENDARIO -->
+            <div class="mini-calendar">
+                <div class="mini-calendar-title">📅 PRÓXIMAS CITAS</div>
+                <div class="mini-calendar-days" id="miniCalendar"></div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-wallet"></i></div>
-                <div class="stat-value" id="statGananciasMes">$0</div>
-                <div class="stat-label">Ganancias del Mes</div>
+
+            <!-- 🔥 OFERTA DEL MES -->
+            <div class="offer-banner" id="offerBanner">
+                <div class="offer-title">OFERTA DEL MES</div>
+                <div class="offer-name" id="offerName">Cargando...</div>
+                <div class="offer-price" id="offerPrice">$0.00</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-box-open"></i></div>
-                <div class="stat-value" id="statProductos">0</div>
-                <div class="stat-label">Productos</div>
+
+            <!-- 📸 PORTAFOLIO MINI -->
+            <div style="margin-bottom:15px; font-family:'Orbitron'; color:var(--neon-cyan); font-size:0.9rem;">
+                <i class="fas fa-camera"></i> MIS TRABAJOS
+            </div>
+            <div class="portfolio-mini" id="portfolioMini">
+                <div class="portfolio-add" id="addPortfolio">+</div>
+            </div>
+            
+            <!-- 🧭 MENÚ EXPANDIDO PARA BARBERO -->
+            <div class="menu-grid">
+                <a href="admin-citas.html" class="menu-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Gestionar Citas</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <a href="admin-productos.html" class="menu-item">
+                    <i class="fas fa-store"></i>
+                    <span>Mis Productos</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <a href="admin-portafolio.html" class="menu-item">
+                    <i class="fas fa-images"></i>
+                    <span>Portafolio</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <div class="menu-item premium" onclick="alert('Función Premium: Estadísticas avanzadas')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>📈 Analytics</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+                <a href="admin-config.html" class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </a>
+                <a href="barbero-perfil.html?id=preview" class="menu-item" target="_blank">
+                    <i class="fas fa-eye"></i>
+                    <span>Vista Pública</span>
+                    <i class="fas fa-external-link-alt arrow"></i>
+                </a>
+                <button onclick="cerrarSesion()" class="menu-item danger" style="width:100%; text-align:left; background:none; border:none; cursor:pointer;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </button>
             </div>
         </div>
-
-        <section class="section">
-            <h2 class="section-title"><i class="fas fa-calendar-alt"></i> CALENDARIO DEL MES</h2>
-            <div class="calendar-grid" id="calendarGrid"></div>
-            <h3 style="font-family:'Orbitron'; color:var(--neon-cyan); margin:20px 0 15px; font-size:1.1rem;">PRÓXIMAS CITAS</h3>
-            <div class="appointment-list" id="appointmentList"></div>
-        </section>
-
-        <section class="section">
-            <h2 class="section-title"><i class="fas fa-store"></i> MIS PRODUCTOS</h2>
-            <div class="shop-grid" id="shopGrid"></div>
-        </section>
     </div>
 
-    <div class="modal" id="productModal">
+    <!-- MODAL PARA SUBIR IMAGEN -->
+    <div class="modal" id="imageModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fas fa-plus"></i> AGREGAR PRODUCTO</h3>
-                <button class="close-modal" onclick="closeProductModal()">&times;</button>
+            <h3 class="modal-title">📷 SUBIR IMAGEN</h3>
+            <input type="file" id="modalFileInput" accept="image/*">
+            <div class="modal-buttons">
+                <button class="modal-btn cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-btn confirm" onclick="confirmUpload()">Subir</button>
             </div>
-            <form id="productForm">
-                <div class="form-group">
-                    <label>Nombre del Producto</label>
-                    <input type="text" id="prodName" placeholder="Ej: Cera Matte" required>
-                </div>
-                <div class="form-group">
-                    <label>Precio ($)</label>
-                    <input type="number" id="prodPrice" placeholder="15.00" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label>Descripción</label>
-                    <textarea id="prodDesc" rows="3" placeholder="Descripción del producto..."></textarea>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="prodOffer">
-                    <label for="prodOffer" style="color:rgba(255,255,255,0.8); font-size:0.9rem;"> Destacar como Oferta del Mes</label>
-                </div>
-                <button type="submit" class="submit-btn" style="margin-top:20px;"><i class="fas fa-save"></i> GUARDAR PRODUCTO</button>
-            </form>
         </div>
     </div>
 
     <script src="config.js"></script>
     <script>
-        function createRays() {
-            const c = document.getElementById('rays');
-            for(let i=0; i<25; i++) {
-                const r = document.createElement('div'); r.className='ray';
-                r.style.left = Math.random()*100+'%'; r.style.animationDelay = Math.random()*4+'s';
-                r.style.animationDuration = (3+Math.random()*3)+'s'; c.appendChild(r);
+        // ✨ CREAR BURBUJAS (Reemplaza los rayos)
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 35; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.animationDuration = (8 + Math.random() * 7) + 's';
+                container.appendChild(p);
             }
         }
-        createRays();
+        createParticles();
 
         let currentUser = null;
-        const today = new Date();
-        const currentMonth = today.getMonth();
-        const currentYear = today.getFullYear();
+        let uploadType = null; // 'avatar' o 'portfolio'
 
+        // 🔐 VERIFICAR SESIÓN Y CARGAR DATOS
         (async () => {
             try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session || session.user.user_metadata?.role !== 'barbero') {
-                    window.location.href = session ? 'explorar.html' : 'auth.html';
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                
+                if (!user) {
+                    window.location.href = 'auth.html';
                     return;
                 }
-                currentUser = session.user;
-                await Promise.all([loadCalendar(), loadAppointments(), loadProducts(), loadMonthlyEarnings()]);
+                
+                // Solo barberos pueden ver esta página
+                if (user.user_metadata?.role !== 'barbero') {
+                    window.location.href = 'explorar.html';
+                    return;
+                }
+                
+                currentUser = user;
+                
+                // Mostrar datos del usuario
+                const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Barbero';
+                document.getElementById('display-name').textContent = nombre;
+                document.getElementById('display-email').textContent = user.email || '';
+                
+                // Cargar avatar si existe
+                const { data: perfil } = await supabaseClient.from('perfiles').select('avatar_url').eq('id', user.id).single();
+                if (perfil?.avatar_url) {
+                    document.getElementById('avatarImg').src = perfil.avatar_url;
+                }
+                
+                // Cargar estadísticas
+                await loadStats();
+                await loadMiniCalendar();
+                await loadOffer();
+                await loadPortfolio();
+                
             } catch (err) {
-                console.error(err);
+                console.error('Error cargando panel:', err);
                 window.location.href = 'auth.html';
             }
         })();
 
-        async function loadCalendar() {
-            const grid = document.getElementById('calendarGrid');
-            grid.innerHTML = '';
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
-            
-            // Obtener fechas con citas
-            const { data: citas } = await supabaseClient.from('citas').select('fecha').eq('barbero_id', currentUser.id);
-            const citaFechas = new Set(citas.map(c => c.fecha));
-
-            for(let i=0; i<firstDay; i++) grid.innerHTML += `<div class="cal-day"></div>`;
-            for(let d=1; d<=daysInMonth; d++) {
-                const dateStr = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                const isToday = d === today.getDate() && currentMonth === today.getMonth();
-                const hasCita = citaFechas.has(dateStr);
-                grid.innerHTML += `<div class="cal-day ${isToday?'today':''} ${hasCita?'has-cita':''}">
-                    <span class="day-num">${d}</span>
-                    ${hasCita?'<span class="cita-dot"></span>':''}
-                </div>`;
+        // 📊 CARGAR ESTADÍSTICAS
+        async function loadStats() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const startOfMonth = `${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}-01`;
+                
+                // Citas hoy
+                const { count: citasHoy } = await supabaseClient
+                    .from('citas')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('barbero_id', currentUser.id)
+                    .eq('fecha', today);
+                
+                // Ganancias del mes (solo completadas)
+                const { data: gananciasData } = await supabaseClient
+                    .from('citas')
+                    .select('precio, estado')
+                    .eq('barbero_id', currentUser.id)
+                    .gte('fecha', startOfMonth)
+                    .eq('estado', 'completada');
+                
+                const ganancias = (gananciasData || []).reduce((sum, c) => sum + (c.precio || 0), 0);
+                
+                // Productos
+                const { count: productos } = await supabaseClient
+                    .from('productos')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('barbero_id', currentUser.id);
+                
+                document.getElementById('stat-citas-hoy').textContent = citasHoy || 0;
+                document.getElementById('stat-ganancias').textContent = `$${ganancias.toFixed(0)}`;
+                document.getElementById('stat-productos').textContent = productos || 0;
+                
+            } catch (err) {
+                console.error('Error cargando stats:', err);
             }
         }
 
-        async function loadAppointments() {
-            const { data } = await supabaseClient.from('citas').select('*').eq('barbero_id', currentUser.id).order('fecha', {ascending:true}).order('hora', {ascending:true}).limit(5);
-            const container = document.getElementById('appointmentList');
-            document.getElementById('statCitasHoy').textContent = data ? data.filter(c => c.fecha === new Date().toISOString().split('T')[0]).length : 0;
+        // 🗓️ MINI CALENDARIO (7 días)
+        async function loadMiniCalendar() {
+            const container = document.getElementById('miniCalendar');
+            const today = new Date();
+            let html = '';
             
-            if(data && data.length > 0) {
-                container.innerHTML = data.map(c => `
-                    <div class="appointment-card">
-                        <div class="client-info"><h3>${c.cliente_nombre}</h3><p>${c.servicio} • ${c.fecha}</p></div>
-                        <div style="display:flex;align-items:center;">
-                            <span class="time-badge">${c.hora}</span>
-                            ${c.estado==='pendiente'?`
-                                <button class="action-btn complete" onclick="completarCita('${c.id}')"><i class="fas fa-check"></i></button>
-                                <button class="action-btn" onclick="cancelarCita('${c.id}')"><i class="fas fa-times"></i></button>
-                            `:`<span style="color:${c.estado==='completada'?'#00ff88':'#ff4444'}; font-family:'Orbitron'; font-size:0.8rem;">${c.estado.toUpperCase()}</span>`}
-                        </div>
-                    </div>`).join('');
-            } else {
-                container.innerHTML = '<p style="color:rgba(255,255,255,0.5); text-align:center; padding:40px;">No hay citas próximas</p>';
-            }
-        }
-
-        async function loadMonthlyEarnings() {
-            const startOfMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-01`;
-            const endOfMonth = `${currentYear}-${String(currentMonth+1).padStart(2,'0')}-31`;
-            const { data } = await supabaseClient.from('citas').select('precio, estado').eq('barbero_id', currentUser.id).gte('fecha', startOfMonth).lte('fecha', endOfMonth);
-            const ganancias = (data || []).filter(c => c.estado === 'completada').reduce((sum, c) => sum + (c.precio || 0), 0);
-            document.getElementById('statGananciasMes').textContent = `$${ganancias.toFixed(2)}`;
-        }
-
-        async function loadProducts() {
-            const { data } = await supabaseClient.from('productos').select('*').eq('barbero_id', currentUser.id);
-            const container = document.getElementById('shopGrid');
-            let html = `<button class="add-product-btn" onclick="openProductModal()"><i class="fas fa-plus"></i>AGREGAR PRODUCTO</button>`;
-            if(data && data.length > 0) {
-                html += data.map(p => `
-                    <div class="product-card ${p.es_oferta_mes?'is-offer':''}">
-                        ${p.es_oferta_mes?'<span class="offer-badge">🔥 OFERTA DEL MES</span>':''}
-                        <div class="product-img">${p.imagen_url?`<img src="${p.imagen_url}">`:'<i class="fas fa-box" style="color:var(--neon-pink);"></i>'}</div>
-                        <div class="product-name">${p.nombre}</div>
-                        <div class="product-price">$${p.precio}</div>
-                        <button class="delete-btn" onclick="eliminarProducto('${p.id}')"><i class="fas fa-trash"></i> Eliminar</button>
-                    </div>`).join('');
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() + i);
+                const dateStr = date.toISOString().split('T')[0];
+                const isToday = i === 0;
+                
+                // Verificar si hay cita ese día
+                const { count } = await supabaseClient
+                    .from('citas')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('barbero_id', currentUser.id)
+                    .eq('fecha', dateStr);
+                
+                const hasCita = count > 0;
+                
+                html += `<div class="${isToday?'today':''} ${hasCita?'has-cita':''}">${date.getDate()}</div>`;
             }
             container.innerHTML = html;
-            document.getElementById('statProductos').textContent = data ? data.length : 0;
         }
 
-        document.getElementById('productForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const payload = {
-                barbero_id: currentUser.id,
-                nombre: document.getElementById('prodName').value,
-                precio: parseFloat(document.getElementById('prodPrice').value),
-                descripcion: document.getElementById('prodDesc').value,
-                es_oferta_mes: document.getElementById('prodOffer').checked
-            };
+        // 🔥 CARGAR OFERTA DEL MES
+        async function loadOffer() {
             try {
-                const { error } = await supabaseClient.from('productos').insert(payload);
-                if(error) throw error;
-                closeProductModal();
-                await loadProducts();
-                alert('✅ Producto guardado');
-            } catch(err) { alert('❌ ' + err.message); }
+                const { data: oferta } = await supabaseClient
+                    .from('productos')
+                    .select('nombre, precio')
+                    .eq('barbero_id', currentUser.id)
+                    .eq('es_oferta_mes', true)
+                    .single();
+                
+                if (oferta) {
+                    document.getElementById('offerName').textContent = oferta.nombre;
+                    document.getElementById('offerPrice').textContent = `$${oferta.precio}`;
+                } else {
+                    document.getElementById('offerBanner').style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Error cargando oferta:', err);
+            }
+        }
+
+        // 📸 CARGAR PORTAFOLIO MINI
+        async function loadPortfolio() {
+            try {
+                const { data: fotos } = await supabaseClient
+                    .from('portafolio')
+                    .select('imagen_url')
+                    .eq('barbero_id', currentUser.id)
+                    .limit(5);
+                
+                const container = document.getElementById('portfolioMini');
+                let html = '';
+                
+                if (fotos && fotos.length > 0) {
+                    html = fotos.map(f => `<div class="portfolio-item"><img src="${f.imagen_url}" alt="Trabajo"></div>`).join('');
+                }
+                html += `<div class="portfolio-add" id="addPortfolio">+</div>`;
+                
+                container.innerHTML = html;
+                document.getElementById('addPortfolio').onclick = () => openModal('portfolio');
+                
+            } catch (err) {
+                console.error('Error cargando portafolio:', err);
+            }
+        }
+
+        // 📷 SUBIR AVATAR
+        document.getElementById('avatarWrap').addEventListener('click', () => openModal('avatar'));
+        document.getElementById('avatarInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            await uploadImage(file, 'avatar');
         });
 
-        async function eliminarProducto(id) {
-            if(!confirm('¿Eliminar producto?')) return;
-            const { error } = await supabaseClient.from('productos').delete().eq('id', id);
-            if(!error) { await loadProducts(); alert('✅ Eliminado'); }
+        // 🗂️ FUNCIONES DE MODAL
+        function openModal(type) {
+            uploadType = type;
+            document.getElementById('imageModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+            document.getElementById('modalFileInput').value = '';
+        }
+        async function confirmUpload() {
+            const file = document.getElementById('modalFileInput').files[0];
+            if (!file) { alert('Selecciona una imagen'); return; }
+            await uploadImage(file, uploadType);
+            closeModal();
         }
 
-        async function completarCita(id) {
-            const { error } = await supabaseClient.from('citas').update({estado:'completada'}).eq('id', id);
-            if(!error) { await Promise.all([loadAppointments(), loadMonthlyEarnings()]); alert('✅ Cita completada'); }
-        }
-        async function cancelarCita(id) {
-            const { error } = await supabaseClient.from('citas').update({estado:'cancelada'}).eq('id', id);
-            if(!error) { await loadAppointments(); alert('❌ Cita cancelada'); }
+        // 📤 SUBIR IMAGEN A SUPABASE
+        async function uploadImage(file, type) {
+            try {
+                const fileName = `${type}s/${currentUser.id}/${Date.now()}_${file.name}`;
+                const { error: uploadError } = await supabaseClient.storage
+                    .from('uploads')
+                    .upload(fileName, file, { upsert: true });
+                
+                if (uploadError) throw uploadError;
+                
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from('uploads')
+                    .getPublicUrl(fileName);
+                
+                if (type === 'avatar') {
+                    // Actualizar avatar en perfil
+                    await supabaseClient.from('perfiles')
+                        .update({ avatar_url: publicUrl })
+                        .eq('id', currentUser.id);
+                    document.getElementById('avatarImg').src = publicUrl;
+                } else if (type === 'portfolio') {
+                    // Agregar al portafolio
+                    await supabaseClient.from('portafolio')
+                        .insert({ barbero_id: currentUser.id, imagen_url: publicUrl });
+                    await loadPortfolio();
+                }
+                
+                alert('✅ Imagen subida correctamente');
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            }
         }
 
-        function openProductModal() { document.getElementById('productModal').style.display='flex'; }
-        function closeProductModal() { document.getElementById('productModal').style.display='none'; document.getElementById('productForm').reset(); }
-        window.onclick = e => { if(e.target.id==='productModal') closeProductModal(); };
-        window.cerrarSesion = async () => { if(confirm('¿Cerrar sesión?')) { await supabaseClient.auth.signOut(); window.location.href='index.html'; } };
+        // 🚪 CERRAR SESIÓN
+        window.cerrarSesion = async () => {
+            if (confirm('¿Cerrar sesión?')) {
+                await supabaseClient.auth.signOut();
+                window.location.href = 'index.html';
+            }
+        };
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = (e) => {
+            if (e.target.id === 'imageModal') closeModal();
+        };
     </script>
 </body>
 </html>
