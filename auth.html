@@ -345,12 +345,23 @@
             } catch (err) { msg.textContent = 'Error: ' + err.message; msg.classList.add('error'); }
         });
 
-        // 🔵 Google
-        document.getElementById('googleBtn').addEventListener('click', async () => {
-            messageBox.textContent = 'Conectando...'; messageBox.className = 'message';
-            try { await supabaseClient.auth.signInWithOAuth({ provider: 'google' }); } 
-            catch (err) { messageBox.textContent = err.message; messageBox.classList.add('error'); }
+ // 🔵 Google Sign In (ACTUALIZADO)
+document.getElementById('googleBtn').addEventListener('click', async () => {
+    messageBox.textContent = 'Conectando...';
+    messageBox.className = 'message';
+    try {
+        const { error } = await supabaseClient.auth.signInWithOAuth({ 
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + '/completar-perfil.html'
+            }
         });
+        if (error) throw error;
+    } catch (err) { 
+        messageBox.textContent = err.message; 
+        messageBox.classList.add('error'); 
+    }
+});
 
         // 🧩 Detector de recuperación
         document.addEventListener('DOMContentLoaded', () => {
