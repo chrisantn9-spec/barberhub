@@ -1,200 +1,524 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="Acceso a tu cuenta de BarberApp"/>
-    <title>🔐 Iniciar Sesión | BarberApp</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔐 Iniciar Sesión | BarberHub</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     
-    <!-- ✅ TU hoja de estilos principal (aquí va TU diseño) -->
-    <link rel="stylesheet" href="style.css" />
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, rgba(15, 17, 21, 0.9), rgba(30, 32, 40, 0.9)), 
+                  url('./fondo-barber.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #e4e4e7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .auth-container {
+      background: rgba(24, 26, 32, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 450px;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .auth-header p {
+      color: #a1a1aa;
+      font-size: 0.95rem;
+    }
+
+    .auth-section { 
+      display: none; 
+    }
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="logo.png" />
-    
-    <!-- Preconexión a Supabase -->
-    <link rel="preconnect" href="https://qnlbaxxbsbwbgqucbywn.supabase.co" />
-    
-    <!-- 📦 Scripts en orden CORRECTO (CRÍTICO) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
-    <script src="auth.js" defer></script>
-    
-    <!-- ⚙️ CSS mínimo SOLO para funcionalidad (no diseño) -->
-    <style>
-        /* Estado de carga: ocultar formulario hasta verificar sesión */
-        body.checking-session #login-form,
-        body.checking-session #auth-container {
-            display: none !important;
-        }
-        body.checking-session #loading {
-            display: flex !important;
-        }
-        #loading {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 60vh;
-        }
-        /* Spinner simple (puedes personalizarlo en style.css) */
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top-color: #00ff88;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+    .auth-section.active { 
+      display: block; 
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: #d4d4d8;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      background: rgba(15, 17, 21, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #e4e4e7;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: rgba(15, 17, 21, 0.8);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .form-group input::placeholder {
+      color: #71717a;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 1rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-google {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .btn-google:hover {
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-google svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+      color: #71717a;
+      font-size: 0.875rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .divider span {
+      padding: 0 1rem;
+    }
+
+    .auth-links {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: #a1a1aa;
+    }
+
+    .auth-links a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .auth-links a:hover {
+      color: #60a5fa;
+      text-decoration: underline;
+    }
+
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+      animation: shake 0.5s;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 2rem 1.5rem;
+      }
+      
+      .auth-header h1 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
 </head>
-<body class="checking-session">
-
-    <!-- ✅ Loading state (funcionalidad) -->
-    <div id="loading">
-        <div class="spinner"></div>
-        <p>Verificando sesión...</p>
+<body>
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>🔐 BarberHub</h1>
+      <p id="auth-subtitle">Inicia sesión para continuar</p>
     </div>
 
-    <!-- ✅ TU contenedor principal (aplica aquí tus clases de diseño) -->
-    <!-- Ejemplo: <div id="auth-container" class="tu-clase-fondo tu-clase-centrado"> -->
-    <div id="auth-container">
-        
-        <!-- ✅ TU formulario (conserva tus clases, IDs obligatorios marcados) -->
-        <form id="login-form"> <!-- ⚠️ ID OBLIGATORIO: no cambiar -->
-            
-            <!-- ✅ TU título/logo (personalízalo en style.css) -->
-            <h2 class="auth-title">🔐 Iniciar Sesión</h2>
-            
-            <!-- ✅ Mensaje de estado (ID obligatorio para auth.js) -->
-            <div id="msg" role="alert" aria-live="polite" class="auth-msg"></div>
-            
-            <!-- ✅ Campo email (ID obligatorio) -->
-            <div class="form-group">
-                <label for="email">📧 Email</label>
-                <input 
-                    type="email" 
-                    id="email"       <!-- ⚠️ ID OBLIGATORIO -->
-                    name="email" 
-                    placeholder="tu@email.com" 
-                    required 
-                    autocomplete="email"
-                    class="auth-input"  <!-- ✅ Tu clase para style.css -->
-                />
-            </div>
-            
-            <!-- ✅ Campo password (ID obligatorio) -->
-            <div class="form-group">
-                <label for="password">🔑 Contraseña</label>
-                <input 
-                    type="password" 
-                    id="password"    <!-- ⚠️ ID OBLIGATORIO -->
-                    name="password" 
-                    placeholder="••••••••" 
-                    required 
-                    autocomplete="current-password"
-                    minlength="6"
-                    class="auth-input"  <!-- ✅ Tu clase para style.css -->
-                />
-            </div>
-            
-            <!-- ✅ Botón (ID obligatorio) -->
-            <button type="submit" id="btn-login" class="auth-button">Entrar</button>
-            
-            <!-- ✅ Enlaces adicionales (personaliza en style.css) -->
-            <div class="auth-links">
-                <a href="recuperar-password.html">¿Olvidaste tu contraseña?</a>
-                <span>¿No tienes cuenta? <a href="registro.html">Regístrate</a></span>
-            </div>
-            
-        </form>
-    </div>
+    <div id="error-message" class="error-message"></div>
 
-    <!-- Fallback si JS está desactivado -->
-    <noscript>
-        <div class="noscript-warning">
-            ⚠️ Esta aplicación requiere JavaScript habilitado.
+    <!-- SECCIÓN LOGIN -->
+    <div id="login-section" class="auth-section active">
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">📧 Email</label>
+          <input 
+            type="email" 
+            id="login-email" 
+            name="email" 
+            placeholder="tu@email.com" 
+            required 
+            autocomplete="email"
+          />
         </div>
-    </noscript>
-    <!-- Coloca esto justo antes de </body> en auth.html -->
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // 1️⃣ Manejar el parámetro ?mode=login (si decides usarlo)
+        <div class="form-group">
+          <label for="login-password">🔑 Contraseña</label>
+          <input 
+            type="password" 
+            id="login-password" 
+            name="password" 
+            placeholder="••••••••" 
+            required 
+            autocomplete="current-password"
+            minlength="6"
+          />
+        </div>
+        <button type="submit" class="btn" id="login-btn">
+          Entrar
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>o continúa con</span>
+      </div>
+
+      <button class="btn btn-google" id="google-login-btn">
+        <svg viewBox="0 0 24 24">
+          <path fill="#fff" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#fff" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#fff" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#fff" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Sign in with Google
+      </button>
+
+      <div class="auth-links">
+        <a href="./auth.html?mode=recover">¿Olvidaste tu contraseña?</a>
+        <br><br>
+        ¿No tienes cuenta? <a href="./auth.html?mode=register">Regístrate</a>
+      </div>
+    </div>
+
+    <!-- SECCIÓN REGISTRO -->
+    <div id="register-section" class="auth-section">
+      <form id="register-form">
+        <div class="form-group">
+          <label for="register-email">📧 Email</label>
+          <input 
+            type="email" 
+            id="register-email" 
+            name="email" 
+            placeholder="tu@email.com" 
+            required 
+            autocomplete="email"
+          />
+        </div>
+        <div class="form-group">
+          <label for="register-password">🔑 Contraseña</label>
+          <input 
+            type="password" 
+            id="register-password" 
+            name="password" 
+            placeholder="••••••••" 
+            required 
+            minlength="6"
+          />
+        </div>
+        <div class="form-group">
+          <label for="register-confirm">🔑 Confirmar Contraseña</label>
+          <input 
+            type="password" 
+            id="register-confirm" 
+            name="confirmPassword" 
+            placeholder="••••••••" 
+            required 
+            minlength="6"
+          />
+        </div>
+        <button type="submit" class="btn">
+          Registrarse
+        </button>
+      </form>
+
+      <div class="auth-links">
+        ¿Ya tienes cuenta? <a href="./auth.html?mode=login">Inicia sesión</a>
+      </div>
+    </div>
+
+    <!-- SECCIÓN RECUPERAR -->
+    <div id="recover-section" class="auth-section">
+      <form id="recover-form">
+        <div class="form-group">
+          <label for="recover-email">📧 Email</label>
+          <input 
+            type="email" 
+            id="recover-email" 
+            name="email" 
+            placeholder="tu@email.com" 
+            required 
+            autocomplete="email"
+          />
+        </div>
+        <button type="submit" class="btn">
+          Enviar enlace
+        </button>
+      </form>
+      <div class="auth-links">
+        <a href="./auth.html?mode=login">← Volver al inicio</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // ⚙️ CONFIGURACIÓN - Reemplaza con tus credenciales
+    const SUPABASE_URL = 'https://qnlbaxxhsbwbqqucbywn.supabase.co';
+    const SUPABASE_ANON_KEY = 'TU_ANON_KEY_AQUI';
+    
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Manejar el parámetro ?mode=
     const params = new URLSearchParams(window.location.search);
-    const mode = params.get('mode');
-    // Aquí podrías ocultar/mostrar secciones si tienes register/login en el mismo archivo
+    const mode = params.get('mode') || 'login';
 
-    // 2️⃣ Capturar el formulario
-    const form = document.querySelector('form');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault(); // Evita recarga tradicional
+    // Elementos del DOM
+    const sections = {
+      login: document.getElementById('login-section'),
+      register: document.getElementById('register-section'),
+      recover: document.getElementById('recover-section')
+    };
 
-      const email = form.querySelector('[name="email"]').value.trim();
-      const password = form.querySelector('[name="password"]').value;
+    const subtitle = document.getElementById('auth-subtitle');
+    const subtitles = {
+      login: 'Inicia sesión para continuar',
+      register: 'Crea tu cuenta gratis',
+      recover: 'Recupera tu contraseña'
+    };
+
+    // Mostrar sección activa
+    Object.keys(sections).forEach(key => {
+      sections[key].classList.remove('active');
+    });
+    
+    if (sections[mode]) {
+      sections[mode].classList.add('active');
+      subtitle.textContent = subtitles[mode] || subtitles.login;
+    } else {
+      sections.login.classList.add('active');
+    }
+
+    // Función para mostrar errores
+    function showError(message) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+      setTimeout(() => errorDiv.classList.remove('show'), 5000);
+    }
+
+    // 🔐 LOGIN
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('login-btn');
+      const email = e.target.email.value.trim();
+      const password = e.target.password.value;
+
+      btn.innerHTML = '<span class="loading"></span> Iniciando...';
+      btn.disabled = true;
 
       try {
-        // 🔑 REEMPLAZA ESTO CON TU SDK O FETCH A TU BACKEND
-        // Ejemplo genérico con Supabase:
-        // const { error } = await supabase.auth.signInWithPassword({ email, password });
-        // if (error) throw error;
-
-        // ✅ Si usas un endpoint propio:
-        /*
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
+        const { data, error } = await supabase.auth.signInWithPassword({ 
+          email, 
+          password 
         });
-        if (!res.ok) throw new Error('Credenciales inválidas');
-        const data = await res.json();
-        // La mayoría de backends modernos devuelven el token en cookies HTTP-only
-        // o en localStorage. NO lo guardes manualmente si tu SDK ya lo hace.
-        */
+        
+        if (error) throw error;
 
-        // 3️⃣ Redirigir solo si el login fue exitoso
-        window.location.href = '/admin.html';
+        // Verificar rol
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
 
-      } catch (err) {
-        console.error('Error de autenticación:', err);
-        alert('Error: ' + err.message);
+        // Redirigir según rol
+        if (profile?.role === 'admin') {
+          window.location.href = './admin.html';
+        } else {
+          window.location.href = './dashboard.html';
+        }
+      } catch (error) {
+        showError('❌ ' + error.message);
+        btn.innerHTML = 'Entrar';
+        btn.disabled = false;
       }
     });
-  });
-</script>
-<script>
-  document.querySelector('form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.querySelector('[name="email"]').value;
-    const password = document.querySelector('[name="password"]').value;
 
-    try {
-      // 🔑 REEMPLAZA CON TU SDK O ENDPOINT
-      // const { error } = await authProvider.signInWithPassword({ email, password });
-      // if (error) throw error;
+    // 🔵 GOOGLE LOGIN
+    document.getElementById('google-login-btn').addEventListener('click', async () => {
+      try {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: window.location.origin + '/dashboard.html'
+          }
+        });
+        
+        if (error) throw error;
+      } catch (error) {
+        showError('❌ Error con Google: ' + error.message);
+      }
+    });
 
-      // 📦 Guardar sesión temporalmente (solo para demostración)
-      // En producción, usa cookies HttpOnly o el SDK que maneje refresh tokens automáticamente
-      sessionStorage.setItem('auth_session', JSON.stringify({ email, loginAt: Date.now() }));
+    // 📝 REGISTRO
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = e.target.email.value.trim();
+      const password = e.target.password.value;
+      const confirmPassword = e.target.confirmPassword.value;
 
-      // ✅ Redirigir al panel real, NO a admin.html
-      window.location.href = '/dashboard.html';
-    } catch (err) {
-      alert('Credenciales incorrectas o error de red');
-      console.error(err);
-    }
-  });
-</script>
-    <!-- auth.html -->
-<script type="module" src="./js/supabase-client.js"></script>
-<script type="module" src="./js/auth.js"></script>
+      if (password !== confirmPassword) {
+        showError('❌ Las contraseñas no coinciden');
+        return;
+      }
 
-<!-- dashboard.html -->
-<script type="module" src="./js/supabase-client.js"></script>
-<script type="module" src="./js/dashboard.js"></script>
-    <!-- ... tu formulario existente ... -->
-<script type="module" src="./js/config.js"></script>
-<script type="module" src="./js/auth.js"></script>
-</body>
+      try {
+        const { error } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: { data: { role: 'client' } }
+        });
+        
+        if (error) throw error;
+
+        alert('✅ Registro exitoso. Verifica tu email.');
+        window.location.href = './auth.html?mode=login';
+      } catch (error) {
+        showError('❌ ' + error.message);
+      }
+    });
+
+    // 🔑 RECUPERAR CONTRASEÑA
+    document.getElementById('recover-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = e.target.email.value.trim();
+
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/auth.html?mode=newpassword',
+        });
+        
+        if (error) throw error;
+
+        alert('✅ Email de recuperación enviado. Revisa tu bandeja de entrada.');
+        window.location.href = './auth.html?mode=login';
+      } catch (error) {
+        showError('❌ ' + error.message);
+      }
+    });
+  </script>
 </body>
 </html>
