@@ -24,7 +24,7 @@
       overflow: hidden;
     }
 
-    /* 🔵 BURBUJAS ELÉCTRICAS */
+    /* 🔵 BURBUJAS ELÉCTRICAS (Fondo) */
     .bubbles {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none; z-index: 0; overflow: hidden;
@@ -62,11 +62,11 @@
     .bubble:nth-child(14){ left: 80%; width: 48px; height: 48px; animation-duration: 14s; animation-delay: 1.2s; }
     .bubble:nth-child(15){ left: 50%; width: 34px; height: 34px; animation-duration: 13s; animation-delay: 3.8s; }
 
-    /* 🪟 TARJETA CON LUZ NEÓN GIRATORIA EN EL CONTORNO */
+    /*  TARJETA CON LUZ "COMETA" GIRATORIA */
     .auth-container {
       position: relative;
       border-radius: 16px;
-      overflow: hidden; /* Recorta la luz giratoria */
+      overflow: hidden; /* Recorta la luz a la forma de la tarjeta */
       padding: 2.5rem;
       width: 100%;
       max-width: 460px;
@@ -75,27 +75,34 @@
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
     }
 
-    /* 1. La Luz Neón que recorre el contorno */
+    /* 1. La Luz Neón (Punto con cola) */
     .auth-container::before {
       content: '';
       position: absolute;
       top: 50%; left: 50%;
-      width: 200%; height: 200%;
+      width: 150%; height: 150%;
       transform: translate(-50%, -50%);
-      /* Gradiente cónico: crea la cola del cometa */
-      background: conic-gradient(from 0deg, transparent 0%, #00ffff 10%, transparent 20%, transparent 100%);
+      /* Gradiente: Transparente -> Cola suave -> Cabeza brillante */
+      background: conic-gradient(
+        from 0deg, 
+        transparent 0%, 
+        rgba(0,255,255,0.3) 92%, 
+        #00ffff 96%, 
+        #00ffff 100%
+      );
       animation: rotate-glow 3s linear infinite;
       z-index: 0;
-      filter: drop-shadow(0 0 8px #00ffff);
+      /* Sombra para que la "cabeza" brille */
+      filter: drop-shadow(0 0 12px #00ffff);
     }
 
-    /* 2. La Máscara Transparente (El vidrio de la tarjeta) */
+    /* 2. La Máscara Transparente (Cristal interno) */
     .auth-container::after {
       content: '';
       position: absolute;
-      inset: 2px; /* Grosor del borde (2px) */
-      background: rgba(10, 15, 25, 0.1); /* Transparente casi total */
-      backdrop-filter: blur(20px); /* Efecto cristal sin color */
+      inset: 2px; /* Grosor del borde: 2px */
+      background: rgba(10, 15, 25, 0.1); /* Muy transparente */
+      backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-radius: 14px;
       z-index: 1;
@@ -111,7 +118,7 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    /* Contenido encima de la luz y el cristal */
+    /* Contenido */
     .auth-content {
       position: relative;
       z-index: 2;
@@ -377,7 +384,7 @@
         const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single();
         window.location.href = profile?.role === 'admin' ? './admin.html' : './dashboard.html';
       } catch (err) {
-        showError('❌ ' + err.message);
+        showError(' ' + err.message);
         btn.innerHTML = 'ENTRAR'; btn.disabled = false;
       }
     });
@@ -389,7 +396,7 @@
           options: { redirectTo: window.location.origin + '/dashboard.html' }
         });
         if (error) throw error;
-      } catch (err) { showError('❌ Error con Google: ' + err.message); }
+      } catch (err) { showError(' Error con Google: ' + err.message); }
     });
 
     document.getElementById('register-form').addEventListener('submit', async (e) => {
