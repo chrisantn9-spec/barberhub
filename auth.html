@@ -47,23 +47,6 @@
       box-shadow: none;
     }
 
-    /* 1. Luz Cometa (Solo recorre el contorno exterior) */
-    .auth-container::before {
-      content: '';
-      position: absolute;
-      top: 50%; left: 50%;
-      width: 180%; height: 180%;
-      transform: translate(-50%, -50%);
-      background: conic-gradient(
-        from 0deg, 
-        transparent 0%, 
-        rgba(0,255,255,0.1) 88%, 
-        #00ffff 94%, 
-        #00ffff 100%
-      );
-      animation: rotate-glow 3.5s linear infinite;
-      z-index: 0;
-      filter: drop-shadow(0 0 10px #00ffff);
     }
 
     /* 2. Máscara Interna (Transparente total + blur mínimo para legibilidad) */
