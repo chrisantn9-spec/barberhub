@@ -1,135 +1,214 @@
-document.addEventListener("DOMContentLoaded", async () => {
-    const msg = document.getElementById("msg");
-    const form = document.getElementById("login-form");
-    const body = document.body;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Acceso a tu cuenta de BarberApp"/>
+    <title>🔐 Iniciar Sesión | BarberApp</title>
     
-    // 🔒 Verificar que supabaseClient esté disponible
-    if (typeof supabaseClient === 'undefined') {
-        console.error("❌ supabaseClient no está definido. ¿Cargaste config.js antes que auth.js?");
-        if (msg) {
-            msg.textContent = "⚠️ Error de configuración. Revisa la consola (F12).";
-            msg.style.color = "#ffaa00";
+    <!-- Estilos -->
+    <link rel="stylesheet" href="style.css" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png" />
+    
+    <!-- Preconexión a Supabase para mejor rendimiento -->
+    <link rel="preconnect" href="https://qnlbaxxbsbwbgqucbywn.supabase.co" />
+    
+    <!-- 1️⃣ CDN de Supabase (SIEMPRE primero) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 2️⃣ Configuración de Supabase -->
+    <script src="config.js"></script>
+    
+    <!-- 3️⃣ Lógica de autenticación (con defer para esperar al DOM) -->
+    <script src="auth.js" defer></script>
+    
+    <!-- Estilos específicos para esta página -->
+    <style>
+        /* Estado de carga inicial: ocultar formulario hasta verificar sesión */
+        body.checking-session #login-form {
+            display: none;
         }
-        return; // Detener ejecución para evitar errores en cadena
-    }
-    
-    // 1. Verificar sesión actual (con manejo seguro de errores)
-    try {
-        const { data, error } = await supabaseClient.auth.getSession();
         
-        if (error) {
-            console.warn("⚠️ Error al verificar sesión:", error.message);
-            body.classList.remove("checking-session");
-            return;
+        body.checking-session #loading {
+            display: flex;
         }
         
-        // Si YA hay sesión activa → redirigir al panel (solo una vez)
-        if (data?.session) {
-            console.log("✅ Sesión activa detectada, redirigiendo a /admin.html...");
-            // Usar replace para evitar que el botón "atrás" regrese aquí
-            // Ruta root-relative para que funcione desde cualquier subcarpeta
-            window.location.replace("/admin.html");
-            return; // DETENER ejecución para que no se muestre el formulario
+        #loading {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            color: #666;
         }
         
-    } catch (err) {
-        console.error("❌ Error crítico en auth:", err);
-        if (msg) {
-            msg.textContent = "⚠️ Error de conexión con el servidor";
-            msg.style.color = "#ffaa00";
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #00ff88;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
         }
-        body.classList.remove("checking-session");
-        return;
-    }
-    
-    // 2. Si NO hay sesión → mostrar formulario
-    body.classList.remove("checking-session");
-    console.log("🔐 Sin sesión, mostrando formulario de login");
-    
-    // 3. Manejar submit del formulario
-    if (form) {
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const emailInput = document.getElementById("email");
-            const passwordInput = document.getElementById("password");
-            const btn = document.getElementById("btn-login");
-            
-            // Validar que los elementos existan
-            if (!emailInput || !passwordInput || !btn) {
-                console.error("❌ Faltan elementos del formulario en el DOM");
-                if (msg) {
-                    msg.textContent = "⚠️ Error interno. Recarga la página.";
-                    msg.style.color = "#ffaa00";
-                }
-                return;
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Formulario de login */
+        #login-form {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        #login-form h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+        
+        #login-form .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        #login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        #login-form input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+        
+        #login-form input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+        
+        #login-form #btn-login {
+            width: 100%;
+            padding: 0.85rem;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+        
+        #login-form #btn-login:hover:not(:disabled) {
+            background: #333;
+        }
+        
+        #login-form #btn-login:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+        
+        #msg {
+            text-align: center;
+            margin: 1rem 0;
+            font-weight: 500;
+            min-height: 1.5rem;
+        }
+        
+        .links {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .links a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        
+        .links a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            #login-form {
+                margin: 1rem;
+                padding: 1.5rem;
             }
-            
-            const email = emailInput.value.trim();
-            const password = passwordInput.value.trim();
-            
-            if (!email || !password) {
-                msg.textContent = "⚠️ Completa email y contraseña";
-                msg.style.color = "#ffaa00";
-                return;
-            }
-            
-            // UI de carga
-            const originalText = btn.textContent;
-            btn.textContent = "⏳ Entrando...";
-            btn.disabled = true;
-            msg.textContent = "";
-            
-            try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    email,
-                    password
-                });
-                
-                if (error) {
-                    // Mostrar error específico de Supabase
-                    if (error.message.includes("Invalid login credentials")) {
-                        msg.textContent = "❌ Email o contraseña incorrectos";
-                    } else if (error.message.includes("Email not confirmed")) {
-                        msg.textContent = "⚠️ Confirma tu email primero (revisa tu bandeja)";
-                    } else if (error.message.includes("rate_limit")) {
-                        msg.textContent = "⏳ Demasiados intentos. Espera unos segundos.";
-                    } else {
-                        msg.textContent = "❌ " + error.message;
-                    }
-                    msg.style.color = "#ff3333";
-                    btn.textContent = originalText;
-                    btn.disabled = false;
-                    return;
-                }
-                
-                // Éxito: redirigir al panel
-                msg.textContent = "✅ ¡Bienvenido! Redirigiendo...";
-                msg.style.color = "#00ff88";
-                
-                // Pequeña pausa para que el usuario vea el mensaje
-                setTimeout(() => {
-                    // Redirección segura con fallback
-                    try {
-                        console.log("🔄 Redirigiendo a /admin.html...");
-                        window.location.replace("/admin.html");
-                    } catch (redirectErr) {
-                        console.warn("⚠️ replace() falló, usando href como fallback", redirectErr);
-                        window.location.href = "/admin.html";
-                    }
-                }, 800);
-                
-            } catch (err) {
-                console.error("Error en login:", err);
-                msg.textContent = "❌ Error inesperado. Intenta de nuevo.";
-                msg.style.color = "#ff3333";
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }
-        });
-    } else {
-        console.warn("⚠️ No se encontró el formulario #login-form en el DOM");
-    }
-    
-    console.log("✅ auth.js inicializado correctamente");
-});
+        }
+    </style>
+</head>
+<body class="checking-session">
+
+    <!-- Estado de carga: se muestra mientras se verifica la sesión -->
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Verificando sesión...</p>
+    </div>
+
+    <!-- Formulario de login: se muestra solo si NO hay sesión activa -->
+    <form id="login-form">
+        <h2>🔐 Iniciar Sesión</h2>
+        
+        <div id="msg" role="alert" aria-live="polite"></div>
+        
+        <div class="form-group">
+            <label for="email">📧 Email</label>
+            <input 
+                type="email" 
+                id="email" 
+                name="email" 
+                placeholder="tu@email.com" 
+                required 
+                autocomplete="email"
+                inputmode="email"
+            />
+        </div>
+        
+        <div class="form-group">
+            <label for="password">🔑 Contraseña</label>
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                placeholder="••••••••" 
+                required 
+                autocomplete="current-password"
+                minlength="6"
+            />
+        </div>
+        
+        <button type="submit" id="btn-login">Entrar</button>
+        
+        <div class="links">
+            <a href="recuperar-password.html">¿Olvidaste tu contraseña?</a><br/>
+            <span>¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a></span>
+        </div>
+    </form>
+
+    <!-- Script mínimo para fallback si JS falla -->
+    <noscript>
+        <div style="text-align:center; padding:2rem; color:#ff3333;">
+            ⚠️ Esta aplicación requiere JavaScript habilitado para funcionar.
+        </div>
+    </noscript>
+
+</body>
+</html>
