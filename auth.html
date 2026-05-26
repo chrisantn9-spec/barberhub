@@ -79,6 +79,7 @@
             transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0, 229, 238, 0.35);
         }
         .btn-submit:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 30px rgba(0, 229, 238, 0.6); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
         .role-selector { display: flex; gap: 10px; margin-top: 5px; }
         .role-selector input { display: none; }
@@ -121,7 +122,7 @@
         .toggle-text a:hover { text-decoration: underline; }
         .message { margin-top: 12px; font-size: 0.85rem; font-weight: bold; min-height: 20px; }
         .error { color: #ff4444; text-shadow: 0 0 6px rgba(255, 68, 68, 0.6); }
-        .success { color: var(--neon-cyan); text-shadow: 0 0 6px var(--neon-cyan); }
+        .success { color: #00ff88; text-shadow: 0 0 6px rgba(0,255,136,0.6); }
         .hidden { display: none !important; }
         .footer { position: fixed; bottom: 12px; width: 100%; text-align: center; font-size: 0.65rem; color: rgba(255,255,255,0.5); z-index: 10; }
         .footer span { color: var(--neon-pink); font-family: 'Orbitron'; font-weight: bold; }
@@ -208,7 +209,7 @@
 
     <script src="config.js"></script>
     <script>
-        console.log('🔧 Iniciando auth.html...');
+        console.log('🔧 Cargando auth.html...');
         
         // ✨ Burbujas
         function createParticles() {
@@ -222,7 +223,10 @@
         createParticles();
 
         // 🔀 Vistas
-        function showRecovery() { document.getElementById('authForm').classList.add('hidden'); document.getElementById('recoveryForm').classList.remove('hidden'); }
+        function showRecovery() { 
+            document.getElementById('authForm').classList.add('hidden'); 
+            document.getElementById('recoveryForm').classList.remove('hidden'); 
+        }
         function showLogin() {
             document.getElementById('recoveryForm').classList.add('hidden');
             document.getElementById('resetPasswordForm').classList.add('hidden');
@@ -239,10 +243,15 @@
         }
 
         // 🔧 Referencias
-        const form = document.getElementById('authForm'), nameGroup = document.getElementById('nameGroup'), roleGroup = document.getElementById('roleGroup');
-        const formTitle = document.getElementById('formTitle'), submitBtn = document.getElementById('submitBtn');
-        const toggleLabel = document.getElementById('toggleLabel'), toggleLink = document.getElementById('toggleLink');
-        const messageBox = document.getElementById('messageBox'), forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const form = document.getElementById('authForm');
+        const nameGroup = document.getElementById('nameGroup');
+        const roleGroup = document.getElementById('roleGroup');
+        const formTitle = document.getElementById('formTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const toggleLabel = document.getElementById('toggleLabel');
+        const toggleLink = document.getElementById('toggleLink');
+        const messageBox = document.getElementById('messageBox');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
         let isRegister = false;
 
         if (new URLSearchParams(window.location.search).get('mode') === 'register') setMode(true);
@@ -250,114 +259,139 @@
         function setMode(register) {
             isRegister = register;
             if (register) {
-                nameGroup.classList.remove('hidden'); roleGroup.classList.remove('hidden');
-                formTitle.textContent = 'REGISTRARSE'; formTitle.style.color = 'var(--neon-pink)'; formTitle.style.textShadow = '0 0 10px var(--neon-pink)';
-                submitBtn.textContent = 'CREAR CUENTA'; submitBtn.style.background = 'var(--neon-pink)';
-                toggleLabel.textContent = '¿Ya tienes cuenta?'; toggleLink.textContent = 'Inicia Sesión';
+                nameGroup.classList.remove('hidden'); 
+                roleGroup.classList.remove('hidden');
+                formTitle.textContent = 'REGISTRARSE'; 
+                formTitle.style.color = 'var(--neon-pink)'; 
+                formTitle.style.textShadow = '0 0 10px var(--neon-pink)';
+                submitBtn.textContent = 'CREAR CUENTA'; 
+                submitBtn.style.background = 'var(--neon-pink)';
+                toggleLabel.textContent = '¿Ya tienes cuenta?'; 
+                toggleLink.textContent = 'Inicia Sesión';
                 forgotPasswordLink.classList.add('hidden');
             } else {
-                nameGroup.classList.add('hidden'); roleGroup.classList.add('hidden');
-                formTitle.textContent = 'INICIAR SESIÓN'; formTitle.style.color = 'var(--neon-cyan)'; formTitle.style.textShadow = '0 0 10px var(--neon-cyan)';
-                submitBtn.textContent = 'ENTRAR'; submitBtn.style.background = 'var(--neon-cyan)';
-                toggleLabel.textContent = '¿No tienes cuenta?'; toggleLink.textContent = 'Regístrate';
+                nameGroup.classList.add('hidden'); 
+                roleGroup.classList.add('hidden');
+                formTitle.textContent = 'INICIAR SESIÓN'; 
+                formTitle.style.color = 'var(--neon-cyan)'; 
+                formTitle.style.textShadow = '0 0 10px var(--neon-cyan)';
+                submitBtn.textContent = 'ENTRAR'; 
+                submitBtn.style.background = 'var(--neon-cyan)';
+                toggleLabel.textContent = '¿No tienes cuenta?'; 
+                toggleLink.textContent = 'Regístrate';
                 forgotPasswordLink.classList.remove('hidden');
             }
             messageBox.textContent = '';
         }
 
         toggleLink.addEventListener('click', e => {
-            e.preventDefault(); setMode(!isRegister);
+            e.preventDefault(); 
+            setMode(!isRegister);
             window.history.pushState({}, '', `?mode=${!isRegister ? 'register' : 'login'}`);
         });
 
-                // 📤 Login/Registro (BLINDADO CONTRA REDIRECCIONES FALLIDAS)
+        // 📤 Login/Registro BLINDADO
         form.addEventListener('submit', async e => {
             e.preventDefault();
-            e.stopImmediatePropagation(); // Evita listeners fantasma
-
+            e.stopImmediatePropagation();
+            
+            console.log('📤 Formulario enviado');
+            
             const email = document.getElementById('emailInput').value.trim();
             const password = document.getElementById('passInput').value;
             const name = document.getElementById('nameInput').value.trim();
             const selectedRole = document.querySelector('input[name="userRole"]:checked')?.value || 'cliente';
 
-            messageBox.textContent = 'Procesando...'; 
+            messageBox.textContent = '⏳ Procesando...'; 
             messageBox.className = 'message';
+            submitBtn.disabled = true;
 
             try {
                 if (isRegister) {
-                    const { error } = await supabaseClient.auth.signUp({
-                        email, password, options: { data: { nombre: name, role: selectedRole } }
+                    console.log('📝 Registrando usuario:', email);
+                    const { error, data } = await supabaseClient.auth.signUp({
+                        email, password, 
+                        options: { data: { nombre: name, role: selectedRole } }
                     });
                     if (error) throw error;
+                    
+                    console.log('✅ Usuario creado:', data.user?.email);
                     messageBox.textContent = '✅ Cuenta creada. Verifica tu correo...';
                     messageBox.classList.add('success');
-                    setTimeout(() => window.location.href = 'auth.html', 2000);
-                } else {
-                    const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
-                    if (error) throw error;
                     
-                    // Obtener rol de forma segura
+                    setTimeout(() => {
+                        window.location.href = 'auth.html';
+                    }, 2000);
+                    
+                } else {
+                    console.log('🔑 Iniciando sesión:', email);
+                    const { error, data } = await supabaseClient.auth.signInWithPassword({ 
+                        email, password 
+                    });
+                    
+                    if (error) {
+                        console.error('❌ Error login:', error.message);
+                        throw error;
+                    }
+                    
+                    console.log('✅ Login exitoso');
+                    console.log('📊 User metadata:', data.user?.user_metadata);
+                    
                     const userRole = data.user?.user_metadata?.role || 'cliente';
+                    console.log('🎭 Rol detectado:', userRole);
                     
                     messageBox.textContent = '✅ Acceso concedido. Redirigiendo...';
                     messageBox.classList.add('success');
 
-                    // ⏳ Delay crítico: esperar a que Supabase sincronice tokens
-                    await new Promise(res => setTimeout(res, 600));
+                    // ⏳ Delay crítico para sincronización de cookies
+                    await new Promise(res => setTimeout(res, 800));
                     
                     const destino = userRole === 'barbero' ? 'admin.html' : 'explorar.html';
-                    console.log('🚀 Redirección forzada a:', destino);
+                    console.log('🚀 Redirigiendo a:', destino);
+                    
                     window.location.href = destino;
                 }
             } catch (err) {
-                console.error('❌ Error auth:', err);
+                console.error('💥 Error crítico:', err);
                 messageBox.textContent = '❌ ' + (err.message || 'Error de conexión');
                 messageBox.classList.add('error');
+                submitBtn.disabled = false;
             }
         });
-        // 🔵 Google Sign In - BLINDADO
+
+        // 🔵 Google Sign In
         const googleBtn = document.getElementById('googleBtn');
-        console.log('🔍 Buscando botón Google:', googleBtn);
-        
         if (googleBtn) {
-            console.log('✅ Botón Google encontrado. Adjuntando listener...');
             googleBtn.addEventListener('click', async (e) => {
                 e.preventDefault();
-                console.log('👆 Click en Google detectado');
+                console.log('🔵 Google login iniciado');
                 
                 if (typeof supabaseClient === 'undefined') {
-                    console.error('❌ supabaseClient no está definido');
                     messageBox.textContent = 'Error: Configuración no cargada';
-                    messageBox.className = 'message error';
+                    messageBox.className = 'message error'; 
                     return;
                 }
-
-                const redirectUrl = window.location.origin + '/auth.html';
-                console.log(' Redirect URL:', redirectUrl);
-
-                messageBox.textContent = 'Redirigiendo a Google...';
+                
+                messageBox.textContent = '🔄 Redirigiendo a Google...';
                 messageBox.className = 'message';
-
+                
                 try {
+                    const redirectUrl = window.location.origin + '/completar-perfil.html';
+                    console.log('📍 Redirect URL:', redirectUrl);
+                    
                     const { error } = await supabaseClient.auth.signInWithOAuth({
                         provider: 'google',
-                        options: {
-                            redirectTo: redirectUrl
-                        }
+                        options: { redirectTo: redirectUrl }
                     });
                     
-                    if (error) {
-                        console.error('❌ Error OAuth:', error);
-                        throw error;
-                    }
-                    console.log('✅ Redirección iniciada');
+                    if (error) throw error;
+                    console.log('✅ Redirección Google iniciada');
                 } catch (err) {
+                    console.error('❌ Error Google:', err);
                     messageBox.textContent = 'Error: ' + err.message;
                     messageBox.classList.add('error');
                 }
             });
-        } else {
-            console.error('❌ No se encontró el botón #googleBtn');
         }
 
         // 📩 Solicitar recuperación
@@ -365,14 +399,24 @@
             e.preventDefault();
             const email = document.getElementById('recoveryEmail').value;
             const msg = document.getElementById('recoveryMessage');
-            msg.textContent = 'Enviando enlace...'; msg.className = 'message';
+            msg.textContent = '⏳ Enviando enlace...'; 
+            msg.className = 'message';
+            
             try {
-                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/auth.html' });
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(
+                    email, 
+                    { redirectTo: window.location.origin + '/auth.html' }
+                );
                 if (error) throw error;
-                msg.textContent = '✅ Enlace enviado. Revisa tu correo.'; msg.classList.add('success');
+                
+                msg.textContent = '✅ Enlace enviado. Revisa tu correo.'; 
+                msg.classList.add('success');
                 document.getElementById('recoveryEmail').value = '';
                 setTimeout(() => showLogin(), 3000);
-            } catch (err) { msg.textContent = 'Error: ' + err.message; msg.classList.add('error'); }
+            } catch (err) { 
+                msg.textContent = 'Error: ' + err.message; 
+                msg.classList.add('error'); 
+            }
         });
 
         // 🔑 Actualizar contraseña
@@ -381,30 +425,57 @@
             const newPass = document.getElementById('newPass').value;
             const confirmPass = document.getElementById('confirmPass').value;
             const msg = document.getElementById('resetMessage');
-            if (newPass.length < 6) { msg.textContent = '❌ Mínimo 6 caracteres.'; msg.className = 'message error'; return; }
-            if (newPass !== confirmPass) { msg.textContent = '❌ Las contraseñas no coinciden.'; msg.className = 'message error'; return; }
-            msg.textContent = 'Actualizando...'; msg.className = 'message';
+            
+            if (newPass.length < 6) { 
+                msg.textContent = '❌ Mínimo 6 caracteres.'; 
+                msg.className = 'message error'; 
+                return; 
+            }
+            if (newPass !== confirmPass) { 
+                msg.textContent = '❌ Las contraseñas no coinciden.'; 
+                msg.className = 'message error'; 
+                return; 
+            }
+            
+            msg.textContent = '⏳ Actualizando...'; 
+            msg.className = 'message';
+            
             try {
                 const { error } = await supabaseClient.auth.updateUser({ password: newPass });
                 if (error) throw error;
-                msg.textContent = '✅ Contraseña actualizada. Redirigiendo...'; msg.classList.add('success');
-                setTimeout(() => window.location.href = 'explorar.html', 2000);
-            } catch (err) { msg.textContent = 'Error: ' + err.message; msg.classList.add('error'); }
+                
+                msg.textContent = '✅ Contraseña actualizada. Redirigiendo...'; 
+                msg.classList.add('success');
+                setTimeout(() => window.location.href = 'auth.html', 2000);
+            } catch (err) { 
+                msg.textContent = 'Error: ' + err.message; 
+                msg.classList.add('error'); 
+            }
         });
 
         // 🧩 Detector de recuperación
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             console.log('🔍 Iniciando detector de recuperación...');
             
-            supabaseClient.auth.onAuthStateChange((event, session) => {
-                console.log('📡 Auth event:', event);
-                
-                if (event === 'PASSWORD_RECOVERY') {
-                    console.log('✅ Recuperación detectada. Mostrando formulario.');
-                    showResetPassword();
-                    window.history.replaceState(null, null, window.location.pathname);
+            const hash = window.location.hash.substring(1);
+            const search = window.location.search.substring(1);
+            const hashParams = new URLSearchParams(hash);
+            const searchParams = new URLSearchParams(search);
+            const type = hashParams.get('type') || searchParams.get('type');
+
+            if (type === 'recovery') {
+                console.log('✅ Enlace de recuperación detectado');
+                try {
+                    const { data: { session } } = await supabaseClient.auth.getSession();
+                    if (session) {
+                        console.log('✅ Sesión de recuperación válida');
+                        showResetPassword();
+                        window.history.replaceState(null, null, window.location.pathname);
+                    }
+                } catch (err) {
+                    console.error('❌ Error en detector:', err);
                 }
-            });
+            }
         });
     </script>
 </body>
