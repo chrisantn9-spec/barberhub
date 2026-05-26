@@ -6,207 +6,115 @@
     <meta name="description" content="Acceso a tu cuenta de BarberApp"/>
     <title>🔐 Iniciar Sesión | BarberApp</title>
     
-    <!-- Estilos -->
+    <!-- ✅ TU hoja de estilos principal (aquí va TU diseño) -->
     <link rel="stylesheet" href="style.css" />
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png" />
     
-    <!-- Preconexión a Supabase para mejor rendimiento -->
+    <!-- Preconexión a Supabase -->
     <link rel="preconnect" href="https://qnlbaxxbsbwbgqucbywn.supabase.co" />
     
-    <!-- 1️⃣ CDN de Supabase (SIEMPRE primero) -->
+    <!-- 📦 Scripts en orden CORRECTO (CRÍTICO) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- 2️⃣ Configuración de Supabase -->
     <script src="config.js"></script>
-    
-    <!-- 3️⃣ Lógica de autenticación (con defer para esperar al DOM) -->
     <script src="auth.js" defer></script>
     
-    <!-- Estilos específicos para esta página -->
+    <!-- ⚙️ CSS mínimo SOLO para funcionalidad (no diseño) -->
     <style>
-        /* Estado de carga inicial: ocultar formulario hasta verificar sesión */
-        body.checking-session #login-form {
-            display: none;
+        /* Estado de carga: ocultar formulario hasta verificar sesión */
+        body.checking-session #login-form,
+        body.checking-session #auth-container {
+            display: none !important;
         }
-        
         body.checking-session #loading {
-            display: flex;
+            display: flex !important;
         }
-        
         #loading {
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 60vh;
-            color: #666;
         }
-        
+        /* Spinner simple (puedes personalizarlo en style.css) */
         .spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #00ff88;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: #00ff88;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 1rem;
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Formulario de login */
-        #login-form {
-            max-width: 400px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-        
-        #login-form h2 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #333;
-        }
-        
-        #login-form .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        #login-form label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #444;
-        }
-        
-        #login-form input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-            box-sizing: border-box;
-        }
-        
-        #login-form input:focus {
-            outline: none;
-            border-color: #00ff88;
-        }
-        
-        #login-form #btn-login {
-            width: 100%;
-            padding: 0.85rem;
-            background: #000;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 0.5rem;
-        }
-        
-        #login-form #btn-login:hover:not(:disabled) {
-            background: #333;
-        }
-        
-        #login-form #btn-login:disabled {
-            background: #999;
-            cursor: not-allowed;
-        }
-        
-        #msg {
-            text-align: center;
-            margin: 1rem 0;
-            font-weight: 500;
-            min-height: 1.5rem;
-        }
-        
-        .links {
-            text-align: center;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
-        
-        .links a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        
-        .links a:hover {
-            text-decoration: underline;
-        }
-        
-        /* Responsive */
-        @media (max-width: 480px) {
-            #login-form {
-                margin: 1rem;
-                padding: 1.5rem;
-            }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="checking-session">
 
-    <!-- Estado de carga: se muestra mientras se verifica la sesión -->
+    <!-- ✅ Loading state (funcionalidad) -->
     <div id="loading">
         <div class="spinner"></div>
         <p>Verificando sesión...</p>
     </div>
 
-    <!-- Formulario de login: se muestra solo si NO hay sesión activa -->
-    <form id="login-form">
-        <h2>🔐 Iniciar Sesión</h2>
+    <!-- ✅ TU contenedor principal (aplica aquí tus clases de diseño) -->
+    <!-- Ejemplo: <div id="auth-container" class="tu-clase-fondo tu-clase-centrado"> -->
+    <div id="auth-container">
         
-        <div id="msg" role="alert" aria-live="polite"></div>
-        
-        <div class="form-group">
-            <label for="email">📧 Email</label>
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                placeholder="tu@email.com" 
-                required 
-                autocomplete="email"
-                inputmode="email"
-            />
-        </div>
-        
-        <div class="form-group">
-            <label for="password">🔑 Contraseña</label>
-            <input 
-                type="password" 
-                id="password" 
-                name="password" 
-                placeholder="••••••••" 
-                required 
-                autocomplete="current-password"
-                minlength="6"
-            />
-        </div>
-        
-        <button type="submit" id="btn-login">Entrar</button>
-        
-        <div class="links">
-            <a href="recuperar-password.html">¿Olvidaste tu contraseña?</a><br/>
-            <span>¿No tienes cuenta? <a href="registro.html">Regístrate aquí</a></span>
-        </div>
-    </form>
+        <!-- ✅ TU formulario (conserva tus clases, IDs obligatorios marcados) -->
+        <form id="login-form"> <!-- ⚠️ ID OBLIGATORIO: no cambiar -->
+            
+            <!-- ✅ TU título/logo (personalízalo en style.css) -->
+            <h2 class="auth-title">🔐 Iniciar Sesión</h2>
+            
+            <!-- ✅ Mensaje de estado (ID obligatorio para auth.js) -->
+            <div id="msg" role="alert" aria-live="polite" class="auth-msg"></div>
+            
+            <!-- ✅ Campo email (ID obligatorio) -->
+            <div class="form-group">
+                <label for="email">📧 Email</label>
+                <input 
+                    type="email" 
+                    id="email"       <!-- ⚠️ ID OBLIGATORIO -->
+                    name="email" 
+                    placeholder="tu@email.com" 
+                    required 
+                    autocomplete="email"
+                    class="auth-input"  <!-- ✅ Tu clase para style.css -->
+                />
+            </div>
+            
+            <!-- ✅ Campo password (ID obligatorio) -->
+            <div class="form-group">
+                <label for="password">🔑 Contraseña</label>
+                <input 
+                    type="password" 
+                    id="password"    <!-- ⚠️ ID OBLIGATORIO -->
+                    name="password" 
+                    placeholder="••••••••" 
+                    required 
+                    autocomplete="current-password"
+                    minlength="6"
+                    class="auth-input"  <!-- ✅ Tu clase para style.css -->
+                />
+            </div>
+            
+            <!-- ✅ Botón (ID obligatorio) -->
+            <button type="submit" id="btn-login" class="auth-button">Entrar</button>
+            
+            <!-- ✅ Enlaces adicionales (personaliza en style.css) -->
+            <div class="auth-links">
+                <a href="recuperar-password.html">¿Olvidaste tu contraseña?</a>
+                <span>¿No tienes cuenta? <a href="registro.html">Regístrate</a></span>
+            </div>
+            
+        </form>
+    </div>
 
-    <!-- Script mínimo para fallback si JS falla -->
+    <!-- Fallback si JS está desactivado -->
     <noscript>
-        <div style="text-align:center; padding:2rem; color:#ff3333;">
-            ⚠️ Esta aplicación requiere JavaScript habilitado para funcionar.
+        <div class="noscript-warning">
+            ⚠️ Esta aplicación requiere JavaScript habilitado.
         </div>
     </noscript>
 
