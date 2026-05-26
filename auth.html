@@ -9,7 +9,7 @@
     
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, rgba(0,0,0,0.25), rgba(10,15,30,0.35)), 
+      background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(10,15,30,0.6)), 
                   url('./fondobarber.png');
       background-size: cover;
       background-position: center;
@@ -62,20 +62,55 @@
     .bubble:nth-child(14){ left: 80%; width: 48px; height: 48px; animation-duration: 14s; animation-delay: 1.2s; }
     .bubble:nth-child(15){ left: 50%; width: 34px; height: 34px; animation-duration: 13s; animation-delay: 3.8s; }
 
-    /* 🪟 TARJETA CRISTAL OPACO */
+    /* 🪟 TARJETA CRISTAL + LUZ NEÓN RECORRIENDO BORDE */
     .auth-container {
-      background: rgba(12, 18, 28, 0.75);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(0, 255, 255, 0.25);
+      /* CAMBIO: Fondo mucho más transparente (0.35 en vez de 0.65) */
+      background: rgba(15, 23, 42, 0.35); 
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      
       padding: 2.5rem;
       border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.08);
       width: 100%;
       max-width: 460px;
       animation: slideIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
       position: relative;
       z-index: 10;
+      
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      overflow: hidden; 
+    }
+
+    /* ✨ EFECTO DE LUZ GIRATORIA EN EL BORDE */
+    .auth-container::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(
+        transparent, 
+        transparent, 
+        transparent, 
+        #00ffff 
+      );
+      animation: rotateBorder 4s linear infinite;
+      z-index: -2;
+    }
+
+    /* Capa interior para tapar el centro y dejar solo el borde */
+    .auth-container::after {
+      content: '';
+      position: absolute;
+      inset: 3px; 
+      /* CAMBIO: Fondo interno también más transparente (0.60) para ver el fondo detrás */
+      background: rgba(15, 23, 42, 0.60); 
+      border-radius: 14px; 
+      z-index: -1;
+    }
+
+    @keyframes rotateBorder {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     @keyframes slideIn {
@@ -83,7 +118,7 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .auth-header { text-align: center; margin-bottom: 2rem; }
+    .auth-header { text-align: center; margin-bottom: 2rem; position: relative; z-index: 2; }
 
     .auth-header h1 {
       font-size: 2.4rem;
@@ -121,9 +156,15 @@
       }
     }
 
-    .auth-header p { color: #9ca3af; font-size: 0.9rem; }
+    .auth-header p { 
+      color: #e2e8f0; 
+      font-size: 1rem; 
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8); /* Sombra al texto para leerse mejor sobre fondo claro */
+    }
 
-    .auth-section { display: none; }
+    .auth-section { display: none; position: relative; z-index: 2; }
     .auth-section.active { display: block; animation: fadeIn 0.4s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -145,7 +186,7 @@
       background: rgba(0, 0, 0, 0.65);
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.25);
     }
-    .form-group input::placeholder { color: #4b5563; }
+    .form-group input::placeholder { color: #9ca3af; }
 
     .btn {
       width: 100%; padding: 1rem;
@@ -154,11 +195,11 @@
       color: #000; font-size: 0.95rem; font-weight: 700;
       cursor: pointer; transition: all 0.3s;
       text-transform: uppercase; letter-spacing: 1px;
+      position: relative; z-index: 2;
     }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    /* 🌸 BOTÓN GOOGLE - ROSA NEÓN */
     .btn-google {
       background: rgba(255, 0, 255, 0.08);
       border: 2px solid #ff00ff;
@@ -183,6 +224,7 @@
     .divider {
       display: flex; align-items: center; margin: 1.5rem 0;
       color: #00ffff; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;
+      position: relative; z-index: 2;
     }
     .divider::before, .divider::after {
       content: ''; flex: 1; height: 1px;
@@ -191,7 +233,8 @@
     .divider span { padding: 0 1rem; }
 
     .auth-links {
-      margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: #6b7280;
+      margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: #cbd5e1;
+      position: relative; z-index: 2;
     }
     .auth-links a {
       color: #00ffff; text-decoration: none; font-weight: 500; transition: all 0.2s;
@@ -202,6 +245,7 @@
       background: rgba(255, 50, 50, 0.15); border: 1px solid rgba(255, 50, 50, 0.4);
       color: #ff8a8a; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem;
       font-size: 0.85rem; display: none; text-align: center;
+      position: relative; z-index: 2;
     }
     .error-message.show { display: block; animation: shake 0.4s; }
     @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
@@ -220,14 +264,16 @@
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
   </div>
 
   <div class="auth-container">
     <div class="auth-header">
       <h1>
-        <span class="barber">BARB</span><span class="hub">ERHUB</span>
+        <span class="barber">BARBER</span><span class="hub">HUB</span>
       </h1>
-      <p id="auth-subtitle">Inicia sesión para continuar</p>
+      <p id="auth-subtitle">Inicia tu estilo</p>
     </div>
 
     <div id="error-message" class="error-message"></div>
@@ -322,7 +368,7 @@
 
     const subtitle = document.getElementById('auth-subtitle');
     const subtitles = {
-      login: 'Inicia sesión para continuar',
+      login: 'Inicia tu estilo',
       register: 'Crea tu cuenta gratis',
       recover: 'Recupera tu contraseña'
     };
