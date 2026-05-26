@@ -188,61 +188,55 @@
             }
         })();
 
-        document.getElementById('roleForm').addEventListener('submit', async (e) => {
+    document.getElementById('roleForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
     const errorBox = document.getElementById('errorBox');
-    const msgBox = document.getElementById('messageBox') || errorBox;
     
     if (!document.getElementById('acceptTerms').checked) {
         errorBox.style.display = 'block';
-        errorBox.textContent = '⚠️ Debes aceptar los términos para continuar.';
+        errorBox.textContent = '⚠️ Acepta los términos para continuar.';
         return;
     }
 
-    // 🔒 Bloquear botón y mostrar carga
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO ROL...';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Configurando perfil...';
     errorBox.style.display = 'none';
 
     const selectedRole = document.querySelector('input[name="userRole"]:checked').value;
 
     try {
-        console.log('💾 Guardando rol:', selectedRole);
+        console.log(' Iniciando guardado de rol:', selectedRole);
         
-        // 1. Actualizar metadata en Supabase Auth
-        const { error: metaError } = await supabaseClient.auth.updateUser({
-            data: { role: selectedRole }
-        });
-        if (metaError) throw metaError;
+        // 1. Actualizar metadata
+        const { error: metaErr } = await supabaseClient.auth.updateUser({ data: { role: selectedRole } });
+        if (metaErr) throw metaErr;
 
-        // 2. Verificar que la sesión sigue activa
-        const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-        if (userError || !user) throw new Error('Sesión perdida tras actualizar rol');
+        // 2. Verificar sesión activa
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (!user) throw new Error('Sesión perdida');
 
-        // 3. Guardar en tabla perfiles
-        const { error: dbError } = await supabaseClient.from('perfiles').upsert({
+        // 3. Guardar en tabla perfiles (ignora si ya existe con upsert)
+        const { error: dbErr } = await supabaseClient.from('perfiles').upsert({
             id: user.id,
-            nombre: user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario',
+            nombre: user.user_metadata?.nombre || user.email?.split('@')[0],
             email: user.email,
             rol: selectedRole
-        });
-        if (dbError) throw dbError;
-
-        console.log('✅ Rol guardado correctamente. Redirigiendo...');
+        }, { onConflict: 'id' });
         
-        // 4. Redirección segura (SOLO si todo salió bien)
-        const destino = selectedRole === 'barbero' ? 'admin.html' : 'explorar.html';
-        window.location.href = destino;
+        if (dbErr) throw dbErr;
+
+        console.log('✅ Rol guardado. Redirigiendo a:', selectedRole === 'barbero' ? 'admin.html' : 'explorar.html');
+        
+        // 4. Redirección FORZADA (sin fallback a index.html)
+        window.location.replace(selectedRole === 'barbero' ? 'admin.html' : 'explorar.html');
         
     } catch (err) {
-        console.error('❌ Error al guardar rol:', err);
+        console.error('❌ Fallo al guardar rol:', err);
         errorBox.style.display = 'block';
-        errorBox.textContent = '❌ ' + (err.message || 'Error desconocido');
-        
-        // 🔥 IMPORTANTE: NO redirigir a index.html. Mostrar el error y dejar que reintente.
+        errorBox.textContent = '❌ ' + err.message;
         btn.disabled = false;
         btn.innerHTML = 'CONTINUAR <i class="fas fa-arrow-right"></i>';
+        // 🔥 IMPORTANTE: NUNCA redirigir a index.html aquí. Dejamos que reintente.
     }
 });
-</html>
