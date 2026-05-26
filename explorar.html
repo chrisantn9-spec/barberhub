@@ -253,6 +253,7 @@
         <a href="mi-perfil.html" class="btn-perfil">
             <i class="fas fa-user"></i> Mi Perfil
         </a>
+        <style> body { visibility: hidden; } </style>
     </header>
 
     <!-- CONTENIDO PRINCIPAL -->
@@ -384,7 +385,7 @@
         </button>
     </footer>
 
-    <script src="config.js"></script>
+       <script src="config.js"></script>
     <script>
         // ✨ Burbujas
         function createParticles() {
@@ -400,16 +401,26 @@
         }
         createParticles();
 
-        // 🔐 Verificar sesión (sin mostrar nombre)
+        // 🔐 VERIFICACIÓN ROBUSTA + OCULTAR FLASH
         (async () => {
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) {
-                    window.location.href = 'auth.html';
-                    return;
+                if (!session) { window.location.href = 'auth.html'; return; }
+                
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) { 
+                    await supabaseClient.auth.signOut(); 
+                    window.location.href = 'auth.html'; 
+                    return; 
                 }
+                
+                console.log('✅ Sesión válida:', user.email);
+                //  MOSTRAR CONTENIDO SOLO SI LA SESIÓN ES REAL
+                document.body.style.visibility = 'visible';
+                
             } catch (err) {
-                console.error('Error:', err);
+                console.error('❌ Error:', err);
+                await supabaseClient.auth.signOut().catch(() => {});
                 window.location.href = 'auth.html';
             }
         })();
@@ -422,5 +433,51 @@
             }
         };
     </script>
-</body>
-</html>
+        createParticles();
+
+             // 🔐 VERIFICACIÓN DE SESIÓN ROBUSTA (Valida contra servidor)
+        (async () => {
+            try {
+                console.log('🔍 Validando sesión con servidor...');
+                
+                // 1. Obtener sesión (puede venir de localStorage)
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                if (sessionError) throw sessionError;
+                
+                // 2. Si no hay sesión local, redirigir inmediatamente
+                if (!session) {
+                    console.log('🚪 Sin sesión local. Redirigiendo a login.');
+                    window.location.href = 'auth.html';
+                    return;
+                }
+                
+                // 3. VALIDACIÓN CRÍTICA: Verificar que el usuario existe realmente en el servidor
+                console.log('📡 Verificando usuario en servidor...');
+                const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+                
+                if (userError || !user) {
+                    console.warn('⚠️ Usuario no válido en servidor. Limpiando sesión local...');
+                    // 4. Limpiar sesión corrupta del localStorage
+                    await supabaseClient.auth.signOut();
+                    window.location.href = 'auth.html';
+                    return;
+                }
+                
+                console.log('✅ Sesión válida para:', user.email);
+                // 5. Sesión válida, continuar cargando la página...
+                
+            } catch (err) {
+                console.error('❌ Error validando sesión:', err);
+                // Limpiar cualquier residuo y redirigir
+                await supabaseClient.auth.signOut().catch(() => {});
+                window.location.href = 'auth.html';
+            }
+        })();
+
+        // 🚪 Cerrar sesión
+        window.cerrarSesion = async () => {
+            if (confirm('¿Cerrar sesión?')) {
+                await supabaseClient.auth.signOut();
+                window.location.href = 'index.html';
+            }
+        };
