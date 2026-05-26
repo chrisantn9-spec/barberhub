@@ -432,43 +432,69 @@
                 window.location.href = 'index.html';
             }
         };
-    </script>
+       <!-- FOOTER LIMPIO -->
+    <footer class="footer">
+        <p>© 2026 All Rights Reserved | by <span>B-U4ALL</span></p>
+        <button class="btn-logout-footer" onclick="cerrarSesion()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
+    </footer>
+
+    <script src="config.js"></script>
+    <script>
+        // ✨ Burbujas
+        function createParticles() {
+            const c = document.getElementById('particles');
+            for(let i=0; i<30; i++){
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random()*100 + '%';
+                p.style.animationDelay = Math.random()*10 + 's';
+                p.style.animationDuration = (8 + Math.random()*7) + 's';
+                c.appendChild(p);
+            }
+        }
+            <!-- FOOTER LIMPIO -->
+    <footer class="footer">
+        <p>© 2026 All Rights Reserved | by <span>B-U4ALL</span></p>
+        <button class="btn-logout-footer" onclick="cerrarSesion()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+        </button>
+    </footer>
+
+    <script src="config.js"></script>
+    <script>
+        // ✨ Burbujas
+        function createParticles() {
+            const c = document.getElementById('particles');
+            for(let i=0; i<30; i++){
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random()*100 + '%';
+                p.style.animationDelay = Math.random()*10 + 's';
+                p.style.animationDuration = (8 + Math.random()*7) + 's';
+                c.appendChild(p);
+            }
+        }
         createParticles();
 
-             // 🔐 VERIFICACIÓN DE SESIÓN ROBUSTA (Valida contra servidor)
+        // 🔐 VALIDACIÓN ROBUSTA + SIN FLASH
         (async () => {
             try {
-                console.log('🔍 Validando sesión con servidor...');
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) { window.location.href = 'auth.html'; return; }
                 
-                // 1. Obtener sesión (puede venir de localStorage)
-                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
-                if (sessionError) throw sessionError;
-                
-                // 2. Si no hay sesión local, redirigir inmediatamente
-                if (!session) {
-                    console.log('🚪 Sin sesión local. Redirigiendo a login.');
-                    window.location.href = 'auth.html';
-                    return;
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) { 
+                    await supabaseClient.auth.signOut(); 
+                    window.location.href = 'auth.html'; 
+                    return; 
                 }
                 
-                // 3. VALIDACIÓN CRÍTICA: Verificar que el usuario existe realmente en el servidor
-                console.log('📡 Verificando usuario en servidor...');
-                const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-                
-                if (userError || !user) {
-                    console.warn('⚠️ Usuario no válido en servidor. Limpiando sesión local...');
-                    // 4. Limpiar sesión corrupta del localStorage
-                    await supabaseClient.auth.signOut();
-                    window.location.href = 'auth.html';
-                    return;
-                }
-                
-                console.log('✅ Sesión válida para:', user.email);
-                // 5. Sesión válida, continuar cargando la página...
-                
+                console.log('✅ Sesión válida:', user.email);
+                document.body.style.visibility = 'visible';
             } catch (err) {
-                console.error('❌ Error validando sesión:', err);
-                // Limpiar cualquier residuo y redirigir
+                console.error('❌ Error:', err);
                 await supabaseClient.auth.signOut().catch(() => {});
                 window.location.href = 'auth.html';
             }
@@ -481,3 +507,6 @@
                 window.location.href = 'index.html';
             }
         };
+    </script>
+</body>
+</html>
