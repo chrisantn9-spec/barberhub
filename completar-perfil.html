@@ -22,14 +22,15 @@
         }
         .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
         .particle {
-            position: absolute; width: 3px; height: 3px; background: var(--neon-cyan);
-            border-radius: 50%; box-shadow: 0 0 10px var(--neon-cyan);
-            animation: float 8s infinite; opacity: 0;
+            position: absolute; width: 4px; height: 4px; background: var(--neon-cyan);
+            border-radius: 50%; box-shadow: 0 0 8px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+            animation: rise 10s infinite linear; opacity: 0;
         }
-        @keyframes float {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            20% { opacity: 1; } 80% { opacity: 1; }
-            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        @keyframes rise {
+            0% { transform: translateY(110vh) scale(0); opacity: 0; }
+            10% { opacity: 0.8; transform: translateY(100vh) scale(1); }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
         }
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -93,12 +94,12 @@
     <div class="particles" id="particles"></div>
     
     <div id="loader">
-        <div class="loader-text">PREPARANDO REGISTRO...</div>
+        <div class="loader-text">PREPARANDO TU PERFIL...</div>
         <div class="loader-bar"><div class="loader-fill"></div></div>
     </div>
 
     <div class="card" id="roleCard">
-        <h1><i class="fas fa-user-plus"></i> COMPLETA TU REGISTRO</h1>
+        <h1><i class="fas fa-user-plus"></i> ELIGE TU ROL</h1>
         <p>Para continuar, dinos cómo usarás BarberHub</p>
         
         <form id="roleForm">
@@ -130,15 +131,15 @@
 
     <script src="config.js"></script>
     <script>
-        // Partículas
-        const particlesContainer = document.getElementById('particles');
-        for(let i=0; i<30; i++){
-            const p = document.createElement('div'); p.className = 'particle';
-            p.style.left = Math.random()*100 + '%'; p.style.animationDelay = Math.random()*8 + 's';
-            particlesContainer.appendChild(p);
+        // ✨ BURBUJAS
+        const pCont = document.getElementById('particles');
+        for(let i=0; i<35; i++){
+            const p = document.createElement('div'); p.className='particle';
+            p.style.left = Math.random()*100+'%'; p.style.animationDelay = Math.random()*10+'s';
+            p.style.animationDuration = (8+Math.random()*7)+'s'; pCont.appendChild(p);
         }
 
-        // 🔍 FLUJO PRINCIPAL - SIEMPRE MUESTRA LA TARJETA
+        // 🔍 FLUJO PRINCIPAL - BLINDADO
         (async () => {
             const loader = document.getElementById('loader');
             const card = document.getElementById('roleCard');
@@ -146,34 +147,37 @@
 
             try {
                 if (typeof supabaseClient === 'undefined') {
-                    throw new Error('config.js no se cargó correctamente');
+                    throw new Error('config.js no se cargó');
                 }
 
-                console.log('🔍 Verificando sesión...');
-                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                console.log('🔍 Esperando sesión de Supabase...');
                 
-                if (sessionError) {
-                    console.error('Error de sesión:', sessionError);
-                }
+                // Usamos onAuthStateChange para esperar a que Supabase procese el token OAuth
+                const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                    console.log('📡 Auth event:', event);
+                    
+                    if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+                        if (session?.user) {
+                            console.log('✅ Sesión activa para:', session.user.email);
+                            
+                            // Si ya tiene rol, redirigir inmediatamente
+                            if (session.user.user_metadata?.role) {
+                                console.log('🔄 Usuario ya tiene rol:', session.user.user_metadata.role);
+                                const destino = session.user.user_metadata.role === 'barbero' ? 'admin.html' : 'explorar.html';
+                                window.location.replace(destino);
+                                return;
+                            }
+                            
+                            // Mostrar tarjeta para elegir rol
+                            console.log('✨ Mostrando selector de rol...');
+                            loader.style.display = 'none';
+                            card.style.display = 'block';
+                        }
+                    }
+                });
 
-                // ✅ SIEMPRE mostrar la tarjeta (incluso si hay sesión)
-                // Solo verificamos que haya un usuario logueado
-                if (!session) {
-                    console.log('🚪 Sin sesión. Redirigiendo a auth.html');
-                    // Esperamos 2 segundos para que el loader se vea
-                    setTimeout(() => {
-                    }, 2000);
-                    return;
-                }
-
-                console.log('✅ Usuario logueado:', session.user.email);
-                console.log('✨ Mostrando selector de rol...');
-                
-                // Ocultar loader y mostrar tarjeta
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    card.style.display = 'block';
-                }, 1000); // Pequeña delay para que se vea profesional
+                // Limpieza al salir
+                window.addEventListener('beforeunload', () => subscription?.unsubscribe());
 
             } catch (err) {
                 console.error('💥 Error crítico:', err);
@@ -188,55 +192,66 @@
             }
         })();
 
-    document.getElementById('roleForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('submitBtn');
-    const errorBox = document.getElementById('errorBox');
-    
-    if (!document.getElementById('acceptTerms').checked) {
-        errorBox.style.display = 'block';
-        errorBox.textContent = '⚠️ Acepta los términos para continuar.';
-        return;
-    }
+        // 💾 GUARDAR ROL SELECCIONADO
+        document.getElementById('roleForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            
+            const btn = document.getElementById('submitBtn');
+            const errorBox = document.getElementById('errorBox');
+            
+            if (!document.getElementById('acceptTerms').checked) {
+                errorBox.style.display = 'block';
+                errorBox.textContent = '⚠️ Debes aceptar los términos para continuar.';
+                return;
+            }
 
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Configurando perfil...';
-    errorBox.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GUARDANDO...';
+            errorBox.style.display = 'none';
 
-    const selectedRole = document.querySelector('input[name="userRole"]:checked').value;
+            const selectedRole = document.querySelector('input[name="userRole"]:checked').value;
+            console.log('💾 Guardando rol:', selectedRole);
 
-    try {
-        console.log(' Iniciando guardado de rol:', selectedRole);
-        
-        // 1. Actualizar metadata
-        const { error: metaErr } = await supabaseClient.auth.updateUser({ data: { role: selectedRole } });
-        if (metaErr) throw metaErr;
+            try {
+                // 1. Actualizar metadata en Auth
+                const { error: metaError } = await supabaseClient.auth.updateUser({
+                    data: { role: selectedRole }
+                });
+                if (metaError) throw metaError;
+                console.log('✅ Metadata actualizada');
 
-        // 2. Verificar sesión activa
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) throw new Error('Sesión perdida');
+                // 2. Verificar sesión activa
+                const { data: { user } } = await supabaseClient.auth.getUser();
+                if (!user) throw new Error('Sesión perdida');
 
-        // 3. Guardar en tabla perfiles (ignora si ya existe con upsert)
-        const { error: dbErr } = await supabaseClient.from('perfiles').upsert({
-            id: user.id,
-            nombre: user.user_metadata?.nombre || user.email?.split('@')[0],
-            email: user.email,
-            rol: selectedRole
-        }, { onConflict: 'id' });
-        
-        if (dbErr) throw dbErr;
+                // 3. Guardar en tabla perfiles (upsert para evitar conflictos)
+                const { error: dbError } = await supabaseClient.from('perfiles').upsert({
+                    id: user.id,
+                    nombre: user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario',
+                    email: user.email,
+                    rol: selectedRole
+                }, { onConflict: 'id' });
+                if (dbError) throw dbError;
+                console.log('✅ Perfil guardado en BD');
 
-        console.log('✅ Rol guardado. Redirigiendo a:', selectedRole === 'barbero' ? 'admin.html' : 'explorar.html');
-        
-        // 4. Redirección FORZADA (sin fallback a index.html)
-        window.location.replace(selectedRole === 'barbero' ? 'admin.html' : 'explorar.html');
-        
-    } catch (err) {
-        console.error('❌ Fallo al guardar rol:', err);
-        errorBox.style.display = 'block';
-        errorBox.textContent = '❌ ' + err.message;
-        btn.disabled = false;
-        btn.innerHTML = 'CONTINUAR <i class="fas fa-arrow-right"></i>';
-        // 🔥 IMPORTANTE: NUNCA redirigir a index.html aquí. Dejamos que reintente.
-    }
-});
+                // 4. Redirección SEGURA (sin fallback a index.html)
+                const destino = selectedRole === 'barbero' ? 'admin.html' : 'explorar.html';
+                console.log('🚀 Redirigiendo a:', destino);
+                
+                // Pequeño delay para asegurar sincronización de cookies
+                await new Promise(r => setTimeout(r, 500));
+                window.location.replace(destino);
+                
+            } catch (err) {
+                console.error('❌ Error guardando rol:', err);
+                errorBox.style.display = 'block';
+                errorBox.textContent = '❌ ' + err.message;
+                btn.disabled = false;
+                btn.innerHTML = 'CONTINUAR <i class="fas fa-arrow-right"></i>';
+                // 🔥 IMPORTANTE: NUNCA redirigir a index.html aquí
+            }
+        });
+    </script>
+</body>
+</html>
