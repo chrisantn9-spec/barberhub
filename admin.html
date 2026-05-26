@@ -2,65 +2,52 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BarberHub | Panel de Administración</title>
+  <title>BarberHub | Panel Admin</title>
   <style>
-    body { font-family: system-ui, sans-serif; margin: 0; background: #0f1115; color: #e4e4e7; }
-    #loading { display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 1.2rem; }
-    #dashboard { display: none; padding: 2rem; max-width: 1200px; margin: auto; }
-    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .btn-logout { background: #ef4444; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
-    .card { background: #1e2028; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem; }
+    body { font-family: system-ui, sans-serif; background: #0f1115; color: #e4e4e7; padding: 2rem; }
+    #loader { text-align: center; margin-top: 20vh; font-size: 1.2rem; }
+    #admin-panel { display: none; }
+    .btn-logout { background: #ef4444; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; margin-top: 1rem; }
   </style>
 </head>
 <body>
-  <!-- Pantalla de carga mientras se verifica sesión -->
-  <div id="loading">🔐 Verificando acceso...</div>
-
-  <!-- Contenido protegido (solo visible si hay sesión válida) -->
-  <div id="dashboard">
-    <div class="header">
-      <h1>👋 Bienvenido al Panel | BarberHub</h1>
-      <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
-    </div>
-    <div class="card">
-      <h2>📊 Resumen Rápido</h2>
-      <p>Aquí irá tu contenido de administración: citas, pagos, usuarios, etc.</p>
-    </div>
-    <div class="card">
-      <h2>🛠️ Próximos pasos</h2>
-      <p>Conecta este panel a tus endpoints o SDK de base de datos para cargar datos reales.</p>
-    </div>
+  <div id="loader">🔐 Verificando permisos de administrador...</div>
+  
+  <div id="admin-panel">
+    <h1>👑 Panel de Administración</h1>
+    <p>Bienvenido. Aquí gestionarás barberos, servicios y pagos.</p>
+    <button id="logout-btn" class="btn-logout">Cerrar sesión</button>
   </div>
 
-  <script>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+    const supabase = createClient('TU_SUPABASE_URL', 'TU_SUPABASE_ANON_KEY');
+
     document.addEventListener('DOMContentLoaded', async () => {
-      const loading = document.getElementById('loading');
-      const dashboard = document.getElementById('dashboard');
-      const logoutBtn = document.getElementById('btn-logout');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) { window.location.href = '/auth.html?mode=login'; return; }
 
-      try {
-        // 🔍 VERIFICACIÓN DE SESIÓN
-        // ⚠️ REEMPLAZA ESTE BLOQUE CON TU SDK O LÓGICA DE BACKEND
-        // Ejemplo genérico:
-        // const { data: { session } } = await authProvider.getSession();
-        // if (!session) throw new Error('No autenticado');
+      // 🔍 Verificar rol (ajusta según cómo guardes el rol)
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
 
-        // ✅ Si llegas aquí, la sesión es válida
-        loading.style.display = 'none';
-        dashboard.style.display = 'block';
-
-        // 🔑 Manejar cierre de sesión
-        logoutBtn.addEventListener('click', async () => {
-          // await authProvider.signOut();
-          window.location.href = '/auth.html?mode=login';
-        });
-
-      } catch (error) {
-        console.warn('Sesión no válida o expirada:', error);
-        // 🚫 Redirigir al login si no hay sesión
-        window.location.href = '/auth.html?mode=login';
+      if (profile?.role !== 'admin') {
+        alert('⛔ Acceso restringido a administradores.');
+        window.location.href = '/dashboard.html';
+        return;
       }
+
+      // ✅ Rol verificado → mostrar panel
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('admin-panel').style.display = 'block';
+
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        window.location.href = '/auth.html?mode=login';
+      });
     });
   </script>
 </body>
