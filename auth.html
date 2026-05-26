@@ -117,6 +117,51 @@
             ⚠️ Esta aplicación requiere JavaScript habilitado.
         </div>
     </noscript>
+    <!-- Coloca esto justo antes de </body> en auth.html -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1️⃣ Manejar el parámetro ?mode=login (si decides usarlo)
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+    // Aquí podrías ocultar/mostrar secciones si tienes register/login en el mismo archivo
+
+    // 2️⃣ Capturar el formulario
+    const form = document.querySelector('form');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Evita recarga tradicional
+
+      const email = form.querySelector('[name="email"]').value.trim();
+      const password = form.querySelector('[name="password"]').value;
+
+      try {
+        // 🔑 REEMPLAZA ESTO CON TU SDK O FETCH A TU BACKEND
+        // Ejemplo genérico con Supabase:
+        // const { error } = await supabase.auth.signInWithPassword({ email, password });
+        // if (error) throw error;
+
+        // ✅ Si usas un endpoint propio:
+        /*
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        if (!res.ok) throw new Error('Credenciales inválidas');
+        const data = await res.json();
+        // La mayoría de backends modernos devuelven el token en cookies HTTP-only
+        // o en localStorage. NO lo guardes manualmente si tu SDK ya lo hace.
+        */
+
+        // 3️⃣ Redirigir solo si el login fue exitoso
+        window.location.href = '/admin.html';
+
+      } catch (err) {
+        console.error('Error de autenticación:', err);
+        alert('Error: ' + err.message);
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
