@@ -62,12 +62,16 @@
     .bubble:nth-child(14){ left: 80%; width: 48px; height: 48px; animation-duration: 14s; animation-delay: 1.2s; }
     .bubble:nth-child(15){ left: 50%; width: 34px; height: 34px; animation-duration: 13s; animation-delay: 3.8s; }
 
-    /* 🪟 TARJETA CRISTAL + LUZ NEÓN RECORRIENDO BORDE */
+    /* 🪟 TARJETA CRISTAL MUY TRANSPARENTE + BORDE TURQUESA FIJO */
     .auth-container {
-      /* CAMBIO: Fondo mucho más transparente (0.35 en vez de 0.65) */
-      background: rgba(15, 23, 42, 0.35); 
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      /* CAMBIO: Transparencia extrema (0.15 es muy poco oscuro, casi puro cristal) */
+      background: rgba(15, 23, 42, 0.15); 
+      backdrop-filter: blur(12px); /* Un poco menos de blur para que se vea más el fondo */
+      -webkit-backdrop-filter: blur(12px);
+      
+      /* CAMBIO: Borde sólido turquesa brillante */
+      border: 2px solid #00ffff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.15); /* Resplandor externo suave */
       
       padding: 2.5rem;
       border-radius: 16px;
@@ -77,40 +81,7 @@
       position: relative;
       z-index: 10;
       
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-      overflow: hidden; 
-    }
-
-    /* ✨ EFECTO DE LUZ GIRATORIA EN EL BORDE */
-    .auth-container::before {
-      content: '';
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: conic-gradient(
-        transparent, 
-        transparent, 
-        transparent, 
-        #00ffff 
-      );
-      animation: rotateBorder 4s linear infinite;
-      z-index: -2;
-    }
-
-    /* Capa interior para tapar el centro y dejar solo el borde */
-    .auth-container::after {
-      content: '';
-      position: absolute;
-      inset: 3px; 
-      /* CAMBIO: Fondo interno también más transparente (0.60) para ver el fondo detrás */
-      background: rgba(15, 23, 42, 0.60); 
-      border-radius: 14px; 
-      z-index: -1;
-    }
-
-    @keyframes rotateBorder {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      /* Eliminados los pseudo-elementos ::before y ::after que creaban la luz giratoria */
     }
 
     @keyframes slideIn {
@@ -157,11 +128,11 @@
     }
 
     .auth-header p { 
-      color: #e2e8f0; 
+      color: #ffffff; 
       font-size: 1rem; 
       margin-top: 0.5rem;
       letter-spacing: 1px;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.8); /* Sombra al texto para leerse mejor sobre fondo claro */
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* Sombra fuerte para leerse sobre fondo claro */
     }
 
     .auth-section { display: none; position: relative; z-index: 2; }
@@ -172,18 +143,20 @@
     .form-group label {
       display: block; margin-bottom: 0.5rem; font-size: 0.8rem;
       color: #00ffff; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
     }
 
     .form-group input {
       width: 100%; padding: 0.9rem 1rem;
-      background: rgba(0, 0, 0, 0.45);
+      /* Inputs un poco más oscuros para que se lean bien */
+      background: rgba(0, 0, 0, 0.6);
       border: 1px solid rgba(0, 255, 255, 0.35);
       border-radius: 10px; color: #ffffff; font-size: 1rem;
       transition: all 0.3s ease;
     }
     .form-group input:focus {
       outline: none; border-color: #00ffff;
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0, 0, 0, 0.8);
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.25);
     }
     .form-group input::placeholder { color: #9ca3af; }
@@ -233,8 +206,9 @@
     .divider span { padding: 0 1rem; }
 
     .auth-links {
-      margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: #cbd5e1;
+      margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: #e2e8f0;
       position: relative; z-index: 2;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
     }
     .auth-links a {
       color: #00ffff; text-decoration: none; font-weight: 500; transition: all 0.2s;
@@ -242,8 +216,8 @@
     .auth-links a:hover { text-shadow: 0 0 8px rgba(0,255,255,0.6); }
 
     .error-message {
-      background: rgba(255, 50, 50, 0.15); border: 1px solid rgba(255, 50, 50, 0.4);
-      color: #ff8a8a; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem;
+      background: rgba(255, 50, 50, 0.25); border: 1px solid rgba(255, 50, 50, 0.4);
+      color: #ffcccc; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem;
       font-size: 0.85rem; display: none; text-align: center;
       position: relative; z-index: 2;
     }
