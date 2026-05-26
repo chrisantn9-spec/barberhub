@@ -383,22 +383,18 @@
             } catch (err) { msg.textContent = 'Error: ' + err.message; msg.classList.add('error'); }
         });
 
-        // 🧩 Detector de recuperación
-        document.addEventListener('DOMContentLoaded', () => {
-            const hash = window.location.hash.substring(1);
-            const hashParams = new URLSearchParams(hash);
-            const type = hashParams.get('type');
-            if (type === 'recovery') {
-                console.log('🔍 Recovery link detectado');
-                supabaseClient.auth.onAuthStateChange((event, session) => {
-                    if (event === 'SIGNED_IN' && type === 'recovery') {
-                        console.log('✅ Recovery session confirmed');
-                        showResetPassword();
-                        window.history.replaceState(null, null, window.location.pathname);
-                    }
-                });
-            }
-        });
-    </script>
-</body>
-</html>
+       document.addEventListener('DOMContentLoaded', () => {
+    console.log(' Esperando señal oficial de Supabase...');
+
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'PASSWORD_RECOVERY') {
+            console.log('✅ Supabase activó modo recuperación. Mostrando formulario.');
+            showResetPassword();
+            // Limpia URL para evitar recargas con tokens expirados
+            window.history.replaceState(null, '', window.location.pathname);
+        }
+    });
+
+    // Limpieza al salir
+    window.addEventListener('beforeunload', () => subscription.unsubscribe());
+});
