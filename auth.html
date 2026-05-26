@@ -48,65 +48,6 @@
     }
     .bubble:nth-child(1) { left: 5%; width: 40px; height: 40px; animation-duration: 12s; animation-delay: 0s; }
     .bubble:nth-child(2) { left: 15%; width: 25px; height: 25px; animation-duration: 9s; animation-delay: 2s; }
-    .bubble:nth-child(3) { left: 30%; width: 50px; height: 50px¡Entendido! Para lograr ese efecto de "cristal flotante" o "vidrio grueso", he añadido una **segunda capa interna** (un panel semitransparente dentro de la tarjeta principal).
-
-Esto crea profundidad:
-1.  **Capa Exterior:** El borde turquesa brillante y el espacio transparente.
-2.  **Capa Interior:** Un panel con fondo oscuro suave y su propio borde tenue, donde residen los formularios. Esto hace que parezca que el contenido flota dentro del marco de cristal.
-
-Aquí tienes el código con este efecto de doble capa profesional:
-
-```html
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión | BarberHub</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(10,15,30,0.6)), 
-                  url('./fondobarber.png');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      color: #e4e4e7;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* 🔵 BURBUJAS ELÉCTRICAS */
-    .bubbles {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 0; overflow: hidden;
-    }
-    .bubble {
-      position: absolute; bottom: -60px;
-      background: radial-gradient(circle, rgba(0,255,255,0.2) 0%, rgba(0,255,255,0) 70%);
-      border-radius: 50%;
-      box-shadow: 0 0 15px rgba(0,255,255,0.4), inset 0 0 10px rgba(255,255,255,0.2);
-      animation: floatUp linear infinite, pulse 2.5s ease-in-out infinite alternate;
-    }
-    @keyframes floatUp {
-      0% { transform: translateY(0) scale(1); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 0.8; }
-      100% { transform: translateY(-110vh) scale(1.3); opacity: 0; }
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 10px rgba(0,255,255,0.3); }
-      100% { box-shadow: 0 0 25px rgba(0,255,255,0.7), 0 0 40px rgba(0,255,255,0.2); }
-    }
-    .bubble:nth-child(1) { left: 5%; width: 40px; height: 40px; animation-duration: 12s; animation-delay: 0s; }
-    .bubble:nth-child(2) { left: 15%; width: 25px; height: 25px; animation-duration: 9s; animation-delay: 2s; }
     .bubble:nth-child(3) { left: 30%; width: 50px; height: 50px; animation-duration: 14s; animation-delay: 1s; }
     .bubble:nth-child(4) { left: 45%; width: 30px; height: 30px; animation-duration: 10s; animation-delay: 3s; }
     .bubble:nth-child(5) { left: 60%; width: 45px; height: 45px; animation-duration: 13s; animation-delay: 0.5s; }
@@ -121,36 +62,24 @@ Aquí tienes el código con este efecto de doble capa profesional:
     .bubble:nth-child(14){ left: 80%; width: 48px; height: 48px; animation-duration: 14s; animation-delay: 1.2s; }
     .bubble:nth-child(15){ left: 50%; width: 34px; height: 34px; animation-duration: 13s; animation-delay: 3.8s; }
 
-    /* 🪟 TARJETA EXTERIOR (MARCO DE CRISTAL) */
+    /* 🪟 TARJETA CRISTAL PURO (LÍMITE ABSOLUTO) */
     .auth-container {
-      /* Fondo casi invisible para el marco exterior */
-      background: rgba(15, 23, 42, 0.05); 
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      /* CAMBIO: Fondo completamente transparente (solo queda el blur) */
+      background: rgba(15, 23, 42, 0.0); 
+      backdrop-filter: blur(6px); 
+      -webkit-backdrop-filter: blur(6px);
       
-      /* Borde turquesa brillante exterior */
+      /* Borde turquesa definido */
       border: 2px solid #00ffff;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
       
-      padding: 15px; /* Espacio entre el borde exterior y la capa interior */
-      border-radius: 20px;
+      padding: 2.5rem;
+      border-radius: 16px;
       width: 100%;
-      max-width: 480px;
+      max-width: 460px;
       animation: slideIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
       position: relative;
       z-index: 10;
-    }
-
-    /* 💎 CAPA INTERIOR (PANEL FLOTANTE) */
-    .inner-glass-panel {
-      /* Fondo semitransparente para la capa de contenido */
-      background: rgba(10, 15, 30, 0.65); 
-      border: 1px solid rgba(0, 255, 255, 0.2); /* Borde sutil interno */
-      border-radius: 14px;
-      padding: 2.5rem 2rem;
-      box-shadow: inset 0 0 20px rgba(0,0,0,0.5); /* Sombra interna para profundidad */
-      position: relative;
-      z-index: 11;
     }
 
     @keyframes slideIn {
@@ -158,7 +87,7 @@ Aquí tienes el código con este efecto de doble capa profesional:
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .auth-header { text-align: center; margin-bottom: 2rem; position: relative; z-index: 2; }
+    .auth-header { text-align: center; margin-bottom: 2.5rem; position: relative; z-index: 2; }
 
     /* ✨ EFECTO DE REFLEJO EN VIDRIO PARA EL TÍTULO */
     .auth-header h1 {
@@ -223,14 +152,14 @@ Aquí tienes el código con este efecto de doble capa profesional:
     .form-group input {
       width: 100%; padding: 0.9rem 1rem;
       /* Inputs oscuros para contraste */
-      background: rgba(0, 0, 0, 0.4);
+      background: rgba(0, 0, 0, 0.6);
       border: 1px solid rgba(0, 255, 255, 0.35);
       border-radius: 10px; color: #ffffff; font-size: 1rem;
       transition: all 0.3s ease;
     }
     .form-group input:focus {
       outline: none; border-color: #00ffff;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.8);
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.25);
     }
     .form-group input::placeholder { color: #9ca3af; }
@@ -299,8 +228,7 @@ Aquí tienes el código con este efecto de doble capa profesional:
     @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
 
     @media (max-width: 480px) {
-      .auth-container { padding: 10px; }
-      .inner-glass-panel { padding: 2rem 1.5rem; }
+      .auth-container { padding: 2rem 1.5rem; }
       .auth-header h1 { font-size: 1.9rem; }
     }
   </style>
@@ -318,90 +246,87 @@ Aquí tienes el código con este efecto de doble capa profesional:
   </div>
 
   <div class="auth-container">
-    <!-- NUEVA CAPA INTERIOR VISIBLE -->
-    <div class="inner-glass-panel">
-      <div class="auth-header">
-        <h1>
-          <!-- Estructura para el efecto de reflejo -->
-          <span class="text-main">
-            <span class="barber">BARBER</span><span class="hub">HUB</span>
-          </span>
-          <span class="text-reflection" aria-hidden="true">
-            <span class="barber">BARBER</span><span class="hub">HUB</span>
-          </span>
-        </h1>
-        <p id="auth-subtitle">Inicia tu estilo</p>
-      </div>
+    <div class="auth-header">
+      <h1>
+        <!-- Estructura para el efecto de reflejo -->
+        <span class="text-main">
+          <span class="barber">BARBER</span><span class="hub">HUB</span>
+        </span>
+        <span class="text-reflection" aria-hidden="true">
+          <span class="barber">BARBER</span><span class="hub">HUB</span>
+        </span>
+      </h1>
+      <p id="auth-subtitle">Inicia tu estilo</p>
+    </div>
 
-      <div id="error-message" class="error-message"></div>
+    <div id="error-message" class="error-message"></div>
 
-      <!-- LOGIN -->
-      <div id="login-section" class="auth-section active">
-        <form id="login-form">
-          <div class="form-group">
-            <label for="login-email">EMAIL</label>
-            <input type="email" id="login-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
-          </div>
-          <div class="form-group">
-            <label for="login-password">CONTRASEÑA</label>
-            <input type="password" id="login-password" name="password" placeholder="••••••••" required autocomplete="current-password" minlength="6" />
-          </div>
-          <button type="submit" class="btn" id="login-btn">ENTRAR</button>
-        </form>
-
-        <div class="divider"><span>o continúa con</span></div>
-
-        <button class="btn btn-google" id="google-login-btn">
-          <svg viewBox="0 0 24 24">
-            <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          Sign in with Google
-        </button>
-
-        <div class="auth-links">
-          <a href="./auth.html?mode=recover">¿Olvidaste tu contraseña?</a>
-          <br><br>
-          ¿No tienes cuenta? <a href="./auth.html?mode=register">Regístrate</a>
+    <!-- LOGIN -->
+    <div id="login-section" class="auth-section active">
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">EMAIL</label>
+          <input type="email" id="login-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
         </div>
-      </div>
-
-      <!-- REGISTRO -->
-      <div id="register-section" class="auth-section">
-        <form id="register-form">
-          <div class="form-group">
-            <label for="register-email">EMAIL</label>
-            <input type="email" id="register-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
-          </div>
-          <div class="form-group">
-            <label for="register-password">CONTRASEÑA</label>
-            <input type="password" id="register-password" name="password" placeholder="••••••••" required minlength="6" />
-          </div>
-          <div class="form-group">
-            <label for="register-confirm">CONFIRMAR CONTRASEÑA</label>
-            <input type="password" id="register-confirm" name="confirmPassword" placeholder="••••••••" required minlength="6" />
-          </div>
-          <button type="submit" class="btn">REGISTRARSE</button>
-        </form>
-        <div class="auth-links">
-          ¿Ya tienes cuenta? <a href="./auth.html?mode=login">Inicia sesión</a>
+        <div class="form-group">
+          <label for="login-password">CONTRASEÑA</label>
+          <input type="password" id="login-password" name="password" placeholder="••••••••" required autocomplete="current-password" minlength="6" />
         </div>
-      </div>
+        <button type="submit" class="btn" id="login-btn">ENTRAR</button>
+      </form>
 
-      <!-- RECUPERAR -->
-      <div id="recover-section" class="auth-section">
-        <form id="recover-form">
-          <div class="form-group">
-            <label for="recover-email">EMAIL</label>
-            <input type="email" id="recover-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
-          </div>
-          <button type="submit" class="btn">ENVIAR ENLACE</button>
-        </form>
-        <div class="auth-links">
-          <a href="./auth.html?mode=login">← Volver al inicio</a>
+      <div class="divider"><span>o continúa con</span></div>
+
+      <button class="btn btn-google" id="google-login-btn">
+        <svg viewBox="0 0 24 24">
+          <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Sign in with Google
+      </button>
+
+      <div class="auth-links">
+        <a href="./auth.html?mode=recover">¿Olvidaste tu contraseña?</a>
+        <br><br>
+        ¿No tienes cuenta? <a href="./auth.html?mode=register">Regístrate</a>
+      </div>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="register-section" class="auth-section">
+      <form id="register-form">
+        <div class="form-group">
+          <label for="register-email">EMAIL</label>
+          <input type="email" id="register-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
         </div>
+        <div class="form-group">
+          <label for="register-password">CONTRASEÑA</label>
+          <input type="password" id="register-password" name="password" placeholder="••••••••" required minlength="6" />
+        </div>
+        <div class="form-group">
+          <label for="register-confirm">CONFIRMAR CONTRASEÑA</label>
+          <input type="password" id="register-confirm" name="confirmPassword" placeholder="••••••••" required minlength="6" />
+        </div>
+        <button type="submit" class="btn">REGISTRARSE</button>
+      </form>
+      <div class="auth-links">
+        ¿Ya tienes cuenta? <a href="./auth.html?mode=login">Inicia sesión</a>
+      </div>
+    </div>
+
+    <!-- RECUPERAR -->
+    <div id="recover-section" class="auth-section">
+      <form id="recover-form">
+        <div class="form-group">
+          <label for="recover-email">EMAIL</label>
+          <input type="email" id="recover-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+        </div>
+        <button type="submit" class="btn">ENVIAR ENLACE</button>
+      </form>
+      <div class="auth-links">
+        <a href="./auth.html?mode=login">← Volver al inicio</a>
       </div>
     </div>
   </div>
@@ -411,7 +336,7 @@ Aquí tienes el código con este efecto de doble capa profesional:
 
     // ⚙️ REEMPLAZA ESTO CON TU CLAVE REAL DE SUPABASE
     const SUPABASE_URL = 'https://qnlbaxxhsbwbqqucbywn.supabase.co';
-    const SUPABASE_ANON_KEY = 'TU_ANON_KEY_AQUI';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
     
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
