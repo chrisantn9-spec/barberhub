@@ -162,6 +162,28 @@
     });
   });
 </script>
+<script>
+  document.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.querySelector('[name="email"]').value;
+    const password = document.querySelector('[name="password"]').value;
 
+    try {
+      // 🔑 REEMPLAZA CON TU SDK O ENDPOINT
+      // const { error } = await authProvider.signInWithPassword({ email, password });
+      // if (error) throw error;
+
+      // 📦 Guardar sesión temporalmente (solo para demostración)
+      // En producción, usa cookies HttpOnly o el SDK que maneje refresh tokens automáticamente
+      sessionStorage.setItem('auth_session', JSON.stringify({ email, loginAt: Date.now() }));
+
+      // ✅ Redirigir al panel real, NO a admin.html
+      window.location.href = '/dashboard.html';
+    } catch (err) {
+      alert('Credenciales incorrectas o error de red');
+      console.error(err);
+    }
+  });
+</script>
 </body>
 </html>
