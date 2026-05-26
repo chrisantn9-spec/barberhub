@@ -270,33 +270,51 @@
             window.history.pushState({}, '', `?mode=${!isRegister ? 'register' : 'login'}`);
         });
 
-        // 📤 Login/Registro
+                // 📤 Login/Registro (BLINDADO CONTRA REDIRECCIONES FALLIDAS)
         form.addEventListener('submit', async e => {
             e.preventDefault();
-            const email = document.getElementById('emailInput').value;
+            e.stopImmediatePropagation(); // Evita listeners fantasma
+
+            const email = document.getElementById('emailInput').value.trim();
             const password = document.getElementById('passInput').value;
-            const name = document.getElementById('nameInput').value;
+            const name = document.getElementById('nameInput').value.trim();
             const selectedRole = document.querySelector('input[name="userRole"]:checked')?.value || 'cliente';
 
-            messageBox.textContent = 'Procesando...'; messageBox.className = 'message';
+            messageBox.textContent = 'Procesando...'; 
+            messageBox.className = 'message';
+
             try {
                 if (isRegister) {
                     const { error } = await supabaseClient.auth.signUp({
                         email, password, options: { data: { nombre: name, role: selectedRole } }
                     });
                     if (error) throw error;
-                    messageBox.textContent = '¡Cuenta creada! Redirigiendo...'; messageBox.classList.add('success');
-                    setTimeout(() => window.location.href = selectedRole === 'barbero' ? 'admin.html' : 'explorar.html', 2000);
+                    messageBox.textContent = '✅ Cuenta creada. Verifica tu correo...';
+                    messageBox.classList.add('success');
+                    setTimeout(() => window.location.href = 'auth.html', 2000);
                 } else {
                     const { error, data } = await supabaseClient.auth.signInWithPassword({ email, password });
                     if (error) throw error;
-                    const userRole = data.user.user_metadata?.role || 'cliente';
-                    messageBox.textContent = 'Acceso concedido...'; messageBox.classList.add('success');
-                    setTimeout(() => window.location.href = userRole === 'barbero' ? 'admin.html' : 'explorar.html', 1000);
-                }
-            } catch (err) { messageBox.textContent = err.message; messageBox.classList.add('error'); }
-        });
+                    
+                    // Obtener rol de forma segura
+                    const userRole = data.user?.user_metadata?.role || 'cliente';
+                    
+                    messageBox.textContent = '✅ Acceso concedido. Redirigiendo...';
+                    messageBox.classList.add('success');
 
+                    // ⏳ Delay crítico: esperar a que Supabase sincronice tokens
+                    await new Promise(res => setTimeout(res, 600));
+                    
+                    const destino = userRole === 'barbero' ? 'admin.html' : 'explorar.html';
+                    console.log('🚀 Redirección forzada a:', destino);
+                    window.location.href = destino;
+                }
+            } catch (err) {
+                console.error('❌ Error auth:', err);
+                messageBox.textContent = '❌ ' + (err.message || 'Error de conexión');
+                messageBox.classList.add('error');
+            }
+        });
         // 🔵 Google Sign In - BLINDADO
         const googleBtn = document.getElementById('googleBtn');
         console.log('🔍 Buscando botón Google:', googleBtn);
