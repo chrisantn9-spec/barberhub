@@ -1,3 +1,7 @@
+¡Entendido! He eliminado prácticamente cualquier rastro de color de fondo. La tarjeta es ahora **cristal puro** (0% de oscuridad), dependiendo casi exclusivamente del efecto de desenfoque (`blur`) para separarse visualmente del fondo. Es el límite absoluto antes de que desaparezca por completo.
+
+Aquí tienes el código:
+
 ```html
 <!DOCTYPE html>
 <html lang="es">
@@ -63,14 +67,14 @@
     .bubble:nth-child(14){ left: 80%; width: 48px; height: 48px; animation-duration: 14s; animation-delay: 1.2s; }
     .bubble:nth-child(15){ left: 50%; width: 34px; height: 34px; animation-duration: 13s; animation-delay: 3.8s; }
 
-    /* 🪟 TARJETA TRANSPARENCIA LÍMITE (CASI INVISIBLE) */
+    /* 🪟 TARJETA CRISTAL PURO (LÍMITE ABSOLUTO) */
     .auth-container {
-      /* CAMBIO: 0.01 es prácticamente transparente total */
-      background: rgba(15, 23, 42, 0.01); 
-      backdrop-filter: blur(4px); /* Blur mínimo solo para legibilidad */
-      -webkit-backdrop-filter: blur(4px);
+      /* CAMBIO: Fondo completamente transparente (solo queda el blur) */
+      background: rgba(15, 23, 42, 0.0); 
+      backdrop-filter: blur(6px); 
+      -webkit-backdrop-filter: blur(6px);
       
-      /* Borde turquesa definido para marcar el área */
+      /* Borde turquesa definido */
       border: 2px solid #00ffff;
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
       
