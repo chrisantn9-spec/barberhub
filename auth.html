@@ -9,7 +9,7 @@
     
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, rgba(0,0,0,0.25), rgba(10,15,30,0.35)), 
+      background: linear-gradient(135deg, rgba(0,0,0,0.2), rgba(5,10,20,0.25)), 
                   url('./fondobarber.png');
       background-size: cover;
       background-position: center;
@@ -31,20 +31,20 @@
     }
     .bubble {
       position: absolute; bottom: -60px;
-      background: radial-gradient(circle, rgba(0,255,255,0.2) 0%, rgba(0,255,255,0) 70%);
+      background: radial-gradient(circle, rgba(0,255,255,0.25) 0%, rgba(0,255,255,0) 70%);
       border-radius: 50%;
-      box-shadow: 0 0 15px rgba(0,255,255,0.4), inset 0 0 10px rgba(255,255,255,0.2);
+      box-shadow: 0 0 12px rgba(0,255,255,0.5), inset 0 0 8px rgba(255,255,255,0.2);
       animation: floatUp linear infinite, pulse 2.5s ease-in-out infinite alternate;
     }
     @keyframes floatUp {
       0% { transform: translateY(0) scale(1); opacity: 0; }
       10% { opacity: 1; }
       90% { opacity: 0.8; }
-      100% { transform: translateY(-110vh) scale(1.3); opacity: 0; }
+      100% { transform: translateY(-110vh) scale(1.2); opacity: 0; }
     }
     @keyframes pulse {
-      0% { box-shadow: 0 0 10px rgba(0,255,255,0.3); }
-      100% { box-shadow: 0 0 25px rgba(0,255,255,0.7), 0 0 40px rgba(0,255,255,0.2); }
+      0% { box-shadow: 0 0 8px rgba(0,255,255,0.3); }
+      100% { box-shadow: 0 0 20px rgba(0,255,255,0.8), 0 0 35px rgba(0,255,255,0.2); }
     }
     .bubble:nth-child(1) { left: 5%; width: 40px; height: 40px; animation-duration: 12s; animation-delay: 0s; }
     .bubble:nth-child(2) { left: 15%; width: 25px; height: 25px; animation-duration: 9s; animation-delay: 2s; }
@@ -62,20 +62,50 @@
     .bubble:nth-child(14){ left: 80%; width: 48px; height: 48px; animation-duration: 14s; animation-delay: 1.2s; }
     .bubble:nth-child(15){ left: 50%; width: 34px; height: 34px; animation-duration: 13s; animation-delay: 3.8s; }
 
-    /* 🪟 TARJETA CRISTAL OPACO */
+    /* 🪟 TARJETA ULTRA TRANSPARENTE + BORDE NEÓN GIRATORIO */
     .auth-container {
-      background: rgba(12, 18, 28, 0.75);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(0, 255, 255, 0.25);
-      padding: 2.5rem;
+      position: relative;
+      background: rgba(6, 10, 18, 0.15); /* Máxima transparencia */
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.08);
+      padding: 2.5rem;
       width: 100%;
       max-width: 460px;
       animation: slideIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-      position: relative;
       z-index: 10;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Luz neón que recorre el contorno */
+    .auth-container::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 220%; height: 220%;
+      transform: translate(-50%, -50%);
+      background: conic-gradient(from 0deg, transparent 0%, #00ffff 15%, transparent 30%, transparent 100%);
+      animation: rotate-glow 3.5s linear infinite;
+      z-index: -2;
+      filter: drop-shadow(0 0 10px #00ffff);
+    }
+
+    /* Recorte interno para dejar solo el borde visible */
+    .auth-container::after {
+      content: '';
+      position: absolute;
+      inset: 2px; /* Grosor del borde neón */
+      background: rgba(6, 10, 18, 0.2);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 14px;
+      z-index: -1;
+    }
+
+    @keyframes rotate-glow {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
     }
 
     @keyframes slideIn {
@@ -83,47 +113,33 @@
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    .auth-header { text-align: center; margin-bottom: 2rem; }
+    .auth-header { text-align: center; margin-bottom: 2rem; position: relative; z-index: 2; }
 
-    .auth-header h1 {
-      font-size: 2.4rem;
+    .brand {
+      font-size: 2.6rem;
       font-weight: 800;
       letter-spacing: 3px;
       text-transform: uppercase;
-      margin-bottom: 0.3rem;
+      display: flex;
+      justify-content: center;
+      gap: 0;
     }
 
-    .barber {
-      color: #ffffff;
-      display: inline;
-      text-shadow: 0 0 10px rgba(255,255,255,0.5);
-    }
-
-    .hub {
-      color: #00ffff;
-      display: inline;
-      text-shadow: 0 0 12px #00ffff, 
-                   0 0 25px rgba(0,255,255,0.6), 
-                   0 0 40px rgba(0,255,255,0.3);
+    .barber { color: #ffffff; text-shadow: 0 0 8px rgba(255,255,255,0.4); }
+    .hub { 
+      color: #00ffff; 
+      text-shadow: 0 0 12px #00ffff, 0 0 25px rgba(0,255,255,0.7), 0 0 45px rgba(0,255,255,0.4);
       animation: neonPulse 2s ease-in-out infinite;
     }
 
     @keyframes neonPulse {
-      0%, 100% {
-        text-shadow: 0 0 12px #00ffff, 
-                     0 0 25px rgba(0,255,255,0.6), 
-                     0 0 40px rgba(0,255,255,0.3);
-      }
-      50% {
-        text-shadow: 0 0 18px #00ffff, 
-                     0 0 35px rgba(0,255,255,0.8), 
-                     0 0 55px rgba(0,255,255,0.5);
-      }
+      0%, 100% { text-shadow: 0 0 12px #00ffff, 0 0 25px rgba(0,255,255,0.7); }
+      50% { text-shadow: 0 0 20px #00ffff, 0 0 40px rgba(0,255,255,0.9), 0 0 60px rgba(0,255,255,0.5); }
     }
 
-    .auth-header p { color: #9ca3af; font-size: 0.9rem; }
+    .auth-header p { color: #9ca3af; font-size: 0.9rem; margin-top: 0.4rem; position: relative; z-index: 2; }
 
-    .auth-section { display: none; }
+    .auth-section { display: none; position: relative; z-index: 2; }
     .auth-section.active { display: block; animation: fadeIn 0.4s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -135,15 +151,15 @@
 
     .form-group input {
       width: 100%; padding: 0.9rem 1rem;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(0, 255, 255, 0.35);
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(0, 255, 255, 0.25);
       border-radius: 10px; color: #ffffff; font-size: 1rem;
       transition: all 0.3s ease;
     }
     .form-group input:focus {
       outline: none; border-color: #00ffff;
-      background: rgba(0, 0, 0, 0.65);
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.25);
+      background: rgba(0, 0, 0, 0.55);
+      box-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
     }
     .form-group input::placeholder { color: #4b5563; }
 
@@ -154,6 +170,7 @@
       color: #000; font-size: 0.95rem; font-weight: 700;
       cursor: pointer; transition: all 0.3s;
       text-transform: uppercase; letter-spacing: 1px;
+      position: relative; z-index: 2;
     }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
@@ -165,50 +182,49 @@
       display: flex; align-items: center; justify-content: center; gap: 0.8rem;
       color: #ff00ff; 
       font-weight: 700;
-      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-      box-shadow: 0 0 15px rgba(255, 0, 255, 0.2), inset 0 0 10px rgba(255, 0, 255, 0.1);
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.25), inset 0 0 12px rgba(255, 0, 255, 0.1);
       margin-top: 0.5rem;
       transition: all 0.3s ease;
     }
     .btn-google:hover { 
       background: rgba(255, 0, 255, 0.2); 
-      box-shadow: 0 0 25px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.2);
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.7), inset 0 0 18px rgba(255, 0, 255, 0.2);
       transform: translateY(-2px);
     }
-    .btn-google svg { 
-      width: 18px; height: 18px; 
-      filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.6));
-    }
+    .btn-google svg { width: 18px; height: 18px; filter: drop-shadow(0 0 6px rgba(255, 0, 255, 0.7)); }
 
     .divider {
       display: flex; align-items: center; margin: 1.5rem 0;
       color: #00ffff; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;
+      position: relative; z-index: 2;
     }
     .divider::before, .divider::after {
       content: ''; flex: 1; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0,255,255,0.5), transparent);
+      background: linear-gradient(90deg, transparent, rgba(0,255,255,0.6), transparent);
     }
     .divider span { padding: 0 1rem; }
 
     .auth-links {
       margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: #6b7280;
+      position: relative; z-index: 2;
     }
     .auth-links a {
       color: #00ffff; text-decoration: none; font-weight: 500; transition: all 0.2s;
     }
-    .auth-links a:hover { text-shadow: 0 0 8px rgba(0,255,255,0.6); }
+    .auth-links a:hover { text-shadow: 0 0 8px rgba(0,255,255,0.7); }
 
     .error-message {
       background: rgba(255, 50, 50, 0.15); border: 1px solid rgba(255, 50, 50, 0.4);
       color: #ff8a8a; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem;
-      font-size: 0.85rem; display: none; text-align: center;
+      font-size: 0.85rem; display: none; text-align: center; position: relative; z-index: 2;
     }
     .error-message.show { display: block; animation: shake 0.4s; }
     @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
 
     @media (max-width: 480px) {
       .auth-container { padding: 2rem 1.5rem; }
-      .auth-header h1 { font-size: 1.9rem; }
+      .brand { font-size: 2rem; }
     }
   </style>
 </head>
@@ -224,8 +240,8 @@
 
   <div class="auth-container">
     <div class="auth-header">
-      <h1>
-        <span class="barber">BARB</span><span class="hub">ERHUB</span>
+      <h1 class="brand">
+        <span class="barber">BARBER</span><span class="hub">HUB</span>
       </h1>
       <p id="auth-subtitle">Inicia sesión para continuar</p>
     </div>
