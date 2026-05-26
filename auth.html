@@ -62,16 +62,16 @@
     .bubble:nth-child(14){ left: 80%; width: 48px; height: 48px; animation-duration: 14s; animation-delay: 1.2s; }
     .bubble:nth-child(15){ left: 50%; width: 34px; height: 34px; animation-duration: 13s; animation-delay: 3.8s; }
 
-    /* 🪟 TARJETA CRISTAL MUY TRANSPARENTE + BORDE TURQUESA FIJO */
+    /* 🪟 TARJETA ULTRA TRANSPARENTE */
     .auth-container {
-      /* CAMBIO: Transparencia extrema (0.15 es muy poco oscuro, casi puro cristal) */
-      background: rgba(15, 23, 42, 0.15); 
-      backdrop-filter: blur(12px); /* Un poco menos de blur para que se vea más el fondo */
-      -webkit-backdrop-filter: blur(12px);
+      /* CAMBIO: Transparencia máxima (0.05 es casi invisible) */
+      background: rgba(15, 23, 42, 0.05); 
+      backdrop-filter: blur(8px); /* Blur suave para no perder legibilidad */
+      -webkit-backdrop-filter: blur(8px);
       
-      /* CAMBIO: Borde sólido turquesa brillante */
+      /* Borde turquesa definido */
       border: 2px solid #00ffff;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.15); /* Resplandor externo suave */
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
       
       padding: 2.5rem;
       border-radius: 16px;
@@ -80,8 +80,6 @@
       animation: slideIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
       position: relative;
       z-index: 10;
-      
-      /* Eliminados los pseudo-elementos ::before y ::after que creaban la luz giratoria */
     }
 
     @keyframes slideIn {
@@ -132,7 +130,7 @@
       font-size: 1rem; 
       margin-top: 0.5rem;
       letter-spacing: 1px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* Sombra fuerte para leerse sobre fondo claro */
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9); /* Sombra fuerte para leerse bien */
     }
 
     .auth-section { display: none; position: relative; z-index: 2; }
@@ -143,12 +141,12 @@
     .form-group label {
       display: block; margin-bottom: 0.5rem; font-size: 0.8rem;
       color: #00ffff; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     }
 
     .form-group input {
       width: 100%; padding: 0.9rem 1rem;
-      /* Inputs un poco más oscuros para que se lean bien */
+      /* Inputs oscuros para contraste */
       background: rgba(0, 0, 0, 0.6);
       border: 1px solid rgba(0, 255, 255, 0.35);
       border-radius: 10px; color: #ffffff; font-size: 1rem;
@@ -208,7 +206,7 @@
     .auth-links {
       margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: #e2e8f0;
       position: relative; z-index: 2;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     }
     .auth-links a {
       color: #00ffff; text-decoration: none; font-weight: 500; transition: all 0.2s;
