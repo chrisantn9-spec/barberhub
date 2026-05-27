@@ -1,190 +1,89 @@
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-
-    // ⚠️ CONFIGURACIÓN DE SUPABASE
-    const SUPABASE_URL = 'https://qnlbaxxhsbwbqqucbywn.supabase.co';
-    // Asegúrate de que esta sea tu clave 'anon public' real
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'; 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión | BarberHub</title>
+  <style>
+    /* ESTILOS BÁSICOS PARA ASEGURAR QUE SE VEA ALGO */
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a; /* Fondo de respaldo oscuro */
+      color: white;
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
     
-    // Inicializar cliente
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // --- LÓGICA DE INTERFAZ (UI) ---
-    const params = new URLSearchParams(window.location.search);
-    const mode = params.get('mode') || 'login';
-
-    const sections = {
-      login: document.getElementById('login-section'),
-      register: document.getElementById('register-section'),
-      recover: document.getElementById('recover-section')
-    };
-
-    const subtitle = document.getElementById('auth-subtitle');
-    const subtitles = { 
-      login: 'Inicia tu estilo', 
-      register: 'Crea tu cuenta gratis', 
-      recover: 'Recupera tu contraseña' 
-    };
-
-    // Mostrar la sección correcta
-    Object.keys(sections).forEach(key => sections[key].classList.remove('active'));
-    if (sections[mode]) { 
-      sections[mode].classList.add('active'); 
-      subtitle.textContent = subtitles[mode]; 
-    } else { 
-      sections.login.classList.add('active'); 
+    /* Si el fondo no carga, al menos se ve oscuro */
+    .bg-fallback {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(10,15,30,0.9));
+      z-index: -1;
     }
 
-    function showError(msg) {
-      const el = document.getElementById('error-message');
-      el.textContent = msg;
-      el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), 5000);
+    /* Contenedor principal visible */
+    #app-container {
+      width: 100%; max-width: 450px; padding: 20px;
+      text-align: center;
     }
 
-    // --- 1. PRUEBA DE CONEXIÓN (Para depurar errores) ---
-    async function testConnection() {
-      try {
-        console.log('🔄 Probando conexión con Supabase...');
-        // Intentamos una consulta simple
-        const { error } = await supabase.from('profiles').select('count').limit(1);
-        
-        if (error) {
-          // Si el error es "Relation does not exist", es normal si no has creado la tabla aún.
-          // Si es "Invalid API key" o "Network Error", hay problema.
-          if (error.message.includes('Invalid API key') || error.message.includes('Network')) {
-             console.error('❌ Error Crítico:', error.message);
-             showError('⚠️ Error de Conexión: Revisa tu Clave ANON o usa Live Server.');
-          } else {
-             console.log('⚠️ Conexión OK, pero la tabla profiles quizás no existe aún.', error.message);
-          }
+    .loading { color: #00ffff; font-size: 1.2rem; }
+    .error-box { 
+      background: rgba(255,0,0,0.2); border: 1px solid red; 
+      padding: 10px; border-radius: 8px; margin-top: 20px; 
+      display: none; 
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fondo de respaldo -->
+  <div class="bg-fallback"></div>
+
+  <div id="app-container">
+    <h1 style="color:#00ffff; text-shadow: 0 0 10px cyan;">BARBERHUB</h1>
+    <p>Cargando sistema...</p>
+    
+    <!-- Caja de errores visible si algo falla -->
+    <div id="global-error" class="error-box"></div>
+  </div>
+
+  <!-- Cargar Supabase de forma tradicional para evitar errores de módulos complejos -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <script>
+    // Verificar si Supabase cargó
+    if (!window.supabase) {
+      document.getElementById('global-error').style.display = 'block';
+      document.getElementById('global-error').innerHTML = "❌ Error Crítico: No se pudo cargar la librería de Supabase. Revisa tu conexión a internet.";
+      document.querySelector('p').textContent = "Error de carga.";
+    } else {
+      // Inicializar cliente
+      const SUPABASE_URL = 'https://qnlbaxxhsbwbqqucbywn.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
+      
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      document.querySelector('p').textContent = "Sistema listo. Conectando...";
+
+      // Prueba de conexión simple
+      supabase.from('profiles').select('count').limit(1).then(({ error }) => {
+        if (error && !error.message.includes('relation')) {
+           console.error("Error de conexión:", error);
+           document.getElementById('global-error').style.display = 'block';
+           document.getElementById('global-error').innerHTML = "⚠️ Error de Conexión: " + error.message;
         } else {
-          console.log('✅ Conexión con Supabase exitosa');
-        }
-      } catch (e) {
-        console.error('❌ Network Error:', e);
-        showError('❌ NetworkError: Verifica que usas Live Server (no file://).');
-      }
-    }
-    
-    // Ejecutar prueba al cargar
-    testConnection();
-
-    // --- 2. LOGIN CON GOOGLE ---
-    const googleBtn = document.getElementById('google-login-btn');
-    if (googleBtn) {
-      googleBtn.addEventListener('click', async () => {
-        console.log('🔵 Iniciando Google Auth...');
-        // Usamos la URL actual para volver aquí mismo después del login
-        const redirectTo = window.location.origin + window.location.pathname;
-        
-        try {
-          const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-              redirectTo: redirectTo,
-              queryParams: {
-                access_type: 'offline',
-                prompt: 'consent',
-              }
-            }
-          });
-          
-          if (error) throw error;
-          // Si no hay error, Supabase redirige automáticamente a Google
-        } catch (err) {
-          console.error(err);
-          showError('❌ Error al iniciar Google: ' + err.message);
-        }
-      });
-    }
-
-    // --- 3. LOGIN CON EMAIL ---
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-      loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('login-btn');
-        const email = e.target.email.value.trim();
-        const password = e.target.password.value;
-
-        btn.innerHTML = '⏳ Cargando...'; 
-        btn.disabled = true;
-
-        try {
-          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-          if (error) throw error;
-
-          // Si el login es exitoso, verificamos el rol
-          const { data: profile, error: profileError } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', data.user.id)
-            .single();
-            
-          if (profileError) console.warn('No se pudo obtener el perfil, pero el login fue exitoso');
-
-          // Redirección según rol
-          window.location.href = profile?.role === 'admin' ? './admin.html' : './dashboard.html';
-        } catch (err) {
-          showError('❌ ' + err.message);
-          btn.innerHTML = 'ENTRAR'; 
-          btn.disabled = false;
-        }
-      });
-    }
-
-    // --- 4. REGISTRO ---
-    const registerForm = document.getElementById('register-form');
-    if (registerForm) {
-      registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = e.target.email.value.trim();
-        const password = e.target.password.value;
-        const confirm = e.target.confirmPassword.value;
-
-        if (password !== confirm) { 
-          showError('❌ Las contraseñas no coinciden'); 
-          return; 
-        }
-
-        try {
-          const { error } = await supabase.auth.signUp({ 
-            email, 
-            password, 
-            options: { 
-              data: { role: 'client' },
-              emailRedirectTo: window.location.origin + window.location.pathname + '?mode=login'
-            } 
-          });
-          if (error) throw error;
-          
-          alert('✅ Registro exitoso. Por favor verifica tu correo electrónico.');
-          window.location.href = window.location.pathname + '?mode=login';
-        } catch (err) { 
-          showError('❌ ' + err.message); 
-        }
-      });
-    }
-
-    // --- 5. RECUPERAR CONTRASEÑA ---
-    const recoverForm = document.getElementById('recover-form');
-    if (recoverForm) {
-      recoverForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = e.target.email.value.trim();
-        
-        try {
-          const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: window.location.origin + window.location.pathname + '?mode=newpassword'
-          });
-          if (error) throw error;
-          
-          alert('✅ Enlace de recuperación enviado. Revisa tu correo.');
-          window.location.href = window.location.pathname + '?mode=login';
-        } catch (err) { 
-          showError('❌ ' + err.message); 
+           console.log("Conexión exitosa");
+           document.querySelector('p').textContent = "Conexión establecida. Redirigiendo al diseño...";
+           
+           // Aquí podrías inyectar el HTML dinámicamente o recargar la página si estabas en un estado roto
+           setTimeout(() => {
+             location.reload(); // Recargar para intentar cargar el CSS/HTML completo si estaba bloqueado
+           }, 1000);
         }
       });
     }
   </script>
+</body>
+</html> 
