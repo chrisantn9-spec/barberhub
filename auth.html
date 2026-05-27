@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://api.allorigins.win; connect-src 'self' https://*.supabase.co https://api.allorigins.win; style-src 'self' 'unsafe-inline';">
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com; connect-src 'self' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión | BarberHub</title>
   <style>
@@ -152,26 +152,25 @@
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-  <!-- LÓGICA CON DEBUG EXTREMO -->
+  <!-- LÓGICA COMPLETA -->
   <script type="text/javascript">
-    console.log('🚀 [DEBUG] Script iniciado');
+    console.log('🚀 [INIT] BarberHub Auth Starting...');
 
-    // 1. Verificar Supabase cargado
     if (typeof window.supabase === 'undefined') {
-      console.error('❌ [DEBUG] Supabase NO cargó');
-      alert('ERROR CRÍTICO: La librería de Supabase no se cargó. Revisa tu conexión.');
+      console.error('❌ [ERROR] Supabase library not loaded');
+      alert('ERROR: No se pudo cargar Supabase. Revisa tu conexión.');
     } else {
-      console.log('✅ [DEBUG] Supabase cargado correctamente');
+      console.log('✅ [INIT] Supabase loaded');
 
       const SUPABASE_URL = 'https://qnlbaxxhsbwbqqucbywn.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
       
-      // Crear cliente con logs
-      console.log('🔌 [DEBUG] Creando cliente Supabase...');
+      // Crear cliente DIRECTO (sin proxy)
+      console.log('🔌 [INIT] Creating Supabase client...');
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      console.log('✅ [DEBUG] Cliente creado');
+      console.log('✅ [INIT] Client created');
 
-      // 2. UI Logic
+      // UI Logic
       const params = new URLSearchParams(window.location.search);
       const mode = params.get('mode') || 'login';
       const sections = {
@@ -193,115 +192,89 @@
       }
 
       function showError(msg) {
-        console.error('❌ [DEBUG] showError:', msg);
+        console.error('❌ [ERROR]', msg);
         const el = document.getElementById('error-message');
         if (el) {
           el.textContent = msg; 
           el.classList.add('show');
           setTimeout(() => el.classList.remove('show'), 8000);
         } else {
-          alert('ERROR: ' + msg); // Fallback si no hay elemento de error
+          alert('ERROR: ' + msg);
         }
       }
 
-      // 3. LOGIN CON EMAIL - CON DEBUG EXTREMO
+      // LOGIN CON EMAIL
       const loginForm = document.getElementById('login-form');
       const loginBtn = document.getElementById('login-btn');
       
-      console.log('🔍 [DEBUG] loginForm:', loginForm ? 'ENCONTRADO' : 'NO ENCONTRADO');
-      console.log('🔍 [DEBUG] loginBtn:', loginBtn ? 'ENCONTRADO' : 'NO ENCONTRADO');
-
       if (loginForm && loginBtn) {
-        console.log('✅ [DEBUG] Attachando evento submit al formulario');
-        
         loginForm.addEventListener('submit', async (e) => {
-          console.log('🔥 [DEBUG] FORMULARIO ENVIADO - preventDefault llamado');
           e.preventDefault();
+          console.log('🔑 [LOGIN] Attempting login...');
           
           const email = document.getElementById('login-email').value.trim();
           const password = document.getElementById('login-password').value;
           
-          console.log('📧 [DEBUG] Email:', email);
-          console.log('🔑 [DEBUG] Password length:', password.length);
-          
-          // Validación básica
           if (!email || !password) {
-            console.warn('⚠️ [DEBUG] Campos vacíos');
             showError('❌ Por favor completa email y contraseña');
             return;
           }
           
-          console.log('⏳ [DEBUG] Llamando a supabase.auth.signInWithPassword...');
+          console.log('📧 [LOGIN] Email:', email);
           loginBtn.innerHTML = '⏳ Verificando...'; 
           loginBtn.disabled = true;
 
           try {
+            console.log('📡 [LOGIN] Calling Supabase...');
             const { data, error } = await supabase.auth.signInWithPassword({ 
               email: email, 
               password: password 
             });
             
-            console.log('📡 [DEBUG] Respuesta de Supabase:', { data, error });
+            console.log('[LOGIN] Response:', { data, error });
             
-            if (error) {
-              console.error('❌ [DEBUG] Error de Supabase:', error);
-              throw new Error(error.message || 'Error desconocido de Supabase');
-            }
+            if (error) throw new Error(error.message);
+            if (!data?.user) throw new Error('No user data received');
             
-            if (!data?.user) {
-              console.error('❌ [DEBUG] No hay usuario en la respuesta');
-              throw new Error('Login exitoso pero no se recibió usuario');
-            }
-            
-            console.log('✅ [DEBUG] Usuario logueado:', data.user.email);
+            console.log('✅ [LOGIN] Success! User:', data.user.email);
             alert('✅ ¡Login exitoso! Redirigiendo...');
             
-            // Intentar obtener perfil (puede fallar si no existe la tabla)
+            // Try to get profile (optional)
             try {
-              const { data: profile, error: profileError } = await supabase
+              const { data: profile } = await supabase
                 .from('profiles')
                 .select('role')
                 .eq('id', data.user.id)
                 .single();
-                
-              if (profileError) {
-                console.warn('⚠️ [DEBUG] No se pudo obtener perfil (quizás la tabla no existe):', profileError.message);
-              } else {
-                console.log('👤 [DEBUG] Perfil obtenido:', profile);
-              }
               
               const role = profile?.role || 'client';
               const redirect = role === 'admin' ? './admin.html' : './dashboard.html';
-              console.log('🔀 [DEBUG] Redirigiendo a:', redirect);
+              console.log('🔀 [LOGIN] Redirecting to:', redirect);
               window.location.href = redirect;
-              
-            } catch (profileErr) {
-              console.warn('⚠️ [DEBUG] Error al obtener perfil, redirigiendo a dashboard por defecto');
+            } catch (e) {
+              console.warn('⚠️ [LOGIN] Profile error, redirecting to dashboard');
               window.location.href = './dashboard.html';
             }
             
           } catch (err) {
-            console.error('💥 [DEBUG] Error capturado en login:', err);
+            console.error('💥 [LOGIN] Error:', err);
             showError('❌ ' + err.message);
             loginBtn.innerHTML = 'ENTRAR'; 
             loginBtn.disabled = false;
           }
         });
-      } else {
-        console.error('❌ [DEBUG] No se encontró el formulario o botón de login');
-        alert('ERROR: No se pudo inicializar el formulario de login');
       }
 
-      // 4. GOOGLE LOGIN - CON DEBUG
+      // GOOGLE LOGIN
       const googleBtn = document.getElementById('google-login-btn');
       if (googleBtn) {
         googleBtn.addEventListener('click', async () => {
-          console.log('🔵 [DEBUG] Click en Google Login');
+          console.log('🔵 [GOOGLE] Starting OAuth...');
           const redirectTo = window.location.origin + window.location.pathname;
-          console.log('🔗 [DEBUG] Redirect URL:', redirectTo);
+          console.log('🔗 [GOOGLE] Redirect:', redirectTo);
           
           try {
-            const { data, error } = await supabase.auth.signInWithOAuth({
+            const { error } = await supabase.auth.signInWithOAuth({
               provider: 'google',
               options: {
                 redirectTo: redirectTo,
@@ -309,20 +282,19 @@
               }
             });
             if (error) throw error;
-            console.log('✅ [DEBUG] Google OAuth iniciado');
           } catch (err) {
-            console.error('❌ [DEBUG] Error Google:', err);
+            console.error('❌ [GOOGLE] Error:', err);
             showError('❌ Error Google: ' + err.message);
           }
         });
       }
 
-      // 5. REGISTRO - CON DEBUG
+      // REGISTRO
       const registerForm = document.getElementById('register-form');
       if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          console.log('🔥 [DEBUG] Registro enviado');
+          console.log('📝 [REGISTER] Attempting registration...');
           
           const email = document.getElementById('register-email').value.trim();
           const password = document.getElementById('register-password').value;
@@ -334,27 +306,27 @@
           }
           
           try {
-            const { data, error } = await supabase.auth.signUp({ 
+            const { error } = await supabase.auth.signUp({ 
               email, password, 
               options: { data: { role: 'client' } } 
             });
             if (error) throw error;
-            console.log('✅ [DEBUG] Registro exitoso:', data);
+            console.log('✅ [REGISTER] Success');
             alert('✅ Registro exitoso. Verifica tu email.');
             window.location.href = '?mode=login';
           } catch (err) { 
-            console.error('❌ [DEBUG] Error registro:', err);
+            console.error('❌ [REGISTER] Error:', err);
             showError('❌ ' + err.message); 
           }
         });
       }
 
-      // 6. RECUPERAR - CON DEBUG
+      // RECUPERAR
       const recoverForm = document.getElementById('recover-form');
       if (recoverForm) {
         recoverForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          console.log('🔥 [DEBUG] Recuperar enviado');
+          console.log('🔐 [RECOVER] Sending reset email...');
           
           const email = document.getElementById('recover-email').value.trim();
           try {
@@ -362,17 +334,17 @@
               redirectTo: window.location.origin + window.location.pathname + '?mode=newpassword'
             });
             if (error) throw error;
-            console.log('✅ [DEBUG] Email de recuperación enviado');
+            console.log('✅ [RECOVER] Email sent');
             alert('✅ Enlace enviado. Revisa tu correo.');
             window.location.href = '?mode=login';
           } catch (err) { 
-            console.error('❌ [DEBUG] Error recuperar:', err);
+            console.error('❌ [RECOVER] Error:', err);
             showError('❌ ' + err.message); 
           }
         });
       }
 
-      console.log('🎉 [DEBUG] Todo inicializado correctamente');
+      console.log('🎉 [INIT] All systems ready!');
     }
   </script>
 </body>
