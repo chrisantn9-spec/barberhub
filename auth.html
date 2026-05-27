@@ -1,364 +1,39 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión | BarberHub</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(10,15,30,0.6)), 
-                  url('./fondobarber.png');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      color: #e4e4e7;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* 🔵 BURBUJAS ELÉCTRICAS */
-    .bubbles {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 0; overflow: hidden;
-    }
-    .bubble {
-      position: absolute; bottom: -60px;
-      background: radial-gradient(circle, rgba(0,255,255,0.2) 0%, rgba(0,255,255,0) 70%);
-      border-radius: 50%;
-      box-shadow: 0 0 15px rgba(0,255,255,0.4), inset 0 0 10px rgba(255,255,255,0.2);
-      animation: floatUp linear infinite, pulse 2.5s ease-in-out infinite alternate;
-    }
-    @keyframes floatUp {
-      0% { transform: translateY(0) scale(1); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 0.8; }
-      100% { transform: translateY(-110vh) scale(1.3); opacity: 0; }
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 10px rgba(0,255,255,0.3); }
-      100% { box-shadow: 0 0 25px rgba(0,255,255,0.7), 0 0 40px rgba(0,255,255,0.2); }
-    }
-    .bubble:nth-child(1) { left: 5%; width: 40px; height: 40px; animation-duration: 12s; animation-delay: 0s; }
-    .bubble:nth-child(2) { left: 15%; width: 25px; height: 25px; animation-duration: 9s; animation-delay: 2s; }
-    .bubble:nth-child(3) { left: 30%; width: 50px; height: 50px; animation-duration: 14s; animation-delay: 1s; }
-    .bubble:nth-child(4) { left: 45%; width: 30px; height: 30px; animation-duration: 10s; animation-delay: 3s; }
-    .bubble:nth-child(5) { left: 60%; width: 45px; height: 45px; animation-duration: 13s; animation-delay: 0.5s; }
-    .bubble:nth-child(6) { left: 75%; width: 20px; height: 20px; animation-duration: 8s; animation-delay: 4s; }
-    .bubble:nth-child(7) { left: 85%; width: 35px; height: 35px; animation-duration: 11s; animation-delay: 1.5s; }
-    .bubble:nth-child(8) { left: 92%; width: 28px; height: 28px; animation-duration: 10s; animation-delay: 2.5s; }
-    .bubble:nth-child(9) { left: 10%; width: 32px; height: 32px; animation-duration: 12s; animation-delay: 3.5s; }
-    .bubble:nth-child(10){ left: 55%; width: 42px; height: 42px; animation-duration: 15s; animation-delay: 0.8s; }
-    .bubble:nth-child(11){ left: 25%; width: 22px; height: 22px; animation-duration: 9s; animation-delay: 5s; }
-    .bubble:nth-child(12){ left: 70%; width: 38px; height: 38px; animation-duration: 11s; animation-delay: 2.2s; }
-    .bubble:nth-child(13){ left: 40%; width: 26px; height: 26px; animation-duration: 10s; animation-delay: 4.5s; }
-    .bubble:nth-child(14){ left: 80%; width: 48px; height: 48px; animation-duration: 14s; animation-delay: 1.2s; }
-    .bubble:nth-child(15){ left: 50%; width: 34px; height: 34px; animation-duration: 13s; animation-delay: 3.8s; }
-
-    /* 🪟 TARJETA CRISTAL PURO (LÍMITE ABSOLUTO) */
-    .auth-container {
-      /* CAMBIO: Fondo completamente transparente (solo queda el blur) */
-      background: rgba(15, 23, 42, 0.0); 
-      backdrop-filter: blur(6px); 
-      -webkit-backdrop-filter: blur(6px);
-      
-      /* Borde turquesa definido */
-      border: 2px solid #00ffff;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.05);
-      
-      padding: 2.5rem;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 460px;
-      animation: slideIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-      position: relative;
-      z-index: 10;
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(40px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    .auth-header { text-align: center; margin-bottom: 2.5rem; position: relative; z-index: 2; }
-
-    /* ✨ EFECTO DE REFLEJO EN VIDRIO PARA EL TÍTULO */
-    .auth-header h1 {
-      font-size: 2.4rem;
-      font-weight: 800;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 0;
-      position: relative;
-      display: inline-block;
-      line-height: 1.1;
-    }
-
-    /* Capa principal del texto */
-    .text-main {
-      display: block;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Capa de reflejo (espejo) */
-    .text-reflection {
-      display: block;
-      position: absolute;
-      top: 100%; /* Justo debajo del original */
-      left: 0;
-      width: 100%;
-      transform: scaleY(-1); /* Invertir verticalmente */
-      opacity: 0.25; /* Transparencia del reflejo */
-      filter: blur(2px); /* Desenfoque para parecer vidrio/suelo */
-      background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent); /* Desvanecimiento */
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* Colores específicos para BARBER y HUB */
-    .barber { color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-    .hub { color: #00ffff; text-shadow: 0 0 12px #00ffff, 0 0 25px rgba(0,255,255,0.6); }
-
-    .auth-header p { 
-      color: #ffffff; 
-      font-size: 1rem; 
-      margin-top: 1.5rem; /* Separación del reflejo */
-      letter-spacing: 1px;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
-    }
-
-    .auth-section { display: none; position: relative; z-index: 2; }
-    .auth-section.active { display: block; animation: fadeIn 0.4s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    .form-group { margin-bottom: 1.4rem; }
-    .form-group label {
-      display: block; margin-bottom: 0.5rem; font-size: 0.8rem;
-      color: #00ffff; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-    }
-
-    .form-group input {
-      width: 100%; padding: 0.9rem 1rem;
-      /* Inputs oscuros para contraste */
-      background: rgba(0, 0, 0, 0.6);
-      border: 1px solid rgba(0, 255, 255, 0.35);
-      border-radius: 10px; color: #ffffff; font-size: 1rem;
-      transition: all 0.3s ease;
-    }
-    .form-group input:focus {
-      outline: none; border-color: #00ffff;
-      background: rgba(0, 0, 0, 0.8);
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.25);
-    }
-    .form-group input::placeholder { color: #9ca3af; }
-
-    .btn {
-      width: 100%; padding: 1rem;
-      background: linear-gradient(135deg, #00e5ff, #0072ff);
-      border: none; border-radius: 10px;
-      color: #000; font-size: 0.95rem; font-weight: 700;
-      cursor: pointer; transition: all 0.3s;
-      text-transform: uppercase; letter-spacing: 1px;
-      position: relative; z-index: 2;
-    }
-    .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-    .btn-google {
-      background: rgba(255, 0, 255, 0.08);
-      border: 2px solid #ff00ff;
-      display: flex; align-items: center; justify-content: center; gap: 0.8rem;
-      color: #ff00ff; 
-      font-weight: 700;
-      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-      box-shadow: 0 0 15px rgba(255, 0, 255, 0.2), inset 0 0 10px rgba(255, 0, 255, 0.1);
-      margin-top: 0.5rem;
-      transition: all 0.3s ease;
-    }
-    .btn-google:hover { 
-      background: rgba(255, 0, 255, 0.2); 
-      box-shadow: 0 0 25px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.2);
-      transform: translateY(-2px);
-    }
-    .btn-google svg { 
-      width: 18px; height: 18px; 
-      filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.6));
-    }
-
-    .divider {
-      display: flex; align-items: center; margin: 1.5rem 0;
-      color: #00ffff; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;
-      position: relative; z-index: 2;
-    }
-    .divider::before, .divider::after {
-      content: ''; flex: 1; height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0,255,255,0.5), transparent);
-    }
-    .divider span { padding: 0 1rem; }
-
-    .auth-links {
-      margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: #e2e8f0;
-      position: relative; z-index: 2;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-    }
-    .auth-links a {
-      color: #00ffff; text-decoration: none; font-weight: 500; transition: all 0.2s;
-    }
-    .auth-links a:hover { text-shadow: 0 0 8px rgba(0,255,255,0.6); }
-
-    .error-message {
-      background: rgba(255, 50, 50, 0.25); border: 1px solid rgba(255, 50, 50, 0.4);
-      color: #ffcccc; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem;
-      font-size: 0.85rem; display: none; text-align: center;
-      position: relative; z-index: 2;
-    }
-    .error-message.show { display: block; animation: shake 0.4s; }
-    @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
-
-    @media (max-width: 480px) {
-      .auth-container { padding: 2rem 1.5rem; }
-      .auth-header h1 { font-size: 1.9rem; }
-    }
-  </style>
-</head>
-<body>
-  <!-- 🔵 Burbujas eléctricas de fondo -->
-  <div class="bubbles">
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
-  </div>
-
-  <div class="auth-container">
-    <div class="auth-header">
-      <h1>
-        <!-- Estructura para el efecto de reflejo -->
-        <span class="text-main">
-          <span class="barber">BARBER</span><span class="hub">HUB</span>
-        </span>
-        <span class="text-reflection" aria-hidden="true">
-          <span class="barber">BARBER</span><span class="hub">HUB</span>
-        </span>
-      </h1>
-      <p id="auth-subtitle">Inicia tu estilo</p>
-    </div>
-
-    <div id="error-message" class="error-message"></div>
-
-    <!-- LOGIN -->
-    <div id="login-section" class="auth-section active">
-      <form id="login-form">
-        <div class="form-group">
-          <label for="login-email">EMAIL</label>
-          <input type="email" id="login-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
-        </div>
-        <div class="form-group">
-          <label for="login-password">CONTRASEÑA</label>
-          <input type="password" id="login-password" name="password" placeholder="••••••••" required autocomplete="current-password" minlength="6" />
-        </div>
-        <button type="submit" class="btn" id="login-btn">ENTRAR</button>
-      </form>
-
-      <div class="divider"><span>o continúa con</span></div>
-
-      <button class="btn btn-google" id="google-login-btn">
-        <svg viewBox="0 0 24 24">
-          <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-          <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
-        Sign in with Google
-      </button>
-
-      <div class="auth-links">
-        <a href="./auth.html?mode=recover">¿Olvidaste tu contraseña?</a>
-        <br><br>
-        ¿No tienes cuenta? <a href="./auth.html?mode=register">Regístrate</a>
-      </div>
-    </div>
-
-    <!-- REGISTRO -->
-    <div id="register-section" class="auth-section">
-      <form id="register-form">
-        <div class="form-group">
-          <label for="register-email">EMAIL</label>
-          <input type="email" id="register-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
-        </div>
-        <div class="form-group">
-          <label for="register-password">CONTRASEÑA</label>
-          <input type="password" id="register-password" name="password" placeholder="••••••••" required minlength="6" />
-        </div>
-        <div class="form-group">
-          <label for="register-confirm">CONFIRMAR CONTRASEÑA</label>
-          <input type="password" id="register-confirm" name="confirmPassword" placeholder="••••••••" required minlength="6" />
-        </div>
-        <button type="submit" class="btn">REGISTRARSE</button>
-      </form>
-      <div class="auth-links">
-        ¿Ya tienes cuenta? <a href="./auth.html?mode=login">Inicia sesión</a>
-      </div>
-    </div>
-
-    <!-- RECUPERAR -->
-    <div id="recover-section" class="auth-section">
-      <form id="recover-form">
-        <div class="form-group">
-          <label for="recover-email">EMAIL</label>
-          <input type="email" id="recover-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
-        </div>
-        <button type="submit" class="btn">ENVIAR ENLACE</button>
-      </form>
-      <div class="auth-links">
-        <a href="./auth.html?mode=login">← Volver al inicio</a>
-      </div>
-    </div>
-  </div>
-
-    <script type="module">
+  <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-    // ⚠️ REEMPLAZA ESTO CON TU CLAVE REAL DE SUPABASE (La que empieza por eyJ...)
+    // ⚠️ CONFIGURACIÓN DE SUPABASE
     const SUPABASE_URL = 'https://qnlbaxxhsbwbqqucbywn.supabase.co';
+    // Asegúrate de que esta sea tu clave 'anon public' real
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'; 
     
-    // Verificación inicial
-    if (SUPABASE_ANON_KEY === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM') {
-      console.error('❌ FALTA LA CLAVE: Debes poner tu Anon Key en el código.');
-      alert('Error: Falta configurar la clave de Supabase en el código.');
-    }
-
+    // Inicializar cliente
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // ... (Resto del código de manejo de UI igual que antes) ...
+    // --- LÓGICA DE INTERFAZ (UI) ---
     const params = new URLSearchParams(window.location.search);
     const mode = params.get('mode') || 'login';
+
     const sections = {
       login: document.getElementById('login-section'),
       register: document.getElementById('register-section'),
       recover: document.getElementById('recover-section')
     };
+
     const subtitle = document.getElementById('auth-subtitle');
-    const subtitles = { login: 'Inicia tu estilo', register: 'Crea tu cuenta gratis', recover: 'Recupera tu contraseña' };
+    const subtitles = { 
+      login: 'Inicia tu estilo', 
+      register: 'Crea tu cuenta gratis', 
+      recover: 'Recupera tu contraseña' 
+    };
+
+    // Mostrar la sección correcta
     Object.keys(sections).forEach(key => sections[key].classList.remove('active'));
-    if (sections[mode]) { sections[mode].classList.add('active'); subtitle.textContent = subtitles[mode]; } 
-    else { sections.login.classList.add('active'); }
+    if (sections[mode]) { 
+      sections[mode].classList.add('active'); 
+      subtitle.textContent = subtitles[mode]; 
+    } else { 
+      sections.login.classList.add('active'); 
+    }
 
     function showError(msg) {
       const el = document.getElementById('error-message');
@@ -367,46 +42,149 @@
       setTimeout(() => el.classList.remove('show'), 5000);
     }
 
-    // --- PRUEBA DE CONEXIÓN ---
+    // --- 1. PRUEBA DE CONEXIÓN (Para depurar errores) ---
     async function testConnection() {
       try {
-        console.log('Probando conexión con Supabase...');
-        const { data, error } = await supabase.from('profiles').select('count').limit(1);
+        console.log('🔄 Probando conexión con Supabase...');
+        // Intentamos una consulta simple
+        const { error } = await supabase.from('profiles').select('count').limit(1);
+        
         if (error) {
-          console.error('Error de conexión:', error.message);
-          showError('⚠️ Error de Conexión: Revisa la consola (F12). Posible bloqueo de CORS o Clave incorrecta.');
+          // Si el error es "Relation does not exist", es normal si no has creado la tabla aún.
+          // Si es "Invalid API key" o "Network Error", hay problema.
+          if (error.message.includes('Invalid API key') || error.message.includes('Network')) {
+             console.error('❌ Error Crítico:', error.message);
+             showError('⚠️ Error de Conexión: Revisa tu Clave ANON o usa Live Server.');
+          } else {
+             console.log('⚠️ Conexión OK, pero la tabla profiles quizás no existe aún.', error.message);
+          }
         } else {
-          console.log('✅ Conexión exitosa con Supabase');
+          console.log('✅ Conexión con Supabase exitosa');
         }
       } catch (e) {
-        console.error('Network Error:', e);
-        showError('❌ NetworkError: Verifica que usas Live Server (no file://) y que la clave es correcta.');
+        console.error('❌ Network Error:', e);
+        showError('❌ NetworkError: Verifica que usas Live Server (no file://).');
       }
     }
     
     // Ejecutar prueba al cargar
     testConnection();
 
-    // --- LOGIN GOOGLE ---
-    document.getElementById('google-login-btn').addEventListener('click', async () => {
-      const redirectTo = window.location.origin + window.location.pathname;
-      console.log('Redirigiendo a Google desde:', redirectTo);
-      
-      try {
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: { redirectTo: redirectTo }
-        });
-        if (error) throw error;
-      } catch (err) {
-        console.error(err);
-        showError('❌ Error al iniciar Google: ' + err.message);
-      }
-    });
-    
-    // ... (Resto de tus listeners de login/register normales) ...
-  </script>
+    // --- 2. LOGIN CON GOOGLE ---
+    const googleBtn = document.getElementById('google-login-btn');
+    if (googleBtn) {
+      googleBtn.addEventListener('click', async () => {
+        console.log('🔵 Iniciando Google Auth...');
+        // Usamos la URL actual para volver aquí mismo después del login
+        const redirectTo = window.location.origin + window.location.pathname;
+        
+        try {
+          const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: redirectTo,
+              queryParams: {
+                access_type: 'offline',
+                prompt: 'consent',
+              }
+            }
+          });
+          
+          if (error) throw error;
+          // Si no hay error, Supabase redirige automáticamente a Google
+        } catch (err) {
+          console.error(err);
+          showError('❌ Error al iniciar Google: ' + err.message);
+        }
+      });
+    }
 
+    // --- 3. LOGIN CON EMAIL ---
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('login-btn');
+        const email = e.target.email.value.trim();
+        const password = e.target.password.value;
+
+        btn.innerHTML = '⏳ Cargando...'; 
+        btn.disabled = true;
+
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+
+          // Si el login es exitoso, verificamos el rol
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .single();
+            
+          if (profileError) console.warn('No se pudo obtener el perfil, pero el login fue exitoso');
+
+          // Redirección según rol
+          window.location.href = profile?.role === 'admin' ? './admin.html' : './dashboard.html';
+        } catch (err) {
+          showError('❌ ' + err.message);
+          btn.innerHTML = 'ENTRAR'; 
+          btn.disabled = false;
+        }
+      });
+    }
+
+    // --- 4. REGISTRO ---
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+      registerForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value.trim();
+        const password = e.target.password.value;
+        const confirm = e.target.confirmPassword.value;
+
+        if (password !== confirm) { 
+          showError('❌ Las contraseñas no coinciden'); 
+          return; 
+        }
+
+        try {
+          const { error } = await supabase.auth.signUp({ 
+            email, 
+            password, 
+            options: { 
+              data: { role: 'client' },
+              emailRedirectTo: window.location.origin + window.location.pathname + '?mode=login'
+            } 
+          });
+          if (error) throw error;
+          
+          alert('✅ Registro exitoso. Por favor verifica tu correo electrónico.');
+          window.location.href = window.location.pathname + '?mode=login';
+        } catch (err) { 
+          showError('❌ ' + err.message); 
+        }
+      });
+    }
+
+    // --- 5. RECUPERAR CONTRASEÑA ---
+    const recoverForm = document.getElementById('recover-form');
+    if (recoverForm) {
+      recoverForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value.trim();
+        
+        try {
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + window.location.pathname + '?mode=newpassword'
+          });
+          if (error) throw error;
+          
+          alert('✅ Enlace de recuperación enviado. Revisa tu correo.');
+          window.location.href = window.location.pathname + '?mode=login';
+        } catch (err) { 
+          showError('❌ ' + err.message); 
+        }
+      });
+    }
   </script>
-</body>
-</html>
