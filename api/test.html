@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<body style="background:#0f172a;color:#fff;font-family:sans-serif;padding:2rem;">
+  <h2>🔌 Probando Supabase...</h2>
+  <div id="res" style="margin-top:1rem;font-size:1.2rem;">Conectando...</div>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://qnlbaxxhsbwbqqucbywn.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'
+    );
+    supabase.from('profiles').select('count').limit(1).then(({ error }) => {
+      document.getElementById('res').innerHTML = error ? 
+        '❌ Fallo: ' + error.message : 
+        '✅ ¡Conexión exitosa! Supabase responde correctamente.';
+    });
+  </script>
+</body>
+</html>
