@@ -2,7 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://esm.sh;">
+  <!-- ✅ AGREGADO: Meta tag para permitir scripts inline y CDN -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://esm.sh; style-src 'self' 'unsafe-inline';">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión | BarberHub</title>
   <style>
@@ -312,12 +314,11 @@
     </div>
   </div>
 
-  <!-- ✅ LIBRERÍA SUPABASE (CDN - NO REQUIERE DESCARGA) -->
+  <!-- ✅ LIBRERÍA SUPABASE (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-  <!-- ✅ TU CÓDIGO JAVASCRIPT (CORRECTAMENTE ENVUELTO) -->
+  <!-- ✅ TU CÓDIGO JAVASCRIPT -->
   <script type="text/javascript">
-    // Verificar si Supabase cargó
     if (typeof window.supabase === 'undefined') {
       alert('Error: No se pudo cargar la librería de Supabase. Revisa tu conexión a internet.');
     } else {
@@ -326,7 +327,6 @@
       
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // --- LÓGICA DE INTERFAZ (UI) ---
       const params = new URLSearchParams(window.location.search);
       const mode = params.get('mode') || 'login';
 
@@ -358,7 +358,7 @@
         setTimeout(() => el.classList.remove('show'), 5000);
       }
 
-      // --- 1. LOGIN CON GOOGLE ---
+      // --- LOGIN CON GOOGLE ---
       const googleBtn = document.getElementById('google-login-btn');
       if (googleBtn) {
         googleBtn.addEventListener('click', async () => {
@@ -381,7 +381,7 @@
         });
       }
 
-      // --- 2. LOGIN CON EMAIL ---
+      // --- LOGIN CON EMAIL ---
       const loginForm = document.getElementById('login-form');
       if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -405,7 +405,7 @@
         });
       }
 
-      // --- 3. REGISTRO ---
+      // --- REGISTRO ---
       const registerForm = document.getElementById('register-form');
       if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
@@ -428,7 +428,7 @@
         });
       }
 
-      // --- 4. RECUPERAR CONTRASEÑA ---
+      // --- RECUPERAR CONTRASEÑA ---
       const recoverForm = document.getElementById('recover-form');
       if (recoverForm) {
         recoverForm.addEventListener('submit', async (e) => {
