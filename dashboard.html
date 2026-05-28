@@ -24,20 +24,21 @@
             visibility: hidden; /* Oculto hasta verificar sesión */
         }
 
-        /* 🔥 FONDO */
+        /* 🔥 FONDO ÉPICO CON TU IMAGEN */
         .cyber-bg {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: 
-                linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(10,5,20,0.4) 100%),
-                url('./fondobarber.png');
+                linear-gradient(135deg, rgba(0,0,0,0.5) 0%, rgba(10,5,20,0.6) 100%),
+                url('./fondodash.jpeg');
             background-size: cover;
             background-position: center;
+            background-attachment: fixed;
             z-index: -3;
         }
 
-        /* ✨ BURBUJAS */
+        /* ✨ BURBUJAS/PARTÍCULAS */
         .particles {
             position: fixed;
             top: 0; left: 0;
@@ -61,7 +62,7 @@
             100% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
         }
 
-        /* 🔲 REJILLA */
+        /* 🔲 REJILLA CYBERPUNK */
         .cyber-grid {
             position: fixed;
             top: 0; left: 0;
@@ -150,7 +151,8 @@
 
         /* 🎴 TARJETAS TRANSPARENTES */
         .card {
-            background: transparent;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
             border: 1.5px solid rgba(0, 229, 238, 0.4);
             border-radius: 15px;
             overflow: hidden;
@@ -190,6 +192,7 @@
         }
         .stat-card {
             background: rgba(0, 229, 238, 0.05);
+            backdrop-filter: blur(5px);
             border: 1px solid rgba(0, 229, 238, 0.3);
             border-radius: 12px;
             padding: 20px;
@@ -219,6 +222,7 @@
             align-items: center;
             gap: 20px;
             background: rgba(255, 0, 255, 0.05);
+            backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 0, 255, 0.3);
             border-radius: 12px;
             padding: 20px;
@@ -401,9 +405,9 @@
                     <i class="fas fa-list"></i>
                     <span>Mis Citas</span>
                 </a>
-                <a href="barberias.html" class="action-btn">
+                <a href="explorar.html" class="action-btn">
                     <i class="fas fa-store"></i>
-                    <span>Barberías</span>
+                    <span>Explorar</span>
                 </a>
                 <a href="mi-perfil.html" class="action-btn">
                     <i class="fas fa-cog"></i>
@@ -478,7 +482,6 @@
 
     <!-- CONFIGURACIÓN SUPABASE -->
     <script>
-        // ⚠️ Reemplaza con tus credenciales reales o usa config.js
         const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
         
@@ -567,7 +570,6 @@
                     window.location.href = 'auth.html';
                 } catch (err) {
                     console.error('Error al cerrar sesión:', err);
-                    // Forzar redirección incluso si hay error
                     window.location.href = 'auth.html';
                 }
             }
