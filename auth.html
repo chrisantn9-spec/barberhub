@@ -162,7 +162,7 @@
             <label for="confirm-new-password">CONFIRMAR CONTRASEÑA</label>
             <input type="password" id="confirm-new-password" name="confirmNewPassword" placeholder="••••••••" required minlength="6" />
           </div>
-          <button type="submit" class="btn">ACTUALIZAR CONTRASEÑA</button>
+          <button type="submit" class="btn" id="update-password-btn">ACTUALIZAR CONTRASEÑA</button>
         </form>
         <div class="auth-links"><a href="?mode=login">← Volver al inicio</a></div>
       </div>
@@ -191,27 +191,6 @@
       console.log('🔌 [INIT] Creating Supabase client...');
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       console.log('✅ [INIT] Client created');
-
-      // 🔑 RECUPERAR SESIÓN (para OAuth y recovery)
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        console.log('✅ Sesión activa detectada, redirigiendo al dashboard...');
-        window.location.href = '/dashboard.html';
-        return;
-      }
-
-      // 🔔 Escuchar cambios de auth
-      supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN' && session) {
-          console.log('🔔 Auth state changed: SIGNED_IN');
-          window.location.href = '/dashboard.html';
-        }
-        // Detectar recuperación de contraseña exitosa
-        if (event === 'PASSWORD_RECOVERY' && session) {
-          console.log('🔐 Password recovery session active');
-          showSection('newpassword');
-        }
-      });
 
       // UI Helpers
       const sections = {
@@ -256,25 +235,103 @@
         }
       }
 
-      // 🎯 Detectar modo desde URL (query params Y hash params)
-      function getModeFromURL() {
-        // Primero intentar con query params (?mode=...)
+      // 🔑 FUNCIÓN CRÍTICA: Detectar recovery desde hash o query params
+      function detectRecoveryMode() {
+        // 1. Revisar query params (?mode=newpassword)
         const params = new URLSearchParams(window.location.search);
-        let mode = params.get('mode');
+        if (params.get('mode') === 'newpassword') return true;
         
-        // Si no hay mode en query, revisar hash (#type=recovery)
-        if (!mode && window.location.hash) {
-          const hashParams = new URLSearchParams(window.location.hash.substring(1));
-          const type = hashParams.get('type');
-          if (type === 'recovery') mode = 'newpassword';
-        }
+        // 2. Revisar hash params (#type=recovery) - LO QUE USA SUPABASE
+        if (window.location.hash.includes('type=recovery')) return true;
         
-        return mode || 'login';
+        // 3. Revisar si hay access_token en hash (indica auth flow)
+        if (window.location.hash.includes('access_token=')) return true;
+        
+        return false;
       }
 
-      // Inicializar vista según modo
-      const mode = getModeFromURL();
-      showSection(mode);
+      // 🔑 FUNCIÓN CRÍTICA: Forzar recuperación de sesión desde hash
+      async function recoverSessionFromHash() {
+        try {
+          // Supabase v2+ maneja automáticamente los tokens del hash
+          // Pero necesitamos esperar a que se procesen
+          const { data, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.warn('⚠️ getSession error:', error.message);
+            return false;
+          }
+          
+          if (data?.session) {
+            console.log('✅ Session recovered from hash:', data.session.user.email);
+            return true;
+          }
+          
+          // Si no hay sesión pero hay hash con tokens, esperar un poco y reintentar
+          if (window.location.hash && window.location.hash.includes('access_token')) {
+            console.log('⏳ Tokens in hash, waiting for session...');
+            await new Promise(resolve => setTimeout(resolve, 500));
+            const retry = await supabase.auth.getSession();
+            return !!retry.data?.session;
+          }
+          
+          return false;
+        } catch (e) {
+          console.error('❌ recoverSessionFromHash error:', e);
+          return false;
+        }
+      }
+
+      // 🎯 Inicialización principal
+      async function initAuth() {
+        const isRecovery = detectRecoveryMode();
+        
+        if (isRecovery) {
+          console.log('🔐 Recovery mode detected, attempting session recovery...');
+          showSection('newpassword');
+          
+          // Intentar recuperar sesión desde el hash
+          const sessionRecovered = await recoverSessionFromHash();
+          
+          if (!sessionRecovered) {
+            console.warn('⚠️ Could not recover session from hash');
+            showError('⚠️ Enlace de recuperación inválido o expirado. Solicita uno nuevo.');
+            setTimeout(() => showSection('recover'), 3000);
+          }
+          return;
+        }
+        
+        // Modo normal: verificar sesión activa
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          console.log('✅ Active session, redirecting to dashboard...');
+          window.location.href = '/dashboard.html';
+          return;
+        }
+        
+        // Modo normal: usar query params para mostrar sección
+        const params = new URLSearchParams(window.location.search);
+        const mode = params.get('mode') || 'login';
+        showSection(mode);
+      }
+
+      // Ejecutar inicialización
+      await initAuth();
+
+      // 🔔 Escuchar cambios de auth (para OAuth y recovery completado)
+      supabase.auth.onAuthStateChange((event, session) => {
+        console.log('🔔 Auth state changed:', event);
+        
+        if (event === 'SIGNED_IN' && session) {
+          console.log('✅ User signed in, redirecting...');
+          window.location.href = '/dashboard.html';
+        }
+        
+        if (event === 'PASSWORD_RECOVERY') {
+          console.log('🔐 Password recovery event');
+          showSection('newpassword');
+        }
+      });
 
       // LOGIN CON EMAIL
       const loginForm = document.getElementById('login-form');
@@ -387,6 +444,8 @@
 
       // NUEVA CONTRASEÑA: Actualizar password después del recovery
       const newPasswordForm = document.getElementById('newpassword-form');
+      const updatePasswordBtn = document.getElementById('update-password-btn');
+      
       if (newPasswordForm) {
         newPasswordForm.addEventListener('submit', async (e) => {
           e.preventDefault();
@@ -404,15 +463,33 @@
             return;
           }
           
+          // 🔑 CRÍTICO: Verificar que tenemos sesión antes de actualizar
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+          
+          if (sessionError || !session) {
+            console.error('❌ No active session for password update');
+            showError('❌ Sesión inválida. Por favor solicita un nuevo enlace de recuperación.');
+            // Limpiar hash y redirigir a recover
+            window.location.hash = '';
+            showSection('recover');
+            return;
+          }
+          
+          updatePasswordBtn.innerHTML = '⏳ Actualizando...';
+          updatePasswordBtn.disabled = true;
+          
           try {
             const { error } = await supabase.auth.updateUser({ password: newPassword });
             if (error) throw error;
             
-            console.log('✅ [NEW PASSWORD] Password updated');
-            showSuccess('✅ Contraseña actualizada. Redirigiendo...');
+            console.log('✅ [NEW PASSWORD] Password updated successfully');
+            showSuccess('✅ Contraseña actualizada. Redirigiendo al login...');
             
-            // Cerrar sesión de recovery y redirigir a login para que inicien sesión con la nueva pass
+            // Cerrar sesión de recovery y limpiar URL
             await supabase.auth.signOut();
+            window.location.hash = '';
+            window.history.replaceState(null, '', window.location.pathname);
+            
             setTimeout(() => {
               window.location.href = '/auth.html?mode=login';
             }, 2500);
@@ -420,6 +497,8 @@
           } catch (err) {
             console.error('❌ [NEW PASSWORD] Error:', err);
             showError('❌ ' + err.message);
+            updatePasswordBtn.innerHTML = 'ACTUALIZAR CONTRASEÑA';
+            updatePasswordBtn.disabled = false;
           }
         });
       }
