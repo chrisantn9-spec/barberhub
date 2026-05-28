@@ -48,16 +48,16 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .form-group { margin-bottom: 1.4rem; }
     .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: #00ffff; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
-    .form-group input, .form-group select { 
+    .form-group input { 
       width: 100%; padding: 0.9rem 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 255, 255, 0.35); border-radius: 10px; color: #ffffff; font-size: 1rem; transition: all 0.3s ease; 
     }
-    .form-group input:focus, .form-group select:focus { outline: none; border-color: #00ffff; background: rgba(0, 0, 0, 0.6); box-shadow: 0 0 15px rgba(0, 255, 255, 0.25); }
+    .form-group input:focus { outline: none; border-color: #00ffff; background: rgba(0, 0, 0, 0.6); box-shadow: 0 0 15px rgba(0, 255, 255, 0.25); }
     .form-group input::placeholder { color: #9ca3af; }
     .btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, #00e5ff, #0072ff); border: none; border-radius: 10px; color: #000; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 2; }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .btn-google { background: rgba(255, 0, 255, 0.08); border: 2px solid #ff00ff; display: flex; align-items: center; justify-content: center; gap: 0.8rem; color: #ff00ff; font-weight: 700; text-shadow: 0 0 10px rgba(255, 0, 255, 0.5); box-shadow: 0 0 15px rgba(255, 0, 255, 0.2), inset 0 0 10px rgba(255, 0, 255, 0.1); margin-top: 0.5rem; transition: all 0.3s ease; }
-    .btn-google:hover { background: rgba(255, 0, 255, 0.2); box-shadow: 0 0 25px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.2); transform: translateY(-2px); }
+    .btn-google:hover:not(:disabled) { background: rgba(255, 0, 255, 0.2); box-shadow: 0 0 25px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.2); transform: translateY(-2px); }
     .btn-google:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
     .btn-google svg { width: 18px; height: 18px; filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.6)); }
     .divider { display: flex; align-items: center; margin: 1.5rem 0; color: #00ffff; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; position: relative; z-index: 2; }
@@ -73,7 +73,7 @@
     @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
     @media (max-width: 480px) { .auth-container { padding: 10px; } .inner-glass-panel { padding: 2rem 1.5rem; } .auth-header h1 { font-size: 1.9rem; } }
 
-    /* ========== MODAL DE GOOGLE + TARJETAS DE ROL ========== */
+    /* ========== MODAL ÚNICO: ROL + PRIVACIDAD ========== */
     .modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999;
@@ -81,16 +81,18 @@
     }
     .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
     .modal-content {
-      background: rgba(10, 15, 30, 0.95); border: 2px solid #ff00ff; border-radius: 20px;
+      background: rgba(10, 15, 30, 0.95); border: 2px solid #00ffff; border-radius: 20px;
       padding: 2rem; max-width: 420px; width: 100%;
-      box-shadow: 0 0 40px rgba(255, 0, 255, 0.3), inset 0 0 30px rgba(0,0,0,0.5);
+      box-shadow: 0 0 40px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0,0,0,0.5);
       text-align: center; position: relative;
     }
     .modal-title {
       font-family: 'Segoe UI', sans-serif; font-size: 1.5rem; font-weight: 800;
-      color: #ff00ff; text-shadow: 0 0 15px rgba(255, 0, 255, 0.6); margin-bottom: 0.5rem;
+      color: #00ffff; text-shadow: 0 0 15px rgba(0, 255, 255, 0.6); margin-bottom: 0.5rem;
     }
     .modal-subtitle { color: #9ca3af; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    
+    /* Tarjetas de rol */
     .role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 1.5rem; }
     .role-card {
       background: rgba(0, 0, 0, 0.5); border: 2px solid rgba(0, 255, 255, 0.3);
@@ -112,97 +114,53 @@
     .role-card-title { font-weight: 700; font-size: 1rem; color: #fff; margin-bottom: 0.3rem; }
     .role-card-desc { font-size: 0.75rem; color: #9ca3af; line-height: 1.4; }
     
-    /* Checkbox de términos */
-    .terms-checkbox {
-      display: flex; align-items: flex-start; gap: 10px; margin-bottom: 1.5rem; text-align: left;
+    /* Checkbox de privacidad */
+    .privacy-box {
+      display: flex; align-items: flex-start; gap: 10px; margin: 1.5rem 0; text-align: left;
+      padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 10px;
+      border: 1px solid rgba(0,255,255,0.2);
     }
-    .terms-checkbox input[type="checkbox"] {
+    .privacy-box input[type="checkbox"] {
       appearance: none; -webkit-appearance: none;
       width: 22px; height: 22px; border: 2px solid rgba(0, 255, 255, 0.5);
       border-radius: 6px; background: rgba(0, 0, 0, 0.4); cursor: pointer;
       flex-shrink: 0; margin-top: 2px; position: relative; transition: all 0.3s;
     }
-    .terms-checkbox input[type="checkbox"]:checked {
+    .privacy-box input[type="checkbox"]:checked {
       background: #00ffff; border-color: #00ffff; box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
     }
-    .terms-checkbox input[type="checkbox"]:checked::after {
+    .privacy-box input[type="checkbox"]:checked::after {
       content: '✓'; position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%); color: #000; font-size: 1rem; font-weight: bold;
     }
-    .terms-checkbox label {
-      font-size: 0.8rem; color: #9ca3af; line-height: 1.4; cursor: pointer;
+    .privacy-box label {
+      font-size: 0.75rem; color: #9ca3af; line-height: 1.4; cursor: pointer;
     }
-    .terms-checkbox label a { color: #00ffff; text-decoration: underline; }
+    .privacy-box label a { color: #00ffff; text-decoration: underline; }
     
-    .btn-continue-google {
-      width: 100%; padding: 1rem; background: linear-gradient(135deg, #ff00ff, #8b008b);
-      border: none; border-radius: 10px; color: #fff; font-size: 0.95rem; font-weight: 700;
-      cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px;
-      opacity: 0.5; pointer-events: none;
+    /* Botón del modal */
+    .btn-modal {
+      width: 100%; padding: 1rem; border: none; border-radius: 10px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s;
+      text-transform: uppercase; letter-spacing: 1px; opacity: 0.5; pointer-events: none;
     }
-    .btn-continue-google.active { opacity: 1; pointer-events: auto; }
-    .btn-continue-google.active:hover { transform: translateY(-2px); box-shadow: 0 0 25px rgba(255, 0, 255, 0.6); }
+    .btn-modal.google {
+      background: linear-gradient(135deg, #ff00ff, #8b008b); color: #fff;
+    }
+    .btn-modal.email {
+      background: linear-gradient(135deg, #00e5ff, #0072ff); color: #000;
+    }
+    .btn-modal.active { opacity: 1; pointer-events: auto; }
+    .btn-modal.active:hover { transform: translateY(-2px); box-shadow: 0 0 25px rgba(0, 255, 255, 0.6); }
+    
     .modal-close {
       position: absolute; top: 10px; right: 15px; background: none; border: none;
       color: #9ca3af; font-size: 1.5rem; cursor: pointer; transition: 0.3s;
     }
     .modal-close:hover { color: #ff4444; transform: scale(1.2); }
-
-    /* ========== ESTILOS PARA LOGIN - PRIVACY CHECKBOX ========== */
-    .privacy-consent-login {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      margin: 1rem 0; padding: 0.5rem; background: rgba(0,0,0,0.2);
-      border-radius: 8px; border: 1px solid rgba(0,255,255,0.2);
-    }
-    .privacy-consent-login input[type="checkbox"] {
-      appearance: none; -webkit-appearance: none;
-      width: 20px; height: 20px; border: 2px solid rgba(0, 255, 255, 0.5);
-      border-radius: 4px; background: rgba(0, 0, 0, 0.4); cursor: pointer;
-      position: relative; transition: all 0.2s; flex-shrink: 0;
-    }
-    .privacy-consent-login input[type="checkbox"]:checked {
-      background: #00ffff; border-color: #00ffff;
-    }
-    .privacy-consent-login input[type="checkbox"]:checked::after {
-      content: '✓'; position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%); color: #000; font-size: 0.8rem; font-weight: bold;
-    }
-    .privacy-consent-login label {
-      font-size: 0.75rem; color: #9ca3af; cursor: pointer;
-    }
-    .privacy-consent-login label a { color: #00ffff; text-decoration: none; }
-    .privacy-consent-login label a:hover { text-shadow: 0 0 8px rgba(0,255,255,0.6); }
-
-    /* ========== ESTILOS PARA REGISTRO - TARJETAS DE ROL ========== */
-    #register-section .role-cards-register {
-      grid-template-columns: 1fr; gap: 12px; margin-top: 0.5rem;
-    }
-    #register-section .role-card-register {
-      background: rgba(0, 0, 0, 0.4); border: 2px solid rgba(0, 255, 255, 0.3);
-      border-radius: 12px; padding: 1rem; cursor: pointer; transition: all 0.3s ease;
-      position: relative; text-align: center;
-    }
-    #register-section .role-card-register:hover {
-      border-color: #00ffff; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-      transform: translateY(-2px);
-    }
-    #register-section .role-card-register.selected {
-      border-color: #00ffff !important; background: rgba(0, 255, 255, 0.1) !important;
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4), inset 0 0 15px rgba(0, 255, 255, 0.05) !important;
-    }
-    #register-section .role-card-register.selected::after {
-      content: '✓'; position: absolute; top: 8px; right: 10px;
-      background: #00ffff; color: #000; width: 22px; height: 22px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem; font-weight: bold; box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
-    }
-    #register-section .role-icon-register { font-size: 2rem; margin-bottom: 0.5rem; }
-    #register-section .role-title-register { color: #fff; font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
-    #register-section .role-desc-register { color: #9ca3af; font-size: 0.75rem; line-height: 1.4; }
-    #role-error { color: #ff6b6b; font-size: 0.75rem; margin-top: 0.5rem; display: none; }
     
-    @media (min-width: 480px) {
-      #register-section .role-cards-register { grid-template-columns: 1fr 1fr; }
+    @media (max-width: 480px) {
+      .role-cards { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -246,16 +204,8 @@
         
         <div class="divider"><span>o continúa con</span></div>
         
-        <!-- ✅ Checkbox de privacidad para habilitar Google -->
-        <div class="privacy-consent-login">
-          <input type="checkbox" id="privacy-consent-login" onchange="toggleGoogleBtn()">
-          <label for="privacy-consent-login">
-            Acepto la <a href="#" onclick="event.preventDefault(); alert('Política de Privacidad BarberHub:\n\n• Tus datos se usan solo para gestionar tu cuenta\n• No compartimos información con terceros\n• Puedes eliminar tu cuenta en cualquier momento');">Política de Privacidad</a> para usar Google
-          </label>
-        </div>
-        
-        <!-- Botón Google (deshabilitado hasta aceptar privacidad) -->
-        <button class="btn btn-google" id="google-login-btn" disabled>
+        <!-- Botón Google para LOGIN (va directo al modal) -->
+        <button class="btn btn-google" id="google-login-btn">
           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Sign in with Google
         </button>
@@ -266,7 +216,7 @@
         </div>
       </div>
 
-      <!-- 📝 REGISTER SECTION - CON TARJETAS VISUALES -->
+      <!-- 📝 REGISTER SECTION - SIN SELECT, solo datos básicos -->
       <div id="register-section" class="auth-section">
         <form id="register-form">
           <div class="form-group">
@@ -282,36 +232,8 @@
             <input type="password" id="register-confirm" name="confirmPassword" placeholder="••••••••" required minlength="6" />
           </div>
           
-          <!-- 🔹 Selector visual de rol con tarjetas -->
-          <div class="form-group">
-            <label style="color:#00ffff; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; font-size:0.8rem; margin-bottom:0.8rem; display:block;">
-              SOY
-            </label>
-            <div class="role-cards role-cards-register">
-              <div class="role-card role-card-register" onclick="selectRegisterRole('client', this)" id="card-client">
-                <div class="role-icon role-icon-register">👤</div>
-                <div class="role-title-register">Cliente</div>
-                <div class="role-desc-register">Quiero agendar citas y explorar estilos</div>
-              </div>
-              <div class="role-card role-card-register" onclick="selectRegisterRole('barber', this)" id="card-barber">
-                <div class="role-icon role-icon-register">💈</div>
-                <div class="role-title-register">Barbero</div>
-                <div class="role-desc-register">Ofrezco servicios y gestiono mi agenda</div>
-              </div>
-            </div>
-            <input type="hidden" id="register-role" name="role" required />
-            <div id="role-error">⚠️ Selecciona si eres Cliente o Barbero</div>
-          </div>
-          
-          <!-- Checkbox de términos obligatorio -->
-          <div class="terms-checkbox" style="margin:1rem 0;">
-            <input type="checkbox" id="terms-register" required>
-            <label for="terms-register">
-              Acepto los <a href="#" onclick="event.preventDefault(); alert('Términos de Servicio BarberHub');">Términos</a> y la <a href="#" onclick="event.preventDefault(); alert('Política de Privacidad BarberHub');">Política de Privacidad</a>
-            </label>
-          </div>
-          
-          <button type="submit" class="btn" id="register-btn">REGISTRARSE</button>
+          <!-- Botón registrar que abre el modal -->
+          <button type="button" class="btn" id="open-register-modal-btn">REGISTRARSE</button>
         </form>
         <div class="auth-links">¿Ya tienes cuenta? <a href="?mode=login">Inicia sesión</a></div>
       </div>
@@ -346,34 +268,37 @@
     </div>
   </div>
 
-  <!-- 🎴 MODAL: SELECCIÓN DE ROL PARA GOOGLE -->
-  <div class="modal-overlay" id="google-role-modal">
+  <!-- 🎴 MODAL ÚNICO: SELECCIÓN DE ROL + PRIVACIDAD -->
+  <div class="modal-overlay" id="role-modal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeGoogleModal()">×</button>
+      <button class="modal-close" onclick="closeRoleModal()">×</button>
       <div class="modal-title">¿Cómo usarás BarberHub?</div>
-      <div class="modal-subtitle">Selecciona tu tipo de cuenta para continuar</div>
+      <div class="modal-subtitle" id="modal-subtitle">Selecciona tu tipo de cuenta</div>
       
+      <!-- Tarjetas Cliente / Barbero -->
       <div class="role-cards">
-        <div class="role-card" onclick="selectRole('client', this)">
+        <div class="role-card" onclick="selectModalRole('client', this)">
           <div class="role-icon">👤</div>
           <div class="role-card-title">Cliente</div>
-          <div class="role-card-desc">Busco agendar citas y explorar estilos</div>
+          <div class="role-card-desc">Quiero agendar citas y explorar estilos</div>
         </div>
-        <div class="role-card" onclick="selectRole('barber', this)">
+        <div class="role-card" onclick="selectModalRole('barber', this)">
           <div class="role-icon">💈</div>
           <div class="role-card-title">Barbero</div>
           <div class="role-card-desc">Ofrezco servicios y gestiono mi agenda</div>
         </div>
       </div>
 
-      <div class="terms-checkbox">
-        <input type="checkbox" id="terms-accept" onchange="checkTermsAndRole()">
-        <label for="terms-accept">
-          Acepto los <a href="#" onclick="event.preventDefault(); alert('Términos de Servicio BarberHub');">Términos</a> y la <a href="#" onclick="event.preventDefault(); alert('Política de Privacidad BarberHub');">Política de Privacidad</a>
+      <!-- Checkbox de privacidad OBLIGATORIO -->
+      <div class="privacy-box">
+        <input type="checkbox" id="modal-privacy-check" onchange="checkModalConditions()">
+        <label for="modal-privacy-check">
+          Acepto la <a href="#" onclick="event.preventDefault(); showPrivacyAlert()">Política de Privacidad</a> y los <a href="#" onclick="event.preventDefault(); showTermsAlert()">Términos de Servicio</a>
         </label>
       </div>
 
-      <button class="btn-continue-google" id="btn-continue-google" onclick="continueWithGoogle()" disabled>
+      <!-- Botón dinámico: Google o Email -->
+      <button class="btn-modal google" id="modal-action-btn" onclick="executeModalAction()" disabled>
         CONTINUAR CON GOOGLE
       </button>
     </div>
@@ -382,75 +307,15 @@
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-  <!-- LÓGICA COMPLETA -->
   <script type="text/javascript">
     // ========== VARIABLES GLOBALES ==========
-    let selectedGoogleRole = null;
-    let selectedRegisterRole = null;
+    let modalSelectedRole = null;
+    let modalAuthMethod = null; // 'google' o 'email'
+    let modalFormData = null; // Para guardar datos del formulario email
     let supabase = null;
 
-    // ========== FUNCIONES UI - LOGIN ==========
-    function toggleGoogleBtn() {
-      const checkbox = document.getElementById('privacy-consent-login');
-      const googleBtn = document.getElementById('google-login-btn');
-      if (checkbox && googleBtn) {
-        googleBtn.disabled = !checkbox.checked;
-      }
-    }
-
-    // ========== FUNCIONES UI - MODAL GOOGLE ==========
-    function selectRole(role, element) {
-      selectedGoogleRole = role;
-      document.querySelectorAll('#google-role-modal .role-card').forEach(card => {
-        card.classList.remove('selected');
-      });
-      element.classList.add('selected');
-      checkTermsAndRole();
-    }
-
-    function checkTermsAndRole() {
-      const termsAccepted = document.getElementById('terms-accept')?.checked;
-      const btn = document.getElementById('btn-continue-google');
-      if (btn) {
-        if (selectedGoogleRole && termsAccepted) {
-          btn.classList.add('active');
-          btn.disabled = false;
-        } else {
-          btn.classList.remove('active');
-          btn.disabled = true;
-        }
-      }
-    }
-
-    function closeGoogleModal() {
-      const modal = document.getElementById('google-role-modal');
-      if (modal) {
-        modal.classList.remove('active');
-      }
-      selectedGoogleRole = null;
-      document.querySelectorAll('#google-role-modal .role-card').forEach(card => {
-        card.classList.remove('selected');
-      });
-      const termsCheckbox = document.getElementById('terms-accept');
-      if (termsCheckbox) termsCheckbox.checked = false;
-      checkTermsAndRole();
-    }
-
-    // ========== FUNCIONES UI - REGISTRO ==========
-    function selectRegisterRole(role, element) {
-      selectedRegisterRole = role;
-      document.querySelectorAll('#register-section .role-card-register').forEach(card => {
-        card.classList.remove('selected');
-      });
-      element.classList.add('selected');
-      const roleInput = document.getElementById('register-role');
-      if (roleInput) roleInput.value = role;
-      const errorDiv = document.getElementById('role-error');
-      if (errorDiv) errorDiv.style.display = 'none';
-    }
-
-    // ========== FUNCIONES DE SUPABASE ==========
-    function getSupabaseClient() {
+    // ========== CONFIG SUPABASE ==========
+    function getSupabase() {
       if (supabase) return supabase;
       const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
@@ -458,366 +323,115 @@
       return supabase;
     }
 
-    // ========== FUNCIONES DE NAVEGACIÓN ==========
-    async function handleLoginRedirect(user) {
-      try {
-        const { data: profile, error } = await getSupabaseClient()
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .single();
+    // ========== FUNCIONES DEL MODAL ==========
+    function openRoleModal(method, formData = null) {
+      modalAuthMethod = method;
+      modalFormData = formData;
+      modalSelectedRole = null;
+      
+      // Resetear UI del modal
+      document.querySelectorAll('#role-modal .role-card').forEach(c => c.classList.remove('selected'));
+      const privacyCheck = document.getElementById('modal-privacy-check');
+      if (privacyCheck) privacyCheck.checked = false;
+      
+      // Configurar título y botón según método
+      const subtitle = document.getElementById('modal-subtitle');
+      const actionBtn = document.getElementById('modal-action-btn');
+      
+      if (method === 'google') {
+        if (subtitle) subtitle.textContent = 'Selecciona tu tipo de cuenta para continuar con Google';
+        if (actionBtn) {
+          actionBtn.textContent = 'CONTINUAR CON GOOGLE';
+          actionBtn.className = 'btn-modal google';
+        }
+      } else {
+        if (subtitle) subtitle.textContent = 'Selecciona tu tipo de cuenta para crear tu perfil';
+        if (actionBtn) {
+          actionBtn.textContent = 'CREAR CUENTA';
+          actionBtn.className = 'btn-modal email';
+        }
+      }
+      
+      // Deshabilitar botón inicialmente
+      if (actionBtn) {
+        actionBtn.disabled = true;
+        actionBtn.classList.remove('active');
+      }
+      
+      // Mostrar modal
+      const modal = document.getElementById('role-modal');
+      if (modal) modal.classList.add('active');
+    }
 
-        if (error) throw error;
-        const role = profile?.role || 'client';
-        console.log(`🚀 Redirecting ${role}...`);
-        
-        if (role === 'admin') {
-          window.location.href = '/admin.html';
+    function closeRoleModal() {
+      const modal = document.getElementById('role-modal');
+      if (modal) modal.classList.remove('active');
+      modalSelectedRole = null;
+      modalAuthMethod = null;
+      modalFormData = null;
+    }
+
+    function selectModalRole(role, element) {
+      modalSelectedRole = role;
+      document.querySelectorAll('#role-modal .role-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      element.classList.add('selected');
+      checkModalConditions();
+    }
+
+    function checkModalConditions() {
+      const privacyChecked = document.getElementById('modal-privacy-check')?.checked;
+      const actionBtn = document.getElementById('modal-action-btn');
+      
+      if (actionBtn) {
+        if (modalSelectedRole && privacyChecked) {
+          actionBtn.disabled = false;
+          actionBtn.classList.add('active');
         } else {
-          window.location.href = '/dashboard.html';
-        }
-      } catch (err) {
-        console.error('Error reading profile:', err);
-        window.location.href = '/dashboard.html';
-      }
-    }
-
-    // ========== FUNCIONES DE UI HELPERS ==========
-    function showError(msg) {
-      console.error('❌ [ERROR]', msg);
-      const errorMsg = document.getElementById('error-message');
-      if (errorMsg) {
-        errorMsg.textContent = msg; 
-        errorMsg.classList.add('show');
-        setTimeout(() => errorMsg.classList.remove('show'), 8000);
-      }
-    }
-
-    function showSuccess(msg) {
-      console.log('✅ [SUCCESS]', msg);
-      const successMsg = document.getElementById('success-message');
-      if (successMsg) {
-        successMsg.textContent = msg; 
-        successMsg.classList.add('show');
-        setTimeout(() => successMsg.classList.remove('show'), 8000);
-      }
-    }
-
-    function showSection(name) {
-      const sections = {
-        login: document.getElementById('login-section'),
-        register: document.getElementById('register-section'),
-        recover: document.getElementById('recover-section'),
-        newpassword: document.getElementById('newpassword-section')
-      };
-      const subtitle = document.getElementById('auth-subtitle');
-      const subtitles = { 
-        login: 'Inicia tu estilo', 
-        register: 'Crea tu cuenta gratis', 
-        recover: 'Recupera tu contraseña',
-        newpassword: 'Crea tu nueva contraseña'
-      };
-      
-      Object.keys(sections).forEach(key => {
-        if (sections[key]) sections[key].classList.remove('active');
-      });
-      if (sections[name]) {
-        sections[name].classList.add('active');
-        if (subtitle && subtitles[name]) subtitle.textContent = subtitles[name];
-      }
-    }
-
-    // ========== DETECCIÓN DE MODO RECUPERACIÓN ==========
-    function detectRecoveryMode() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('mode') === 'newpassword') return true;
-      if (window.location.hash.includes('type=recovery')) return true;
-      if (window.location.hash.includes('access_token=')) return true;
-      return false;
-    }
-
-    async function recoverSessionFromHash() {
-      try {
-        const { data, error } = await getSupabaseClient().auth.getSession();
-        if (error) return false;
-        if (data?.session) return true;
-        
-        if (window.location.hash && window.location.hash.includes('access_token')) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const retry = await getSupabaseClient().auth.getSession();
-          return !!retry.data?.session;
-        }
-        return false;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    // ========== PROCESAR CALLBACK DE GOOGLE OAUTH ==========
-    async function processGoogleOAuthCallback() {
-      const hash = window.location.hash;
-      if (hash.includes('access_token') || hash.includes('code=')) {
-        console.log('🔄 Processing Google OAuth callback...');
-        
-        const stateMatch = hash.match(/state=([^&]+)/);
-        if (stateMatch) {
-          try {
-            const stateData = JSON.parse(atob(stateMatch[1]));
-            const selectedRole = stateData.role;
-            
-            if (selectedRole) {
-              console.log('✅ Role from OAuth state:', selectedRole);
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              
-              const { data: { session } } = await getSupabaseClient().auth.getSession();
-              
-              if (session) {
-                const { data: profile } = await getSupabaseClient()
-                  .from('profiles')
-                  .select('role')
-                  .eq('id', session.user.id)
-                  .single();
-                
-                if (!profile || !profile.role) {
-                  await getSupabaseClient().from('profiles').insert([{
-                    id: session.user.id,
-                    email: session.user.email,
-                    role: selectedRole,
-                    created_at: new Date().toISOString()
-                  }]);
-                  console.log('✅ Profile created with role:', selectedRole);
-                }
-              }
-            }
-          } catch (e) {
-            console.warn('⚠️ Could not process OAuth state:', e);
-          }
+          actionBtn.disabled = true;
+          actionBtn.classList.remove('active');
         }
       }
     }
 
-    // ========== INICIALIZACIÓN PRINCIPAL ==========
-    document.addEventListener('DOMContentLoaded', async () => {
-      console.log('🚀 [INIT] BarberHub Auth Starting...');
+    function showPrivacyAlert() {
+      alert('🔒 Política de Privacidad BarberHub:\n\n• Tus datos se usan solo para gestionar tu cuenta y citas\n• No compartimos información con terceros\n• Puedes solicitar la eliminación de tu cuenta en cualquier momento\n• Usamos cookies esenciales para el funcionamiento de la app');
+    }
 
-      if (typeof window.supabase === 'undefined') {
-        console.error('❌ [ERROR] Supabase library not loaded');
-        alert('ERROR: No se pudo cargar Supabase.');
+    function showTermsAlert() {
+      alert('📋 Términos de Servicio:\n\n• Debes ser mayor de 13 años para usar BarberHub\n• Eres responsable de la veracidad de tu información\n• BarberHub no se hace responsable de citas no atendidas\n• Puedes cancelar citas con 24h de anticipación');
+    }
+
+    // ========== EJECUTAR ACCIÓN DEL MODAL ==========
+    async function executeModalAction() {
+      if (!modalSelectedRole || !document.getElementById('modal-privacy-check')?.checked) {
+        alert('⚠️ Debes seleccionar un rol y aceptar los términos para continuar');
         return;
       }
 
-      console.log('✅ [INIT] Supabase loaded');
-      
-      // Procesar callback de OAuth si existe
-      await processGoogleOAuthCallback();
-      
-      const isRecovery = detectRecoveryMode();
-      
-      if (isRecovery) {
-        console.log('🔐 Recovery mode detected');
-        showSection('newpassword');
-        const sessionRecovered = await recoverSessionFromHash();
-        if (!sessionRecovered) {
-          showError('⚠️ Enlace de recuperación inválido o expirado.');
-          setTimeout(() => showSection('recover'), 3000);
-        }
-        return;
+      if (modalAuthMethod === 'google') {
+        await continueWithGoogle(modalSelectedRole);
+      } else if (modalAuthMethod === 'email' && modalFormData) {
+        await completeEmailRegistration(modalFormData, modalSelectedRole);
       }
       
-      const { data: { session } } = await getSupabaseClient().auth.getSession();
-      if (session) {
-        console.log('✅ Active session, redirecting...');
-        await handleLoginRedirect(session.user);
-        return;
-      }
-      
-      const params = new URLSearchParams(window.location.search);
-      const mode = params.get('mode') || 'login';
-      showSection(mode);
+      closeRoleModal();
+    }
 
-      // 🔔 Escuchar cambios de auth
-      getSupabaseClient().auth.onAuthStateChange((event, session) => {
-        console.log('🔔 Auth state changed:', event);
-        if (event === 'SIGNED_IN' && session) {
-          handleLoginRedirect(session.user);
-        }
-        if (event === 'PASSWORD_RECOVERY') {
-          showSection('newpassword');
-        }
-      });
-
-      // ========== LOGIN CON EMAIL ==========
-      const loginForm = document.getElementById('login-form');
-      const loginBtn = document.getElementById('login-btn');
-      if (loginForm && loginBtn) {
-        loginForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const email = document.getElementById('login-email')?.value.trim();
-          const password = document.getElementById('login-password')?.value;
-          if (!email || !password) { showError('❌ Completa email y contraseña'); return; }
-          
-          loginBtn.innerHTML = '⏳ Verificando...'; 
-          loginBtn.disabled = true;
-          
-          try {
-            const { error } = await getSupabaseClient().auth.signInWithPassword({ email, password });
-            if (error) throw new Error(error.message);
-          } catch (err) {
-            showError('❌ ' + err.message);
-            loginBtn.innerHTML = 'ENTRAR'; 
-            loginBtn.disabled = false;
-          }
-        });
-      }
-
-      // ========== GOOGLE LOGIN - CON VALIDACIÓN DE PRIVACIDAD ==========
-      const googleBtn = document.getElementById('google-login-btn');
-      if (googleBtn) {
-        googleBtn.addEventListener('click', async (e) => {
-          const checkbox = document.getElementById('privacy-consent-login');
-          if (!checkbox?.checked) {
-            e.preventDefault();
-            showError('⚠️ Debes aceptar la política de privacidad para continuar con Google');
-            return;
-          }
-          
-          console.log(' [GOOGLE] Opening role selection modal...');
-          const modal = document.getElementById('google-role-modal');
-          if (modal) modal.classList.add('active');
-        });
-      }
-
-      // ========== REGISTRO CON TARJETAS DE ROL ==========
-      const registerForm = document.getElementById('register-form');
-      if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          
-          const email = document.getElementById('register-email')?.value.trim();
-          const password = document.getElementById('register-password')?.value;
-          const confirm = document.getElementById('register-confirm')?.value;
-          const role = document.getElementById('register-role')?.value;
-          const terms = document.getElementById('terms-register')?.checked;
-          
-          if (password !== confirm) { showError('❌ Las contraseñas no coinciden'); return; }
-          if (!selectedRegisterRole || (role !== 'client' && role !== 'barber')) { 
-            const errorDiv = document.getElementById('role-error');
-            if (errorDiv) errorDiv.style.display = 'block';
-            showError('⚠️ Selecciona si eres Cliente o Barbero');
-            return; 
-          }
-          if (!terms) { showError('⚠️ Debes aceptar los términos para continuar'); return; }
-          
-          const registerBtn = document.getElementById('register-btn');
-          if (registerBtn) {
-            registerBtn.innerHTML = '⏳ Creando cuenta...';
-            registerBtn.disabled = true;
-          }
-          
-          try {
-            const { data: authData, error: authError } = await getSupabaseClient().auth.signUp({ 
-              email, password, options: { data: { role: selectedRegisterRole } } 
-            });
-            if (authError) throw authError;
-            if (!authData.user) throw new Error('No se creó el usuario');
-            
-            const { error: profileError } = await getSupabaseClient().from('profiles').insert([{
-              id: authData.user.id, email, role: selectedRegisterRole, created_at: new Date().toISOString()
-            }]);
-            if (profileError) console.warn('⚠️ Error creando perfil:', profileError.message);
-            
-            showSuccess(`✅ ¡Registro exitoso! Bienvenido ${selectedRegisterRole === 'barber' ? 'Barbero' : 'Cliente'}. Verifica tu email.`);
-            setTimeout(() => showSection('login'), 3000);
-          } catch (err) { 
-            showError('❌ ' + err.message);
-            if (registerBtn) {
-              registerBtn.innerHTML = 'REGISTRARSE';
-              registerBtn.disabled = false;
-            }
-          }
-        });
-      }
-
-      // ========== RECUPERAR CONTRASEÑA ==========
-      const recoverForm = document.getElementById('recover-form');
-      if (recoverForm) {
-        recoverForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const email = document.getElementById('recover-email')?.value.trim();
-          try {
-            const { error } = await getSupabaseClient().auth.resetPasswordForEmail(email, {
-              redirectTo: window.location.origin + '/auth.html'
-            });
-            if (error) throw error;
-            showSuccess('✅ Enlace enviado. Revisa tu correo.');
-            setTimeout(() => showSection('login'), 4000);
-          } catch (err) { showError('❌ ' + err.message); }
-        });
-      }
-
-      // ========== NUEVA CONTRASEÑA ==========
-      const newPasswordForm = document.getElementById('newpassword-form');
-      const updatePasswordBtn = document.getElementById('update-password-btn');
-      if (newPasswordForm) {
-        newPasswordForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const newPassword = document.getElementById('new-password')?.value;
-          const confirmNew = document.getElementById('confirm-new-password')?.value;
-          
-          if (newPassword !== confirmNew) { showError('❌ Las contraseñas no coinciden'); return; }
-          if (newPassword.length < 6) { showError('⚠️ Mínimo 6 caracteres'); return; }
-          
-          const { data: { session } } = await getSupabaseClient().auth.getSession();
-          if (!session) { showError('❌ Sesión inválida. Solicita un nuevo enlace.'); showSection('recover'); return; }
-          
-          if (updatePasswordBtn) {
-            updatePasswordBtn.innerHTML = '⏳ Actualizando...'; 
-            updatePasswordBtn.disabled = true;
-          }
-          
-          try {
-            const { error } = await getSupabaseClient().auth.updateUser({ password: newPassword });
-            if (error) throw error;
-            showSuccess('✅ Contraseña actualizada. Redirigiendo...');
-            await getSupabaseClient().auth.signOut();
-            window.location.hash = '';
-            window.history.replaceState(null, '', window.location.pathname);
-            setTimeout(() => { window.location.href = '/auth.html?mode=login'; }, 2500);
-          } catch (err) {
-            showError('❌ ' + err.message);
-            if (updatePasswordBtn) {
-              updatePasswordBtn.innerHTML = 'ACTUALIZAR CONTRASEÑA'; 
-              updatePasswordBtn.disabled = false;
-            }
-          }
-        });
-      }
-
-      console.log('🎉 [INIT] All systems ready!');
-    });
-
-    // ========== FUNCIÓN GOOGLE OAUTH ==========
-    async function continueWithGoogle() {
-      if (!selectedGoogleRole) {
-        alert('Por favor selecciona un rol (Cliente o Barbero).');
-        return;
-      }
-      if (!document.getElementById('terms-accept')?.checked) {
-        alert('Por favor acepta los términos y política de privacidad.');
-        return;
-      }
-
-      console.log('🔵 [GOOGLE] Starting OAuth with role:', selectedGoogleRole);
+    // ========== GOOGLE OAUTH ==========
+    async function continueWithGoogle(role) {
+      console.log('🔵 [GOOGLE] Starting OAuth with role:', role);
       
       try {
-        const { error } = await getSupabaseClient().auth.signInWithOAuth({
+        const { error } = await getSupabase().auth.signInWithOAuth({
           provider: 'google',
           options: {
             redirectTo: window.location.origin + '/auth.html',
             queryParams: { 
               access_type: 'offline', 
               prompt: 'consent',
-              state: btoa(JSON.stringify({ role: selectedGoogleRole }))
+              state: btoa(JSON.stringify({ role }))
             }
           }
         });
@@ -827,6 +441,283 @@
         alert('❌ Error al conectar con Google: ' + err.message);
       }
     }
+
+    // ========== REGISTRO CON EMAIL ==========
+    async function completeEmailRegistration(formData, role) {
+      const { email, password } = formData;
+      
+      try {
+        const { data: authData, error: authError } = await getSupabase().auth.signUp({ 
+          email, password, options: { data: { role } } 
+        });
+        if (authError) throw authError;
+        if (!authData.user) throw new Error('No se creó el usuario');
+        
+        // Crear perfil en tabla profiles
+        const { error: profileError } = await getSupabase().from('profiles').insert([{
+          id: authData.user.id,
+          email,
+          role,
+          created_at: new Date().toISOString()
+        }]);
+        if (profileError) console.warn('⚠️ Warning creando perfil:', profileError.message);
+        
+        showSuccess(`✅ ¡Registro exitoso! Bienvenido ${role === 'barber' ? 'Barbero' : 'Cliente'}. Verifica tu email.`);
+        setTimeout(() => {
+          showSection('login');
+          document.getElementById('register-form')?.reset();
+        }, 3000);
+        
+      } catch (err) { 
+        showError('❌ ' + err.message);
+        console.error('Registration error:', err);
+      }
+    }
+
+    // ========== UI HELPERS ==========
+    function showError(msg) {
+      const el = document.getElementById('error-message');
+      if (el) {
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 8000);
+      }
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('success-message');
+      if (el) {
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 8000);
+      }
+    }
+
+    function showSection(name) {
+      const sections = ['login', 'register', 'recover', 'newpassword'];
+      const subtitles = { 
+        login: 'Inicia tu estilo', 
+        register: 'Crea tu cuenta gratis', 
+        recover: 'Recupera tu contraseña',
+        newpassword: 'Crea tu nueva contraseña'
+      };
+      
+      sections.forEach(s => {
+        const sec = document.getElementById(s + '-section');
+        if (sec) sec.classList.remove('active');
+      });
+      
+      const target = document.getElementById(name + '-section');
+      if (target) target.classList.add('active');
+      
+      const subtitle = document.getElementById('auth-subtitle');
+      if (subtitle && subtitles[name]) subtitle.textContent = subtitles[name];
+    }
+
+    // ========== REDIRECCIÓN POST-LOGIN ==========
+    async function handleLoginRedirect(user) {
+      try {
+        const { data: profile } = await getSupabase()
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        const role = profile?.role || 'client';
+        console.log(`🚀 Redirecting ${role}...`);
+        window.location.href = role === 'admin' ? '/admin.html' : '/dashboard.html';
+      } catch (err) {
+        console.error('Redirect error:', err);
+        window.location.href = '/dashboard.html';
+      }
+    }
+
+    // ========== PROCESAR CALLBACK OAUTH ==========
+    async function processOAuthCallback() {
+      const hash = window.location.hash;
+      if (!hash.includes('access_token') && !hash.includes('code=')) return;
+      
+      console.log('🔄 Processing OAuth callback...');
+      const stateMatch = hash.match(/state=([^&]+)/);
+      
+      if (stateMatch) {
+        try {
+          const stateData = JSON.parse(atob(stateMatch[1]));
+          const role = stateData.role;
+          
+          if (role) {
+            await new Promise(r => setTimeout(r, 1000));
+            const { data: { session } } = await getSupabase().auth.getSession();
+            
+            if (session) {
+              const { data: profile } = await getSupabase()
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .single();
+              
+              if (!profile?.role) {
+                await getSupabase().from('profiles').insert([{
+                  id: session.user.id,
+                  email: session.user.email,
+                  role,
+                  created_at: new Date().toISOString()
+                }]);
+                console.log('✅ Profile created:', role);
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('⚠️ Could not process state:', e);
+        }
+      }
+    }
+
+    // ========== INICIALIZACIÓN ==========
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('🚀 BarberHub Auth Init');
+      
+      if (typeof window.supabase === 'undefined') {
+        alert('ERROR: No se pudo cargar Supabase');
+        return;
+      }
+      
+      // Procesar callback OAuth primero
+      await processOAuthCallback();
+      
+      // Verificar sesión activa
+      const { data: { session } } = await getSupabase().auth.getSession();
+      if (session) {
+        await handleLoginRedirect(session.user);
+        return;
+      }
+      
+      // Mostrar sección según URL
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get('mode') || 'login';
+      showSection(mode);
+      
+      // Listener para auth state changes
+      getSupabase().auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) handleLoginRedirect(session.user);
+        if (event === 'PASSWORD_RECOVERY') showSection('newpassword');
+      });
+
+      // ===== LOGIN CON EMAIL =====
+      const loginForm = document.getElementById('login-form');
+      if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('login-email')?.value.trim();
+          const password = document.getElementById('login-password')?.value;
+          const btn = document.getElementById('login-btn');
+          
+          if (!email || !password) { showError('❌ Completa email y contraseña'); return; }
+          if (btn) { btn.innerHTML = '⏳...'; btn.disabled = true; }
+          
+          try {
+            const { error } = await getSupabase().auth.signInWithPassword({ email, password });
+            if (error) throw new Error(error.message);
+          } catch (err) {
+            showError('❌ ' + err.message);
+            if (btn) { btn.innerHTML = 'ENTRAR'; btn.disabled = false; }
+          }
+        });
+      }
+
+      // ===== GOOGLE LOGIN (abre modal) =====
+      const googleLoginBtn = document.getElementById('google-login-btn');
+      if (googleLoginBtn) {
+        googleLoginBtn.addEventListener('click', () => {
+          openRoleModal('google');
+        });
+      }
+
+      // ===== REGISTER: Botón que abre modal =====
+      const openModalBtn = document.getElementById('open-register-modal-btn');
+      const registerForm = document.getElementById('register-form');
+      
+      if (openModalBtn && registerForm) {
+        openModalBtn.addEventListener('click', () => {
+          const email = document.getElementById('register-email')?.value.trim();
+          const password = document.getElementById('register-password')?.value;
+          const confirm = document.getElementById('register-confirm')?.value;
+          
+          // Validaciones básicas antes de abrir modal
+          if (!email || !password || !confirm) {
+            showError('❌ Completa todos los campos');
+            return;
+          }
+          if (password !== confirm) {
+            showError('❌ Las contraseñas no coinciden');
+            return;
+          }
+          if (password.length < 6) {
+            showError('⚠️ La contraseña debe tener al menos 6 caracteres');
+            return;
+          }
+          
+          // Guardar datos y abrir modal
+          modalFormData = { email, password };
+          openRoleModal('email', modalFormData);
+        });
+      }
+
+      // ===== RECUPERAR CONTRASEÑA =====
+      const recoverForm = document.getElementById('recover-form');
+      if (recoverForm) {
+        recoverForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('recover-email')?.value.trim();
+          try {
+            const { error } = await getSupabase().auth.resetPasswordForEmail(email, {
+              redirectTo: window.location.origin + '/auth.html'
+            });
+            if (error) throw error;
+            showSuccess('✅ Enlace enviado. Revisa tu correo.');
+            setTimeout(() => showSection('login'), 4000);
+          } catch (err) { showError('❌ ' + err.message); }
+        });
+      }
+
+      // ===== NUEVA CONTRASEÑA =====
+      const newPasswordForm = document.getElementById('newpassword-form');
+      if (newPasswordForm) {
+        newPasswordForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const newP = document.getElementById('new-password')?.value;
+          const confirmP = document.getElementById('confirm-new-password')?.value;
+          const btn = document.getElementById('update-password-btn');
+          
+          if (newP !== confirmP) { showError('❌ Las contraseñas no coinciden'); return; }
+          if (newP.length < 6) { showError('⚠️ Mínimo 6 caracteres'); return; }
+          
+          const { data: { session } } = await getSupabase().auth.getSession();
+          if (!session) { showError('❌ Sesión inválida'); showSection('recover'); return; }
+          
+          if (btn) { btn.innerHTML = '⏳...'; btn.disabled = true; }
+          
+          try {
+            const { error } = await getSupabase().auth.updateUser({ password: newP });
+            if (error) throw error;
+            showSuccess('✅ Contraseña actualizada. Redirigiendo...');
+            await getSupabase().auth.signOut();
+            window.location.hash = '';
+            setTimeout(() => window.location.href = '/auth.html?mode=login', 2500);
+          } catch (err) {
+            showError('❌ ' + err.message);
+            if (btn) { btn.innerHTML = 'ACTUALIZAR'; btn.disabled = false; }
+          }
+        });
+      }
+
+      console.log('✅ Auth ready');
+    });
+
+    // Cerrar modal al hacer click fuera
+    document.getElementById('role-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'role-modal') closeRoleModal();
+    });
   </script>
 </body>
 </html>
