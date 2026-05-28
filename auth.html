@@ -2,25 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="
-  default-src 'self';
-  script-src 'self' 'unsafe-inline' 'unsafe-eval' 
-    https://cdn.jsdelivr.net 
-    https://unpkg.com 
-    https://accounts.google.com 
-    https://*.googleapis.com 
-    https://*.gstatic.com;
-  connect-src 'self' 
-    https://*.supabase.co 
-    https://accounts.google.com 
-    https://*.googleapis.com 
-    https://oauth2.googleapis.com 
-    https://www.googleapis.com;
-  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-  font-src 'self' https://fonts.gstatic.com;
-  img-src 'self' data: https:;
-  frame-src 'self' https://accounts.google.com;
-">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://accounts.google.com https://*.googleapis.com https://*.gstatic.com; connect-src 'self' https://*.supabase.co https://accounts.google.com https://*.googleapis.com https://oauth2.googleapis.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; frame-src 'self' https://accounts.google.com;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión | BarberHub</title>
   <style>
@@ -171,6 +153,7 @@
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
   </div>
 
   <div class="auth-container">
@@ -294,16 +277,19 @@
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-// Agrega esto al inicio de tu script para ignorar errores de extensiones
-window.addEventListener('error', (e) => {
-  if (e.message?.includes('lockdown') || e.message?.includes('SES')) {
-    e.preventDefault(); // Silencia errores de extensiones
-  }
-}, true);
+
   <script type="text/javascript">
+    // ========== IGNORE EXTENSION ERRORS ==========
+    window.addEventListener('error', (e) => {
+      if (e.message?.includes('lockdown') || e.message?.includes('SES') || e.message?.includes('inpage.js')) {
+        e.preventDefault();
+        return true;
+      }
+    }, true);
+
     // ========== VARIABLES GLOBALES ==========
     let modalRole = null;
-    let modalMethod = null; // 'google' | 'email'
+    let modalMethod = null;
     let modalEmailData = null;
     let supabaseClient = null;
 
@@ -312,7 +298,7 @@ window.addEventListener('error', (e) => {
       console.log('🚀 BarberHub Auth Init');
       
       if (!window.supabase) {
-        showError('❌ Error: No se cargó Supabase. Revisa tu conexión.');
+        showError('❌ Error: No se cargó Supabase.');
         return;
       }
 
@@ -320,23 +306,24 @@ window.addEventListener('error', (e) => {
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // 1. PROCESAR CALLBACK OAUTH (Google redirige aquí)
+      // ✅ 1. PROCESAR CALLBACK OAUTH PRIMERO
       await processOAuthCallback();
 
-      // 2. VERIFICAR SESIÓN ACTIVA
+      // ✅ 2. VERIFICAR SESIÓN ACTIVA
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
+        console.log('✅ Sesión activa:', session.user.email);
         handleLoginRedirect(session.user);
         return;
       }
 
-      // 3. MOSTRAR SECCIÓN SEGÚN URL
+      // ✅ 3. MOSTRAR SECCIÓN SEGÚN URL
       const params = new URLSearchParams(window.location.search);
-      const mode = params.get('mode') || 'login';
-      showSection(mode);
+      showSection(params.get('mode') || 'login');
 
-      // 4. ESCUCHAR CAMBIOS DE AUTH
+      // ✅ 4. ESCUCHAR CAMBIOS DE AUTH
       supabaseClient.auth.onAuthStateChange((event, session) => {
+        console.log('🔔 Auth event:', event);
         if (event === 'SIGNED_IN' && session) handleLoginRedirect(session.user);
         if (event === 'PASSWORD_RECOVERY') showSection('newpassword');
       });
@@ -360,12 +347,13 @@ window.addEventListener('error', (e) => {
         }
       });
 
-      // GOOGLE BUTTON
+      // GOOGLE BUTTON - ABRE MODAL
       document.getElementById('google-login-btn').addEventListener('click', () => {
+        console.log('🔵 Google button clicked');
         openModal('google');
       });
 
-      // REGISTER BUTTON (VALIDA Y ABRE MODAL)
+      // REGISTER BUTTON - VALIDA Y ABRE MODAL
       document.getElementById('open-register-modal-btn').addEventListener('click', () => {
         const email = document.getElementById('register-email').value.trim();
         const pass = document.getElementById('register-password').value;
@@ -383,10 +371,10 @@ window.addEventListener('error', (e) => {
       document.getElementById('modal-card-client').addEventListener('click', () => selectRole('client'));
       document.getElementById('modal-card-barber').addEventListener('click', () => selectRole('barber'));
       
-      // MODAL PRIVACY CHECK
+      // MODAL PRIVACY CHECK - HABILITA BOTÓN
       document.getElementById('modal-privacy-check').addEventListener('change', checkModalReady);
       
-      // MODAL ACTION BUTTON
+      // MODAL ACTION BUTTON - EJECUTA ACCIÓN
       document.getElementById('modal-action-btn').addEventListener('click', executeModalAction);
       
       // MODAL CLOSE
@@ -396,8 +384,14 @@ window.addEventListener('error', (e) => {
       });
 
       // PRIVACY LINKS
-      document.getElementById('privacy-link').addEventListener('click', (e) => { e.preventDefault(); alert('🔒 Política de Privacidad:\n• Datos usados solo para gestionar citas\n• No compartimos info con terceros\n• Puedes eliminar tu cuenta cuando quieras'); });
-      document.getElementById('terms-link').addEventListener('click', (e) => { e.preventDefault(); alert('📋 Términos:\n• Mayor de 13 años\n• Responsable de tu info\n• BarberHub no garantiza disponibilidad de barberos'); });
+      document.getElementById('privacy-link').addEventListener('click', (e) => { 
+        e.preventDefault(); 
+        alert('🔒 Política de Privacidad:\n• Datos usados solo para gestionar citas\n• No compartimos info con terceros\n• Puedes eliminar tu cuenta cuando quieras'); 
+      });
+      document.getElementById('terms-link').addEventListener('click', (e) => { 
+        e.preventDefault(); 
+        alert('📋 Términos:\n• Mayor de 13 años\n• Responsable de tu info\n• BarberHub no garantiza disponibilidad de barberos'); 
+      });
 
       // RECOVER FORM
       document.getElementById('recover-form').addEventListener('submit', async (e) => {
@@ -466,11 +460,13 @@ window.addEventListener('error', (e) => {
       btn.disabled = true;
       btn.classList.remove('active', 'loading');
       document.getElementById('role-modal').classList.add('active');
+      console.log('🎴 Modal opened:', method);
     }
 
     function closeModal() {
       document.getElementById('role-modal').classList.remove('active');
       modalRole = null; modalMethod = null; modalEmailData = null;
+      console.log('🔒 Modal closed');
     }
 
     function selectRole(role) {
@@ -478,6 +474,7 @@ window.addEventListener('error', (e) => {
       document.querySelectorAll('#role-modal .role-card').forEach(c => c.classList.remove('selected'));
       document.getElementById(`modal-card-${role}`).classList.add('selected');
       checkModalReady();
+      console.log('✅ Role selected:', role);
     }
 
     function checkModalReady() {
@@ -486,28 +483,51 @@ window.addEventListener('error', (e) => {
       if (modalRole && checked) {
         btn.disabled = false;
         btn.classList.add('active');
+        console.log('🟢 Button enabled');
       } else {
         btn.disabled = true;
         btn.classList.remove('active');
+        console.log('🔴 Button disabled');
       }
     }
 
     async function executeModalAction() {
       const btn = document.getElementById('modal-action-btn');
+      
+      if (!modalRole) {
+        showError('⚠️ Selecciona Cliente o Barbero');
+        return;
+      }
+      if (!document.getElementById('modal-privacy-check').checked) {
+        showError('⚠️ Debes aceptar los términos');
+        return;
+      }
+      
       btn.classList.add('loading');
       btn.textContent = '⏳ Procesando...';
       btn.disabled = true;
 
       try {
         if (modalMethod === 'google') {
+          console.log('🔵 Starting Google OAuth with role:', modalRole);
+          
+          // Guardar rol en localStorage por seguridad
+          localStorage.setItem('pending_google_role', modalRole);
+          
           await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
               redirectTo: window.location.origin + '/auth.html',
-              queryParams: { access_type: 'offline', prompt: 'consent', state: btoa(JSON.stringify({ role: modalRole })) }
+              queryParams: { 
+                access_type: 'offline', 
+                prompt: 'consent',
+                state: btoa(JSON.stringify({ role: modalRole, ts: Date.now() }))
+              }
             }
           });
         } else if (modalMethod === 'email' && modalEmailData) {
+          console.log('📧 Creating account with email');
+          
           const { data, error } = await supabaseClient.auth.signUp({
             email: modalEmailData.email,
             password: modalEmailData.password,
@@ -527,7 +547,7 @@ window.addEventListener('error', (e) => {
           return;
         }
       } catch (err) {
-        console.error('Modal error:', err);
+        console.error('❌ Modal action error:', err);
         showError('❌ ' + err.message);
         btn.classList.remove('loading');
         btn.disabled = false;
@@ -539,10 +559,12 @@ window.addEventListener('error', (e) => {
     function showError(msg) {
       const el = document.getElementById('error-message');
       if (el) { el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 8000); }
+      console.error('❌', msg);
     }
     function showSuccess(msg) {
       const el = document.getElementById('success-message');
       if (el) { el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 8000); }
+      console.log('✅', msg);
     }
     function showSection(name) {
       document.querySelectorAll('.auth-section').forEach(s => s.classList.remove('active'));
@@ -551,70 +573,60 @@ window.addEventListener('error', (e) => {
       const sub = document.getElementById('auth-subtitle');
       const titles = { login: 'Inicia tu estilo', register: 'Crea tu cuenta gratis', recover: 'Recupera tu contraseña', newpassword: 'Crea tu nueva contraseña' };
       if (sub && titles[name]) sub.textContent = titles[name];
+      console.log('📄 Section:', name);
     }
     async function handleLoginRedirect(user) {
       try {
         const { data: profile } = await supabaseClient.from('profiles').select('role').eq('id', user.id).single();
         const role = profile?.role || 'client';
+        console.log('🚀 Redirecting to', role);
         window.location.href = role === 'admin' ? '/admin.html' : '/dashboard.html';
-      } catch { window.location.href = '/dashboard.html'; }
+      } catch (e) {
+        console.error('Redirect error:', e);
+        window.location.href = '/dashboard.html';
+      }
     }
     async function processOAuthCallback() {
       const hash = window.location.hash;
       if (!hash.includes('access_token') && !hash.includes('code=')) return;
+      
       console.log('🔄 OAuth callback detected');
       const match = hash.match(/state=([^&]+)/);
+      
       if (match) {
         try {
           const { role } = JSON.parse(atob(match[1]));
+          console.log('📦 Role from state:', role);
+          
           if (role) {
             await new Promise(r => setTimeout(r, 1000));
             const { data: { session } } = await supabaseClient.auth.getSession();
+            
             if (session) {
               const { data: exists } = await supabaseClient.from('profiles').select('role').eq('id', session.user.id).single();
               if (!exists?.role) {
-                await supabaseClient.from('profiles').insert([{ id: session.user.id, email: session.user.email, role, created_at: new Date().toISOString() }]);
+                await supabaseClient.from('profiles').insert([{ 
+                  id: session.user.id, 
+                  email: session.user.email, 
+                  role, 
+                  created_at: new Date().toISOString() 
+                }]);
                 console.log('✅ Profile created:', role);
               }
+              // Limpiar localStorage si existe
+              localStorage.removeItem('pending_google_role');
             }
           }
-        } catch (e) { console.warn('⚠️ State parse failed', e); }
+        } catch (e) { 
+          console.warn('⚠️ State parse failed', e);
+          // Fallback: usar localStorage si el state falla
+          const savedRole = localStorage.getItem('pending_google_role');
+          if (savedRole) {
+            console.log('🔄 Using role from localStorage:', savedRole);
+          }
+        }
       }
     }
   </script>
-  <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // 🔍 Busca la casilla de términos y el botón de continuar dentro del modal
-  const termsCheckbox = document.querySelector('#google-role-modal input[type="checkbox"]');
-  const continueBtn = document.getElementById('btn-continue-google');
-
-  if (termsCheckbox && continueBtn) {
-    // ✅ Cuando se marca/desmarca la casilla
-    termsCheckbox.addEventListener('change', () => {
-      if (termsCheckbox.checked) {
-        continueBtn.disabled = false;
-        continueBtn.classList.add('active');
-        continueBtn.style.pointerEvents = 'auto';
-        continueBtn.style.opacity = '1';
-      } else {
-        continueBtn.disabled = true;
-        continueBtn.classList.remove('active');
-        continueBtn.style.pointerEvents = 'none';
-        continueBtn.style.opacity = '0.5';
-      }
-    });
-
-    // 🖱️ Asegura que el botón funcione al hacer click
-    continueBtn.addEventListener('click', (e) => {
-      if (!termsCheckbox.checked) {
-        e.preventDefault();
-        return;
-      }
-      // Aquí ya puedes llamar a tu función de Google OAuth
-      // continueWithGoogle(); 
-    });
-  }
-});
-</script>
 </body>
 </html>
