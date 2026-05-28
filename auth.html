@@ -48,10 +48,8 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .form-group { margin-bottom: 1.4rem; }
     .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: #00ffff; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
-    .form-group input, .form-group select { 
-      width: 100%; padding: 0.9rem 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 255, 255, 0.35); border-radius: 10px; color: #ffffff; font-size: 1rem; transition: all 0.3s ease; 
-    }
-    .form-group input:focus, .form-group select:focus { outline: none; border-color: #00ffff; background: rgba(0, 0, 0, 0.6); box-shadow: 0 0 15px rgba(0, 255, 255, 0.25); }
+    .form-group input { width: 100%; padding: 0.9rem 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 255, 255, 0.35); border-radius: 10px; color: #ffffff; font-size: 1rem; transition: all 0.3s ease; }
+    .form-group input:focus { outline: none; border-color: #00ffff; background: rgba(0, 0, 0, 0.6); box-shadow: 0 0 15px rgba(0, 255, 255, 0.25); }
     .form-group input::placeholder { color: #9ca3af; }
     .btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, #00e5ff, #0072ff); border: none; border-radius: 10px; color: #000; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 2; }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
@@ -72,188 +70,72 @@
     @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
     @media (max-width: 480px) { .auth-container { padding: 10px; } .inner-glass-panel { padding: 2rem 1.5rem; } .auth-header h1 { font-size: 1.9rem; } }
 
-    /*  ESTILOS PARA MODAL DE GOOGLE + TARJETAS DE ROL */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 9999;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-    .modal-overlay.active {
-      display: flex;
-      animation: fadeIn 0.3s ease;
-    }
-    .modal-content {
-      background: rgba(10, 15, 30, 0.95);
-      border: 2px solid #ff00ff;
-      border-radius: 20px;
-      padding: 2rem;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 0 40px rgba(255, 0, 255, 0.3), inset 0 0 30px rgba(0,0,0,0.5);
-      text-align: center;
-    }
-    .modal-title {
-      font-family: 'Segoe UI', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #ff00ff;
-      text-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
-      margin-bottom: 0.5rem;
-    }
-    .modal-subtitle {
-      color: #9ca3af;
-      font-size: 0.9rem;
-      margin-bottom: 1.5rem;
-    }
-    .role-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 1.5rem;
-    }
+    /* 🎴 TARJETAS DE ROL (Cliente / Barbero) */
+    .role-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1rem; }
     .role-card {
       background: rgba(0, 0, 0, 0.5);
       border: 2px solid rgba(0, 255, 255, 0.3);
-      border-radius: 15px;
-      padding: 1.5rem 1rem;
+      border-radius: 14px;
+      padding: 1.2rem 0.8rem;
       cursor: pointer;
       transition: all 0.3s ease;
       position: relative;
+      text-align: center;
     }
-    .role-card:hover {
-      border-color: #00ffff;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
-      transform: translateY(-3px);
-    }
+    .role-card:hover { border-color: #00ffff; box-shadow: 0 0 15px rgba(0, 255, 255, 0.3); transform: translateY(-2px); }
     .role-card.selected {
       border-color: #00ffff;
       background: rgba(0, 255, 255, 0.1);
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4), inset 0 0 15px rgba(0, 255, 255, 0.05);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.4), inset 0 0 10px rgba(0, 255, 255, 0.05);
     }
     .role-card.selected::after {
-      content: '✓';
-      position: absolute;
-      top: 8px; right: 10px;
-      background: #00ffff;
-      color: #000;
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.8rem; font-weight: bold;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+      content: '✓'; position: absolute; top: 6px; right: 8px;
+      background: #00ffff; color: #000; width: 20px; height: 20px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: bold; box-shadow: 0 0 8px rgba(0,255,255,0.6);
     }
-    .role-icon {
-      font-size: 2.5rem;
-      margin-bottom: 0.8rem;
+    .role-icon-svg { width: 48px; height: 48px; margin: 0 auto 8px; }
+    .role-icon-svg svg { width: 100%; height: 100%; stroke: #00ffff; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .role-card-title { font-weight: 700; font-size: 0.95rem; color: #fff; margin-bottom: 4px; }
+    .role-card-desc { font-size: 0.7rem; color: #9ca3af; line-height: 1.3; }
+
+    /*  MODAL DE GOOGLE */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 9999;
+      align-items: center; justify-content: center; padding: 1.5rem;
     }
-    .role-card-title {
-      font-weight: 700;
-      font-size: 1rem;
-      color: #fff;
-      margin-bottom: 0.3rem;
-    }
-    .role-card-desc {
-      font-size: 0.75rem;
-      color: #9ca3af;
-      line-height: 1.4;
-    }
-    .terms-checkbox {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 1.5rem;
-      text-align: left;
-    }
-    .terms-checkbox input[type="checkbox"] {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 22px; height: 22px;
-      border: 2px solid rgba(0, 255, 255, 0.5);
-      border-radius: 6px;
-      background: rgba(0, 0, 0, 0.4);
-      cursor: pointer;
-      flex-shrink: 0;
-      margin-top: 2px;
-      position: relative;
-      transition: all 0.3s;
-    }
-    .terms-checkbox input[type="checkbox"]:checked {
-      background: #00ffff;
-      border-color: #00ffff;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
-    }
-    .terms-checkbox input[type="checkbox"]:checked::after {
-      content: '✓';
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      color: #000;
-      font-size: 1rem;
-      font-weight: bold;
-    }
-    .terms-checkbox label {
-      font-size: 0.8rem;
-      color: #9ca3af;
-      line-height: 1.4;
-      cursor: pointer;
-    }
-    .terms-checkbox label a {
-      color: #00ffff;
-      text-decoration: underline;
-    }
-    .btn-continue-google {
-      width: 100%;
-      padding: 1rem;
-      background: linear-gradient(135deg, #ff00ff, #8b008b);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      opacity: 0.5;
-      pointer-events: none;
-    }
-    .btn-continue-google.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .btn-continue-google.active:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 25px rgba(255, 0, 255, 0.6);
-    }
-    .btn-continue-google:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-    .modal-close {
-      position: absolute;
-      top: 10px; right: 15px;
-      background: none;
-      border: none;
-      color: #9ca3af;
-      font-size: 1.5rem;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .modal-close:hover {
-      color: #ff4444;
-      transform: scale(1.2);
-    }
+    .modal-overlay.active { display: flex; animation: fadeIn 0.3s ease; }
     .modal-content {
-      position: relative;
+      background: rgba(10, 15, 30, 0.95); border: 2px solid #ff00ff; border-radius: 20px;
+      padding: 1.8rem; max-width: 400px; width: 100%; position: relative;
+      box-shadow: 0 0 30px rgba(255, 0, 255, 0.25);
     }
+    .modal-title { font-size: 1.3rem; font-weight: 800; color: #ff00ff; text-shadow: 0 0 10px rgba(255,0,255,0.5); margin-bottom: 0.3rem; text-align: center; }
+    .modal-subtitle { color: #9ca3af; font-size: 0.85rem; margin-bottom: 1.2rem; text-align: center; }
+    .terms-checkbox { display: flex; align-items: flex-start; gap: 10px; margin: 1rem 0; text-align: left; }
+    .terms-checkbox input[type="checkbox"] {
+      appearance: none; -webkit-appearance: none; width: 20px; height: 20px;
+      border: 2px solid rgba(0,255,255,0.5); border-radius: 5px; background: rgba(0,0,0,0.4);
+      cursor: pointer; flex-shrink: 0; margin-top: 2px; position: relative; transition: 0.2s;
+    }
+    .terms-checkbox input[type="checkbox"]:checked { background: #00ffff; border-color: #00ffff; }
+    .terms-checkbox input[type="checkbox"]:checked::after {
+      content: '✓'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      color: #000; font-size: 0.9rem; font-weight: bold;
+    }
+    .terms-checkbox label { font-size: 0.8rem; color: #9ca3af; line-height: 1.4; cursor: pointer; }
+    .terms-checkbox label a { color: #00ffff; text-decoration: underline; }
+    .btn-continue-google {
+      width: 100%; padding: 0.9rem; background: linear-gradient(135deg, #ff00ff, #8b008b);
+      border: none; border-radius: 10px; color: #fff; font-size: 0.9rem; font-weight: 700;
+      cursor: not-allowed; opacity: 0.4; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+      position: relative; z-index: 10; /* Evita que otros elementos lo tapen */
+    }
+    .btn-continue-google.active { opacity: 1; cursor: pointer; }
+    .btn-continue-google.active:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(255,0,255,0.5); }
+    .modal-close { position: absolute; top: 12px; right: 15px; background: none; border: none; color: #9ca3af; font-size: 1.4rem; cursor: pointer; }
+    .modal-close:hover { color: #ff4444; }
   </style>
 </head>
 <body>
@@ -285,11 +167,11 @@
         <form id="login-form">
           <div class="form-group">
             <label for="login-email">EMAIL</label>
-            <input type="email" id="login-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+            <input type="email" id="login-email" placeholder="tu@email.com" required autocomplete="email" />
           </div>
           <div class="form-group">
             <label for="login-password">CONTRASEÑA</label>
-            <input type="password" id="login-password" name="password" placeholder="••••••••" required autocomplete="current-password" minlength="6" />
+            <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password" minlength="6" />
           </div>
           <button type="submit" class="btn" id="login-btn">ENTRAR</button>
         </form>
@@ -304,29 +186,58 @@
         </div>
       </div>
 
-      <!-- REGISTRO CON SELECTOR DE ROL -->
+      <!-- REGISTRO CON TARJETAS DE ROL -->
       <div id="register-section" class="auth-section">
         <form id="register-form">
           <div class="form-group">
             <label for="register-email">EMAIL</label>
-            <input type="email" id="register-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+            <input type="email" id="register-email" placeholder="tu@email.com" required autocomplete="email" />
           </div>
           <div class="form-group">
             <label for="register-password">CONTRASEÑA</label>
-            <input type="password" id="register-password" name="password" placeholder="••••••••" required minlength="6" />
+            <input type="password" id="register-password" placeholder="••••••••" required minlength="6" />
           </div>
           <div class="form-group">
             <label for="register-confirm">CONFIRMAR CONTRASEÑA</label>
-            <input type="password" id="register-confirm" name="confirmPassword" placeholder="••••••••" required minlength="6" />
+            <input type="password" id="register-confirm" placeholder="••••••••" required minlength="6" />
           </div>
-          <div class="form-group">
-            <label for="register-role">SOY</label>
-            <select id="register-role" name="role" required>
-              <option value="" disabled selected>Selecciona tu tipo de cuenta</option>
-              <option value="client">👤 Cliente (Quiero agendar citas)</option>
-              <option value="barber">💈 Barbero (Quiero ofrecer servicios)</option>
-            </select>
+          
+          <label style="display:block; margin-bottom:0.5rem; font-size:0.8rem; color:#00ffff; font-weight:600; letter-spacing:1.5px; text-transform:uppercase;">SOY</label>
+          <div class="role-cards" id="register-role-cards">
+            <!-- Cliente -->
+            <div class="role-card" onclick="selectRole('client', this)">
+              <div class="role-icon-svg">
+                <svg viewBox="0 0 48 48">
+                  <circle cx="24" cy="16" r="8"/>
+                  <path d="M12 38c0-8 5-12 12-12s12 4 12 12"/>
+                  <path d="M18 20c-2 4-6 6-6 6"/>
+                  <path d="M30 20c2 4 6 6 6 6"/>
+                  <path d="M24 24v4"/>
+                </svg>
+              </div>
+              <div class="role-card-title">Cliente</div>
+              <div class="role-card-desc">Agendar citas y explorar estilos</div>
+            </div>
+            <!-- Barbero -->
+            <div class="role-card" onclick="selectRole('barber', this)">
+              <div class="role-icon-svg">
+                <svg viewBox="0 0 48 48">
+                  <!-- Tijeras -->
+                  <path d="M14 14l20 20M34 14L14 34"/>
+                  <circle cx="14" cy="14" r="4"/>
+                  <circle cx="34" cy="14" r="4"/>
+                  <!-- Máquina -->
+                  <rect x="20" y="28" width="8" height="12" rx="2"/>
+                  <path d="M22 28v-4h4v4"/>
+                  <path d="M20 36h8"/>
+                </svg>
+              </div>
+              <div class="role-card-title">Barbero</div>
+              <div class="role-card-desc">Ofrecer servicios y gestionar agenda</div>
+            </div>
           </div>
+          <input type="hidden" id="register-role-value" value="">
+
           <button type="submit" class="btn">REGISTRARSE</button>
         </form>
         <div class="auth-links">¿Ya tienes cuenta? <a href="?mode=login">Inicia sesión</a></div>
@@ -337,7 +248,7 @@
         <form id="recover-form">
           <div class="form-group">
             <label for="recover-email">EMAIL</label>
-            <input type="email" id="recover-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+            <input type="email" id="recover-email" placeholder="tu@email.com" required autocomplete="email" />
           </div>
           <button type="submit" class="btn">ENVIAR ENLACE</button>
         </form>
@@ -349,11 +260,11 @@
         <form id="newpassword-form">
           <div class="form-group">
             <label for="new-password">NUEVA CONTRASEÑA</label>
-            <input type="password" id="new-password" name="newPassword" placeholder="••••••••" required minlength="6" />
+            <input type="password" id="new-password" placeholder="••••••••" required minlength="6" />
           </div>
           <div class="form-group">
             <label for="confirm-new-password">CONFIRMAR CONTRASEÑA</label>
-            <input type="password" id="confirm-new-password" name="confirmNewPassword" placeholder="••••••••" required minlength="6" />
+            <input type="password" id="confirm-new-password" placeholder="••••••••" required minlength="6" />
           </div>
           <button type="submit" class="btn" id="update-password-btn">ACTUALIZAR CONTRASEÑA</button>
         </form>
@@ -362,21 +273,25 @@
     </div>
   </div>
 
-  <!-- 🎴 MODAL: SELECCIÓN DE ROL PARA GOOGLE -->
+  <!--  MODAL: SELECCIÓN DE ROL PARA GOOGLE -->
   <div class="modal-overlay" id="google-role-modal">
     <div class="modal-content">
-      <button class="modal-close" onclick="closeGoogleModal()"></button>
+      <button class="modal-close" onclick="closeGoogleModal()">&times;</button>
       <div class="modal-title">¿Cómo usarás BarberHub?</div>
       <div class="modal-subtitle">Selecciona tu tipo de cuenta para continuar</div>
       
       <div class="role-cards">
         <div class="role-card" onclick="selectRole('client', this)">
-          <div class="role-icon">👤</div>
+          <div class="role-icon-svg">
+            <svg viewBox="0 0 48 48"><circle cx="24" cy="16" r="8"/><path d="M12 38c0-8 5-12 12-12s12 4 12 12"/><path d="M18 20c-2 4-6 6-6 6"/><path d="M30 20c2 4 6 6 6 6"/><path d="M24 24v4"/></svg>
+          </div>
           <div class="role-card-title">Cliente</div>
           <div class="role-card-desc">Busco agendar citas y explorar estilos</div>
         </div>
         <div class="role-card" onclick="selectRole('barber', this)">
-          <div class="role-icon"></div>
+          <div class="role-icon-svg">
+            <svg viewBox="0 0 48 48"><path d="M14 14l20 20M34 14L14 34"/><circle cx="14" cy="14" r="4"/><circle cx="34" cy="14" r="4"/><rect x="20" y="28" width="8" height="12" rx="2"/><path d="M22 28v-4h4v4"/><path d="M20 36h8"/></svg>
+          </div>
           <div class="role-card-title">Barbero</div>
           <div class="role-card-desc">Ofrezco servicios y gestiono mi agenda</div>
         </div>
@@ -384,9 +299,7 @@
 
       <div class="terms-checkbox">
         <input type="checkbox" id="terms-accept" onchange="checkTermsAndRole()">
-        <label for="terms-accept">
-          Acepto los <a href="#" onclick="event.preventDefault(); alert('Políticas de BarberHub: Al usar esta app aceptas nuestros términos de servicio y política de privacidad.')">Términos de Servicio</a> y la <a href="#" onclick="event.preventDefault(); alert('Política de Privacidad: Tus datos se usan solo para gestionar tus citas y mejorar tu experiencia.')">Política de Privacidad</a>. Entiendo que mi información será utilizada conforme a las políticas de BarberHub.
-        </label>
+        <label for="terms-accept">Acepto los <a href="#" onclick="event.preventDefault()">Términos</a> y <a href="#" onclick="event.preventDefault()">Política de Privacidad</a>. Entiendo el uso de mis datos según las políticas de BarberHub.</label>
       </div>
 
       <button class="btn-continue-google" id="btn-continue-google" onclick="continueWithGoogle()" disabled>
@@ -402,385 +315,179 @@
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', async () => {
       console.log('🚀 [INIT] BarberHub Auth Starting...');
-
       if (typeof window.supabase === 'undefined') {
-        console.error('❌ [ERROR] Supabase library not loaded');
-        alert('ERROR: No se pudo cargar Supabase.');
-        return;
+        console.error('❌ Supabase not loaded'); alert('Error cargando Supabase.'); return;
       }
-
-      console.log('✅ [INIT] Supabase loaded');
 
       const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
-      
-      console.log('🔌 [INIT] Creating Supabase client...');
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      console.log('✅ [INIT] Client created');
 
-      // UI Helpers
-      const sections = {
-        login: document.getElementById('login-section'),
-        register: document.getElementById('register-section'),
-        recover: document.getElementById('recover-section'),
-        newpassword: document.getElementById('newpassword-section')
-      };
+      const sections = { login: document.getElementById('login-section'), register: document.getElementById('register-section'), recover: document.getElementById('recover-section'), newpassword: document.getElementById('newpassword-section') };
       const subtitle = document.getElementById('auth-subtitle');
-      const subtitles = { 
-        login: 'Inicia tu estilo', 
-        register: 'Crea tu cuenta gratis', 
-        recover: 'Recupera tu contraseña',
-        newpassword: 'Crea tu nueva contraseña'
-      };
+      const subtitles = { login: 'Inicia tu estilo', register: 'Crea tu cuenta gratis', recover: 'Recupera tu contraseña', newpassword: 'Crea tu nueva contraseña' };
       const errorMsg = document.getElementById('error-message');
       const successMsg = document.getElementById('success-message');
 
-      function showError(msg) {
-        console.error('❌ [ERROR]', msg);
-        if (errorMsg) {
-          errorMsg.textContent = msg; 
-          errorMsg.classList.add('show');
-          setTimeout(() => errorMsg.classList.remove('show'), 8000);
-        }
-      }
+      function showError(msg) { if(errorMsg){ errorMsg.textContent=msg; errorMsg.classList.add('show'); setTimeout(()=>errorMsg.classList.remove('show'),6000); } }
+      function showSuccess(msg) { if(successMsg){ successMsg.textContent=msg; successMsg.classList.add('show'); setTimeout(()=>successMsg.classList.remove('show'),5000); } }
+      function showSection(name) { Object.keys(sections).forEach(k=>sections[k]?.classList.remove('active')); if(sections[name]){ sections[name].classList.add('active'); subtitle.textContent=subtitles[name]; } }
 
-      function showSuccess(msg) {
-        console.log('✅ [SUCCESS]', msg);
-        if (successMsg) {
-          successMsg.textContent = msg; 
-          successMsg.classList.add('show');
-          setTimeout(() => successMsg.classList.remove('show'), 8000);
-        }
-      }
-
-      function showSection(name) {
-        Object.keys(sections).forEach(key => sections[key]?.classList.remove('active'));
-        if (sections[name]) {
-          sections[name].classList.add('active');
-          subtitle.textContent = subtitles[name];
-        }
-      }
-
-      // 🔑 FUNCIÓN: Decidir a dónde enviar según ROL
       async function handleLoginRedirect(user) {
         try {
-          const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single();
-
-          if (error) throw error;
+          const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
           const role = profile?.role || 'client';
-          
-          console.log(`🚀 Redirecting ${role}...`);
-          
-          if (role === 'admin') {
-            window.location.href = '/admin.html';
-          } else {
-            window.location.href = '/dashboard.html';
-          }
-        } catch (err) {
-          console.error('Error reading profile:', err);
-          window.location.href = '/dashboard.html';
-        }
+          window.location.href = role === 'admin' ? '/admin.html' : '/dashboard.html';
+        } catch { window.location.href = '/dashboard.html'; }
       }
 
-      // 🎯 Inicialización principal
       async function initAuth() {
-        const isRecovery = detectRecoveryMode();
-        
-        if (isRecovery) {
-          console.log(' Recovery mode detected');
+        const hash = window.location.hash;
+        if(hash.includes('type=recovery') || hash.includes('access_token')) {
           showSection('newpassword');
-          const sessionRecovered = await recoverSessionFromHash();
-          if (!sessionRecovered) {
-            showError('⚠️ Enlace de recuperación inválido o expirado.');
-            setTimeout(() => showSection('recover'), 3000);
-          }
+          const { data } = await supabase.auth.getSession();
+          if(!data?.session){ showError('Enlace inválido o expirado.'); setTimeout(()=>showSection('recover'),3000); }
           return;
         }
-        
         const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          console.log('✅ Active session, redirecting...');
-          await handleLoginRedirect(session.user);
-          return;
-        }
-        
-        const params = new URLSearchParams(window.location.search);
-        const mode = params.get('mode') || 'login';
+        if(session) { await handleLoginRedirect(session.user); return; }
+        const mode = new URLSearchParams(window.location.search).get('mode') || 'login';
         showSection(mode);
       }
-
       await initAuth();
 
-      // 🔔 Escuchar cambios de auth
       supabase.auth.onAuthStateChange((event, session) => {
-        console.log('🔔 Auth state changed:', event);
-        if (event === 'SIGNED_IN' && session) {
-          handleLoginRedirect(session.user);
-        }
-        if (event === 'PASSWORD_RECOVERY') {
-          showSection('newpassword');
-        }
+        if(event==='SIGNED_IN' && session) handleLoginRedirect(session.user);
+        if(event==='PASSWORD_RECOVERY') showSection('newpassword');
       });
 
-      // LOGIN CON EMAIL
-      const loginForm = document.getElementById('login-form');
-      const loginBtn = document.getElementById('login-btn');
-      if (loginForm && loginBtn) {
-        loginForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const email = document.getElementById('login-email').value.trim();
-          const password = document.getElementById('login-password').value;
-          if (!email || !password) { showError('❌ Completa email y contraseña'); return; }
-          loginBtn.innerHTML = '⏳ Verificando...'; loginBtn.disabled = true;
-          try {
-            const { error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) throw new Error(error.message);
-          } catch (err) {
-            showError('❌ ' + err.message);
-            loginBtn.innerHTML = 'ENTRAR'; loginBtn.disabled = false;
-          }
-        });
-      }
+      // LOGIN
+      document.getElementById('login-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const pass = document.getElementById('login-password').value;
+        if(!email||!pass) return showError('Completa email y contraseña');
+        const btn = document.getElementById('login-btn'); btn.innerHTML='⏳...'; btn.disabled=true;
+        try {
+          const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+          if(error) throw error;
+        } catch(err) { showError('❌ '+err.message); btn.innerHTML='ENTRAR'; btn.disabled=false; }
+      });
 
-      // ✅ GOOGLE LOGIN - ABRIR MODAL
-      const googleBtn = document.getElementById('google-login-btn');
-      if (googleBtn) {
-        googleBtn.addEventListener('click', () => {
-          console.log(' [GOOGLE] Opening role selection modal...');
-          document.getElementById('google-role-modal').classList.add('active');
-        });
-      }
+      // GOOGLE BTN -> ABRIR MODAL
+      document.getElementById('google-login-btn')?.addEventListener('click', () => {
+        document.getElementById('google-role-modal').classList.add('active');
+      });
 
-      // ✅ REGISTRO CON ROL
-      const registerForm = document.getElementById('register-form');
-      if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const email = document.getElementById('register-email').value.trim();
-          const password = document.getElementById('register-password').value;
-          const confirm = document.getElementById('register-confirm').value;
-          const role = document.getElementById('register-role').value;
-          
-          if (password !== confirm) { showError('❌ Las contraseñas no coinciden'); return; }
-          if (!role || (role !== 'client' && role !== 'barber')) { showError(' Selecciona Cliente o Barbero'); return; }
-          
-          try {
-            const { data: authData, error: authError } = await supabase.auth.signUp({ 
-              email, password, options: { data: { role } } 
-            });
-            if (authError) throw authError;
-            if (!authData.user) throw new Error('No se creó el usuario');
-            
-            const { error: profileError } = await supabase.from('profiles').insert([{
-              id: authData.user.id, email, role, created_at: new Date().toISOString()
-            }]);
-            if (profileError) console.warn('⚠️ Error creando perfil:', profileError.message);
-            
-            showSuccess(`✅ ¡Registro exitoso! Bienvenido ${role === 'barber' ? 'Barbero' : 'Cliente'}. Verifica tu email.`);
-            setTimeout(() => showSection('login'), 3000);
-          } catch (err) { 
-            showError('❌ ' + err.message); 
-          }
-        });
-      }
+      // REGISTRO
+      document.getElementById('register-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('register-email').value.trim();
+        const pass = document.getElementById('register-password').value;
+        const confirm = document.getElementById('register-confirm').value;
+        const role = document.getElementById('register-role-value').value;
+        if(pass!==confirm) return showError('Las contraseñas no coinciden');
+        if(!role) return showError('Selecciona si eres Cliente o Barbero');
+        try {
+          const { data, error } = await supabase.auth.signUp({ email, password: pass, options: { data: { role } } });
+          if(error) throw error;
+          await supabase.from('profiles').insert([{ id: data.user.id, email, role, created_at: new Date().toISOString() }]);
+          showSuccess(`✅ ¡Listo! Eres ${role==='barber'?'Barbero':'Cliente'}. Verifica tu email.`);
+          setTimeout(()=>showSection('login'),3000);
+        } catch(err) { showError('❌ '+err.message); }
+      });
 
       // RECUPERAR
-      const recoverForm = document.getElementById('recover-form');
-      if (recoverForm) {
-        recoverForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const email = document.getElementById('recover-email').value.trim();
-          try {
-            const { error } = await supabase.auth.resetPasswordForEmail(email, {
-              redirectTo: 'https://barberhub-two.vercel.app/auth.html'
-            });
-            if (error) throw error;
-            showSuccess('✅ Enlace enviado. Revisa tu correo.');
-            setTimeout(() => showSection('login'), 4000);
-          } catch (err) { showError('❌ ' + err.message); }
-        });
-      }
+      document.getElementById('recover-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('recover-email').value.trim();
+        try {
+          const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + window.location.pathname });
+          if(error) throw error;
+          showSuccess('✅ Enlace enviado. Revisa tu correo.');
+          setTimeout(()=>showSection('login'),4000);
+        } catch(err) { showError('❌ '+err.message); }
+      });
 
       // NUEVA CONTRASEÑA
-      const newPasswordForm = document.getElementById('newpassword-form');
-      const updatePasswordBtn = document.getElementById('update-password-btn');
-      if (newPasswordForm) {
-        newPasswordForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const newPassword = document.getElementById('new-password').value;
-          const confirmNew = document.getElementById('confirm-new-password').value;
-          if (newPassword !== confirmNew) { showError('❌ Las contraseñas no coinciden'); return; }
-          if (newPassword.length < 6) { showError(' Mínimo 6 caracteres'); return; }
-          
-          const { data: { session } } = await supabase.auth.getSession();
-          if (!session) { showError('❌ Sesión inválida. Solicita un nuevo enlace.'); showSection('recover'); return; }
-          
-          updatePasswordBtn.innerHTML = '⏳ Actualizando...'; updatePasswordBtn.disabled = true;
-          try {
-            const { error } = await supabase.auth.updateUser({ password: newPassword });
-            if (error) throw error;
-            showSuccess('✅ Contraseña actualizada. Redirigiendo...');
-            await supabase.auth.signOut();
-            window.location.hash = '';
-            window.history.replaceState(null, '', window.location.pathname);
-            setTimeout(() => { window.location.href = '/auth.html?mode=login'; }, 2500);
-          } catch (err) {
-            showError('❌ ' + err.message);
-            updatePasswordBtn.innerHTML = 'ACTUALIZAR CONTRASEÑA'; updatePasswordBtn.disabled = false;
-          }
-        });
-      }
-
-      console.log('🎉 [INIT] All systems ready!');
+      document.getElementById('newpassword-form')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const np = document.getElementById('new-password').value;
+        const cp = document.getElementById('confirm-new-password').value;
+        if(np!==cp) return showError('No coinciden');
+        if(np.length<6) return showError('Mínimo 6 caracteres');
+        const { data: { session } } = await supabase.auth.getSession();
+        if(!session) return showError('Sesión inválida. Pide otro enlace.');
+        const btn = document.getElementById('update-password-btn'); btn.innerHTML='⏳...'; btn.disabled=true;
+        try {
+          const { error } = await supabase.auth.updateUser({ password: np });
+          if(error) throw error;
+          showSuccess('✅ Contraseña actualizada.');
+          await supabase.auth.signOut();
+          setTimeout(()=>window.location.href='/auth.html?mode=login', 2000);
+        } catch(err) { showError('❌ '+err.message); btn.innerHTML='ACTUALIZAR'; btn.disabled=false; }
+      });
     });
 
-    //  LÓGICA DEL MODAL DE GOOGLE
-    let selectedGoogleRole = null;
-
-    function selectRole(role, element) {
-      selectedGoogleRole = role;
-      document.querySelectorAll('.role-card').forEach(card => card.classList.remove('selected'));
-      element.classList.add('selected');
+    // 🎴 LÓGICA DE TARJETAS DE ROL
+    let selectedRole = null;
+    function selectRole(role, el) {
+      selectedRole = role;
+      document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      // Sincronizar con registro si aplica
+      const regInput = document.getElementById('register-role-value');
+      if(regInput) regInput.value = role;
       checkTermsAndRole();
     }
 
     function checkTermsAndRole() {
-      const termsAccepted = document.getElementById('terms-accept').checked;
+      const accepted = document.getElementById('terms-accept')?.checked;
       const btn = document.getElementById('btn-continue-google');
-      if (selectedGoogleRole && termsAccepted) {
-        btn.classList.add('active');
-        btn.disabled = false;
-      } else {
-        btn.classList.remove('active');
-        btn.disabled = true;
+      if(btn) {
+        if(selectedRole && accepted) { btn.classList.add('active'); btn.disabled = false; }
+        else { btn.classList.remove('active'); btn.disabled = true; }
       }
     }
 
     function closeGoogleModal() {
       document.getElementById('google-role-modal').classList.remove('active');
-      selectedGoogleRole = null;
-      document.querySelectorAll('.role-card').forEach(card => card.classList.remove('selected'));
-      document.getElementById('terms-accept').checked = false;
+      selectedRole = null;
+      document.querySelectorAll('.modal-content .role-card').forEach(c => c.classList.remove('selected'));
+      const cb = document.getElementById('terms-accept'); if(cb) cb.checked = false;
       checkTermsAndRole();
     }
 
     async function continueWithGoogle() {
-      if (!selectedGoogleRole || !document.getElementById('terms-accept').checked) {
-        alert('Por favor selecciona un rol y acepta los términos.');
-        return;
-      }
-
-      console.log('🔵 [GOOGLE] Starting OAuth with role:', selectedGoogleRole);
-      
+      if(!selectedRole || !document.getElementById('terms-accept').checked) return;
       try {
-        const { error } = await window.supabase.createClient(
-          'https://qnlbaxxbsbwbgqucbywn.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'
-        ).auth.signInWithOAuth({
+        const supabase = window.supabase.createClient('https://qnlbaxxbsbwbgqucbywn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM');
+        await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
             redirectTo: 'https://barberhub-two.vercel.app/auth.html',
-            queryParams: { 
-              access_type: 'offline', 
-              prompt: 'consent',
-              state: btoa(JSON.stringify({ role: selectedGoogleRole })) // Guardamos el rol en el state
-            }
+            queryParams: { state: btoa(JSON.stringify({ role: selectedRole })) }
           }
         });
-        if (error) throw error;
-      } catch (err) {
-        console.error('❌ [GOOGLE] Error:', err);
-        alert('❌ Error al conectar con Google: ' + err.message);
-      }
+      } catch(err) { alert('Error con Google: '+err.message); }
     }
 
-    // 🔑 Detectar recovery desde hash o query params
-    function detectRecoveryMode() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('mode') === 'newpassword') return true;
-      if (window.location.hash.includes('type=recovery')) return true;
-      if (window.location.hash.includes('access_token=')) return true;
-      return false;
-    }
-
-    // 🔑 Recuperar sesión desde hash
-    async function recoverSessionFromHash() {
-      try {
-        const { data, error } = await window.supabase.createClient(
-          'https://qnlbaxxbsbwbgqucbywn.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'
-        ).auth.getSession();
-        
-        if (error) return false;
-        if (data?.session) return true;
-        
-        if (window.location.hash && window.location.hash.includes('access_token')) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const retry = await window.supabase.createClient(
-            'https://qnlbaxxbsbwbgqucbywn.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'
-          ).auth.getSession();
-          return !!retry.data?.session;
-        }
-        return false;
-      } catch (e) {
-        return false;
-      }
-    }
-
-    // 🔄 Cuando Google OAuth redirige de vuelta, procesar el rol del state
-    (async function processGoogleOAuthCallback() {
-      const hash = window.location.hash;
-      if (hash.includes('access_token') || hash.includes('code=')) {
-        console.log('🔄 Processing Google OAuth callback...');
-        
-        // Extraer el state (donde guardamos el rol)
-        const stateMatch = hash.match(/state=([^&]+)/);
-        if (stateMatch) {
-          try {
-            const stateData = JSON.parse(atob(stateMatch[1]));
-            const selectedRole = stateData.role;
-            
-            if (selectedRole) {
-              console.log('✅ Role from OAuth state:', selectedRole);
-              
-              // Esperar a que Supabase procese la sesión
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              
-              const { data: { session } } = await window.supabase.createClient(
-                'https://qnlbaxxbsbwbgqucbywn.supabase.co',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'
-              ).auth.getSession();
-              
-              if (session) {
-                // Verificar si ya existe el perfil
-                const { data: profile } = await window.supabase.createClient(
-                  'https://qnlbaxxbsbwbgqucbywn.supabase.co',
-                  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'
-                ).from('profiles').select('role').eq('id', session.user.id).single();
-                
-                // Si no existe, crear el perfil con el rol seleccionado
-                if (!profile || !profile.role) {
-                  await window.supabase.createClient(
-                    'https://qnlbaxxbsbwbgqucbywn.supabase.co',
-                    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'
-                  ).from('profiles').insert([{
-                    id: session.user.id,
-                    email: session.user.email,
-                    role: selectedRole,
-                    created_at: new Date().toISOString()
-                  }]);
-                  console.log('✅ Profile created with role:', selectedRole);
-                }
-              }
-            }
-          } catch (e) {
-            console.warn('⚠️ Could not process OAuth state:', e);
+    // 🔄 Procesar callback de Google OAuth
+    (async () => {
+      if(window.location.hash.includes('access_token') || window.location.hash.includes('code=')) {
+        await new Promise(r => setTimeout(r, 800));
+        const supabase = window.supabase.createClient('https://qnlbaxxbsbwbgqucbywn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM');
+        const { data: { session } } = await supabase.auth.getSession();
+        if(session) {
+          const match = window.location.hash.match(/state=([^&]+)/);
+          let role = 'client';
+          if(match) try { role = JSON.parse(atob(match[1])).role || 'client'; } catch{}
+          
+          const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
+          if(!profile?.role) {
+            await supabase.from('profiles').insert([{ id: session.user.id, email: session.user.email, role, created_at: new Date().toISOString() }]);
           }
+          window.location.href = role === 'admin' ? '/admin.html' : '/dashboard.html';
         }
       }
     })();
