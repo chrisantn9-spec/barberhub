@@ -2,21 +2,119 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>BarberHub | Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | BarberHub</title>
   <style>
-    body { font-family: system-ui, sans-serif; background: #0f1115; color: #e4e4e7; padding: 2rem; }
-    #loader { text-align: center; margin-top: 20vh; }
-    #content { display: none; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0a0f1e 0%, #050810 100%);
+      color: #e4e4e7; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      padding: 2rem; position: relative; overflow-x: hidden;
+    }
+    /* Pantalla de carga */
+    #loading-screen {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100vh; text-align: center; animation: fadeIn 0.5s ease;
+    }
+    #loading-screen h2 { color: #00ffff; font-size: 1.8rem; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(0,255,255,0.5); }
+    .loader { width: 40px; height: 40px; border: 3px solid rgba(0,255,255,0.2); border-top: 3px solid #00ffff; border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* Contenido del Dashboard */
+    #dashboard-content { display: none; width: 100%; max-width: 1200px; animation: slideUp 0.6s ease-out; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(0,255,255,0.2); }
+    .header h1 { font-size: 2rem; font-weight: 800; letter-spacing: 2px; }
+    .barber { color: #fff; } .hub { color: #00ffff; text-shadow: 0 0 12px rgba(0,255,255,0.6); }
+    
+    .btn-logout {
+      padding: 0.8rem 1.5rem; background: rgba(255, 50, 50, 0.1); border: 1px solid rgba(255, 50, 50, 0.4);
+      color: #ff6b6b; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s;
+    }
+    .btn-logout:hover { background: rgba(255, 50, 50, 0.25); box-shadow: 0 0 15px rgba(255, 50, 50, 0.3); transform: translateY(-2px); }
+
+    .welcome-card {
+      background: rgba(0, 255, 255, 0.03); border: 1px solid rgba(0, 255, 255, 0.2); border-radius: 16px;
+      padding: 2.5rem; text-align: center; box-shadow: 0 0 30px rgba(0, 255, 255, 0.05);
+    }
+    .welcome-card h2 { font-size: 1.8rem; margin-bottom: 0.8rem; color: #fff; }
+    .welcome-card p { color: #9ca3af; font-size: 1.1rem; }
+    .user-badge {
+      display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1.2rem; background: rgba(0,255,255,0.1);
+      border: 1px solid rgba(0,255,255,0.3); border-radius: 20px; color: #00ffff; font-size: 0.9rem; font-weight: 600;
+    }
   </style>
 </head>
 <body>
-  <div id="loader">🔐 Verificando sesión...</div>
-  <div id="content">
-    <h1>👤 Mi Panel</h1>
-    <p>Email: <span id="user-email"></span></p>
-    <button id="logout-btn">Cerrar sesión</button>
+  <!-- PANTALLA DE CARGA -->
+  <div id="loading-screen">
+    <div class="loader"></div>
+    <h2 style="margin-top: 1.5rem;"> Verificando sesión...</h2>
   </div>
-  <script type="module" src="./js/config.js"></script>
-  <script type="module" src="./js/dashboard.js"></script>
+
+  <!-- CONTENIDO REAL DEL DASHBOARD -->
+  <div id="dashboard-content">
+    <div class="header">
+      <h1><span class="barber">BARBER</span><span class="hub">HUB</span> | Dashboard</h1>
+      <button id="logout-btn" class="btn-logout">Cerrar Sesión</button>
+    </div>
+    
+    <div class="welcome-card">
+      <h2>¡Bienvenido de nuevo! 💈</h2>
+      <p>Tu sesión está activa y segura. Ya puedes gestionar tus citas, servicios y perfil.</p>
+      <div class="user-badge" id="user-email">cargando...</div>
+    </div>
+
+    <!-- Aquí puedes agregar el resto de tu dashboard: tablas, gráficos, botones, etc. -->
+  </div>
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- LÓGICA DE PROTECCIÓN Y SESIÓN -->
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', async () => {
+      const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
+      
+      const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // 1. Verificar sesión al cargar
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) console.warn('⚠️ Error verificando sesión:', error.message);
+      
+      if (!session) {
+        console.log('🚫 Sin sesión activa. Redirigiendo a login...');
+        window.location.href = '/auth.html';
+        return;
+      }
+
+      // 2. Sesión válida → Mostrar dashboard
+      console.log('✅ Sesión activa para:', session.user.email);
+      document.getElementById('loading-screen').style.display = 'none';
+      document.getElementById('dashboard-content').style.display = 'block';
+      document.getElementById('user-email').textContent = session.user.email;
+
+      // 3. Escuchar cambios de auth (logout desde otra pestaña, token expirado, etc.)
+      supabase.auth.onAuthStateChange((event) => {
+        if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+          if (event === 'SIGNED_OUT') window.location.href = '/auth.html';
+        }
+      });
+    });
+
+    // 4. Botón de logout
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await window.supabase.createClient(
+        'https://qnlbaxxbsbwbgqucbywn.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM'
+      ).auth.signOut();
+      window.location.href = '/auth.html';
+    });
+  </script>
 </body>
 </html>
