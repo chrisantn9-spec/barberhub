@@ -559,5 +559,39 @@
       }
     }
   </script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  // 🔍 Busca la casilla de términos y el botón de continuar dentro del modal
+  const termsCheckbox = document.querySelector('#google-role-modal input[type="checkbox"]');
+  const continueBtn = document.getElementById('btn-continue-google');
+
+  if (termsCheckbox && continueBtn) {
+    // ✅ Cuando se marca/desmarca la casilla
+    termsCheckbox.addEventListener('change', () => {
+      if (termsCheckbox.checked) {
+        continueBtn.disabled = false;
+        continueBtn.classList.add('active');
+        continueBtn.style.pointerEvents = 'auto';
+        continueBtn.style.opacity = '1';
+      } else {
+        continueBtn.disabled = true;
+        continueBtn.classList.remove('active');
+        continueBtn.style.pointerEvents = 'none';
+        continueBtn.style.opacity = '0.5';
+      }
+    });
+
+    // 🖱️ Asegura que el botón funcione al hacer click
+    continueBtn.addEventListener('click', (e) => {
+      if (!termsCheckbox.checked) {
+        e.preventDefault();
+        return;
+      }
+      // Aquí ya puedes llamar a tu función de Google OAuth
+      // continueWithGoogle(); 
+    });
+  }
+});
+</script>
 </body>
 </html>
