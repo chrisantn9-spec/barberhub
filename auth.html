@@ -201,8 +201,19 @@
       try{
         if(modalMethod==='google'){
           console.log('🔵 Google OAuth con rol:',modalRole);
-          localStorage.setItem('pending_google_role',modalRole);
-          await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/auth.html',queryParams:{access_type:'offline',prompt:'consent',state:btoa(JSON.stringify({role:modalRole,ts:Date.now()}))}}})
+          // ✅ GUARDAR ROL EN LOCALSTORAGE (en lugar de state)
+          localStorage.setItem('barberhub_pending_role', modalRole);
+          localStorage.setItem('barberhub_oauth_ts', Date.now().toString());
+          
+          // ✅ LLAMAR A OAUTH SIN STATE PERSONALIZADO (dejar que Supabase lo maneje)
+          await supabaseClient.auth.signInWithOAuth({
+            provider:'google',
+            options:{
+              redirectTo:window.location.origin+'/auth.html',
+              queryParams:{access_type:'offline',prompt:'consent'}
+              // ❌ SIN state personalizado → evita bad_oauth_state
+            }
+          })
         }else if(modalMethod==='email'&&modalEmailData){
           const{data,error}=await supabaseClient.auth.signUp({email:modalEmailData.email,password:modalEmailData.password,options:{data:{role:modalRole}}});
           if(error)throw error;if(!data.user)throw new Error('No se creó el usuario');
@@ -217,14 +228,58 @@
     function showSection(name){document.querySelectorAll('.auth-section').forEach(s=>s.classList.remove('active'));const target=document.getElementById(name+'-section');if(target)target.classList.add('active');const sub=document.getElementById('auth-subtitle');const titles={login:'Inicia tu estilo',register:'Crea tu cuenta gratis',recover:'Recupera tu contraseña',newpassword:'Crea tu nueva contraseña'};if(sub&&titles[name])sub.textContent=titles[name]}
     
     async function handleLoginRedirect(user){
-      try{const{data:profile}=await supabaseClient.from('profiles').select('role').eq('id',user.id).single();const role=profile?.role||'client';console.log('🚀 Redirect to',role);window.location.href=role==='admin'?'/admin.html':'/dashboard.html'}
+      try{
+        // ✅ Recuperar rol de localStorage si existe (fallback)
+        const savedRole = localStorage.getItem('barberhub_pending_role');
+        const{data:profile}=await supabaseClient.from('profiles').select('role').eq('id',user.id).single();
+        let role = profile?.role || savedRole || 'client';
+        
+        // Limpiar localStorage después de usarlo
+        localStorage.removeItem('barberhub_pending_role');
+        localStorage.removeItem('barberhub_oauth_ts');
+        
+        console.log('🚀 Redirect to',role);
+        window.location.href=role==='admin'?'/admin.html':'/dashboard.html'
+      }
       catch(e){console.error('Redirect error:',e);window.location.href='/dashboard.html'}
     }
     
     async function processOAuthCallback(){
-      const hash=window.location.hash;if(!hash.includes('access_token')&&!hash.includes('code='))return;
-      console.log('🔄 OAuth callback');const match=hash.match(/state=([^&]+)/);
-      if(match){try{const{role}=JSON.parse(atob(match[1]));console.log('📦 Role:',role);if(role){await new Promise(r=>setTimeout(r,800));const{data:{session}}=await supabaseClient.auth.getSession();if(session){const{data:exists}=await supabaseClient.from('profiles').select('role').eq('id',session.user.id).single();if(!exists?.role){await supabaseClient.from('profiles').insert([{id:session.user.id,email:session.user.email,role,created_at:new Date().toISOString()}]);console.log('✅ Profile created')}localStorage.removeItem('pending_google_role')}}}catch(e){console.warn('⚠️ State parse failed',e);const savedRole=localStorage.getItem('pending_google_role');if(savedRole)console.log('🔄 Using localStorage role:',savedRole)}}}
+      const hash=window.location.hash;
+      if(!hash.includes('access_token')&&!hash.includes('code='))return;
+      
+      console.log('🔄 OAuth callback detected');
+      
+      // ✅ Esperar a que Supabase procese la sesión
+      await new Promise(r=>setTimeout(r,1000));
+      
+      const{data:{session}}=await supabaseClient.auth.getSession();
+      if(session){
+        console.log('✅ Session available after OAuth');
+        
+        // ✅ Recuperar rol de localStorage
+        const savedRole = localStorage.getItem('barberhub_pending_role');
+        console.log('📦 Saved role from localStorage:', savedRole);
+        
+        // ✅ Verificar si ya existe perfil
+        const{data:exists}=await supabaseClient.from('profiles').select('role').eq('id',session.user.id).single();
+        
+        // ✅ Crear perfil si no existe, usando el rol guardado
+        if(!exists?.role && savedRole){
+          await supabaseClient.from('profiles').insert([{
+            id:session.user.id,
+            email:session.user.email,
+            role:savedRole,
+            created_at:new Date().toISOString()
+          }]);
+          console.log('✅ Profile created with role:', savedRole);
+        }
+        
+        // ✅ Limpiar localStorage
+        localStorage.removeItem('barberhub_pending_role');
+        localStorage.removeItem('barberhub_oauth_ts');
+      }
+    }
   </script>
 </body>
 </html>
