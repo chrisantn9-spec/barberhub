@@ -48,8 +48,10 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     .form-group { margin-bottom: 1.4rem; }
     .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.8rem; color: #00ffff; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
-    .form-group input { width: 100%; padding: 0.9rem 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 255, 255, 0.35); border-radius: 10px; color: #ffffff; font-size: 1rem; transition: all 0.3s ease; }
-    .form-group input:focus { outline: none; border-color: #00ffff; background: rgba(0, 0, 0, 0.6); box-shadow: 0 0 15px rgba(0, 255, 255, 0.25); }
+    .form-group input, .form-group select { 
+      width: 100%; padding: 0.9rem 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 255, 255, 0.35); border-radius: 10px; color: #ffffff; font-size: 1rem; transition: all 0.3s ease; 
+    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #00ffff; background: rgba(0, 0, 0, 0.6); box-shadow: 0 0 15px rgba(0, 255, 255, 0.25); }
     .form-group input::placeholder { color: #9ca3af; }
     .btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, #00e5ff, #0072ff); border: none; border-radius: 10px; color: #000; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 2; }
     .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
@@ -119,7 +121,7 @@
         </div>
       </div>
 
-      <!-- REGISTRO -->
+      <!-- REGISTRO CON SELECTOR DE ROL -->
       <div id="register-section" class="auth-section">
         <form id="register-form">
           <div class="form-group">
@@ -132,17 +134,19 @@
           </div>
           <div class="form-group">
             <label for="register-confirm">CONFIRMAR CONTRASEÑA</label>
-            <!-- En el register-section de auth.html, agrega esto: -->
-<div class="form-group">
-  <label for="register-role">SOY</label>
-  <select id="register-role" name="role" required style="width: 100%; padding: 0.9rem 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 255, 255, 0.35); border-radius: 10px; color: #ffffff; font-size: 1rem; cursor: pointer;">
-    <option value="" disabled selected>Selecciona tu tipo de cuenta</option>
-    <option value="client">👤 Cliente (Quiero agendar citas)</option>
-    <option value="barber">💈 Barbero (Quiero ofrecer servicios)</option>
-  </select>
-</div>
             <input type="password" id="register-confirm" name="confirmPassword" placeholder="••••••••" required minlength="6" />
           </div>
+          
+          <!-- ✅ NUEVO: Selector de Rol -->
+          <div class="form-group">
+            <label for="register-role">SOY</label>
+            <select id="register-role" name="role" required>
+              <option value="" disabled selected>Selecciona tu tipo de cuenta</option>
+              <option value="client">👤 Cliente (Quiero agendar citas)</option>
+              <option value="barber">💈 Barbero (Quiero ofrecer servicios)</option>
+            </select>
+          </div>
+
           <button type="submit" class="btn">REGISTRARSE</button>
         </form>
         <div class="auth-links">¿Ya tienes cuenta? <a href="?mode=login">Inicia sesión</a></div>
@@ -194,6 +198,7 @@
 
       console.log('✅ [INIT] Supabase loaded');
 
+      // 🔑 CONFIGURACIÓN EXACTA (ID CORREGIDO)
       const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
       
@@ -244,46 +249,64 @@
         }
       }
 
+      //  FUNCIÓN CRÍTICA: Decidir a dónde enviar al usuario según su ROL
+      async function handleLoginRedirect(user) {
+        try {
+          // 1. Consultar la tabla 'profiles' para saber el rol
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+          if (error) throw error;
+
+          // 2. Decidir ruta
+          const role = profile?.role || 'client'; // Si no tiene rol, es cliente por defecto
+          
+          console.log(`🚀 Redirigiendo a ${role}:`, role === 'admin' ? 'admin.html' : 'dashboard.html');
+
+          // 3. Redirigir
+          if (role === 'admin') {
+            window.location.href = '/admin.html';
+          } else {
+            window.location.href = '/dashboard.html'; // Barberos y clientes van aquí por ahora
+          }
+
+        } catch (err) {
+          console.error('Error leyendo perfil:', err);
+          // Si falla, mandamos al dashboard por defecto
+          window.location.href = '/dashboard.html';
+        }
+      }
+
       // 🔑 FUNCIÓN CRÍTICA: Detectar recovery desde hash o query params
       function detectRecoveryMode() {
-        // 1. Revisar query params (?mode=newpassword)
         const params = new URLSearchParams(window.location.search);
         if (params.get('mode') === 'newpassword') return true;
-        
-        // 2. Revisar hash params (#type=recovery) - LO QUE USA SUPABASE
         if (window.location.hash.includes('type=recovery')) return true;
-        
-        // 3. Revisar si hay access_token en hash (indica auth flow)
         if (window.location.hash.includes('access_token=')) return true;
-        
         return false;
       }
 
       // 🔑 FUNCIÓN CRÍTICA: Forzar recuperación de sesión desde hash
       async function recoverSessionFromHash() {
         try {
-          // Supabase v2+ maneja automáticamente los tokens del hash
-          // Pero necesitamos esperar a que se procesen
           const { data, error } = await supabase.auth.getSession();
-          
           if (error) {
             console.warn('⚠️ getSession error:', error.message);
             return false;
           }
-          
           if (data?.session) {
             console.log('✅ Session recovered from hash:', data.session.user.email);
             return true;
           }
-          
-          // Si no hay sesión pero hay hash con tokens, esperar un poco y reintentar
           if (window.location.hash && window.location.hash.includes('access_token')) {
-            console.log('⏳ Tokens in hash, waiting for session...');
+            console.log(' Tokens in hash, waiting for session...');
             await new Promise(resolve => setTimeout(resolve, 500));
             const retry = await supabase.auth.getSession();
             return !!retry.data?.session;
           }
-          
           return false;
         } catch (e) {
           console.error('❌ recoverSessionFromHash error:', e);
@@ -299,11 +322,10 @@
           console.log('🔐 Recovery mode detected, attempting session recovery...');
           showSection('newpassword');
           
-          // Intentar recuperar sesión desde el hash
           const sessionRecovered = await recoverSessionFromHash();
           
           if (!sessionRecovered) {
-            console.warn('⚠️ Could not recover session from hash');
+            console.warn('️ Could not recover session from hash');
             showError('⚠️ Enlace de recuperación inválido o expirado. Solicita uno nuevo.');
             setTimeout(() => showSection('recover'), 3000);
           }
@@ -313,8 +335,8 @@
         // Modo normal: verificar sesión activa
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-          console.log('✅ Active session, redirecting to dashboard...');
-          window.location.href = '/dashboard.html';
+          console.log('✅ Active session, redirecting based on role...');
+          await handleLoginRedirect(session.user); // Redirige según rol
           return;
         }
         
@@ -332,8 +354,8 @@
         console.log('🔔 Auth state changed:', event);
         
         if (event === 'SIGNED_IN' && session) {
-          console.log('✅ User signed in, redirecting...');
-          window.location.href = '/dashboard.html';
+          console.log('✅ User signed in, redirecting based on role...');
+          handleLoginRedirect(session.user); // Redirige según rol
         }
         
         if (event === 'PASSWORD_RECOVERY') {
@@ -396,7 +418,7 @@
         });
       }
 
-      // REGISTRO
+      // ✅ REGISTRO CON ROL (ACTUALIZADO)
       const registerForm = document.getElementById('register-form');
       if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
@@ -406,21 +428,51 @@
           const email = document.getElementById('register-email').value.trim();
           const password = document.getElementById('register-password').value;
           const confirm = document.getElementById('register-confirm').value;
+          const role = document.getElementById('register-role').value; // Leer el rol seleccionado
           
           if (password !== confirm) { 
-            showError('❌ Las contraseñas no coinciden'); 
+            showError(' Las contraseñas no coinciden'); 
             return; 
           }
           
+          if (!role || (role !== 'client' && role !== 'barber')) {
+            showError('❌ Por favor selecciona si eres Cliente o Barbero');
+            return;
+          }
+          
           try {
-            const { error } = await supabase.auth.signUp({ 
+            // 1. Crear usuario en auth
+            const { data: authData, error: authError } = await supabase.auth.signUp({ 
               email, password, 
-              options: { data: { role: 'client' } } 
+              options: { data: { role: role } } 
             });
-            if (error) throw error;
-            console.log('✅ [REGISTER] Success');
-            showSuccess('✅ Registro exitoso. Verifica tu email.');
-            setTimeout(() => showSection('login'), 3000);
+            
+            if (authError) throw authError;
+            if (!authData.user) throw new Error('No se creó el usuario');
+            
+            console.log('✅ [REGISTER] User created in auth');
+            
+            // 2. Crear perfil en tabla profiles (con el rol seleccionado)
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert([{
+                id: authData.user.id,
+                email: email,
+                role: role,
+                created_at: new Date().toISOString()
+              }]);
+            
+            if (profileError) {
+              console.warn('⚠️ Error creando perfil:', profileError.message);
+            }
+            
+            console.log('✅ [REGISTER] Profile created with role:', role);
+            showSuccess(`✅ Registro exitoso. Bienvenido ${role === 'barber' ? 'Barbero' : 'Cliente'}! Verifica tu email.`);
+            
+            setTimeout(() => {
+              showSection('login');
+            }, 3000);
+            
           } catch (err) { 
             console.error('❌ [REGISTER] Error:', err);
             showError('❌ ' + err.message); 
@@ -446,7 +498,7 @@
             setTimeout(() => showSection('login'), 4000);
           } catch (err) { 
             console.error('❌ [RECOVER] Error:', err);
-            showError('❌ ' + err.message); 
+            showError(' ' + err.message); 
           }
         });
       }
@@ -478,7 +530,6 @@
           if (sessionError || !session) {
             console.error('❌ No active session for password update');
             showError('❌ Sesión inválida. Por favor solicita un nuevo enlace de recuperación.');
-            // Limpiar hash y redirigir a recover
             window.location.hash = '';
             showSection('recover');
             return;
@@ -494,7 +545,6 @@
             console.log('✅ [NEW PASSWORD] Password updated successfully');
             showSuccess('✅ Contraseña actualizada. Redirigiendo al login...');
             
-            // Cerrar sesión de recovery y limpiar URL
             await supabase.auth.signOut();
             window.location.hash = '';
             window.history.replaceState(null, '', window.location.pathname);
