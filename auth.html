@@ -78,6 +78,7 @@
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
   </div>
 
   <div class="auth-container">
@@ -154,18 +155,20 @@
 
   <!-- LÓGICA COMPLETA -->
   <script type="text/javascript">
-    console.log('🚀 [INIT] BarberHub Auth Starting...');
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 [INIT] BarberHub Auth Starting...');
 
-    if (typeof window.supabase === 'undefined') {
-      console.error('❌ [ERROR] Supabase library not loaded');
-      alert('ERROR: No se pudo cargar Supabase. Revisa tu conexión.');
-    } else {
+      if (typeof window.supabase === 'undefined') {
+        console.error('❌ [ERROR] Supabase library not loaded');
+        alert('ERROR: No se pudo cargar Supabase. Revisa tu conexión o extensión de bloqueador.');
+        return;
+      }
+
       console.log('✅ [INIT] Supabase loaded');
 
       const SUPABASE_URL = 'https://qnlbaxxhsbwbqqucbywn.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
       
-      // Crear cliente DIRECTO (sin proxy)
       console.log('🔌 [INIT] Creating Supabase client...');
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       console.log('✅ [INIT] Client created');
@@ -216,30 +219,24 @@
           const password = document.getElementById('login-password').value;
           
           if (!email || !password) {
-            showError('❌ Por favor completa email y contraseña');
+            showError(' Por favor completa email y contraseña');
             return;
           }
           
-          console.log('📧 [LOGIN] Email:', email);
-          loginBtn.innerHTML = '⏳ Verificando...'; 
+          loginBtn.innerHTML = ' Verificando...'; 
           loginBtn.disabled = true;
 
           try {
-            console.log('📡 [LOGIN] Calling Supabase...');
             const { data, error } = await supabase.auth.signInWithPassword({ 
               email: email, 
               password: password 
             });
             
-            console.log('[LOGIN] Response:', { data, error });
-            
             if (error) throw new Error(error.message);
             if (!data?.user) throw new Error('No user data received');
             
             console.log('✅ [LOGIN] Success! User:', data.user.email);
-            alert('✅ ¡Login exitoso! Redirigiendo...');
             
-            // Try to get profile (optional)
             try {
               const { data: profile } = await supabase
                 .from('profiles')
@@ -248,16 +245,17 @@
                 .single();
               
               const role = profile?.role || 'client';
-              const redirect = role === 'admin' ? './admin.html' : './dashboard.html';
+              // Rutas absolutas para Vercel
+              const redirect = role === 'admin' ? '/admin.html' : '/dashboard.html';
               console.log('🔀 [LOGIN] Redirecting to:', redirect);
               window.location.href = redirect;
             } catch (e) {
               console.warn('⚠️ [LOGIN] Profile error, redirecting to dashboard');
-              window.location.href = './dashboard.html';
+              window.location.href = '/dashboard.html';
             }
             
           } catch (err) {
-            console.error('💥 [LOGIN] Error:', err);
+            console.error(' [LOGIN] Error:', err);
             showError('❌ ' + err.message);
             loginBtn.innerHTML = 'ENTRAR'; 
             loginBtn.disabled = false;
@@ -265,19 +263,18 @@
         });
       }
 
-      // GOOGLE LOGIN
+      // GOOGLE LOGIN (FIXED: redirect URL limpio y absoluto)
       const googleBtn = document.getElementById('google-login-btn');
       if (googleBtn) {
         googleBtn.addEventListener('click', async () => {
           console.log('🔵 [GOOGLE] Starting OAuth...');
-          const redirectTo = window.location.origin + window.location.pathname;
-          console.log('🔗 [GOOGLE] Redirect:', redirectTo);
           
           try {
             const { error } = await supabase.auth.signInWithOAuth({
               provider: 'google',
               options: {
-                redirectTo: redirectTo,
+                // URL absoluta sin query params para evitar problemas de encoding/SSL
+                redirectTo: 'https://barberhub-two.vercel.app/auth.html',
                 queryParams: { access_type: 'offline', prompt: 'consent' }
               }
             });
@@ -294,7 +291,7 @@
       if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          console.log('📝 [REGISTER] Attempting registration...');
+          console.log(' [REGISTER] Attempting registration...');
           
           const email = document.getElementById('register-email').value.trim();
           const password = document.getElementById('register-password').value;
@@ -331,7 +328,7 @@
           const email = document.getElementById('recover-email').value.trim();
           try {
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-              redirectTo: window.location.origin + window.location.pathname + '?mode=newpassword'
+              redirectTo: 'https://barberhub-two.vercel.app/auth.html?mode=newpassword'
             });
             if (error) throw error;
             console.log('✅ [RECOVER] Email sent');
@@ -345,7 +342,7 @@
       }
 
       console.log('🎉 [INIT] All systems ready!');
-    }
+    });
   </script>
 </body>
 </html>
