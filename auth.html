@@ -65,6 +65,8 @@
     .auth-links a:hover { text-shadow: 0 0 8px rgba(0,255,255,0.6); }
     .error-message { background: rgba(255, 50, 50, 0.25); border: 1px solid rgba(255, 50, 50, 0.4); color: #ffcccc; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.85rem; display: none; text-align: center; position: relative; z-index: 2; }
     .error-message.show { display: block; animation: shake 0.4s; }
+    .success-message { background: rgba(50, 255, 150, 0.2); border: 1px solid rgba(50, 255, 150, 0.4); color: #a0f0c0; padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; font-size: 0.85rem; display: none; text-align: center; position: relative; z-index: 2; }
+    .success-message.show { display: block; animation: fadeIn 0.4s; }
     @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
     @media (max-width: 480px) { .auth-container { padding: 10px; } .inner-glass-panel { padding: 2rem 1.5rem; } .auth-header h1 { font-size: 1.9rem; } }
   </style>
@@ -91,6 +93,7 @@
         <p id="auth-subtitle">Inicia tu estilo</p>
       </div>
       <div id="error-message" class="error-message"></div>
+      <div id="success-message" class="success-message"></div>
 
       <!-- LOGIN -->
       <div id="login-section" class="auth-section active">
@@ -136,7 +139,7 @@
         <div class="auth-links">¿Ya tienes cuenta? <a href="?mode=login">Inicia sesión</a></div>
       </div>
 
-      <!-- RECUPERAR -->
+      <!-- RECUPERAR (Enviar email) -->
       <div id="recover-section" class="auth-section">
         <form id="recover-form">
           <div class="form-group">
@@ -144,6 +147,22 @@
             <input type="email" id="recover-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
           </div>
           <button type="submit" class="btn">ENVIAR ENLACE</button>
+        </form>
+        <div class="auth-links"><a href="?mode=login">← Volver al inicio</a></div>
+      </div>
+
+      <!-- NUEVA CONTRASEÑA (Después del email) -->
+      <div id="newpassword-section" class="auth-section">
+        <form id="newpassword-form">
+          <div class="form-group">
+            <label for="new-password">NUEVA CONTRASEÑA</label>
+            <input type="password" id="new-password" name="newPassword" placeholder="••••••••" required minlength="6" />
+          </div>
+          <div class="form-group">
+            <label for="confirm-new-password">CONFIRMAR CONTRASEÑA</label>
+            <input type="password" id="confirm-new-password" name="confirmNewPassword" placeholder="••••••••" required minlength="6" />
+          </div>
+          <button type="submit" class="btn">ACTUALIZAR CONTRASEÑA</button>
         </form>
         <div class="auth-links"><a href="?mode=login">← Volver al inicio</a></div>
       </div>
@@ -156,7 +175,7 @@
   <!-- LÓGICA COMPLETA -->
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', async () => {
-      console.log(' [INIT] BarberHub Auth Starting...');
+      console.log('🚀 [INIT] BarberHub Auth Starting...');
 
       if (typeof window.supabase === 'undefined') {
         console.error('❌ [ERROR] Supabase library not loaded');
@@ -166,7 +185,6 @@
 
       console.log('✅ [INIT] Supabase loaded');
 
-      // 🔑 CONFIGURACIÓN EXACTA
       const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
       
@@ -174,54 +192,89 @@
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       console.log('✅ [INIT] Client created');
 
-      //  FIX CRÍTICO 1: Recuperar sesión al cargar (evita volver al login tras Google)
+      // 🔑 RECUPERAR SESIÓN (para OAuth y recovery)
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         console.log('✅ Sesión activa detectada, redirigiendo al dashboard...');
         window.location.href = '/dashboard.html';
-        return; // Detiene ejecución para no mostrar el formulario
+        return;
       }
 
-      // 🔑 FIX CRÍTICO 2: Escuchar login en tiempo real (Google o Email)
+      // 🔔 Escuchar cambios de auth
       supabase.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN' && session) {
-          console.log('🔔 Auth state changed: SIGNED_IN -> Redirecting');
+          console.log('🔔 Auth state changed: SIGNED_IN');
           window.location.href = '/dashboard.html';
+        }
+        // Detectar recuperación de contraseña exitosa
+        if (event === 'PASSWORD_RECOVERY' && session) {
+          console.log('🔐 Password recovery session active');
+          showSection('newpassword');
         }
       });
 
-      // UI Logic
-      const params = new URLSearchParams(window.location.search);
-      const mode = params.get('mode') || 'login';
+      // UI Helpers
       const sections = {
         login: document.getElementById('login-section'),
         register: document.getElementById('register-section'),
-        recover: document.getElementById('recover-section')
+        recover: document.getElementById('recover-section'),
+        newpassword: document.getElementById('newpassword-section')
       };
       const subtitle = document.getElementById('auth-subtitle');
-      const subtitles = { login: 'Inicia tu estilo', register: 'Crea tu cuenta gratis', recover: 'Recupera tu contraseña' };
-      
-      Object.keys(sections).forEach(key => {
-        if (sections[key]) sections[key].classList.remove('active');
-      });
-      if (sections[mode]) { 
-        sections[mode].classList.add('active'); 
-        subtitle.textContent = subtitles[mode]; 
-      } else { 
-        sections.login.classList.add('active'); 
-      }
+      const subtitles = { 
+        login: 'Inicia tu estilo', 
+        register: 'Crea tu cuenta gratis', 
+        recover: 'Recupera tu contraseña',
+        newpassword: 'Crea tu nueva contraseña'
+      };
+      const errorMsg = document.getElementById('error-message');
+      const successMsg = document.getElementById('success-message');
 
       function showError(msg) {
         console.error('❌ [ERROR]', msg);
-        const el = document.getElementById('error-message');
-        if (el) {
-          el.textContent = msg; 
-          el.classList.add('show');
-          setTimeout(() => el.classList.remove('show'), 8000);
-        } else {
-          alert('ERROR: ' + msg);
+        if (errorMsg) {
+          errorMsg.textContent = msg; 
+          errorMsg.classList.add('show');
+          setTimeout(() => errorMsg.classList.remove('show'), 8000);
         }
       }
+
+      function showSuccess(msg) {
+        console.log('✅ [SUCCESS]', msg);
+        if (successMsg) {
+          successMsg.textContent = msg; 
+          successMsg.classList.add('show');
+          setTimeout(() => successMsg.classList.remove('show'), 8000);
+        }
+      }
+
+      function showSection(name) {
+        Object.keys(sections).forEach(key => sections[key]?.classList.remove('active'));
+        if (sections[name]) {
+          sections[name].classList.add('active');
+          subtitle.textContent = subtitles[name];
+        }
+      }
+
+      // 🎯 Detectar modo desde URL (query params Y hash params)
+      function getModeFromURL() {
+        // Primero intentar con query params (?mode=...)
+        const params = new URLSearchParams(window.location.search);
+        let mode = params.get('mode');
+        
+        // Si no hay mode en query, revisar hash (#type=recovery)
+        if (!mode && window.location.hash) {
+          const hashParams = new URLSearchParams(window.location.hash.substring(1));
+          const type = hashParams.get('type');
+          if (type === 'recovery') mode = 'newpassword';
+        }
+        
+        return mode || 'login';
+      }
+
+      // Inicializar vista según modo
+      const mode = getModeFromURL();
+      showSection(mode);
 
       // LOGIN CON EMAIL
       const loginForm = document.getElementById('login-form');
@@ -246,7 +299,7 @@
           try {
             const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw new Error(error.message);
-            // onAuthStateChange manejará la redirección automáticamente
+            // onAuthStateChange manejará la redirección
           } catch (err) {
             console.error('💥 [LOGIN] Error:', err);
             showError('❌ ' + err.message);
@@ -300,8 +353,8 @@
             });
             if (error) throw error;
             console.log('✅ [REGISTER] Success');
-            alert('✅ Registro exitoso. Verifica tu email.');
-            window.location.href = '?mode=login';
+            showSuccess('✅ Registro exitoso. Verifica tu email.');
+            setTimeout(() => showSection('login'), 3000);
           } catch (err) { 
             console.error('❌ [REGISTER] Error:', err);
             showError('❌ ' + err.message); 
@@ -309,7 +362,7 @@
         });
       }
 
-      // RECUPERAR
+      // RECUPERAR: Enviar email
       const recoverForm = document.getElementById('recover-form');
       if (recoverForm) {
         recoverForm.addEventListener('submit', async (e) => {
@@ -319,15 +372,54 @@
           const email = document.getElementById('recover-email').value.trim();
           try {
             const { error } = await supabase.auth.resetPasswordForEmail(email, {
-              redirectTo: 'https://barberhub-two.vercel.app/auth.html?mode=newpassword'
+              redirectTo: 'https://barberhub-two.vercel.app/auth.html'
             });
             if (error) throw error;
             console.log('✅ [RECOVER] Email sent');
-            alert('✅ Enlace enviado. Revisa tu correo.');
-            window.location.href = '?mode=login';
+            showSuccess('✅ Enlace enviado. Revisa tu correo (incluye spam).');
+            setTimeout(() => showSection('login'), 4000);
           } catch (err) { 
             console.error('❌ [RECOVER] Error:', err);
             showError('❌ ' + err.message); 
+          }
+        });
+      }
+
+      // NUEVA CONTRASEÑA: Actualizar password después del recovery
+      const newPasswordForm = document.getElementById('newpassword-form');
+      if (newPasswordForm) {
+        newPasswordForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          console.log('🔐 [NEW PASSWORD] Updating password...');
+          
+          const newPassword = document.getElementById('new-password').value;
+          const confirmNew = document.getElementById('confirm-new-password').value;
+          
+          if (newPassword !== confirmNew) {
+            showError('❌ Las contraseñas no coinciden');
+            return;
+          }
+          if (newPassword.length < 6) {
+            showError('❌ La contraseña debe tener al menos 6 caracteres');
+            return;
+          }
+          
+          try {
+            const { error } = await supabase.auth.updateUser({ password: newPassword });
+            if (error) throw error;
+            
+            console.log('✅ [NEW PASSWORD] Password updated');
+            showSuccess('✅ Contraseña actualizada. Redirigiendo...');
+            
+            // Cerrar sesión de recovery y redirigir a login para que inicien sesión con la nueva pass
+            await supabase.auth.signOut();
+            setTimeout(() => {
+              window.location.href = '/auth.html?mode=login';
+            }, 2500);
+            
+          } catch (err) {
+            console.error('❌ [NEW PASSWORD] Error:', err);
+            showError('❌ ' + err.message);
           }
         });
       }
