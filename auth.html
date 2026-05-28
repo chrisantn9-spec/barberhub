@@ -132,6 +132,15 @@
           </div>
           <div class="form-group">
             <label for="register-confirm">CONFIRMAR CONTRASEÑA</label>
+            <!-- En el register-section de auth.html, agrega esto: -->
+<div class="form-group">
+  <label for="register-role">SOY</label>
+  <select id="register-role" name="role" required style="width: 100%; padding: 0.9rem 1rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 255, 255, 0.35); border-radius: 10px; color: #ffffff; font-size: 1rem; cursor: pointer;">
+    <option value="" disabled selected>Selecciona tu tipo de cuenta</option>
+    <option value="client">👤 Cliente (Quiero agendar citas)</option>
+    <option value="barber">💈 Barbero (Quiero ofrecer servicios)</option>
+  </select>
+</div>
             <input type="password" id="register-confirm" name="confirmPassword" placeholder="••••••••" required minlength="6" />
           </div>
           <button type="submit" class="btn">REGISTRARSE</button>
