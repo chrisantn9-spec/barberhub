@@ -294,7 +294,12 @@
 
   <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
+// Agrega esto al inicio de tu script para ignorar errores de extensiones
+window.addEventListener('error', (e) => {
+  if (e.message?.includes('lockdown') || e.message?.includes('SES')) {
+    e.preventDefault(); // Silencia errores de extensiones
+  }
+}, true);
   <script type="text/javascript">
     // ========== VARIABLES GLOBALES ==========
     let modalRole = null;
