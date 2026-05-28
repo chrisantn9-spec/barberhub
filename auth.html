@@ -691,24 +691,106 @@
       return null;
     }
 
-    // ========== FUNCIÓN: DETECTAR MODO RECUPERACIÓN ==========
-    function isRecoveryMode() {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('mode') === 'newpassword') return true;
-      const hash = window.location.hash;
-      if (hash.includes('type=recovery') || hash.includes('access_token=')) return true;
-      return false;
-    }
+    // ========== FUNCIÓN: DETECTAR MODO RECUPERACIÓN (CORREGIDA) ==========
+function isRecoveryMode() {
+  const hash = window.location.hash;
+  const params = new URLSearchParams(window.location.search);
+  
+  // Caso 1: URL con ?mode=newpassword (navegación manual)
+  if (params.get('mode') === 'newpassword') return true;
+  
+  // Caso 2: Hash de recuperación de Supabase
+  // Supabase envía: #type=recovery&access_token=xxx&refresh_token=xxx...
+  if (hash.includes('type=recovery')) return true;
+  if (hash.includes('access_token=') && hash.includes('type=')) return true;
+  
+  // Caso 3: Hash con token pero sin tipo explícito (fallback)
+  if (hash.includes('access_token=') && !hash.includes('provider_token')) return true;
+  
+  return false;
+}
 
-    // ========== INICIALIZACIÓN PRINCIPAL ==========
-    document.addEventListener('DOMContentLoaded', async () => {
-      console.log('🚀 BarberHub Auth - Iniciando...');
+    // 2️⃣ VERIFICAR SI ES MODO RECUPERACIÓN DE CONTRASEÑA
+if (isRecoveryMode()) {
+  console.log('🔐 Recovery mode detected | Hash:', window.location.hash);
+  
+// 🔑 FORMULARIO NUEVA CONTRASEÑA (reemplaza el existente)
+document.getElementById('newpassword-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const newP = document.getElementById('new-password').value;
+  const confirmP = document.getElementById('confirm-new-password').value;
+  const btn = document.getElementById('update-password-btn');
 
-      // Verificar que Supabase cargó
-      if (!window.supabase) {
-        showError('❌ Error: No se cargó Supabase. Revisa tu conexión.');
-        return;
-      }
+  // Validaciones
+  if (newP !== confirmP) {
+    showError('❌ Las contraseñas no coinciden');
+    return;
+  }
+  if (newP.length < 6) {
+    showError('⚠️ Mínimo 6 caracteres');
+    return;
+  }
+
+  // Verificar sesión de recuperación (CRÍTICO)
+  const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+  
+  if (sessionError) {
+    console.error('Session error:', sessionError);
+  }
+  
+  if (!session) {
+    showError('❌ Sesión inválida. El enlace expiró o ya fue usado. Solicita uno nuevo.');
+    console.log('🔍 Current hash:', window.location.hash);
+    setTimeout(() => showSection('recover'), 3000);
+    return;
+  }
+
+  console.log('✅ Valid session for password update:', session.user?.email);
+
+  // Actualizar contraseña
+  btn.textContent = '⏳...';
+  btn.disabled = true;
+
+  try {
+    const { error } = await supabaseClient.auth.updateUser({ password: newP });
+    if (error) throw error;
+    
+    showSuccess('✅ Contraseña actualizada. Redirigiendo al login...');
+    
+    // Cerrar sesión y limpiar
+    await supabaseClient.auth.signOut();
+    window.location.hash = '';
+    window.history.replaceState(null, '', window.location.pathname);
+    
+    setTimeout(() => {
+      window.location.href = '/auth.html?mode=login';
+    }, 2500);
+    
+  } catch (err) {
+    console.error('❌ Update password error:', err);
+    showError('❌ ' + err.message);
+    btn.textContent = 'ACTUALIZAR CONTRASEÑA';
+    btn.disabled = false;
+  }
+});
+  
+  // Esperar a que Supabase procese la sesión de recuperación
+  const session = await waitForSession(5, 800); // Más intentos, más tiempo
+  
+  if (!session) {
+    console.error('❌ No session found after recovery callback');
+    showError('⚠️ Enlace de recuperación inválido o expirado. Solicita uno nuevo.');
+    
+    // Redirigir a recover después de 4 segundos
+    setTimeout(() => {
+      window.location.hash = '';
+      showSection('recover');
+    }, 4000);
+  } else {
+    console.log('✅ Recovery session ready for user:', session.user?.email);
+  }
+  return; // ⛔ DETENER: no continuar con flujo normal
+}
 
       // Configurar cliente de Supabase
       const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
