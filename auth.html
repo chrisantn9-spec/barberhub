@@ -155,31 +155,40 @@
 
   <!-- LÓGICA COMPLETA -->
   <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       console.log(' [INIT] BarberHub Auth Starting...');
 
       if (typeof window.supabase === 'undefined') {
         console.error('❌ [ERROR] Supabase library not loaded');
-        alert('ERROR: No se pudo cargar Supabase. Revisa tu conexión o extensión de bloqueador.');
+        alert('ERROR: No se pudo cargar Supabase.');
         return;
       }
 
       console.log('✅ [INIT] Supabase loaded');
 
-      // ==========================================
-      // ️ CONFIGURACIÓN CRÍTICA ️
-      // ==========================================
-      // ID DEL PROYECTO CORREGIDO: qnlbaxxbsbwbgqucbywn
+      // 🔑 CONFIGURACIÓN EXACTA
       const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
-      
-      // ¡IMPORTANTE! Debes poner aquí la ANON KEY de este nuevo proyecto
-      // La encuentras en: Supabase Dashboard -> Project Settings -> API -> anon public
-      const SUPABASE_ANON_KEY = 'COPIA_Y_PEGA_TU_NUEVA_ANON_KEY_AQUI'; 
-      // ==========================================
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
       
       console.log('🔌 [INIT] Creating Supabase client...');
       const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       console.log('✅ [INIT] Client created');
+
+      //  FIX CRÍTICO 1: Recuperar sesión al cargar (evita volver al login tras Google)
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        console.log('✅ Sesión activa detectada, redirigiendo al dashboard...');
+        window.location.href = '/dashboard.html';
+        return; // Detiene ejecución para no mostrar el formulario
+      }
+
+      // 🔑 FIX CRÍTICO 2: Escuchar login en tiempo real (Google o Email)
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session) {
+          console.log('🔔 Auth state changed: SIGNED_IN -> Redirecting');
+          window.location.href = '/dashboard.html';
+        }
+      });
 
       // UI Logic
       const params = new URLSearchParams(window.location.search);
@@ -227,40 +236,17 @@
           const password = document.getElementById('login-password').value;
           
           if (!email || !password) {
-            showError(' Por favor completa email y contraseña');
+            showError('❌ Por favor completa email y contraseña');
             return;
           }
           
-          loginBtn.innerHTML = ' Verificando...'; 
+          loginBtn.innerHTML = '⏳ Verificando...'; 
           loginBtn.disabled = true;
 
           try {
-            const { data, error } = await supabase.auth.signInWithPassword({ 
-              email: email, 
-              password: password 
-            });
-            
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) throw new Error(error.message);
-            if (!data?.user) throw new Error('No user data received');
-            
-            console.log('✅ [LOGIN] Success! User:', data.user.email);
-            
-            try {
-              const { data: profile } = await supabase
-                .from('profiles')
-                .select('role')
-                .eq('id', data.user.id)
-                .single();
-              
-              const role = profile?.role || 'client';
-              const redirect = role === 'admin' ? '/admin.html' : '/dashboard.html';
-              console.log('🔀 [LOGIN] Redirecting to:', redirect);
-              window.location.href = redirect;
-            } catch (e) {
-              console.warn('⚠️ [LOGIN] Profile error, redirecting to dashboard');
-              window.location.href = '/dashboard.html';
-            }
-            
+            // onAuthStateChange manejará la redirección automáticamente
           } catch (err) {
             console.error('💥 [LOGIN] Error:', err);
             showError('❌ ' + err.message);
@@ -270,17 +256,15 @@
         });
       }
 
-      // GOOGLE LOGIN (REDIRECT FIJO PARA EVITAR ERRORES SSL)
+      // GOOGLE LOGIN
       const googleBtn = document.getElementById('google-login-btn');
       if (googleBtn) {
         googleBtn.addEventListener('click', async () => {
           console.log('🔵 [GOOGLE] Starting OAuth...');
-          
           try {
             const { error } = await supabase.auth.signInWithOAuth({
               provider: 'google',
               options: {
-                // URL absoluta limpia sin query params
                 redirectTo: 'https://barberhub-two.vercel.app/auth.html',
                 queryParams: { access_type: 'offline', prompt: 'consent' }
               }
@@ -288,7 +272,7 @@
             if (error) throw error;
           } catch (err) {
             console.error('❌ [GOOGLE] Error:', err);
-            showError(' Error Google: ' + err.message);
+            showError('❌ Error Google: ' + err.message);
           }
         });
       }
@@ -319,7 +303,7 @@
             alert('✅ Registro exitoso. Verifica tu email.');
             window.location.href = '?mode=login';
           } catch (err) { 
-            console.error(' [REGISTER] Error:', err);
+            console.error('❌ [REGISTER] Error:', err);
             showError('❌ ' + err.message); 
           }
         });
