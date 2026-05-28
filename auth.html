@@ -6,10 +6,519 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Iniciar Sesión | BarberHub</title>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(10,15,30,0.6)),url('./fondobarber.png');background-size:cover;background-position:center;background-attachment:fixed;color:#e4e4e7;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;position:relative;overflow:hidden}.bubbles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}.bubble{position:absolute;bottom:-60px;background:radial-gradient(circle,rgba(0,255,255,0.2) 0%,rgba(0,255,255,0) 70%);border-radius:50%;box-shadow:0 0 15px rgba(0,255,255,0.4),inset 0 0 10px rgba(255,255,255,0.2);animation:floatUp linear infinite,pulse 2.5s ease-in-out infinite alternate}@keyframes floatUp{0%{transform:translateY(0) scale(1);opacity:0}10%{opacity:1}90%{opacity:0.8}100%{transform:translateY(-110vh) scale(1.3);opacity:0}}@keyframes pulse{0%{box-shadow:0 0 10px rgba(0,255,255,0.3)}100%{box-shadow:0 0 25px rgba(0,255,255,0.7),0 0 40px rgba(0,255,255,0.2)}}.bubble:nth-child(1){left:5%;width:40px;height:40px;animation-duration:12s;animation-delay:0s}.bubble:nth-child(2){left:15%;width:25px;height:25px;animation-duration:9s;animation-delay:2s}.bubble:nth-child(3){left:30%;width:50px;height:50px;animation-duration:14s;animation-delay:1s}.bubble:nth-child(4){left:45%;width:30px;height:30px;animation-duration:10s;animation-delay:3s}.bubble:nth-child(5){left:60%;width:45px;height:45px;animation-duration:13s;animation-delay:0.5s}.bubble:nth-child(6){left:75%;width:20px;height:20px;animation-duration:8s;animation-delay:4s}.bubble:nth-child(7){left:85%;width:35px;height:35px;animation-duration:11s;animation-delay:1.5s}.bubble:nth-child(8){left:92%;width:28px;height:28px;animation-duration:10s;animation-delay:2.5s}.bubble:nth-child(9){left:10%;width:32px;height:32px;animation-duration:12s;animation-delay:3.5s}.bubble:nth-child(10){left:55%;width:42px;height:42px;animation-duration:15s;animation-delay:0.8s}.bubble:nth-child(11){left:25%;width:22px;height:22px;animation-duration:9s;animation-delay:5s}.bubble:nth-child(12){left:70%;width:38px;height:38px;animation-duration:11s;animation-delay:2.2s}.bubble:nth-child(13){left:40%;width:26px;height:26px;animation-duration:10s;animation-delay:4.5s}.bubble:nth-child(14){left:80%;width:48px;height:48px;animation-duration:14s;animation-delay:1.2s}.bubble:nth-child(15){left:50%;width:34px;height:34px;animation-duration:13s;animation-delay:3.8s}.auth-container{background:rgba(15,23,42,0.05);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:2px solid #00ffff;box-shadow:0 0 20px rgba(0,255,255,0.1);padding:15px;border-radius:20px;width:100%;max-width:480px;animation:slideIn 0.6s cubic-bezier(0.2,0.8,0.2,1);position:relative;z-index:10}.inner-glass-panel{background:rgba(10,15,30,0.65);border:1px solid rgba(0,255,255,0.2);border-radius:14px;padding:2.5rem 2rem;box-shadow:inset 0 0 20px rgba(0,0,0,0.5);position:relative;z-index:11}@keyframes slideIn{from{opacity:0;transform:translateY(40px) scale(0.95)}to{opacity:1;transform:translateY(0) scale(1)}}.auth-header{text-align:center;margin-bottom:2rem;position:relative;z-index:2}.auth-header h1{font-size:2.4rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin-bottom:0;position:relative;display:inline-block;line-height:1.1}.text-main{display:block;position:relative;z-index:2}.text-reflection{display:block;position:absolute;top:100%;left:0;width:100%;transform:scaleY(-1);opacity:0.25;filter:blur(2px);background:linear-gradient(to bottom,rgba(255,255,255,0.8),transparent);-webkit-background-clip:text;background-clip:text;color:transparent;pointer-events:none;z-index:1}.barber{color:#fff;text-shadow:0 0 10px rgba(255,255,255,0.5)}.hub{color:#00ffff;text-shadow:0 0 12px #00ffff,0 0 25px rgba(0,255,255,0.6)}.auth-header p{color:#fff;font-size:1rem;margin-top:1.5rem;letter-spacing:1px;text-shadow:0 2px 4px rgba(0,0,0,0.9)}.auth-section{display:none;position:relative;z-index:2}.auth-section.active{display:block;animation:fadeIn 0.4s ease-out}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.form-group{margin-bottom:1.4rem}.form-group label{display:block;margin-bottom:0.5rem;font-size:0.8rem;color:#00ffff;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;text-shadow:0 1px 3px rgba(0,0,0,0.9)}.form-group input{width:100%;padding:0.9rem 1rem;background:rgba(0,0,0,0.4);border:1px solid rgba(0,255,255,0.35);border-radius:10px;color:#fff;font-size:1rem;transition:all 0.3s ease}.form-group input:focus{outline:none;border-color:#00ffff;background:rgba(0,0,0,0.6);box-shadow:0 0 15px rgba(0,255,255,0.25)}.form-group input::placeholder{color:#9ca3af}.btn{width:100%;padding:1rem;background:linear-gradient(135deg,#00e5ff,#0072ff);border:none;border-radius:10px;color:#000;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:1px;position:relative;z-index:2}.btn:hover{transform:translateY(-2px);box-shadow:0 0 20px rgba(0,229,255,0.5)}.btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}.btn-google{background:rgba(255,0,255,0.08);border:2px solid #ff00ff;display:flex;align-items:center;justify-content:center;gap:0.8rem;color:#ff00ff;font-weight:700;text-shadow:0 0 10px rgba(255,0,255,0.5);box-shadow:0 0 15px rgba(255,0,255,0.2),inset 0 0 10px rgba(255,0,255,0.1);margin-top:0.5rem;transition:all 0.3s ease}.btn-google:hover:not(:disabled){background:rgba(255,0,255,0.2);box-shadow:0 0 25px rgba(255,0,255,0.6),inset 0 0 15px rgba(255,0,255,0.2);transform:translateY(-2px)}.btn-google:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;filter:grayscale(0.5)}.btn-google svg{width:18px;height:18px;filter:drop-shadow(0 0 5px rgba(255,0,255,0.6))}.divider{display:flex;align-items:center;margin:1.5rem 0;color:#00ffff;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;opacity:0.8;position:relative;z-index:2}.divider::before,.divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,255,0.5),transparent)}.divider span{padding:0 1rem}.auth-links{margin-top:1.5rem;text-align:center;font-size:0.85rem;color:#e2e8f0;position:relative;z-index:2;text-shadow:0 1px 3px rgba(0,0,0,0.9)}.auth-links a{color:#00ffff;text-decoration:none;font-weight:500;transition:all 0.2s}.auth-links a:hover{text-shadow:0 0 8px rgba(0,255,255,0.6)}.error-message{background:rgba(255,50,50,0.25);border:1px solid rgba(255,50,50,0.4);color:#ffcccc;padding:0.8rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;display:none;text-align:center;position:relative;z-index:2}.error-message.show{display:block;animation:shake 0.4s}.success-message{background:rgba(50,255,150,0.2);border:1px solid rgba(50,255,150,0.4);color:#a0f0c0;padding:0.8rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem;display:none;text-align:center;position:relative;z-index:2}.success-message.show{display:block;animation:fadeIn 0.4s}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}@media(max-width:480px){.auth-container{padding:10px}.inner-glass-panel{padding:2rem 1.5rem}.auth-header h1{font-size:1.9rem}}.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);z-index:10000;align-items:center;justify-content:center;padding:1.5rem}.modal-overlay.active{display:flex;animation:fadeIn 0.25s ease}.modal-content{background:rgba(10,15,30,0.95);border:2px solid #00ffff;border-radius:20px;padding:2rem;max-width:420px;width:100%;box-shadow:0 0 50px rgba(0,255,255,0.3),inset 0 0 30px rgba(0,0,0,0.6);text-align:center;position:relative}.modal-title{font-size:1.5rem;font-weight:800;color:#00ffff;text-shadow:0 0 15px rgba(0,255,255,0.6);margin-bottom:0.5rem}.modal-subtitle{color:#9ca3af;font-size:0.9rem;margin-bottom:1.5rem}.role-cards{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:1.5rem}.role-card{background:rgba(0,0,0,0.5);border:2px solid rgba(0,255,255,0.3);border-radius:15px;padding:1.5rem 1rem;cursor:pointer;transition:all 0.3s ease;position:relative}.role-card:hover{border-color:#00ffff;box-shadow:0 0 20px rgba(0,255,255,0.3);transform:translateY(-3px)}.role-card.selected{border-color:#00ffff;background:rgba(0,255,255,0.1);box-shadow:0 0 25px rgba(0,255,255,0.4),inset 0 0 15px rgba(0,255,255,0.05)}.role-card.selected::after{content:'✓';position:absolute;top:8px;right:10px;background:#00ffff;color:#000;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:bold;box-shadow:0 0 10px rgba(0,255,255,0.6)}.role-icon{font-size:2.5rem;margin-bottom:0.8rem}.role-card-title{font-weight:700;font-size:1rem;color:#fff;margin-bottom:0.3rem}.role-card-desc{font-size:0.75rem;color:#9ca3af;line-height:1.4}.privacy-box{display:flex;align-items:flex-start;gap:10px;margin:1.5rem 0;text-align:left;padding:1rem;background:rgba(0,0,0,0.3);border-radius:10px;border:1px solid rgba(0,255,255,0.2)}.privacy-box input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:22px;height:22px;border:2px solid rgba(0,255,255,0.5);border-radius:6px;background:rgba(0,0,0,0.4);cursor:pointer;flex-shrink:0;margin-top:2px;position:relative;transition:all 0.3s}.privacy-box input[type="checkbox"]:checked{background:#00ffff;border-color:#00ffff;box-shadow:0 0 10px rgba(0,255,255,0.4)}.privacy-box input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#000;font-size:1rem;font-weight:bold}.privacy-box label{font-size:0.75rem;color:#9ca3af;line-height:1.4;cursor:pointer}.privacy-box label a{color:#00ffff;text-decoration:underline}.btn-modal{width:100%;padding:1rem;border:none;border-radius:10px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:1px;opacity:0.5;pointer-events:none;background:linear-gradient(135deg,#00e5ff,#0072ff);color:#000}.btn-modal.active{opacity:1;pointer-events:auto}.btn-modal.active:hover{transform:translateY(-2px);box-shadow:0 0 25px rgba(0,255,255,0.6)}.btn-modal.loading{opacity:0.7;cursor:wait}.modal-close{position:absolute;top:12px;right:15px;background:none;border:none;color:#9ca3af;font-size:1.8rem;cursor:pointer;transition:0.2s;line-height:1}.modal-close:hover{color:#ff4444;transform:scale(1.1)}@media(max-width:480px){.role-cards{grid-template-columns:1fr}}
+    /* ========== RESET & BASE ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(10,15,30,0.6)), url('./fondobarber.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #e4e4e7;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ========== BURBUJAS DE FONDO ========== */
+    .bubbles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .bubble {
+      position: absolute;
+      bottom: -60px;
+      background: radial-gradient(circle, rgba(0,255,255,0.2) 0%, rgba(0,255,255,0) 70%);
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(0,255,255,0.4), inset 0 0 10px rgba(255,255,255,0.2);
+      animation: floatUp linear infinite, pulse 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 0.8; }
+      100% { transform: translateY(-110vh) scale(1.3); opacity: 0; }
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px rgba(0,255,255,0.3); }
+      100% { box-shadow: 0 0 25px rgba(0,255,255,0.7), 0 0 40px rgba(0,255,255,0.2); }
+    }
+    .bubble:nth-child(1) { left: 5%; width: 40px; height: 40px; animation-duration: 12s; animation-delay: 0s; }
+    .bubble:nth-child(2) { left: 15%; width: 25px; height: 25px; animation-duration: 9s; animation-delay: 2s; }
+    .bubble:nth-child(3) { left: 30%; width: 50px; height: 50px; animation-duration: 14s; animation-delay: 1s; }
+    .bubble:nth-child(4) { left: 45%; width: 30px; height: 30px; animation-duration: 10s; animation-delay: 3s; }
+    .bubble:nth-child(5) { left: 60%; width: 45px; height: 45px; animation-duration: 13s; animation-delay: 0.5s; }
+    .bubble:nth-child(6) { left: 75%; width: 20px; height: 20px; animation-duration: 8s; animation-delay: 4s; }
+    .bubble:nth-child(7) { left: 85%; width: 35px; height: 35px; animation-duration: 11s; animation-delay: 1.5s; }
+    .bubble:nth-child(8) { left: 92%; width: 28px; height: 28px; animation-duration: 10s; animation-delay: 2.5s; }
+    .bubble:nth-child(9) { left: 10%; width: 32px; height: 32px; animation-duration: 12s; animation-delay: 3.5s; }
+    .bubble:nth-child(10) { left: 55%; width: 42px; height: 42px; animation-duration: 15s; animation-delay: 0.8s; }
+    .bubble:nth-child(11) { left: 25%; width: 22px; height: 22px; animation-duration: 9s; animation-delay: 5s; }
+    .bubble:nth-child(12) { left: 70%; width: 38px; height: 38px; animation-duration: 11s; animation-delay: 2.2s; }
+    .bubble:nth-child(13) { left: 40%; width: 26px; height: 26px; animation-duration: 10s; animation-delay: 4.5s; }
+    .bubble:nth-child(14) { left: 80%; width: 48px; height: 48px; animation-duration: 14s; animation-delay: 1.2s; }
+    .bubble:nth-child(15) { left: 50%; width: 34px; height: 34px; animation-duration: 13s; animation-delay: 3.8s; }
+
+    /* ========== CONTENEDOR PRINCIPAL ========== */
+    .auth-container {
+      background: rgba(15, 23, 42, 0.05);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 2px solid #00ffff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 480px;
+      animation: slideIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+      position: relative;
+      z-index: 10;
+    }
+    .inner-glass-panel {
+      background: rgba(10, 15, 30, 0.65);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 14px;
+      padding: 2.5rem 2rem;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+      position: relative;
+      z-index: 11;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(40px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ========== HEADER ========== */
+    .auth-header { text-align: center; margin-bottom: 2rem; position: relative; z-index: 2; }
+    .auth-header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 0;
+      position: relative;
+      display: inline-block;
+      line-height: 1.1;
+    }
+    .text-main { display: block; position: relative; z-index: 2; }
+    .text-reflection {
+      display: block;
+      position: absolute;
+      top: 100%; left: 0;
+      width: 100%;
+      transform: scaleY(-1);
+      opacity: 0.25;
+      filter: blur(2px);
+      background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .barber { color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+    .hub { color: #00ffff; text-shadow: 0 0 12px #00ffff, 0 0 25px rgba(0,255,255,0.6); }
+    .auth-header p {
+      color: #ffffff;
+      font-size: 1rem;
+      margin-top: 1.5rem;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+    }
+
+    /* ========== SECCIONES ========== */
+    .auth-section { display: none; position: relative; z-index: 2; }
+    .auth-section.active { display: block; animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== FORMULARIOS ========== */
+    .form-group { margin-bottom: 1.4rem; }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+      color: #00ffff;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    }
+    .form-group input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(0, 255, 255, 0.35);
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #00ffff;
+      background: rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.25);
+    }
+    .form-group input::placeholder { color: #9ca3af; }
+
+    /* ========== BOTONES ========== */
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #00e5ff, #0072ff);
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 2;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+    }
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-google {
+      background: rgba(255, 0, 255, 0.08);
+      border: 2px solid #ff00ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.8rem;
+      color: #ff00ff;
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+      box-shadow: 0 0 15px rgba(255, 0, 255, 0.2), inset 0 0 10px rgba(255, 0, 255, 0.1);
+      margin-top: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    .btn-google:hover:not(:disabled) {
+      background: rgba(255, 0, 255, 0.2);
+      box-shadow: 0 0 25px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    .btn-google:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+      filter: grayscale(0.5);
+    }
+    .btn-google svg {
+      width: 18px;
+      height: 18px;
+      filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.6));
+    }
+
+    /* ========== DIVIDER ========== */
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 1.5rem 0;
+      color: #00ffff;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+      position: relative;
+      z-index: 2;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,255,255,0.5), transparent);
+    }
+    .divider span { padding: 0 1rem; }
+
+    /* ========== ENLACES ========== */
+    .auth-links {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      position: relative;
+      z-index: 2;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    }
+    .auth-links a {
+      color: #00ffff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .auth-links a:hover {
+      text-shadow: 0 0 8px rgba(0,255,255,0.6);
+    }
+
+    /* ========== MENSAJES ========== */
+    .error-message {
+      background: rgba(255, 50, 50, 0.25);
+      border: 1px solid rgba(255, 50, 50, 0.4);
+      color: #ffcccc;
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      display: none;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .error-message.show { display: block; animation: shake 0.4s; }
+    .success-message {
+      background: rgba(50, 255, 150, 0.2);
+      border: 1px solid rgba(50, 255, 150, 0.4);
+      color: #a0f0c0;
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      display: none;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .success-message.show { display: block; animation: fadeIn 0.4s; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 480px) {
+      .auth-container { padding: 10px; }
+      .inner-glass-panel { padding: 2rem 1.5rem; }
+      .auth-header h1 { font-size: 1.9rem; }
+    }
+
+    /* ========== MODAL - OVERLAY ========== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.25s ease;
+    }
+
+    /* ========== MODAL - CONTENIDO ========== */
+    .modal-content {
+      background: rgba(10, 15, 30, 0.95);
+      border: 2px solid #00ffff;
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 0 50px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0,0,0,0.6);
+      text-align: center;
+      position: relative;
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #00ffff;
+      text-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+      margin-bottom: 0.5rem;
+    }
+    .modal-subtitle {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ========== MODAL - TARJETAS DE ROL ========== */
+    .role-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 1.5rem;
+    }
+    .role-card {
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(0, 255, 255, 0.3);
+      border-radius: 15px;
+      padding: 1.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .role-card:hover {
+      border-color: #00ffff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+      transform: translateY(-3px);
+    }
+    .role-card.selected {
+      border-color: #00ffff;
+      background: rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4), inset 0 0 15px rgba(0, 255, 255, 0.05);
+    }
+    .role-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 8px; right: 10px;
+      background: #00ffff;
+      color: #000;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: bold;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+    }
+    .role-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.8rem;
+    }
+    .role-card-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .role-card-desc {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      line-height: 1.4;
+    }
+
+    /* ========== MODAL - CHECKBOX PRIVACIDAD ========== */
+    .privacy-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 1.5rem 0;
+      text-align: left;
+      padding: 1rem;
+      background: rgba(0,0,0,0.3);
+      border-radius: 10px;
+      border: 1px solid rgba(0,255,255,0.2);
+    }
+    .privacy-box input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 22px; height: 22px;
+      border: 2px solid rgba(0, 255, 255, 0.5);
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 2px;
+      position: relative;
+      transition: all 0.3s;
+    }
+    .privacy-box input[type="checkbox"]:checked {
+      background: #00ffff;
+      border-color: #00ffff;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    }
+    .privacy-box input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: #000;
+      font-size: 1rem;
+      font-weight: bold;
+    }
+    .privacy-box label {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+    .privacy-box label a {
+      color: #00ffff;
+      text-decoration: underline;
+    }
+
+    /* ========== MODAL - BOTÓN DE ACCIÓN ========== */
+    .btn-modal {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.5;
+      pointer-events: none;
+      background: linear-gradient(135deg, #00e5ff, #0072ff);
+      color: #000;
+    }
+    .btn-modal.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .btn-modal.active:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+    }
+    .btn-modal.loading {
+      opacity: 0.7;
+      cursor: wait;
+    }
+
+    /* ========== MODAL - BOTÓN CERRAR ========== */
+    .modal-close {
+      position: absolute;
+      top: 12px; right: 15px;
+      background: none;
+      border: none;
+      color: #9ca3af;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: 0.2s;
+      line-height: 1;
+    }
+    .modal-close:hover {
+      color: #ff4444;
+      transform: scale(1.1);
+    }
+
+    /* ========== RESPONSIVE MODAL ========== */
+    @media (max-width: 480px) {
+      .role-cards { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
+  <!-- Burbujas de fondo -->
   <div class="bubbles">
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
@@ -21,56 +530,92 @@
     <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
   </div>
 
+  <!-- Contenedor principal de autenticación -->
   <div class="auth-container">
     <div class="inner-glass-panel">
       <div class="auth-header">
-        <h1><span class="text-main"><span class="barber">BARBER</span><span class="hub">HUB</span></span><span class="text-reflection" aria-hidden="true"><span class="barber">BARBER</span><span class="hub">HUB</span></span></h1>
+        <h1>
+          <span class="text-main"><span class="barber">BARBER</span><span class="hub">HUB</span></span>
+          <span class="text-reflection" aria-hidden="true"><span class="barber">BARBER</span><span class="hub">HUB</span></span>
+        </h1>
         <p id="auth-subtitle">Inicia tu estilo</p>
       </div>
       <div id="error-message" class="error-message"></div>
       <div id="success-message" class="success-message"></div>
 
-      <!-- 🔐 LOGIN -->
+      <!-- 🔐 SECCIÓN: LOGIN -->
       <div id="login-section" class="auth-section active">
         <form id="login-form">
-          <div class="form-group"><label for="login-email">EMAIL</label><input type="email" id="login-email" placeholder="tu@email.com" required autocomplete="email"></div>
-          <div class="form-group"><label for="login-password">CONTRASEÑA</label><input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password" minlength="6"></div>
+          <div class="form-group">
+            <label for="login-email">EMAIL</label>
+            <input type="email" id="login-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="login-password">CONTRASEÑA</label>
+            <input type="password" id="login-password" name="password" placeholder="••••••••" required autocomplete="current-password" minlength="6" />
+          </div>
           <button type="submit" class="btn" id="login-btn">ENTRAR</button>
         </form>
+        
         <div class="divider"><span>o continúa con</span></div>
+        
         <button class="btn btn-google" id="google-login-btn">
           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Sign in with Google
         </button>
-        <div class="auth-links"><a href="?mode=recover">¿Olvidaste tu contraseña?</a><br><br>¿No tienes cuenta? <a href="?mode=register">Regístrate</a></div>
+        
+        <div class="auth-links">
+          <a href="?mode=recover">¿Olvidaste tu contraseña?</a><br><br>
+          ¿No tienes cuenta? <a href="?mode=register">Regístrate</a>
+        </div>
       </div>
 
-      <!-- 📝 REGISTRO -->
+      <!-- 📝 SECCIÓN: REGISTRO -->
       <div id="register-section" class="auth-section">
         <form id="register-form">
-          <div class="form-group"><label for="register-email">EMAIL</label><input type="email" id="register-email" placeholder="tu@email.com" required autocomplete="email"></div>
-          <div class="form-group"><label for="register-password">CONTRASEÑA</label><input type="password" id="register-password" placeholder="••••••••" required minlength="6"></div>
-          <div class="form-group"><label for="register-confirm">CONFIRMAR CONTRASEÑA</label><input type="password" id="register-confirm" placeholder="••••••••" required minlength="6"></div>
+          <div class="form-group">
+            <label for="register-email">EMAIL</label>
+            <input type="email" id="register-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="register-password">CONTRASEÑA</label>
+            <input type="password" id="register-password" name="password" placeholder="••••••••" required minlength="6" />
+          </div>
+          <div class="form-group">
+            <label for="register-confirm">CONFIRMAR CONTRASEÑA</label>
+            <input type="password" id="register-confirm" name="confirmPassword" placeholder="••••••••" required minlength="6" />
+          </div>
           <button type="button" class="btn" id="open-register-modal-btn">REGISTRARSE</button>
         </form>
         <div class="auth-links">¿Ya tienes cuenta? <a href="?mode=login">Inicia sesión</a></div>
       </div>
 
-      <!-- 🔁 RECUPERAR CONTRASEÑA -->
+      <!-- 🔁 SECCIÓN: RECUPERAR CONTRASEÑA -->
       <div id="recover-section" class="auth-section">
         <form id="recover-form">
-          <div class="form-group"><label for="recover-email">EMAIL</label><input type="email" id="recover-email" placeholder="tu@email.com" required autocomplete="email"></div>
+          <div class="form-group">
+            <label for="recover-email">EMAIL</label>
+            <input type="email" id="recover-email" name="email" placeholder="tu@email.com" required autocomplete="email" />
+          </div>
           <button type="submit" class="btn" id="recover-btn">ENVIAR ENLACE</button>
         </form>
         <div class="auth-links"><a href="?mode=login">← Volver al inicio</a></div>
       </div>
 
-      <!-- 🔑 NUEVA CONTRASEÑA -->
+      <!-- 🔑 SECCIÓN: NUEVA CONTRASEÑA -->
       <div id="newpassword-section" class="auth-section">
-        <p style="color:#9ca3af;font-size:0.9rem;margin-bottom:1.5rem;text-align:center">Ingresa tu nueva contraseña para recuperar el acceso a tu cuenta.</p>
+        <p style="color:#9ca3af;font-size:0.9rem;margin-bottom:1.5rem;text-align:center">
+          Ingresa tu nueva contraseña para recuperar el acceso a tu cuenta.
+        </p>
         <form id="newpassword-form">
-          <div class="form-group"><label for="new-password">NUEVA CONTRASEÑA</label><input type="password" id="new-password" placeholder="••••••••" required minlength="6"></div>
-          <div class="form-group"><label for="confirm-new-password">CONFIRMAR CONTRASEÑA</label><input type="password" id="confirm-new-password" placeholder="••••••••" required minlength="6"></div>
+          <div class="form-group">
+            <label for="new-password">NUEVA CONTRASEÑA</label>
+            <input type="password" id="new-password" name="newPassword" placeholder="••••••••" required minlength="6" />
+          </div>
+          <div class="form-group">
+            <label for="confirm-new-password">CONFIRMAR CONTRASEÑA</label>
+            <input type="password" id="confirm-new-password" name="confirmNewPassword" placeholder="••••••••" required minlength="6" />
+          </div>
           <button type="submit" class="btn" id="update-password-btn">ACTUALIZAR CONTRASEÑA</button>
         </form>
         <div class="auth-links"><a href="?mode=login">← Volver al inicio</a></div>
@@ -78,216 +623,610 @@
     </div>
   </div>
 
-  <!-- 🎴 MODAL: ROL + PRIVACIDAD -->
+  <!-- 🎴 MODAL: SELECCIÓN DE ROL + PRIVACIDAD -->
   <div class="modal-overlay" id="role-modal">
     <div class="modal-content">
       <button class="modal-close" id="modal-close-btn">×</button>
       <div class="modal-title">¿Cómo usarás BarberHub?</div>
       <div class="modal-subtitle" id="modal-subtitle">Selecciona tu tipo de cuenta</div>
+      
       <div class="role-cards">
-        <div class="role-card" id="modal-card-client"><div class="role-icon">👤</div><div class="role-card-title">Cliente</div><div class="role-card-desc">Quiero agendar citas y explorar estilos</div></div>
-        <div class="role-card" id="modal-card-barber"><div class="role-icon">💈</div><div class="role-card-title">Barbero</div><div class="role-card-desc">Ofrezco servicios y gestiono mi agenda</div></div>
+        <div class="role-card" id="modal-card-client">
+          <div class="role-icon">👤</div>
+          <div class="role-card-title">Cliente</div>
+          <div class="role-card-desc">Quiero agendar citas y explorar estilos</div>
+        </div>
+        <div class="role-card" id="modal-card-barber">
+          <div class="role-icon">💈</div>
+          <div class="role-card-title">Barbero</div>
+          <div class="role-card-desc">Ofrezco servicios y gestiono mi agenda</div>
+        </div>
       </div>
-      <div class="privacy-box"><input type="checkbox" id="modal-privacy-check"><label for="modal-privacy-check">Acepto la <a href="#" id="privacy-link">Política de Privacidad</a> y los <a href="#" id="terms-link">Términos de Servicio</a></label></div>
+
+      <div class="privacy-box">
+        <input type="checkbox" id="modal-privacy-check">
+        <label for="modal-privacy-check">
+          Acepto la <a href="#" id="privacy-link">Política de Privacidad</a> y los <a href="#" id="terms-link">Términos de Servicio</a>
+        </label>
+      </div>
+
       <button class="btn-modal" id="modal-action-btn" disabled>CONTINUAR</button>
     </div>
   </div>
 
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- LÓGICA JAVASCRIPT -->
   <script type="text/javascript">
-    // Ignorar errores de extensiones
-    window.addEventListener('error',e=>{if(e.message?.includes('lockdown')||e.message?.includes('SES')){e.preventDefault();return true}},true);
-
-    let modalRole=null,modalMethod=null,modalEmailData=null,supabaseClient=null;
-
-    // Esperar sesión con reintentos (clave para Google OAuth)
-    async function waitForSession(maxAttempts=3,delayMs=600){
-      for(let i=0;i<maxAttempts;i++){
-        const{data:{session}}=await supabaseClient.auth.getSession();
-        if(session){console.log(`✅ Sesión en intento ${i+1}`);return session}
-        console.log(`⏳ Intento ${i+1}...`);
-        await new Promise(r=>setTimeout(r,delayMs))
+    // ========== CONFIGURACIÓN GLOBAL ==========
+    
+    // Ignorar errores de extensiones del navegador (MetaMask, Wallet, etc.)
+    window.addEventListener('error', (e) => {
+      if (e.message?.includes('lockdown') || e.message?.includes('SES') || e.message?.includes('inpage.js')) {
+        e.preventDefault();
+        return true;
       }
-      return null
+    }, true);
+
+    // Variables globales para el modal
+    let modalRole = null;           // 'client' | 'barber'
+    let modalMethod = null;         // 'google' | 'email'
+    let modalEmailData = null;      // { email, password }
+    let supabaseClient = null;      // Cliente de Supabase
+
+    // ========== FUNCIÓN: ESPERAR SESIÓN CON REINTENTOS ==========
+    // Clave para Google OAuth: la sesión tarda unos ms en estar lista
+    async function waitForSession(maxAttempts = 3, delayMs = 600) {
+      for (let i = 0; i < maxAttempts; i++) {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+          console.log(`✅ Sesión encontrada en intento ${i + 1}`);
+          return session;
+        }
+        console.log(`⏳ Intento ${i + 1}: esperando sesión...`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+      console.warn('⚠️ No se encontró sesión después de los reintentos');
+      return null;
     }
 
-    // Detectar modo recuperación desde hash o query params
-    function isRecoveryMode(){
-      const params=new URLSearchParams(window.location.search);
-      if(params.get('mode')==='newpassword')return true;
-      const hash=window.location.hash;
-      if(hash.includes('type=recovery')||hash.includes('access_token='))return true;
+    // ========== FUNCIÓN: DETECTAR MODO RECUPERACIÓN ==========
+    function isRecoveryMode() {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('mode') === 'newpassword') return true;
+      const hash = window.location.hash;
+      if (hash.includes('type=recovery') || hash.includes('access_token=')) return true;
       return false;
     }
 
-    document.addEventListener('DOMContentLoaded',async()=>{
-      if(!window.supabase){showError('❌ Supabase no cargó');return}
-      const SUPABASE_URL='https://qnlbaxxbsbwbgqucbywn.supabase.co';
-      const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
-      supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    // ========== INICIALIZACIÓN PRINCIPAL ==========
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('🚀 BarberHub Auth - Iniciando...');
 
-      // 1. Procesar callback OAuth (Google)
+      // Verificar que Supabase cargó
+      if (!window.supabase) {
+        showError('❌ Error: No se cargó Supabase. Revisa tu conexión.');
+        return;
+      }
+
+      // Configurar cliente de Supabase
+      const SUPABASE_URL = 'https://qnlbaxxbsbwbgqucbywn.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      console.log('✅ Supabase conectado');
+
+      // 1️⃣ PROCESAR CALLBACK DE OAUTH (Google redirige aquí)
       await processOAuthCallback();
 
-      // 2. Verificar si es modo recuperación de contraseña
-      if(isRecoveryMode()){
-        console.log('🔐 Recovery mode detected');
+      // 2️⃣ VERIFICAR SI ES MODO RECUPERACIÓN DE CONTRASEÑA
+      if (isRecoveryMode()) {
+        console.log('🔐 Modo recuperación detectado');
         showSection('newpassword');
-        // Verificar que haya sesión de recuperación
-        const session=await waitForSession();
-        if(!session){
+        const session = await waitForSession();
+        if (!session) {
           showError('⚠️ Enlace de recuperación inválido o expirado.');
-          setTimeout(()=>showSection('recover'),3000);
+          setTimeout(() => showSection('recover'), 3000);
         }
         return;
       }
 
-      // 3. Verificar sesión activa normal
-      const session=await waitForSession();
-      if(session){console.log('🚀 Sesión activa, redirigiendo...');handleLoginRedirect(session.user);return}
+      // 3️⃣ VERIFICAR SESIÓN ACTIVA (con reintentos para OAuth)
+      const session = await waitForSession();
+      if (session) {
+        console.log('🚀 Sesión activa, redirigiendo...');
+        handleLoginRedirect(session.user);
+        return; // ⛔ DETENER: no mostrar login si ya hay sesión
+      }
 
-      // 4. Mostrar sección según URL
-      const params=new URLSearchParams(window.location.search);
-      showSection(params.get('mode')||'login');
+      // 4️⃣ MOSTRAR SECCIÓN SEGÚN URL (?mode=login|register|recover)
+      const params = new URLSearchParams(window.location.search);
+      showSection(params.get('mode') || 'login');
 
-      // 5. Escuchar cambios de auth en tiempo real
-      supabaseClient.auth.onAuthStateChange((event,session)=>{
-        console.log('🔔 Auth event:',event);
-        if(event==='SIGNED_IN'&&session)handleLoginRedirect(session.user);
-        if(event==='PASSWORD_RECOVERY')showSection('newpassword');
+      // 5️⃣ ESCUCHAR CAMBIOS DE AUTH EN TIEMPO REAL
+      supabaseClient.auth.onAuthStateChange((event, session) => {
+        console.log('🔔 Auth event:', event);
+        if (event === 'SIGNED_IN' && session) {
+          handleLoginRedirect(session.user);
+        }
+        if (event === 'PASSWORD_RECOVERY') {
+          showSection('newpassword');
+        }
       });
 
-      // ========== EVENT LISTENERS ==========
-      
-      // LOGIN FORM
-      document.getElementById('login-form').addEventListener('submit',async e=>{
+      // ========== EVENT LISTENERS: FORMULARIOS ==========
+
+      // 🔐 LOGIN CON EMAIL
+      document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email=document.getElementById('login-email').value.trim(),pass=document.getElementById('login-password').value,btn=document.getElementById('login-btn');
-        if(!email||!pass){showError('❌ Completa email y contraseña');return}
-        btn.textContent='⏳...';btn.disabled=true;
-        try{const{error}=await supabaseClient.auth.signInWithPassword({email,password:pass});if(error)throw new Error(error.message)}
-        catch(err){showError('❌ '+err.message);btn.textContent='ENTRAR';btn.disabled=false}
+        const email = document.getElementById('login-email').value.trim();
+        const pass = document.getElementById('login-password').value;
+        const btn = document.getElementById('login-btn');
+
+        if (!email || !pass) {
+          showError('❌ Completa email y contraseña');
+          return;
+        }
+
+        btn.textContent = '⏳...';
+        btn.disabled = true;
+
+        try {
+          const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pass });
+          if (error) throw new Error(error.message);
+          // Éxito: onAuthStateChange redirigirá automáticamente
+        } catch (err) {
+          showError('❌ ' + err.message);
+          btn.textContent = 'ENTRAR';
+          btn.disabled = false;
+        }
       });
 
-      // GOOGLE BUTTON
-      document.getElementById('google-login-btn').addEventListener('click',()=>openModal('google'));
-
-      // REGISTER BUTTON
-      document.getElementById('open-register-modal-btn').addEventListener('click',()=>{
-        const email=document.getElementById('register-email').value.trim(),pass=document.getElementById('register-password').value,confirm=document.getElementById('register-confirm').value;
-        if(!email||!pass||!confirm){showError('❌ Completa todos los campos');return}
-        if(pass!==confirm){showError('❌ Las contraseñas no coinciden');return}
-        if(pass.length<6){showError('⚠️ Mínimo 6 caracteres');return}
-        modalEmailData={email,password:pass};openModal('email')
+      // 🔵 BOTÓN GOOGLE (ABRE MODAL)
+      document.getElementById('google-login-btn').addEventListener('click', () => {
+        console.log('🔵 Google button clicked');
+        openModal('google');
       });
 
-      // RECOVER FORM
-      document.getElementById('recover-form').addEventListener('submit',async e=>{
+      // 📝 BOTÓN REGISTRARSE (VALIDA Y ABRE MODAL)
+      document.getElementById('open-register-modal-btn').addEventListener('click', () => {
+        const email = document.getElementById('register-email').value.trim();
+        const pass = document.getElementById('register-password').value;
+        const confirm = document.getElementById('register-confirm').value;
+
+        if (!email || !pass || !confirm) {
+          showError('❌ Completa todos los campos');
+          return;
+        }
+        if (pass !== confirm) {
+          showError('❌ Las contraseñas no coinciden');
+          return;
+        }
+        if (pass.length < 6) {
+          showError('⚠️ Mínimo 6 caracteres');
+          return;
+        }
+
+        modalEmailData = { email, password: pass };
+        openModal('email');
+      });
+
+      // 🔁 FORMULARIO RECUPERAR CONTRASEÑA
+      document.getElementById('recover-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email=document.getElementById('recover-email').value.trim(),btn=document.getElementById('recover-btn');
-        if(!email){showError('❌ Ingresa tu email');return}
-        btn.textContent='⏳...';btn.disabled=true;
-        try{
-          const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{
-            redirectTo:window.location.origin+'/auth.html'
+        const email = document.getElementById('recover-email').value.trim();
+        const btn = document.getElementById('recover-btn');
+
+        if (!email) {
+          showError('❌ Ingresa tu email');
+          return;
+        }
+
+        btn.textContent = '⏳...';
+        btn.disabled = true;
+
+        try {
+          const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/auth.html'
           });
-          if(error)throw error;
+          if (error) throw error;
           showSuccess('✅ Enlace enviado. Revisa tu correo (incluye spam).');
-          setTimeout(()=>{showSection('login');btn.textContent='ENVIAR ENLACE';btn.disabled=false},4000);
-        }catch(err){showError('❌ '+err.message);btn.textContent='ENVIAR ENLACE';btn.disabled=false}
+          setTimeout(() => {
+            showSection('login');
+            btn.textContent = 'ENVIAR ENLACE';
+            btn.disabled = false;
+          }, 4000);
+        } catch (err) {
+          showError('❌ ' + err.message);
+          btn.textContent = 'ENVIAR ENLACE';
+          btn.disabled = false;
+        }
       });
 
-      // NEW PASSWORD FORM
-      document.getElementById('newpassword-form').addEventListener('submit',async e=>{
+      // 🔑 FORMULARIO NUEVA CONTRASEÑA
+      document.getElementById('newpassword-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const newP=document.getElementById('new-password').value,confirmP=document.getElementById('confirm-new-password').value,btn=document.getElementById('update-password-btn');
-        if(newP!==confirmP){showError('❌ Las contraseñas no coinciden');return}
-        if(newP.length<6){showError('⚠️ Mínimo 6 caracteres');return}
-        
+        const newP = document.getElementById('new-password').value;
+        const confirmP = document.getElementById('confirm-new-password').value;
+        const btn = document.getElementById('update-password-btn');
+
+        if (newP !== confirmP) {
+          showError('❌ Las contraseñas no coinciden');
+          return;
+        }
+        if (newP.length < 6) {
+          showError('⚠️ Mínimo 6 caracteres');
+          return;
+        }
+
         // Verificar que haya sesión de recuperación
-        const{data:{session}}=await supabaseClient.auth.getSession();
-        if(!session){showError('❌ Sesión inválida. Solicita un nuevo enlace.');showSection('recover');return}
-        
-        btn.textContent='⏳...';btn.disabled=true;
-        try{
-          const{error}=await supabaseClient.auth.updateUser({password:newP});
-          if(error)throw error;
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) {
+          showError('❌ Sesión inválida. Solicita un nuevo enlace.');
+          showSection('recover');
+          return;
+        }
+
+        btn.textContent = '⏳...';
+        btn.disabled = true;
+
+        try {
+          const { error } = await supabaseClient.auth.updateUser({ password: newP });
+          if (error) throw error;
           showSuccess('✅ Contraseña actualizada. Inicia sesión con tu nueva contraseña.');
           await supabaseClient.auth.signOut();
-          window.location.hash='';
-          setTimeout(()=>{window.location.href='/auth.html?mode=login'},2500);
-        }catch(err){showError('❌ '+err.message);btn.textContent='ACTUALIZAR CONTRASEÑA';btn.disabled=false}
+          window.location.hash = '';
+          setTimeout(() => {
+            window.location.href = '/auth.html?mode=login';
+          }, 2500);
+        } catch (err) {
+          showError('❌ ' + err.message);
+          btn.textContent = 'ACTUALIZAR CONTRASEÑA';
+          btn.disabled = false;
+        }
       });
 
-      // MODAL EVENTS
-      document.getElementById('modal-card-client').addEventListener('click',()=>selectRole('client'));
-      document.getElementById('modal-card-barber').addEventListener('click',()=>selectRole('barber'));
-      document.getElementById('modal-privacy-check').addEventListener('change',checkModalReady);
-      document.getElementById('modal-action-btn').addEventListener('click',executeModalAction);
-      document.getElementById('modal-close-btn').addEventListener('click',closeModal);
-      document.getElementById('role-modal').addEventListener('click',e=>{if(e.target.id==='role-modal')closeModal()});
-      document.getElementById('privacy-link').addEventListener('click',e=>{e.preventDefault();alert('🔒 Política de Privacidad:\n• Datos usados solo para gestionar citas\n• No compartimos info con terceros\n• Puedes eliminar tu cuenta cuando quieras')});
-      document.getElementById('terms-link').addEventListener('click',e=>{e.preventDefault();alert('📋 Términos:\n• Mayor de 13 años\n• Responsable de tu info\n• BarberHub no garantiza disponibilidad de barberos')});
+      // ========== EVENT LISTENERS: MODAL ==========
+
+      // Seleccionar rol: Cliente
+      document.getElementById('modal-card-client').addEventListener('click', () => {
+        selectRole('client');
+      });
+
+      // Seleccionar rol: Barbero
+      document.getElementById('modal-card-barber').addEventListener('click', () => {
+        selectRole('barber');
+      });
+
+      // Checkbox de privacidad: habilitar botón
+      document.getElementById('modal-privacy-check').addEventListener('change', () => {
+        checkModalReady();
+      });
+
+      // Botón CONTINUAR del modal
+      document.getElementById('modal-action-btn').addEventListener('click', () => {
+        executeModalAction();
+      });
+
+      // Cerrar modal: botón X
+      document.getElementById('modal-close-btn').addEventListener('click', () => {
+        closeModal();
+      });
+
+      // Cerrar modal: click fuera del contenido
+      document.getElementById('role-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'role-modal') {
+          closeModal();
+        }
+      });
+
+      // Enlaces de Política y Términos (alertas)
+      document.getElementById('privacy-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('🔒 Política de Privacidad BarberHub:\n\n• Tus datos se usan solo para gestionar tu cuenta y citas\n• No compartimos información con terceros\n• Puedes solicitar la eliminación de tu cuenta en cualquier momento\n• Usamos cookies esenciales para el funcionamiento de la app');
+      });
+      document.getElementById('terms-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('📋 Términos de Servicio BarberHub:\n\n• Debes ser mayor de 13 años para usar BarberHub\n• Eres responsable de la veracidad de tu información\n• BarberHub no se hace responsable de citas no atendidas\n• Puedes cancelar citas con 24h de anticipación');
+      });
+
+      console.log('✅ BarberHub Auth - Listo');
     });
 
     // ========== FUNCIONES DEL MODAL ==========
-    function openModal(method){
-      modalMethod=method;modalRole=null;
-      document.querySelectorAll('#role-modal .role-card').forEach(c=>c.classList.remove('selected'));
-      document.getElementById('modal-privacy-check').checked=false;
-      const subtitle=document.getElementById('modal-subtitle'),btn=document.getElementById('modal-action-btn');
-      if(method==='google'){subtitle.textContent='Selecciona tu tipo de cuenta para continuar con Google';btn.textContent='CONTINUAR CON GOOGLE';btn.style.background='linear-gradient(135deg, #ff00ff, #8b008b)';btn.style.color='#fff'}
-      else{subtitle.textContent='Selecciona tu tipo de cuenta para crear tu perfil';btn.textContent='CREAR CUENTA';btn.style.background='linear-gradient(135deg, #00e5ff, #0072ff)';btn.style.color='#000'}
-      btn.disabled=true;btn.classList.remove('active','loading');document.getElementById('role-modal').classList.add('active')
-    }
-    function closeModal(){document.getElementById('role-modal').classList.remove('active');modalRole=null;modalMethod=null;modalEmailData=null}
-    function selectRole(role){modalRole=role;document.querySelectorAll('#role-modal .role-card').forEach(c=>c.classList.remove('selected'));document.getElementById(`modal-card-${role}`).classList.add('selected');checkModalReady()}
-    function checkModalReady(){const checked=document.getElementById('modal-privacy-check').checked,btn=document.getElementById('modal-action-btn');if(modalRole&&checked){btn.disabled=false;btn.classList.add('active')}else{btn.disabled=true;btn.classList.remove('active')}}
-    
-    async function executeModalAction(){
-      const btn=document.getElementById('modal-action-btn');
-      if(!modalRole){showError('⚠️ Selecciona Cliente o Barbero');return}
-      if(!document.getElementById('modal-privacy-check').checked){showError('⚠️ Debes aceptar los términos');return}
-      btn.classList.add('loading');btn.textContent='⏳ Procesando...';btn.disabled=true;
-      try{
-        if(modalMethod==='google'){
-          console.log('🔵 Google OAuth con rol:',modalRole);
-          localStorage.setItem('barberhub_pending_role',modalRole);
-          localStorage.setItem('barberhub_oauth_ts',Date.now().toString());
-          await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/auth.html',queryParams:{access_type:'offline',prompt:'consent'}}})
-        }else if(modalMethod==='email'&&modalEmailData){
-          const{data,error}=await supabaseClient.auth.signUp({email:modalEmailData.email,password:modalEmailData.password,options:{data:{role:modalRole}}});
-          if(error)throw error;if(!data.user)throw new Error('No se creó el usuario');
-          await supabaseClient.from('profiles').insert([{id:data.user.id,email:modalEmailData.email,role:modalRole,created_at:new Date().toISOString()}]);
-          closeModal();showSuccess(`✅ ¡Registro exitoso! Revisa tu email para activar la cuenta.`);document.getElementById('register-form').reset();setTimeout(()=>showSection('login'),3000);return
-        }
-      }catch(err){console.error('❌ Error:',err);showError('❌ '+err.message);btn.classList.remove('loading');btn.disabled=false;btn.textContent=modalMethod==='google'?'CONTINUAR CON GOOGLE':'CREAR CUENTA'}
+
+    // Abrir modal con método ('google' o 'email')
+    function openModal(method) {
+      modalMethod = method;
+      modalRole = null;
+
+      // Resetear UI del modal
+      document.querySelectorAll('#role-modal .role-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      document.getElementById('modal-privacy-check').checked = false;
+
+      // Configurar título y botón según método
+      const subtitle = document.getElementById('modal-subtitle');
+      const btn = document.getElementById('modal-action-btn');
+
+      if (method === 'google') {
+        subtitle.textContent = 'Selecciona tu tipo de cuenta para continuar con Google';
+        btn.textContent = 'CONTINUAR CON GOOGLE';
+        btn.style.background = 'linear-gradient(135deg, #ff00ff, #8b008b)';
+        btn.style.color = '#fff';
+      } else {
+        subtitle.textContent = 'Selecciona tu tipo de cuenta para crear tu perfil';
+        btn.textContent = 'CREAR CUENTA';
+        btn.style.background = 'linear-gradient(135deg, #00e5ff, #0072ff)';
+        btn.style.color = '#000';
+      }
+
+      // Deshabilitar botón inicialmente
+      btn.disabled = true;
+      btn.classList.remove('active', 'loading');
+
+      // Mostrar modal con animación
+      document.getElementById('role-modal').classList.add('active');
+      console.log('🎴 Modal opened:', method);
     }
 
-    // ========== UTILIDADES ==========
-    function showError(msg){const el=document.getElementById('error-message');if(el){el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),8000)}console.error('❌',msg)}
-    function showSuccess(msg){const el=document.getElementById('success-message');if(el){el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),8000)}console.log('✅',msg)}
-    function showSection(name){document.querySelectorAll('.auth-section').forEach(s=>s.classList.remove('active'));const target=document.getElementById(name+'-section');if(target)target.classList.add('active');const sub=document.getElementById('auth-subtitle');const titles={login:'Inicia tu estilo',register:'Crea tu cuenta gratis',recover:'Recupera tu contraseña',newpassword:'Crea tu nueva contraseña'};if(sub&&titles[name])sub.textContent=titles[name]}
-    
-    async function handleLoginRedirect(user){
-      try{
-        const savedRole=localStorage.getItem('barberhub_pending_role');
-        const{data:profile}=await supabaseClient.from('profiles').select('role').eq('id',user.id).single();
-        let role=profile?.role||savedRole||'client';
-        localStorage.removeItem('barberhub_pending_role');localStorage.removeItem('barberhub_oauth_ts');
-        console.log('🚀 Redirect to',role);window.location.href=role==='admin'?'/admin.html':'/dashboard.html'
-      }catch(e){console.error('Redirect error:',e);window.location.href='/dashboard.html'}
+    // Cerrar modal y resetear estado
+    function closeModal() {
+      document.getElementById('role-modal').classList.remove('active');
+      modalRole = null;
+      modalMethod = null;
+      modalEmailData = null;
+      console.log('🔒 Modal closed');
     }
-    
-    async function processOAuthCallback(){
-      const hash=window.location.hash;if(!hash.includes('access_token')&&!hash.includes('code='))return;
-      console.log('🔄 OAuth callback detected');await new Promise(r=>setTimeout(r,1000));
-      const{data:{session}}=await supabaseClient.auth.getSession();
-      if(session){
-        console.log('✅ Session after OAuth');const savedRole=localStorage.getItem('barberhub_pending_role');console.log('📦 Saved role:',savedRole);
-        const{data:exists}=await supabaseClient.from('profiles').select('role').eq('id',session.user.id).single();
-        if(!exists?.role&&savedRole){await supabaseClient.from('profiles').insert([{id:session.user.id,email:session.user.email,role:savedRole,created_at:new Date().toISOString()}]);console.log('✅ Profile created:',savedRole)}
-        localStorage.removeItem('barberhub_pending_role');localStorage.removeItem('barberhub_oauth_ts')
+
+    // Seleccionar rol en el modal
+    function selectRole(role) {
+      modalRole = role;
+
+      // Remover selección previa
+      document.querySelectorAll('#role-modal .role-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+
+      // Agregar selección a la tarjeta clickeada
+      document.getElementById(`modal-card-${role}`).classList.add('selected');
+
+      // Verificar si habilitar botón
+      checkModalReady();
+      console.log('✅ Role selected:', role);
+    }
+
+    // Verificar condiciones para habilitar botón del modal
+    function checkModalReady() {
+      const privacyChecked = document.getElementById('modal-privacy-check').checked;
+      const btn = document.getElementById('modal-action-btn');
+
+      if (modalRole && privacyChecked) {
+        btn.disabled = false;
+        btn.classList.add('active');
+        console.log('🟢 Button enabled');
+      } else {
+        btn.disabled = true;
+        btn.classList.remove('active');
+        console.log('🔴 Button disabled');
+      }
+    }
+
+    // Ejecutar acción del modal (Google OAuth o Registro Email)
+    async function executeModalAction() {
+      const btn = document.getElementById('modal-action-btn');
+
+      // Validaciones de seguridad
+      if (!modalRole) {
+        showError('⚠️ Selecciona Cliente o Barbero');
+        return;
+      }
+      if (!document.getElementById('modal-privacy-check').checked) {
+        showError('⚠️ Debes aceptar los términos para continuar');
+        return;
+      }
+
+      // Mostrar estado de carga
+      btn.classList.add('loading');
+      btn.textContent = '⏳ Procesando...';
+      btn.disabled = true;
+
+      try {
+        if (modalMethod === 'google') {
+          // 🔵 GOOGLE OAUTH
+          console.log('🔵 Starting Google OAuth with role:', modalRole);
+
+          // Guardar rol en localStorage (fallback por si el state falla)
+          localStorage.setItem('barberhub_pending_role', modalRole);
+          localStorage.setItem('barberhub_oauth_ts', Date.now().toString());
+
+          // Iniciar OAuth SIN state personalizado (evita bad_oauth_state)
+          await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: window.location.origin + '/auth.html',
+              queryParams: {
+                access_type: 'offline',
+                prompt: 'consent'
+                // ❌ SIN state personalizado → Supabase maneja el suyo internamente
+              }
+            }
+          });
+
+        } else if (modalMethod === 'email' && modalEmailData) {
+          // 📧 REGISTRO CON EMAIL
+          console.log('📧 Creating account with email');
+
+          const { data, error } = await supabaseClient.auth.signUp({
+            email: modalEmailData.email,
+            password: modalEmailData.password,
+            options: { data: { role: modalRole } }
+          });
+
+          if (error) throw error;
+          if (!data.user) throw new Error('No se creó el usuario');
+
+          // Crear perfil en tabla 'profiles'
+          await supabaseClient.from('profiles').insert([{
+            id: data.user.id,
+            email: modalEmailData.email,
+            role: modalRole,
+            created_at: new Date().toISOString()
+          }]);
+
+          // Feedback de éxito
+          closeModal();
+          showSuccess(`✅ ¡Registro exitoso! Revisa tu email para activar la cuenta.`);
+          document.getElementById('register-form').reset();
+          setTimeout(() => showSection('login'), 3000);
+          return;
+        }
+      } catch (err) {
+        console.error('❌ Modal action error:', err);
+        showError('❌ ' + err.message);
+        
+        // Restaurar botón
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        btn.textContent = modalMethod === 'google' 
+          ? 'CONTINUAR CON GOOGLE' 
+          : 'CREAR CUENTA';
+      }
+    }
+
+    // ========== FUNCIONES UTILITARIAS ==========
+
+    // Mostrar mensaje de error
+    function showError(msg) {
+      const el = document.getElementById('error-message');
+      if (el) {
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 8000);
+      }
+      console.error('❌', msg);
+    }
+
+    // Mostrar mensaje de éxito
+    function showSuccess(msg) {
+      const el = document.getElementById('success-message');
+      if (el) {
+        el.textContent = msg;
+        el.classList.add('show');
+        setTimeout(() => el.classList.remove('show'), 8000);
+      }
+      console.log('✅', msg);
+    }
+
+    // Mostrar sección y ocultar las demás
+    function showSection(name) {
+      // Ocultar todas las secciones
+      document.querySelectorAll('.auth-section').forEach(section => {
+        section.classList.remove('active');
+      });
+
+      // Mostrar la sección objetivo
+      const target = document.getElementById(name + '-section');
+      if (target) {
+        target.classList.add('active');
+      }
+
+      // Actualizar subtítulo
+      const subtitle = document.getElementById('auth-subtitle');
+      const titles = {
+        login: 'Inicia tu estilo',
+        register: 'Crea tu cuenta gratis',
+        recover: 'Recupera tu contraseña',
+        newpassword: 'Crea tu nueva contraseña'
+      };
+      if (subtitle && titles[name]) {
+        subtitle.textContent = titles[name];
+      }
+
+      console.log('📄 Section shown:', name);
+    }
+
+    // Redirigir según rol del usuario
+    async function handleLoginRedirect(user) {
+      try {
+        // Intentar obtener rol desde localStorage (fallback)
+        const savedRole = localStorage.getItem('barberhub_pending_role');
+
+        // Consultar perfil en base de datos
+        const { data: profile } = await supabaseClient
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+
+        // Determinar rol final
+        const role = profile?.role || savedRole || 'client';
+
+        // Limpiar localStorage
+        localStorage.removeItem('barberhub_pending_role');
+        localStorage.removeItem('barberhub_oauth_ts');
+
+        console.log('🚀 Redirecting to', role);
+
+        // Redirigir según rol
+        if (role === 'admin') {
+          window.location.href = '/admin.html';
+        } else {
+          window.location.href = '/dashboard.html';
+        }
+      } catch (e) {
+        console.error('Redirect error:', e);
+        // Fallback seguro
+        window.location.href = '/dashboard.html';
+      }
+    }
+
+    // Procesar callback de OAuth (cuando Google redirige de vuelta)
+    async function processOAuthCallback() {
+      const hash = window.location.hash;
+
+      // Si no hay token ni código, no es callback de OAuth
+      if (!hash.includes('access_token') && !hash.includes('code=')) {
+        return;
+      }
+
+      console.log('🔄 OAuth callback detected');
+
+      // Esperar a que Supabase procese la sesión
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Obtener sesión
+      const { data: { session } } = await supabaseClient.auth.getSession();
+
+      if (session) {
+        console.log('✅ Session available after OAuth');
+
+        // Recuperar rol de localStorage (guardado antes del redirect)
+        const savedRole = localStorage.getItem('barberhub_pending_role');
+        console.log('📦 Saved role from localStorage:', savedRole);
+
+        // Verificar si ya existe perfil en la base de datos
+        const { data: exists } = await supabaseClient
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        // Crear perfil si no existe
+        if (!exists?.role && savedRole) {
+          await supabaseClient.from('profiles').insert([{
+            id: session.user.id,
+            email: session.user.email,
+            role: savedRole,
+            created_at: new Date().toISOString()
+          }]);
+          console.log('✅ Profile created with role:', savedRole);
+        }
+
+        // Limpiar localStorage después de usarlo
+        localStorage.removeItem('barberhub_pending_role');
+        localStorage.removeItem('barberhub_oauth_ts');
       }
     }
   </script>
