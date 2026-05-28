@@ -30,7 +30,7 @@
       <div id="error-message" class="error-message"></div>
       <div id="success-message" class="success-message"></div>
 
-      <!-- LOGIN -->
+      <!-- 🔐 LOGIN -->
       <div id="login-section" class="auth-section active">
         <form id="login-form">
           <div class="form-group"><label for="login-email">EMAIL</label><input type="email" id="login-email" placeholder="tu@email.com" required autocomplete="email"></div>
@@ -45,7 +45,7 @@
         <div class="auth-links"><a href="?mode=recover">¿Olvidaste tu contraseña?</a><br><br>¿No tienes cuenta? <a href="?mode=register">Regístrate</a></div>
       </div>
 
-      <!-- REGISTRO -->
+      <!-- 📝 REGISTRO -->
       <div id="register-section" class="auth-section">
         <form id="register-form">
           <div class="form-group"><label for="register-email">EMAIL</label><input type="email" id="register-email" placeholder="tu@email.com" required autocomplete="email"></div>
@@ -56,17 +56,18 @@
         <div class="auth-links">¿Ya tienes cuenta? <a href="?mode=login">Inicia sesión</a></div>
       </div>
 
-      <!-- RECUPERAR -->
+      <!-- 🔁 RECUPERAR CONTRASEÑA -->
       <div id="recover-section" class="auth-section">
         <form id="recover-form">
           <div class="form-group"><label for="recover-email">EMAIL</label><input type="email" id="recover-email" placeholder="tu@email.com" required autocomplete="email"></div>
-          <button type="submit" class="btn">ENVIAR ENLACE</button>
+          <button type="submit" class="btn" id="recover-btn">ENVIAR ENLACE</button>
         </form>
         <div class="auth-links"><a href="?mode=login">← Volver al inicio</a></div>
       </div>
 
-      <!-- NUEVA CONTRASEÑA -->
+      <!-- 🔑 NUEVA CONTRASEÑA -->
       <div id="newpassword-section" class="auth-section">
+        <p style="color:#9ca3af;font-size:0.9rem;margin-bottom:1.5rem;text-align:center">Ingresa tu nueva contraseña para recuperar el acceso a tu cuenta.</p>
         <form id="newpassword-form">
           <div class="form-group"><label for="new-password">NUEVA CONTRASEÑA</label><input type="password" id="new-password" placeholder="••••••••" required minlength="6"></div>
           <div class="form-group"><label for="confirm-new-password">CONFIRMAR CONTRASEÑA</label><input type="password" id="confirm-new-password" placeholder="••••••••" required minlength="6"></div>
@@ -77,7 +78,7 @@
     </div>
   </div>
 
-  <!-- MODAL -->
+  <!-- 🎴 MODAL: ROL + PRIVACIDAD -->
   <div class="modal-overlay" id="role-modal">
     <div class="modal-content">
       <button class="modal-close" id="modal-close-btn">×</button>
@@ -110,31 +111,55 @@
       return null
     }
 
+    // Detectar modo recuperación desde hash o query params
+    function isRecoveryMode(){
+      const params=new URLSearchParams(window.location.search);
+      if(params.get('mode')==='newpassword')return true;
+      const hash=window.location.hash;
+      if(hash.includes('type=recovery')||hash.includes('access_token='))return true;
+      return false;
+    }
+
     document.addEventListener('DOMContentLoaded',async()=>{
       if(!window.supabase){showError('❌ Supabase no cargó');return}
       const SUPABASE_URL='https://qnlbaxxbsbwbgqucbywn.supabase.co';
       const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
       supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
-      // 1. Procesar callback OAuth
+      // 1. Procesar callback OAuth (Google)
       await processOAuthCallback();
 
-      // 2. Esperar sesión (con reintentos para Google)
-      const session=await waitForSession();
-      if(session){console.log('🚀 Redirigiendo...');handleLoginRedirect(session.user);return}
+      // 2. Verificar si es modo recuperación de contraseña
+      if(isRecoveryMode()){
+        console.log('🔐 Recovery mode detected');
+        showSection('newpassword');
+        // Verificar que haya sesión de recuperación
+        const session=await waitForSession();
+        if(!session){
+          showError('⚠️ Enlace de recuperación inválido o expirado.');
+          setTimeout(()=>showSection('recover'),3000);
+        }
+        return;
+      }
 
-      // 3. Mostrar sección según URL
+      // 3. Verificar sesión activa normal
+      const session=await waitForSession();
+      if(session){console.log('🚀 Sesión activa, redirigiendo...');handleLoginRedirect(session.user);return}
+
+      // 4. Mostrar sección según URL
       const params=new URLSearchParams(window.location.search);
       showSection(params.get('mode')||'login');
 
-      // 4. Escuchar cambios de auth en tiempo real
+      // 5. Escuchar cambios de auth en tiempo real
       supabaseClient.auth.onAuthStateChange((event,session)=>{
         console.log('🔔 Auth event:',event);
         if(event==='SIGNED_IN'&&session)handleLoginRedirect(session.user);
-        if(event==='PASSWORD_RECOVERY')showSection('newpassword')
+        if(event==='PASSWORD_RECOVERY')showSection('newpassword');
       });
 
-      // Event listeners
+      // ========== EVENT LISTENERS ==========
+      
+      // LOGIN FORM
       document.getElementById('login-form').addEventListener('submit',async e=>{
         e.preventDefault();
         const email=document.getElementById('login-email').value.trim(),pass=document.getElementById('login-password').value,btn=document.getElementById('login-btn');
@@ -144,7 +169,10 @@
         catch(err){showError('❌ '+err.message);btn.textContent='ENTRAR';btn.disabled=false}
       });
 
+      // GOOGLE BUTTON
       document.getElementById('google-login-btn').addEventListener('click',()=>openModal('google'));
+
+      // REGISTER BUTTON
       document.getElementById('open-register-modal-btn').addEventListener('click',()=>{
         const email=document.getElementById('register-email').value.trim(),pass=document.getElementById('register-password').value,confirm=document.getElementById('register-confirm').value;
         if(!email||!pass||!confirm){showError('❌ Completa todos los campos');return}
@@ -153,6 +181,45 @@
         modalEmailData={email,password:pass};openModal('email')
       });
 
+      // RECOVER FORM
+      document.getElementById('recover-form').addEventListener('submit',async e=>{
+        e.preventDefault();
+        const email=document.getElementById('recover-email').value.trim(),btn=document.getElementById('recover-btn');
+        if(!email){showError('❌ Ingresa tu email');return}
+        btn.textContent='⏳...';btn.disabled=true;
+        try{
+          const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{
+            redirectTo:window.location.origin+'/auth.html'
+          });
+          if(error)throw error;
+          showSuccess('✅ Enlace enviado. Revisa tu correo (incluye spam).');
+          setTimeout(()=>{showSection('login');btn.textContent='ENVIAR ENLACE';btn.disabled=false},4000);
+        }catch(err){showError('❌ '+err.message);btn.textContent='ENVIAR ENLACE';btn.disabled=false}
+      });
+
+      // NEW PASSWORD FORM
+      document.getElementById('newpassword-form').addEventListener('submit',async e=>{
+        e.preventDefault();
+        const newP=document.getElementById('new-password').value,confirmP=document.getElementById('confirm-new-password').value,btn=document.getElementById('update-password-btn');
+        if(newP!==confirmP){showError('❌ Las contraseñas no coinciden');return}
+        if(newP.length<6){showError('⚠️ Mínimo 6 caracteres');return}
+        
+        // Verificar que haya sesión de recuperación
+        const{data:{session}}=await supabaseClient.auth.getSession();
+        if(!session){showError('❌ Sesión inválida. Solicita un nuevo enlace.');showSection('recover');return}
+        
+        btn.textContent='⏳...';btn.disabled=true;
+        try{
+          const{error}=await supabaseClient.auth.updateUser({password:newP});
+          if(error)throw error;
+          showSuccess('✅ Contraseña actualizada. Inicia sesión con tu nueva contraseña.');
+          await supabaseClient.auth.signOut();
+          window.location.hash='';
+          setTimeout(()=>{window.location.href='/auth.html?mode=login'},2500);
+        }catch(err){showError('❌ '+err.message);btn.textContent='ACTUALIZAR CONTRASEÑA';btn.disabled=false}
+      });
+
+      // MODAL EVENTS
       document.getElementById('modal-card-client').addEventListener('click',()=>selectRole('client'));
       document.getElementById('modal-card-barber').addEventListener('click',()=>selectRole('barber'));
       document.getElementById('modal-privacy-check').addEventListener('change',checkModalReady);
@@ -161,25 +228,9 @@
       document.getElementById('role-modal').addEventListener('click',e=>{if(e.target.id==='role-modal')closeModal()});
       document.getElementById('privacy-link').addEventListener('click',e=>{e.preventDefault();alert('🔒 Política de Privacidad:\n• Datos usados solo para gestionar citas\n• No compartimos info con terceros\n• Puedes eliminar tu cuenta cuando quieras')});
       document.getElementById('terms-link').addEventListener('click',e=>{e.preventDefault();alert('📋 Términos:\n• Mayor de 13 años\n• Responsable de tu info\n• BarberHub no garantiza disponibilidad de barberos')});
-
-      document.getElementById('recover-form').addEventListener('submit',async e=>{
-        e.preventDefault();const email=document.getElementById('recover-email').value.trim();
-        try{const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/auth.html'});if(error)throw error;showSuccess('✅ Enlace enviado. Revisa tu correo.');setTimeout(()=>showSection('login'),4000)}
-        catch(err){showError('❌ '+err.message)}
-      });
-
-      document.getElementById('newpassword-form').addEventListener('submit',async e=>{
-        e.preventDefault();const newP=document.getElementById('new-password').value,confirmP=document.getElementById('confirm-new-password').value,btn=document.getElementById('update-password-btn');
-        if(newP!==confirmP){showError('❌ No coinciden');return}
-        if(newP.length<6){showError('⚠️ Mínimo 6 caracteres');return}
-        const{data:{session}}=await supabaseClient.auth.getSession();
-        if(!session){showError('❌ Sesión inválida');showSection('recover');return}
-        btn.textContent='⏳...';btn.disabled=true;
-        try{const{error}=await supabaseClient.auth.updateUser({password:newP});if(error)throw error;showSuccess('✅ Actualizada. Redirigiendo...');await supabaseClient.auth.signOut();window.location.hash='';setTimeout(()=>window.location.href='/auth.html?mode=login',2000)}
-        catch(err){showError('❌ '+err.message);btn.textContent='ACTUALIZAR';btn.disabled=false}
-      });
     });
 
+    // ========== FUNCIONES DEL MODAL ==========
     function openModal(method){
       modalMethod=method;modalRole=null;
       document.querySelectorAll('#role-modal .role-card').forEach(c=>c.classList.remove('selected'));
@@ -201,19 +252,9 @@
       try{
         if(modalMethod==='google'){
           console.log('🔵 Google OAuth con rol:',modalRole);
-          // ✅ GUARDAR ROL EN LOCALSTORAGE (en lugar de state)
-          localStorage.setItem('barberhub_pending_role', modalRole);
-          localStorage.setItem('barberhub_oauth_ts', Date.now().toString());
-          
-          // ✅ LLAMAR A OAUTH SIN STATE PERSONALIZADO (dejar que Supabase lo maneje)
-          await supabaseClient.auth.signInWithOAuth({
-            provider:'google',
-            options:{
-              redirectTo:window.location.origin+'/auth.html',
-              queryParams:{access_type:'offline',prompt:'consent'}
-              // ❌ SIN state personalizado → evita bad_oauth_state
-            }
-          })
+          localStorage.setItem('barberhub_pending_role',modalRole);
+          localStorage.setItem('barberhub_oauth_ts',Date.now().toString());
+          await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/auth.html',queryParams:{access_type:'offline',prompt:'consent'}}})
         }else if(modalMethod==='email'&&modalEmailData){
           const{data,error}=await supabaseClient.auth.signUp({email:modalEmailData.email,password:modalEmailData.password,options:{data:{role:modalRole}}});
           if(error)throw error;if(!data.user)throw new Error('No se creó el usuario');
@@ -223,61 +264,30 @@
       }catch(err){console.error('❌ Error:',err);showError('❌ '+err.message);btn.classList.remove('loading');btn.disabled=false;btn.textContent=modalMethod==='google'?'CONTINUAR CON GOOGLE':'CREAR CUENTA'}
     }
 
+    // ========== UTILIDADES ==========
     function showError(msg){const el=document.getElementById('error-message');if(el){el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),8000)}console.error('❌',msg)}
     function showSuccess(msg){const el=document.getElementById('success-message');if(el){el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),8000)}console.log('✅',msg)}
     function showSection(name){document.querySelectorAll('.auth-section').forEach(s=>s.classList.remove('active'));const target=document.getElementById(name+'-section');if(target)target.classList.add('active');const sub=document.getElementById('auth-subtitle');const titles={login:'Inicia tu estilo',register:'Crea tu cuenta gratis',recover:'Recupera tu contraseña',newpassword:'Crea tu nueva contraseña'};if(sub&&titles[name])sub.textContent=titles[name]}
     
     async function handleLoginRedirect(user){
       try{
-        // ✅ Recuperar rol de localStorage si existe (fallback)
-        const savedRole = localStorage.getItem('barberhub_pending_role');
+        const savedRole=localStorage.getItem('barberhub_pending_role');
         const{data:profile}=await supabaseClient.from('profiles').select('role').eq('id',user.id).single();
-        let role = profile?.role || savedRole || 'client';
-        
-        // Limpiar localStorage después de usarlo
-        localStorage.removeItem('barberhub_pending_role');
-        localStorage.removeItem('barberhub_oauth_ts');
-        
-        console.log('🚀 Redirect to',role);
-        window.location.href=role==='admin'?'/admin.html':'/dashboard.html'
-      }
-      catch(e){console.error('Redirect error:',e);window.location.href='/dashboard.html'}
+        let role=profile?.role||savedRole||'client';
+        localStorage.removeItem('barberhub_pending_role');localStorage.removeItem('barberhub_oauth_ts');
+        console.log('🚀 Redirect to',role);window.location.href=role==='admin'?'/admin.html':'/dashboard.html'
+      }catch(e){console.error('Redirect error:',e);window.location.href='/dashboard.html'}
     }
     
     async function processOAuthCallback(){
-      const hash=window.location.hash;
-      if(!hash.includes('access_token')&&!hash.includes('code='))return;
-      
-      console.log('🔄 OAuth callback detected');
-      
-      // ✅ Esperar a que Supabase procese la sesión
-      await new Promise(r=>setTimeout(r,1000));
-      
+      const hash=window.location.hash;if(!hash.includes('access_token')&&!hash.includes('code='))return;
+      console.log('🔄 OAuth callback detected');await new Promise(r=>setTimeout(r,1000));
       const{data:{session}}=await supabaseClient.auth.getSession();
       if(session){
-        console.log('✅ Session available after OAuth');
-        
-        // ✅ Recuperar rol de localStorage
-        const savedRole = localStorage.getItem('barberhub_pending_role');
-        console.log('📦 Saved role from localStorage:', savedRole);
-        
-        // ✅ Verificar si ya existe perfil
+        console.log('✅ Session after OAuth');const savedRole=localStorage.getItem('barberhub_pending_role');console.log('📦 Saved role:',savedRole);
         const{data:exists}=await supabaseClient.from('profiles').select('role').eq('id',session.user.id).single();
-        
-        // ✅ Crear perfil si no existe, usando el rol guardado
-        if(!exists?.role && savedRole){
-          await supabaseClient.from('profiles').insert([{
-            id:session.user.id,
-            email:session.user.email,
-            role:savedRole,
-            created_at:new Date().toISOString()
-          }]);
-          console.log('✅ Profile created with role:', savedRole);
-        }
-        
-        // ✅ Limpiar localStorage
-        localStorage.removeItem('barberhub_pending_role');
-        localStorage.removeItem('barberhub_oauth_ts');
+        if(!exists?.role&&savedRole){await supabaseClient.from('profiles').insert([{id:session.user.id,email:session.user.email,role:savedRole,created_at:new Date().toISOString()}]);console.log('✅ Profile created:',savedRole)}
+        localStorage.removeItem('barberhub_pending_role');localStorage.removeItem('barberhub_oauth_ts')
       }
     }
   </script>
