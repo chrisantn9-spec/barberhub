@@ -57,7 +57,9 @@
     .btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 229, 255, 0.5); }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .btn-google { background: rgba(255, 0, 255, 0.08); border: 2px solid #ff00ff; display: flex; align-items: center; justify-content: center; gap: 0.8rem; color: #ff00ff; font-weight: 700; text-shadow: 0 0 10px rgba(255, 0, 255, 0.5); box-shadow: 0 0 15px rgba(255, 0, 255, 0.2), inset 0 0 10px rgba(255, 0, 255, 0.1); margin-top: 0.5rem; transition: all 0.3s ease; }
-    .btn-google:hover { background: rgba(255, 0, 255, 0.2); box-shadow: 0 0 25px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.2); transform: translateY(-2px); }
+    .btn-google:hover:not(:disabled) { background: rgba(255, 0, 255, 0.2); box-shadow: 0 0 25px rgba(255, 0, 255, 0.6), inset 0 0 15px rgba(255, 0, 255, 0.2); transform: translateY(-2px); }
+    .btn-google:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; filter: grayscale(0.5); }
+    .btn-google svg { width: 18px; height: 18px; filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.6)); }
     .divider { display: flex; align-items: center; margin: 1.5rem 0; color: #00ffff; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; position: relative; z-index: 2; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, rgba(0,255,255,0.5), transparent); }
     .divider span { padding: 0 1rem; }
@@ -70,6 +72,27 @@
     .success-message.show { display: block; animation: fadeIn 0.4s; }
     @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
     @media (max-width: 480px) { .auth-container { padding: 10px; } .inner-glass-panel { padding: 2rem 1.5rem; } .auth-header h1 { font-size: 1.9rem; } }
+
+    /* ========== CHECKBOX PRIVACIDAD (LOGIN) ========== */
+    .privacy-login {
+      display: flex; align-items: center; gap: 10px; padding: 0.8rem;
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(0,255,255,0.2);
+      border-radius: 8px; margin: 1rem 0; cursor: pointer; transition: 0.2s;
+    }
+    .privacy-login:hover { background: rgba(0,0,0,0.4); border-color: rgba(0,255,255,0.4); }
+    .privacy-login input[type="checkbox"] {
+      appearance: none; -webkit-appearance: none; width: 20px; height: 20px;
+      border: 2px solid #ff00ff; border-radius: 4px; background: rgba(0,0,0,0.5);
+      cursor: pointer; position: relative; transition: 0.2s; flex-shrink: 0;
+    }
+    .privacy-login input[type="checkbox"]:checked { background: #ff00ff; border-color: #ff00ff; }
+    .privacy-login input[type="checkbox"]:checked::after {
+      content: '✓'; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%); color: #fff; font-size: 0.8rem; font-weight: bold;
+    }
+    .privacy-login label { font-size: 0.75rem; color: #9ca3af; cursor: pointer; line-height: 1.4; }
+    .privacy-login label a { color: #00ffff; text-decoration: none; }
+    .privacy-login label a:hover { text-decoration: underline; text-shadow: 0 0 5px #00ffff; }
 
     /* ========== MODAL ========== */
     .modal-overlay {
@@ -134,7 +157,6 @@
     }
     .btn-modal.active { opacity: 1; pointer-events: auto; }
     .btn-modal.active:hover { transform: translateY(-2px); box-shadow: 0 0 25px rgba(0, 255, 255, 0.6); }
-    .btn-modal.loading { opacity: 0.7; cursor: wait; }
     .modal-close {
       position: absolute; top: 12px; right: 15px; background: none; border: none;
       color: #9ca3af; font-size: 1.8rem; cursor: pointer; transition: 0.2s; line-height: 1;
@@ -182,7 +204,17 @@
         </form>
         
         <div class="divider"><span>o continúa con</span></div>
-        <button class="btn btn-google" id="google-login-btn">
+        
+        <!-- ✅ CASILLA DE PRIVACIDAD (Habilita Google) -->
+        <div class="privacy-login" id="privacy-area">
+          <input type="checkbox" id="privacy-login-check">
+          <label for="privacy-login-check">
+            Acepto la <a href="#" id="privacy-link-login">Política de Privacidad</a> y los <a href="#" id="terms-link-login">Términos de Servicio</a> para usar Google
+          </label>
+        </div>
+        
+        <!-- Botón Google (DESHABILITADO por defecto) -->
+        <button class="btn btn-google" id="google-login-btn" disabled>
           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           Sign in with Google
         </button>
@@ -243,7 +275,7 @@
     </div>
   </div>
 
-  <!-- 🎴 MODAL: ROL + PRIVACIDAD -->
+  <!-- 🎴 MODAL: ROL + CONFIRMACIÓN FINAL -->
   <div class="modal-overlay" id="role-modal">
     <div class="modal-content">
       <button class="modal-close" id="modal-close-btn">×</button>
@@ -266,7 +298,7 @@
       <div class="privacy-box">
         <input type="checkbox" id="modal-privacy-check">
         <label for="modal-privacy-check">
-          Acepto la <a href="#" id="privacy-link">Política de Privacidad</a> y los <a href="#" id="terms-link">Términos de Servicio</a>
+          Confirmo que acepto la <a href="#" id="privacy-link-modal">Política de Privacidad</a>
         </label>
       </div>
 
@@ -286,10 +318,8 @@
 
     // ========== INICIALIZACIÓN ==========
     document.addEventListener('DOMContentLoaded', async () => {
-      console.log('🚀 BarberHub Auth Init');
-      
       if (!window.supabase) {
-        showError('❌ Error: No se cargó Supabase. Revisa tu conexión.');
+        showError('❌ Error: No se cargó Supabase.');
         return;
       }
 
@@ -297,30 +327,19 @@
       const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM';
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-      // 1. PROCESAR CALLBACK OAUTH (Google redirige aquí)
       await processOAuthCallback();
-
-      // 2. VERIFICAR SESIÓN ACTIVA
       const { data: { session } } = await supabaseClient.auth.getSession();
-      if (session) {
-        handleLoginRedirect(session.user);
-        return;
-      }
+      if (session) { handleLoginRedirect(session.user); return; }
 
-      // 3. MOSTRAR SECCIÓN SEGÚN URL
       const params = new URLSearchParams(window.location.search);
-      const mode = params.get('mode') || 'login';
-      showSection(mode);
+      showSection(params.get('mode') || 'login');
 
-      // 4. ESCUCHAR CAMBIOS DE AUTH
       supabaseClient.auth.onAuthStateChange((event, session) => {
         if (event === 'SIGNED_IN' && session) handleLoginRedirect(session.user);
         if (event === 'PASSWORD_RECOVERY') showSection('newpassword');
       });
 
-      // ========== EVENT LISTENERS ==========
-      
-      // LOGIN FORM
+      // ===== LOGIN FORM =====
       document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value.trim();
@@ -337,12 +356,35 @@
         }
       });
 
-      // GOOGLE BUTTON
-      document.getElementById('google-login-btn').addEventListener('click', () => {
+      // ✅ CHECKBOX PRIVACIDAD -> HABILITA BOTÓN GOOGLE
+      const privacyCheck = document.getElementById('privacy-login-check');
+      const googleBtn = document.getElementById('google-login-btn');
+      
+      privacyCheck.addEventListener('change', () => {
+        if (privacyCheck.checked) {
+          googleBtn.disabled = false;
+        } else {
+          googleBtn.disabled = true;
+        }
+      });
+
+      // ✅ CLICK EN GOOGLE -> ABRE MODAL (si está habilitado)
+      googleBtn.addEventListener('click', () => {
+        if (!privacyCheck.checked) {
+          showError('⚠️ Debes aceptar la política de privacidad primero');
+          return;
+        }
         openModal('google');
       });
 
-      // REGISTER BUTTON (VALIDA Y ABRE MODAL)
+      // CLICK EN CHECKBOX LABEL TAMBIÉN FUNCIONA
+      document.getElementById('privacy-area').addEventListener('click', (e) => {
+        if (e.target.tagName !== 'A') {
+          privacyCheck.click();
+        }
+      });
+
+      // ===== REGISTER BUTTON =====
       document.getElementById('open-register-modal-btn').addEventListener('click', () => {
         const email = document.getElementById('register-email').value.trim();
         const pass = document.getElementById('register-password').value;
@@ -356,27 +398,26 @@
         openModal('email');
       });
 
-      // MODAL CARDS
+      // ===== MODAL EVENTS =====
       document.getElementById('modal-card-client').addEventListener('click', () => selectRole('client'));
       document.getElementById('modal-card-barber').addEventListener('click', () => selectRole('barber'));
-      
-      // MODAL PRIVACY CHECK
       document.getElementById('modal-privacy-check').addEventListener('change', checkModalReady);
-      
-      // MODAL ACTION BUTTON
       document.getElementById('modal-action-btn').addEventListener('click', executeModalAction);
-      
-      // MODAL CLOSE
       document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-      document.getElementById('role-modal').addEventListener('click', (e) => {
-        if (e.target.id === 'role-modal') closeModal();
+      document.getElementById('role-modal').addEventListener('click', (e) => { if (e.target.id === 'role-modal') closeModal(); });
+
+      // ===== PRIVACY LINKS =====
+      document.querySelectorAll('a[href="#"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const text = link.textContent.includes('Privacidad') 
+            ? '🔒 Política: Datos usados solo para gestionar citas. No compartimos info con terceros.' 
+            : '📋 Términos: Mayor de 13 años. Responsable de tu info.';
+          alert(text);
+        });
       });
 
-      // PRIVACY LINKS
-      document.getElementById('privacy-link').addEventListener('click', (e) => { e.preventDefault(); alert('🔒 Política de Privacidad:\n• Datos usados solo para gestionar citas\n• No compartimos info con terceros\n• Puedes eliminar tu cuenta cuando quieras'); });
-      document.getElementById('terms-link').addEventListener('click', (e) => { e.preventDefault(); alert('📋 Términos:\n• Mayor de 13 años\n• Responsable de tu info\n• BarberHub no garantiza disponibilidad de barberos'); });
-
-      // RECOVER FORM
+      // ===== RECOVER FORM =====
       document.getElementById('recover-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('recover-email').value.trim();
@@ -388,7 +429,7 @@
         } catch (err) { showError('❌ ' + err.message); }
       });
 
-      // NEW PASSWORD FORM
+      // ===== NEW PASSWORD FORM =====
       document.getElementById('newpassword-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         const newP = document.getElementById('new-password').value;
@@ -414,7 +455,7 @@
         }
       });
 
-      console.log('✅ Todo listo');
+      console.log('✅ Auth listo');
     });
 
     // ========== FUNCIONES DEL MODAL ==========
@@ -441,7 +482,7 @@
       }
       
       btn.disabled = true;
-      btn.classList.remove('active', 'loading');
+      btn.classList.remove('active');
       document.getElementById('role-modal').classList.add('active');
     }
 
@@ -471,7 +512,6 @@
 
     async function executeModalAction() {
       const btn = document.getElementById('modal-action-btn');
-      btn.classList.add('loading');
       btn.textContent = '⏳ Procesando...';
       btn.disabled = true;
 
@@ -504,9 +544,8 @@
           return;
         }
       } catch (err) {
-        console.error('Modal error:', err);
+        console.error('Error:', err);
         showError('❌ ' + err.message);
-        btn.classList.remove('loading');
         btn.disabled = false;
         btn.textContent = modalMethod === 'google' ? 'CONTINUAR CON GOOGLE' : 'CREAR CUENTA';
       }
@@ -532,14 +571,12 @@
     async function handleLoginRedirect(user) {
       try {
         const { data: profile } = await supabaseClient.from('profiles').select('role').eq('id', user.id).single();
-        const role = profile?.role || 'client';
-        window.location.href = role === 'admin' ? '/admin.html' : '/dashboard.html';
+        window.location.href = (profile?.role === 'admin') ? '/admin.html' : '/dashboard.html';
       } catch { window.location.href = '/dashboard.html'; }
     }
     async function processOAuthCallback() {
       const hash = window.location.hash;
       if (!hash.includes('access_token') && !hash.includes('code=')) return;
-      console.log('🔄 OAuth callback detected');
       const match = hash.match(/state=([^&]+)/);
       if (match) {
         try {
@@ -555,7 +592,7 @@
               }
             }
           }
-        } catch (e) { console.warn('⚠️ State parse failed', e); }
+        } catch (e) { console.warn('State parse failed', e); }
       }
     }
   </script>
