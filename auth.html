@@ -210,141 +210,122 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script type="text/javascript">
-    // Ignorar errores de extensiones
     window.addEventListener('error', e => { if(e.message?.includes('lockdown')||e.message?.includes('SES')){e.preventDefault();return true} }, true);
 
     let modalRole=null, modalMethod=null, modalEmailData=null, supabaseClient=null;
+    let isRecoveryFlow = false; // Variable clave para evitar redirección al dashboard
 
-    // Esperar sesión con reintentos
-    async function waitForSession(attempts=3, delay=600){
-      for(let i=0;i<attempts;i++){
-        const{data:{session}}=await supabaseClient.auth.getSession();
-        if(session) return session;
-        await new Promise(r=>setTimeout(r,delay));
+    // Función robusta para detectar el enlace de recuperación de Supabase
+    function checkRecoveryMode() {
+      const hash = window.location.hash || '';
+      const search = window.location.search || '';
+      const p = new URLSearchParams(search);
+      return hash.includes('type=recovery') || search.includes('type=recovery') || p.get('mode') === 'newpassword';
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!window.supabase) return alert('❌ Supabase no cargó');
+      supabaseClient = window.supabase.createClient('https://qnlbaxxbsbwbgqucbywn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM');
+
+      // 1. Detectar recuperación INMEDIATAMENTE (sin detener el script)
+      isRecoveryFlow = checkRecoveryMode();
+      if (isRecoveryFlow) {
+        console.log('🔐 Modo recuperación detectado en URL');
+        showSection('newpassword');
       }
-      return null;
-    }
 
-    // Detectar si estamos en modo recuperación (hash o query param)
-    function isRecoveryMode(){
-      const h=window.location.hash;
-      const p=new URLSearchParams(window.location.search);
-      return h.includes('type=recovery') || 
-             (h.includes('access_token=') && h.includes('type=')) || 
-             p.get('mode')==='newpassword' ||
-             p.get('type')==='recovery' ||
-             h.includes('recovery') ||
-             (h.includes('token') && h.includes('type='));
-    }
+      // 2. Escuchar cambios de estado de Supabase
+      supabaseClient.auth.onAuthStateChange((event, session) => {
+        console.log('🔔 Auth event:', event);
+        if (event === 'PASSWORD_RECOVERY') {
+          isRecoveryFlow = true;
+          showSection('newpassword');
+        } else if (event === 'SIGNED_IN' && session) {
+          // ¡IMPORTANTE! Solo redirigir al dashboard si NO estamos en modo recuperación
+          if (!isRecoveryFlow) {
+            handleLoginRedirect(session.user);
+          }
+        }
+      });
 
-    document.addEventListener('DOMContentLoaded', async()=>{
-      if(!window.supabase) return alert('❌ Supabase no cargó');
-      supabaseClient=window.supabase.createClient('https://qnlbaxxbsbwbgqucbywn.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM');
-
-      // 1. Procesar callback OAuth (Google)
+      // 3. Procesar OAuth (Google)
       await processOAuthCallback();
 
-      // 2. MODO RECUPERACIÓN (Crucial para que aparezca la nueva contraseña)
-      if(isRecoveryMode()){
-        console.log('🔐 Recovery mode detected | Hash:', window.location.hash);
-        showSection('newpassword');
-        const s=await waitForSession(5,800); // Más intentos para recovery
-        if(!s){ 
-          console.error('❌ Recovery session failed');
-          alert('⚠️ Enlace inválido o expirado.'); 
-          window.location.hash=''; 
-          showSection('recover'); 
+      // 4. Si NO es recuperación, verificar sesión normal y mostrar sección correspondiente
+      if (!isRecoveryFlow) {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+          handleLoginRedirect(session.user);
+          return; // Salimos solo si hay sesión normal de login
         }
-        return;
+        const p = new URLSearchParams(location.search);
+        showSection(p.get('mode') || 'login');
       }
 
-      // 3. Escuchar cambios de hash (para cuando el usuario hace click en el link del email)
-      window.addEventListener('hashchange', async()=>{
-        if(isRecoveryMode()){ 
-          console.log('🔄 Hash changed to recovery mode');
-          showSection('newpassword'); 
-          await waitForSession(); 
-        }
-      });
-
-      // 4. Sesión normal (Login)
-      const session=await waitForSession();
-      if(session){ handleLoginRedirect(session.user); return; }
-
-      // 5. Mostrar sección por URL
-      const p=new URLSearchParams(location.search);
-      showSection(p.get('mode')||'login');
-
-      // Auth state changes
-      supabaseClient.auth.onAuthStateChange((ev,s)=>{
-        if(ev==='SIGNED_IN'&&s) handleLoginRedirect(s.user);
-        if(ev==='PASSWORD_RECOVERY') showSection('newpassword');
-      });
-
-      // --- EVENT LISTENERS ---
-
+      // 5. EVENT LISTENERS (Siempre se adjuntan, incluso en recuperación)
+      
       // Login Form
-      document.getElementById('login-form').addEventListener('submit', async e=>{
+      document.getElementById('login-form').addEventListener('submit', async e => {
         e.preventDefault();
-        const email=document.getElementById('login-email').value.trim(), pass=document.getElementById('login-password').value;
-        if(!email||!pass) return alert('Completa todos los campos');
-        try{ const{error}=await supabaseClient.auth.signInWithPassword({email,password:pass}); if(error) throw error; }
-        catch(err){ alert('❌ '+err.message) }
+        const email = document.getElementById('login-email').value.trim(), pass = document.getElementById('login-password').value;
+        if (!email || !pass) return alert('Completa todos los campos');
+        try { 
+          const { error } = await supabaseClient.auth.signInWithPassword({ email, password: pass }); 
+          if (error) throw error; 
+        } catch (err) { alert('❌ ' + err.message); }
       });
 
       // Google Button
-      document.getElementById('google-login-btn').addEventListener('click', ()=>openModal('google'));
+      document.getElementById('google-login-btn').addEventListener('click', () => openModal('google'));
 
       // Register Button
-      document.getElementById('open-register-modal-btn').addEventListener('click', ()=>{
-        const email=document.getElementById('register-email').value.trim(), pass=document.getElementById('register-password').value, confirm=document.getElementById('register-confirm').value;
-        if(!email||!pass||!confirm) return alert('Completa todos los campos');
-        if(pass!==confirm) return alert('Las contraseñas no coinciden');
-        modalEmailData={email,password:pass};
+      document.getElementById('open-register-modal-btn').addEventListener('click', () => {
+        const email = document.getElementById('register-email').value.trim(), pass = document.getElementById('register-password').value, confirm = document.getElementById('register-confirm').value;
+        if (!email || !pass || !confirm) return alert('Completa todos los campos');
+        if (pass !== confirm) return alert('Las contraseñas no coinciden');
+        modalEmailData = { email, password: pass };
         openModal('email');
       });
 
       // Modal Logic
-      document.getElementById('modal-card-client').addEventListener('click', ()=>selectRole('client'));
-      document.getElementById('modal-card-barber').addEventListener('click', ()=>selectRole('barber'));
+      document.getElementById('modal-card-client').addEventListener('click', () => selectRole('client'));
+      document.getElementById('modal-card-barber').addEventListener('click', () => selectRole('barber'));
       document.getElementById('modal-privacy-check').addEventListener('change', checkModalReady);
       document.getElementById('modal-action-btn').addEventListener('click', executeModalAction);
       document.getElementById('modal-close-btn').addEventListener('click', closeModal);
-      document.getElementById('role-modal').addEventListener('click', e=>{if(e.target.id==='role-modal') closeModal()});
+      document.getElementById('role-modal').addEventListener('click', e => { if (e.target.id === 'role-modal') closeModal() });
 
       // Recover Form
-      document.getElementById('recover-form').addEventListener('submit', async e=>{
+      document.getElementById('recover-form').addEventListener('submit', async e => {
         e.preventDefault();
-        const email=document.getElementById('recover-email').value.trim();
-        try{
-          const{error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+'/auth.html'});
-          if(error) throw error;
+        const email = document.getElementById('recover-email').value.trim();
+        try {
+          const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/auth.html' });
+          if (error) throw error;
           alert('✅ Enlace enviado. Revisa tu correo.');
-        }catch(err){ alert('❌ '+err.message) }
+        } catch (err) { alert('❌ ' + err.message); }
       });
 
-      // New Password Form
-      document.getElementById('newpassword-form').addEventListener('submit', async e=>{
+      // New Password Form (¡Este es el que fallaba antes porque el script retornaba temprano!)
+      document.getElementById('newpassword-form').addEventListener('submit', async e => {
         e.preventDefault();
-        const newP=document.getElementById('new-password').value, confirmP=document.getElementById('confirm-new-password').value;
-        if(newP!==confirmP) return alert('Las contraseñas no coinciden');
-        if(newP.length<6) return alert('Mínimo 6 caracteres');
+        const newP = document.getElementById('new-password').value, confirmP = document.getElementById('confirm-new-password').value;
+        if (newP !== confirmP) return alert('Las contraseñas no coinciden');
+        if (newP.length < 6) return alert('Mínimo 6 caracteres');
         
-        const{data:{session}}=await supabaseClient.auth.getSession();
-        if(!session) return alert('⚠️ Sesión inválida. Solicita un nuevo enlace.');
-        
-        try{
-          const{error}=await supabaseClient.auth.updateUser({password:newP});
-          if(error) throw error;
-          alert('✅ Contraseña actualizada. Redirigiendo...');
+        try {
+          const { error } = await supabaseClient.auth.updateUser({ password: newP });
+          if (error) throw error;
+          alert('✅ Contraseña actualizada. Redirigiendo al login...');
           await supabaseClient.auth.signOut();
-          window.location.hash='';
-          setTimeout(()=>window.location.href='/auth.html?mode=login', 2000);
-        }catch(err){ alert('❌ '+err.message) }
+          window.location.hash = '';
+          isRecoveryFlow = false; // Limpiar estado
+          setTimeout(() => window.location.href = '/auth.html?mode=login', 2000);
+        } catch (err) { alert('❌ ' + err.message); }
       });
     });
 
-    // Funciones de UI y Lógica
+    // Funciones de UI y Lógica (Sin cambios)
     function openModal(method){
       modalMethod=method; modalRole=null;
       document.querySelectorAll('#role-modal .role-card').forEach(c=>c.classList.remove('selected'));
