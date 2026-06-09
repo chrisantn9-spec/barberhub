@@ -14,7 +14,6 @@
     <script src="config.js"></script>
     
     <style>
-        /* ... TU CSS ORIGINAL (sin cambios, conservamos tu diseño) ... */
         :root { --neon-cyan: #00E5EE; --neon-pink: #ff00ff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Rajdhani', sans-serif; color: #fff; min-height: 100vh; background: #030303; overflow-x: hidden; position: relative; }
@@ -52,7 +51,7 @@
         .stat-num { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: var(--neon-cyan); margin-bottom: 3px; text-shadow: 0 0 8px rgba(0, 229, 238, 0.6); }
         .stat-lbl { color: rgba(255,255,255,0.8); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; }
         .menu-grid { display: grid; gap: 12px; }
-        .menu-item { display: flex; align-items: center; gap: 12px; padding: 16px; background: transparent; border: 1.5px solid rgba(0, 229, 238, 0.3); border-radius: 12px; color: #fff; text-decoration: none; transition: all 0.3s ease; }
+        .menu-item { display: flex; align-items: center; gap: 12px; padding: 16px; background: transparent; border: 1.5px solid rgba(0, 229, 238, 0.3); border-radius: 12px; color: #fff; text-decoration: none; transition: all 0.3s ease; position: relative; }
         .menu-item:hover { border-color: var(--neon-cyan); box-shadow: 0 0 15px rgba(0, 229, 238, 0.3); transform: translateX(4px); }
         .menu-item i { font-size: 1.2rem; color: var(--neon-cyan); width: 24px; text-align: center; text-shadow: 0 0 8px rgba(0, 229, 238, 0.6); }
         .menu-item .arrow { margin-left: auto; color: rgba(255,255,255,0.4); }
@@ -61,7 +60,6 @@
         .menu-item.danger:hover { border-color: #ff4444; box-shadow: 0 0 15px rgba(255, 68, 68, 0.3); }
         @media (max-width: 500px) { .stats-grid { grid-template-columns: 1fr; } .brand { font-size: 1.5rem; } }
         
-        /* ✨ Estado de carga */
         .loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(3,3,3,0.95); display: flex; align-items: center; justify-content: center;
@@ -74,7 +72,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* 🆕 BOTÓN FLOTANTE EXPLORAR */
         .floating-btn {
             position: fixed;
             top: 20px;
@@ -100,97 +97,81 @@
             box-shadow: 0 0 30px rgba(0, 229, 238, 0.8), 0 0 60px rgba(255, 0, 255, 0.5);
         }
         
-        /* 🆕 SECCIÓN DE CHAT */
-        .chat-section {
-            margin-top: 25px;
-            border-top: 1px solid rgba(0, 229, 238, 0.3);
-            padding-top: 20px;
-        }
-        .chat-header {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            color: var(--neon-cyan);
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(0, 229, 238, 0.6);
-        }
-        .chat-messages {
-            height: 200px;
-            overflow-y: auto;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(0, 229, 238, 0.2);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .chat-message {
-            margin-bottom: 10px;
-            padding: 8px 12px;
-            background: rgba(0, 229, 238, 0.1);
-            border-radius: 8px;
-            border-left: 3px solid var(--neon-cyan);
-        }
-        .chat-message .sender {
-            font-size: 0.75rem;
-            color: var(--neon-cyan);
-            font-weight: 700;
-            margin-bottom: 3px;
-        }
-        .chat-message .text {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.9);
-        }
-        .chat-input-container {
+        /* 🆕 BADGE DE NOTIFICACIÓN */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: #fff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
             display: flex;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.6);
+            animation: pulse 2s infinite;
         }
-        .chat-input {
-            flex: 1;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 229, 238, 0.3);
-            border-radius: 10px;
-            color: #fff;
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        /* 🆕 TOAST DE NOTIFICACIÓN */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 229, 238, 0.95);
+            color: #000;
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 229, 238, 0.6);
+            z-index: 10000;
+            display: none;
+            animation: slideInRight 0.3s ease;
+            max-width: 300px;
+        }
+        .toast.show {
+            display: block;
+        }
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        .toast-title {
+            font-weight: 700;
+            margin-bottom: 5px;
             font-size: 0.9rem;
         }
-        .chat-input:focus {
-            outline: none;
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 10px rgba(0, 229, 238, 0.3);
-        }
-        .chat-send {
-            padding: 12px 20px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .chat-send:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 15px rgba(0, 229, 238, 0.5);
+        .toast-message {
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body>
-    <!-- ✅ Overlay de carga (se oculta cuando termina la verificación) -->
     <div id="loading" class="loading-overlay">
         <div class="loading-spinner"></div>
         <p>Verificando sesión...</p>
     </div>
 
-    <!-- 🆕 BOTÓN FLOTANTE PARA EXPLORAR -->
     <a href="/explorar.html" class="floating-btn" title="Explorar">
         <i class="fas fa-compass"></i>
     </a>
 
-    <!-- Fondo y efectos -->
     <div class="cyber-bg"></div>
     <div class="cyber-grid"></div>
     <div class="rays" id="rays"></div>
 
-    <!-- Contenido principal -->
     <div class="app-container">
         <div class="card">
             <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
@@ -223,6 +204,11 @@
                 <a href="/mis-citas.html" class="menu-item">
                     <i class="fas fa-calendar-check"></i><span>Mis Citas</span><i class="fas fa-chevron-right arrow"></i>
                 </a>
+                <a href="/chat.html" class="menu-item" id="chat-menu-item">
+                    <i class="fas fa-comments"></i><span>Chat</span>
+                    <span class="notification-badge" id="chat-badge" style="display: none;">0</span>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </a>
                 <a href="/pagos.html" class="menu-item">
                     <i class="fas fa-wallet"></i><span>Mis Pagos</span><i class="fas fa-chevron-right arrow"></i>
                 </a>
@@ -236,27 +222,17 @@
                     <i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span><i class="fas fa-chevron-right arrow"></i>
                 </button>
             </div>
-
-            <!-- 🆕 SECCIÓN DE CHAT -->
-            <div class="chat-section">
-                <h3 class="chat-header"><i class="fas fa-comments"></i> Chat</h3>
-                <div class="chat-messages" id="chat-messages">
-                    <div class="chat-message">
-                        <div class="sender">Sistema</div>
-                        <div class="text">¡Bienvenido a BarberHub! ¿En qué podemos ayudarte?</div>
-                    </div>
-                </div>
-                <div class="chat-input-container">
-                    <input type="text" class="chat-input" id="chat-input" placeholder="Escribe un mensaje...">
-                    <button class="chat-send" id="chat-send"><i class="fas fa-paper-plane"></i></button>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- ✅ Script corregido: espera a que config.js esté listo -->
+    <div class="toast" id="toast">
+        <div class="toast-title" id="toast-title">Nuevo mensaje</div>
+        <div class="toast-message" id="toast-message"></div>
+    </div>
+
     <script>
-        // ⚡ CREAR RAYOS DE NEÓN
+        let currentUserId = null;
+
         function createRays() {
             const container = document.getElementById('rays');
             if (!container) return;
@@ -270,7 +246,6 @@
             }
         }
 
-        // 🆕 FUNCIÓN PARA SUBIR FOTO DE PERFIL
         async function subirFotoPerfil(file) {
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
@@ -281,26 +256,22 @@
                 const fileName = `${userId}_${Date.now()}.${fileExt}`;
                 const filePath = `avatars/${fileName}`;
                 
-                // Subir a Supabase Storage
                 const { error: uploadError } = await supabaseClient.storage
                     .from('profile-images')
                     .upload(filePath, file);
                 
                 if (uploadError) throw uploadError;
                 
-                // Obtener URL pública
                 const { data: { publicUrl } } = supabaseClient.storage
                     .from('profile-images')
                     .getPublicUrl(filePath);
                 
-                // Actualizar metadata del usuario
                 const { error: updateError } = await supabaseClient.auth.updateUser({
                     data: { avatar: publicUrl }
                 });
                 
                 if (updateError) throw updateError;
                 
-                // Actualizar imagen en la UI
                 document.getElementById('user-avatar').src = publicUrl;
                 alert('✅ Foto de perfil actualizada');
                 
@@ -310,32 +281,80 @@
             }
         }
 
-        // 🆕 FUNCIÓN PARA ENVIAR MENSAJE DE CHAT
-        function enviarMensaje() {
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (!message) return;
+        // 🆕 MOSTRAR NOTIFICACIÓN TOAST
+        function showToast(title, message) {
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toast-title');
+            const toastMessage = document.getElementById('toast-message');
             
-            const messagesContainer = document.getElementById('chat-messages');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'chat-message';
-            messageDiv.innerHTML = `
-                <div class="sender">Tú</div>
-                <div class="text">${message}</div>
-            `;
-            messagesContainer.appendChild(messageDiv);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            input.value = '';
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
             
-            // Aquí puedes agregar la lógica para enviar el mensaje a Supabase
-            // await supabaseClient.from('chat_messages').insert([{ user_id: userId, message: message }]);
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
         }
 
-        // 🔐 FUNCIÓN PRINCIPAL: verificar sesión y cargar perfil
+        // 🆕 ACTUALIZAR BADGE DE NOTIFICACIONES
+        function updateChatBadge(count) {
+            const badge = document.getElementById('chat-badge');
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // 🆕 ESCUCHAR MENSAJES NUEVOS EN TIEMPO REAL
+        function escucharMensajes(userId) {
+            supabaseClient
+                .channel('chat-notifications')
+                .on('postgres_changes', 
+                    { 
+                        event: 'INSERT', 
+                        schema: 'public', 
+                        table: 'messages',
+                        filter: `receiver_id=eq.${userId}`
+                    }, 
+                    (payload) => {
+                        console.log('📩 Nuevo mensaje recibido:', payload);
+                        
+                        // Actualizar badge
+                        const currentCount = parseInt(document.getElementById('chat-badge').textContent || '0');
+                        updateChatBadge(currentCount + 1);
+                        
+                        // Mostrar notificación toast
+                        showToast('💬 Nuevo mensaje', 'Has recibido un nuevo mensaje');
+                        
+                        // Reproducir sonido de notificación (opcional)
+                        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ==');
+                        audio.play().catch(() => {});
+                    }
+                )
+                .subscribe();
+        }
+
+        // 🆕 CONTAR MENSAJES NO LEÍDOS
+        async function contarMensajesNoLeidos(userId) {
+            try {
+                const { count, error } = await supabaseClient
+                    .from('messages')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('receiver_id', userId)
+                    .eq('read', false);
+                
+                if (error) throw error;
+                updateChatBadge(count || 0);
+            } catch (err) {
+                console.error('Error contando mensajes:', err);
+            }
+        }
+
         async function initPerfil() {
             const loading = document.getElementById('loading');
             
-            // ✅ Verificar que supabaseClient exista
             if (typeof supabaseClient === 'undefined') {
                 console.error('❌ supabaseClient no está definido. ¿Se cargó config.js?');
                 if (loading) loading.innerHTML = '<p style="color:#ff4444">⚠️ Error de configuración</p>';
@@ -343,24 +362,22 @@
             }
             
             try {
-                // ✅ Paso 1: Verificar sesión LOCALMENTE (más rápido y confiable)
                 const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
                 
                 if (sessionError || !session) {
                     console.warn('⚠️ Sin sesión activa, redirigiendo a login...');
-                    window.location.replace('/auth.html'); // ✅ Ruta root-relative
+                    window.location.replace('/auth.html');
                     return;
                 }
                 
                 const user = session.user;
+                currentUserId = user.id;
                 
-                // ✅ Paso 2: Si es barbero, redirigir a admin
                 if (user.user_metadata?.role === 'barbero') {
                     window.location.replace('/admin.html');
                     return;
                 }
                 
-                // ✅ Paso 3: Mostrar datos del usuario
                 const nombre = user.user_metadata?.nombre || user.email?.split('@')[0] || 'Usuario';
                 const avatar = user.user_metadata?.avatar || 'https://placehold.co/150x150/111/00E5EE?text=👤';
                 
@@ -368,35 +385,24 @@
                 document.getElementById('display-email').textContent = user.email || '';
                 document.getElementById('user-avatar').src = avatar;
                 
-                // ✅ Paso 4 (opcional): Cargar estadísticas reales desde Supabase
-                // const { data: stats } = await supabaseClient
-                //     .from('user_stats')
-                //     .select('citas, gastado, favoritos')
-                //     .eq('user_id', user.id)
-                //     .single();
-                // if (stats) {
-                //     document.getElementById('stat-citas').textContent = stats.citas || '0';
-                //     document.getElementById('stat-gastado').textContent = `$${stats.gastado || '0'}`;
-                //     document.getElementById('stat-favoritos').textContent = stats.favoritos || '0';
-                // }
+                // 🆕 Iniciar sistema de notificaciones
+                contarMensajesNoLeidos(user.id);
+                escucharMensajes(user.id);
                 
             } catch (err) {
                 console.error('❌ Error cargando perfil:', err);
-                // En caso de error crítico, redirigir a login
                 window.location.replace('/auth.html');
             } finally {
-                // ✅ Ocultar loading al finalizar (éxito o error)
                 const loading = document.getElementById('loading');
                 if (loading) loading.style.display = 'none';
             }
         }
 
-        // 🚪 Cerrar sesión
         async function cerrarSesion() {
             if (confirm('¿Cerrar sesión?')) {
                 try {
                     await supabaseClient.auth.signOut();
-                    window.location.replace('/index.html'); // ✅ Ruta root-relative
+                    window.location.replace('/index.html');
                 } catch (err) {
                     console.error('Error al cerrar sesión:', err);
                     alert('⚠️ No se pudo cerrar sesión. Intenta de nuevo.');
@@ -404,18 +410,15 @@
             }
         }
 
-        // ✅ Inicializar cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', () => {
             createRays();
             initPerfil();
             
-            // Bind del botón logout
             const btnLogout = document.getElementById('btn-logout');
             if (btnLogout) {
                 btnLogout.onclick = cerrarSesion;
             }
             
-            // 🆕 Bind para cambiar foto de perfil
             const avatarContainer = document.getElementById('avatar-container');
             const avatarInput = document.getElementById('avatar-input');
             
@@ -433,15 +436,12 @@
                 };
             }
             
-            // 🆕 Bind para chat
-            const chatInput = document.getElementById('chat-input');
-            const chatSend = document.getElementById('chat-send');
-            
-            if (chatInput && chatSend) {
-                chatSend.onclick = enviarMensaje;
-                chatInput.onkeypress = (e) => {
-                    if (e.key === 'Enter') enviarMensaje();
-                };
+            // 🆕 Resetear badge cuando entras al chat
+            const chatMenuItem = document.getElementById('chat-menu-item');
+            if (chatMenuItem) {
+                chatMenuItem.addEventListener('click', () => {
+                    updateChatBadge(0);
+                });
             }
         });
     </script>
