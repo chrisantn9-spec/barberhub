@@ -213,9 +213,8 @@
     window.addEventListener('error', e => { if(e.message?.includes('lockdown')||e.message?.includes('SES')){e.preventDefault();return true} }, true);
 
     let modalRole=null, modalMethod=null, modalEmailData=null, supabaseClient=null;
-    let isRecoveryFlow = false; // Variable clave para evitar redirección al dashboard
+    let isRecoveryFlow = false;
 
-    // Función robusta para detectar el enlace de recuperación de Supabase
     function checkRecoveryMode() {
       const hash = window.location.hash || '';
       const search = window.location.search || '';
@@ -227,44 +226,36 @@
       if (!window.supabase) return alert('❌ Supabase no cargó');
       supabaseClient = window.supabase.createClient('https://qnlbaxxbsbwbgqucbywn.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFubGJheHhic2J3YmdxdWNieXduIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkxMzQzNjcsImV4cCI6MjA5NDcxMDM2N30.6n-0yf-9fuZKO8qJEM2dOmwBNxhijQtaBzVo2TNesjM');
 
-      // 1. Detectar recuperación INMEDIATAMENTE (sin detener el script)
       isRecoveryFlow = checkRecoveryMode();
       if (isRecoveryFlow) {
         console.log('🔐 Modo recuperación detectado en URL');
         showSection('newpassword');
       }
 
-      // 2. Escuchar cambios de estado de Supabase
       supabaseClient.auth.onAuthStateChange((event, session) => {
         console.log('🔔 Auth event:', event);
         if (event === 'PASSWORD_RECOVERY') {
           isRecoveryFlow = true;
           showSection('newpassword');
         } else if (event === 'SIGNED_IN' && session) {
-          // ¡IMPORTANTE! Solo redirigir al dashboard si NO estamos en modo recuperación
           if (!isRecoveryFlow) {
             handleLoginRedirect(session.user);
           }
         }
       });
 
-      // 3. Procesar OAuth (Google)
       await processOAuthCallback();
 
-      // 4. Si NO es recuperación, verificar sesión normal y mostrar sección correspondiente
       if (!isRecoveryFlow) {
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
           handleLoginRedirect(session.user);
-          return; // Salimos solo si hay sesión normal de login
+          return;
         }
         const p = new URLSearchParams(location.search);
         showSection(p.get('mode') || 'login');
       }
 
-      // 5. EVENT LISTENERS (Siempre se adjuntan, incluso en recuperación)
-      
-      // Login Form
       document.getElementById('login-form').addEventListener('submit', async e => {
         e.preventDefault();
         const email = document.getElementById('login-email').value.trim(), pass = document.getElementById('login-password').value;
@@ -275,10 +266,8 @@
         } catch (err) { alert('❌ ' + err.message); }
       });
 
-      // Google Button
       document.getElementById('google-login-btn').addEventListener('click', () => openModal('google'));
 
-      // Register Button
       document.getElementById('open-register-modal-btn').addEventListener('click', () => {
         const email = document.getElementById('register-email').value.trim(), pass = document.getElementById('register-password').value, confirm = document.getElementById('register-confirm').value;
         if (!email || !pass || !confirm) return alert('Completa todos los campos');
@@ -287,7 +276,6 @@
         openModal('email');
       });
 
-      // Modal Logic
       document.getElementById('modal-card-client').addEventListener('click', () => selectRole('client'));
       document.getElementById('modal-card-barber').addEventListener('click', () => selectRole('barber'));
       document.getElementById('modal-privacy-check').addEventListener('change', checkModalReady);
@@ -295,7 +283,6 @@
       document.getElementById('modal-close-btn').addEventListener('click', closeModal);
       document.getElementById('role-modal').addEventListener('click', e => { if (e.target.id === 'role-modal') closeModal() });
 
-      // Recover Form
       document.getElementById('recover-form').addEventListener('submit', async e => {
         e.preventDefault();
         const email = document.getElementById('recover-email').value.trim();
@@ -306,7 +293,6 @@
         } catch (err) { alert('❌ ' + err.message); }
       });
 
-      // New Password Form (¡Este es el que fallaba antes porque el script retornaba temprano!)
       document.getElementById('newpassword-form').addEventListener('submit', async e => {
         e.preventDefault();
         const newP = document.getElementById('new-password').value, confirmP = document.getElementById('confirm-new-password').value;
@@ -319,13 +305,12 @@
           alert('✅ Contraseña actualizada. Redirigiendo al login...');
           await supabaseClient.auth.signOut();
           window.location.hash = '';
-          isRecoveryFlow = false; // Limpiar estado
+          isRecoveryFlow = false;
           setTimeout(() => window.location.href = '/auth.html?mode=login', 2000);
         } catch (err) { alert('❌ ' + err.message); }
       });
     });
 
-    // Funciones de UI y Lógica (Sin cambios)
     function openModal(method){
       modalMethod=method; modalRole=null;
       document.querySelectorAll('#role-modal .role-card').forEach(c=>c.classList.remove('selected'));
@@ -354,6 +339,7 @@
       const checked=document.getElementById('modal-privacy-check').checked, btn=document.getElementById('modal-action-btn');
       if(modalRole&&checked){ btn.disabled=false; btn.classList.add('active'); }else{ btn.disabled=true; btn.classList.remove('active'); }
     }
+    
     async function executeModalAction(){
       const btn=document.getElementById('modal-action-btn');
       if(!modalRole) return alert('Selecciona un rol');
@@ -365,13 +351,41 @@
           localStorage.setItem('barberhub_pending_role', modalRole);
           await supabaseClient.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin+'/auth.html',queryParams:{access_type:'offline',prompt:'consent'}}});
         }else if(modalMethod==='email'&&modalEmailData){
-          const{data,error}=await supabaseClient.auth.signUp({email:modalEmailData.email,password:modalEmailData.password,options:{data:{role:modalRole}}});
+          const{data,error}=await supabaseClient.auth.signUp({
+            email:modalEmailData.email,
+            password:modalEmailData.password,
+            options:{
+              data:{
+                rol: modalRole,
+                nombre: modalEmailData.email.split('@')[0]
+              }
+            }
+          });
           if(error) throw error;
-          await supabaseClient.from('profiles').insert([{id:data.user.id,email:modalEmailData.email,role:modalRole,created_at:new Date().toISOString()}]);
-          closeModal(); alert('✅ ¡Registro exitoso! Revisa tu email.');
+          
+          const{error: profileError}=await supabaseClient
+            .from('perfiles')
+            .insert([{
+              id: data.user.id,
+              email: modalEmailData.email,
+              nombre: modalEmailData.email.split('@')[0],
+              rol: modalRole
+            }]);
+          
+          if(profileError) {
+            console.error('Error al crear perfil:', profileError);
+            throw profileError;
+          }
+          
+          closeModal(); 
+          alert('✅ ¡Registro exitoso! Revisa tu email para confirmar.');
           setTimeout(()=>showSection('login'), 3000);
         }
-      }catch(err){ alert('❌ '+err.message); btn.classList.remove('loading'); btn.disabled=false; }
+      }catch(err){ 
+        alert('❌ '+err.message); 
+        btn.classList.remove('loading'); 
+        btn.disabled=false; 
+      }
     }
 
     function showSection(n){
@@ -381,11 +395,24 @@
       document.getElementById('auth-subtitle').textContent=t[n]||'';
     }
 
+    // ✅ FUNCIÓN ACTUALIZADA: Redirige según los 3 roles
     async function handleLoginRedirect(u){
       try{
-        const{data:p}=await supabaseClient.from('profiles').select('role').eq('id',u.id).single();
-        location.href=(p?.role==='admin')?'/admin.html':'/dashboard.html';
-      }catch{location.href='/dashboard.html'}
+        const{data:p}=await supabaseClient.from('perfiles').select('rol').eq('id',u.id).single();
+        const rol = p?.rol || 'client';
+        
+        // Redirección según el rol
+        if(rol === 'admin'){
+          location.href = '/admin.html';
+        } else if(rol === 'barber'){
+          location.href = '/barbero-perfil.html';
+        } else {
+          // Por defecto (cliente)
+          location.href = '/dashboard.html';
+        }
+      }catch{
+        location.href = '/dashboard.html';
+      }
     }
 
     async function processOAuthCallback(){
@@ -395,9 +422,14 @@
       const{data:{session}}=await supabaseClient.auth.getSession();
       if(session){
         const saved=localStorage.getItem('barberhub_pending_role');
-        const{data:ex}=await supabaseClient.from('profiles').select('role').eq('id',session.user.id).single();
-        if(!ex?.role&&saved){
-          await supabaseClient.from('profiles').insert([{id:session.user.id,email:session.user.email,role:saved,created_at:new Date().toISOString()}]);
+        const{data:ex}=await supabaseClient.from('perfiles').select('rol').eq('id',session.user.id).single();
+        if(!ex?.rol&&saved){
+          await supabaseClient.from('perfiles').insert([{
+            id:session.user.id,
+            email:session.user.email,
+            nombre:session.user.email.split('@')[0],
+            rol:saved
+          }]);
         }
         localStorage.removeItem('barberhub_pending_role');
       }
