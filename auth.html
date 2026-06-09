@@ -238,25 +238,9 @@
           isRecoveryFlow = true;
           showSection('newpassword');
         } else if (event === 'SIGNED_IN' && session) {
+          // ✅ CORREGIDO: Solo llamar a la función, NO definirla aquí
           if (!isRecoveryFlow) {
-            async function handleLoginRedirect(u){
-  try{
-    const{data:p}=await supabaseClient.from('perfiles').select('rol').eq('id',u.id).single();
-    const rol = p?.rol || 'client';
-    
-    // Redirección según el rol
-    if(rol === 'admin'){
-      location.href = '/admin.html';
-    } else if(rol === 'barber'){
-      location.href = '/barbero-perfil.html';
-    } else {
-      // Por defecto (cliente)
-      location.href = '/dashboard.html';
-    }
-  }catch{
-    location.href = '/dashboard.html';
-  }
-}
+            handleLoginRedirect(session.user);
           }
         }
       });
@@ -412,19 +396,17 @@
       document.getElementById('auth-subtitle').textContent=t[n]||'';
     }
 
-    // ✅ FUNCIÓN ACTUALIZADA: Redirige según los 3 roles
+    // ✅ FUNCIÓN DE REDIRECCIÓN SEGÚN ROL (UNA SOLA VEZ, AL FINAL)
     async function handleLoginRedirect(u){
       try{
         const{data:p}=await supabaseClient.from('perfiles').select('rol').eq('id',u.id).single();
         const rol = p?.rol || 'client';
         
-        // Redirección según el rol
         if(rol === 'admin'){
           location.href = '/admin.html';
         } else if(rol === 'barber'){
           location.href = '/barbero-perfil.html';
         } else {
-          // Por defecto (cliente)
           location.href = '/dashboard.html';
         }
       }catch{
