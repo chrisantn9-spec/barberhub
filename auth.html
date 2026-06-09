@@ -239,7 +239,24 @@
           showSection('newpassword');
         } else if (event === 'SIGNED_IN' && session) {
           if (!isRecoveryFlow) {
-            handleLoginRedirect(session.user);
+            async function handleLoginRedirect(u){
+  try{
+    const{data:p}=await supabaseClient.from('perfiles').select('rol').eq('id',u.id).single();
+    const rol = p?.rol || 'client';
+    
+    // Redirección según el rol
+    if(rol === 'admin'){
+      location.href = '/admin.html';
+    } else if(rol === 'barber'){
+      location.href = '/barbero-perfil.html';
+    } else {
+      // Por defecto (cliente)
+      location.href = '/dashboard.html';
+    }
+  }catch{
+    location.href = '/dashboard.html';
+  }
+}
           }
         }
       });
