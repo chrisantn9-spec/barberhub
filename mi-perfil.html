@@ -29,8 +29,22 @@
         .brand { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: 2px; text-align: center; margin-bottom: 25px; color: #fff; text-shadow: 0 0 12px rgba(0, 229, 238, 0.7); }
         .brand .b { color: #fff; } .brand .h { color: var(--neon-cyan); }
         .avatar-section { text-align: center; margin-bottom: 25px; }
-        .avatar-wrap { width: 100px; height: 100px; margin: 0 auto 15px; border-radius: 50%; overflow: hidden; border: 3px solid var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 229, 238, 0.5); }
+        .avatar-wrap { width: 100px; height: 100px; margin: 0 auto 15px; border-radius: 50%; overflow: hidden; border: 3px solid var(--neon-cyan); box-shadow: 0 0 20px rgba(0, 229, 238, 0.5); position: relative; cursor: pointer; }
         .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-wrap:hover::after {
+            content: '📷';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        #avatar-input { display: none; }
         .user-name { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; margin: 0 0 5px; color: #fff; text-shadow: 0 0 10px rgba(0, 229, 238, 0.6), 0 2px 4px rgba(0,0,0,0.9); }
         .user-email { color: var(--neon-cyan); font-size: 0.95rem; margin: 0; text-shadow: 0 0 8px rgba(0, 229, 238, 0.5); }
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 25px; }
@@ -59,6 +73,104 @@
             animation: spin 1s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* 🆕 BOTÓN FLOTANTE EXPLORAR */
+        .floating-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 229, 238, 0.6), 0 0 40px rgba(255, 0, 255, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        .floating-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+            box-shadow: 0 0 30px rgba(0, 229, 238, 0.8), 0 0 60px rgba(255, 0, 255, 0.5);
+        }
+        
+        /* 🆕 SECCIÓN DE CHAT */
+        .chat-section {
+            margin-top: 25px;
+            border-top: 1px solid rgba(0, 229, 238, 0.3);
+            padding-top: 20px;
+        }
+        .chat-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--neon-cyan);
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(0, 229, 238, 0.6);
+        }
+        .chat-messages {
+            height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 229, 238, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background: rgba(0, 229, 238, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid var(--neon-cyan);
+        }
+        .chat-message .sender {
+            font-size: 0.75rem;
+            color: var(--neon-cyan);
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+        .chat-message .text {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 229, 238, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 238, 0.3);
+        }
+        .chat-send {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-pink));
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .chat-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(0, 229, 238, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -67,6 +179,11 @@
         <div class="loading-spinner"></div>
         <p>Verificando sesión...</p>
     </div>
+
+    <!-- 🆕 BOTÓN FLOTANTE PARA EXPLORAR -->
+    <a href="/explorar.html" class="floating-btn" title="Explorar">
+        <i class="fas fa-compass"></i>
+    </a>
 
     <!-- Fondo y efectos -->
     <div class="cyber-bg"></div>
@@ -79,8 +196,9 @@
             <h1 class="brand"><span class="b">BARBER</span><span class="h">HUB</span></h1>
             
             <div class="avatar-section">
-                <div class="avatar-wrap">
+                <div class="avatar-wrap" id="avatar-container">
                     <img src="https://placehold.co/150x150/111/00E5EE?text=👤" alt="Avatar" id="user-avatar">
+                    <input type="file" id="avatar-input" accept="image/*">
                 </div>
                 <h2 class="user-name" id="display-name">Cargando...</h2>
                 <p class="user-email" id="display-email">email@ejemplo.com</p>
@@ -118,6 +236,21 @@
                     <i class="fas fa-sign-out-alt"></i><span>Cerrar Sesión</span><i class="fas fa-chevron-right arrow"></i>
                 </button>
             </div>
+
+            <!-- 🆕 SECCIÓN DE CHAT -->
+            <div class="chat-section">
+                <h3 class="chat-header"><i class="fas fa-comments"></i> Chat</h3>
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-message">
+                        <div class="sender">Sistema</div>
+                        <div class="text">¡Bienvenido a BarberHub! ¿En qué podemos ayudarte?</div>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Escribe un mensaje...">
+                    <button class="chat-send" id="chat-send"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -135,6 +268,67 @@
                 ray.style.animationDuration = (3 + Math.random() * 3) + 's';
                 container.appendChild(ray);
             }
+        }
+
+        // 🆕 FUNCIÓN PARA SUBIR FOTO DE PERFIL
+        async function subirFotoPerfil(file) {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) return alert('⚠️ Sesión expirada');
+                
+                const userId = session.user.id;
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${userId}_${Date.now()}.${fileExt}`;
+                const filePath = `avatars/${fileName}`;
+                
+                // Subir a Supabase Storage
+                const { error: uploadError } = await supabaseClient.storage
+                    .from('profile-images')
+                    .upload(filePath, file);
+                
+                if (uploadError) throw uploadError;
+                
+                // Obtener URL pública
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from('profile-images')
+                    .getPublicUrl(filePath);
+                
+                // Actualizar metadata del usuario
+                const { error: updateError } = await supabaseClient.auth.updateUser({
+                    data: { avatar: publicUrl }
+                });
+                
+                if (updateError) throw updateError;
+                
+                // Actualizar imagen en la UI
+                document.getElementById('user-avatar').src = publicUrl;
+                alert('✅ Foto de perfil actualizada');
+                
+            } catch (err) {
+                console.error('Error subiendo foto:', err);
+                alert('❌ Error al subir la foto: ' + err.message);
+            }
+        }
+
+        // 🆕 FUNCIÓN PARA ENVIAR MENSAJE DE CHAT
+        function enviarMensaje() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const messagesContainer = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            messageDiv.innerHTML = `
+                <div class="sender">Tú</div>
+                <div class="text">${message}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            input.value = '';
+            
+            // Aquí puedes agregar la lógica para enviar el mensaje a Supabase
+            // await supabaseClient.from('chat_messages').insert([{ user_id: userId, message: message }]);
         }
 
         // 🔐 FUNCIÓN PRINCIPAL: verificar sesión y cargar perfil
@@ -219,6 +413,35 @@
             const btnLogout = document.getElementById('btn-logout');
             if (btnLogout) {
                 btnLogout.onclick = cerrarSesion;
+            }
+            
+            // 🆕 Bind para cambiar foto de perfil
+            const avatarContainer = document.getElementById('avatar-container');
+            const avatarInput = document.getElementById('avatar-input');
+            
+            if (avatarContainer && avatarInput) {
+                avatarContainer.onclick = () => avatarInput.click();
+                avatarInput.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('⚠️ La imagen no debe superar los 5MB');
+                            return;
+                        }
+                        subirFotoPerfil(file);
+                    }
+                };
+            }
+            
+            // 🆕 Bind para chat
+            const chatInput = document.getElementById('chat-input');
+            const chatSend = document.getElementById('chat-send');
+            
+            if (chatInput && chatSend) {
+                chatSend.onclick = enviarMensaje;
+                chatInput.onkeypress = (e) => {
+                    if (e.key === 'Enter') enviarMensaje();
+                };
             }
         });
     </script>
