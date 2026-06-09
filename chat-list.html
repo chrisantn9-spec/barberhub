@@ -14,6 +14,8 @@
       --neon-pink: #ff00ff;
       --neon-green: #00ff41;
       --neon-purple: #bf00ff;
+      --neon-yellow: #fff01f;
+      --neon-orange: #ff6600;
       --dark-bg: #030303;
     }
     
@@ -297,6 +299,26 @@
         0 2px 0 rgba(0, 114, 255, 0.6),
         0 0 15px rgba(0, 229, 238, 0.5);
     }
+
+    .emoji-btn {
+      background: linear-gradient(145deg, var(--neon-yellow), var(--neon-orange));
+      box-shadow: 
+        0 5px 0 rgba(255, 102, 0, 0.6),
+        0 0 20px rgba(255, 240, 31, 0.5);
+      color: #000;
+    }
+    .emoji-btn:hover {
+      transform: translateY(-2px) rotate(10deg);
+      box-shadow: 
+        0 7px 0 rgba(255, 102, 0, 0.6),
+        0 0 30px rgba(255, 240, 31, 0.8);
+    }
+    .emoji-btn:active {
+      transform: translateY(3px) rotate(0deg);
+      box-shadow: 
+        0 2px 0 rgba(255, 102, 0, 0.6),
+        0 0 15px rgba(255, 240, 31, 0.5);
+    }
     
     .send-btn {
       background: linear-gradient(145deg, var(--neon-green), #00cc33);
@@ -350,6 +372,104 @@
       40% { transform: scale(1); opacity: 1; }
     }
 
+    /* 🎨 PANEL DE EMOJIS 3D NEÓN */
+    .emoji-panel {
+      position: absolute;
+      bottom: 80px;
+      left: 20px;
+      right: 20px;
+      background: rgba(10, 15, 30, 0.95);
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(255, 240, 31, 0.4);
+      border-radius: 20px;
+      padding: 20px;
+      max-height: 350px;
+      overflow-y: auto;
+      display: none;
+      z-index: 1000;
+      box-shadow: 
+        0 -10px 40px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(255, 240, 31, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      animation: slideUpEmoji 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .emoji-panel.show {
+      display: block;
+    }
+    
+    @keyframes slideUpEmoji {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px) scale(0.9);
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    .emoji-panel::-webkit-scrollbar { width: 6px; }
+    .emoji-panel::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); }
+    .emoji-panel::-webkit-scrollbar-thumb { 
+      background: linear-gradient(180deg, var(--neon-yellow), var(--neon-orange)); 
+      border-radius: 3px;
+      box-shadow: 0 0 10px var(--neon-yellow);
+    }
+    
+    .emoji-category {
+      margin-bottom: 15px;
+    }
+    
+    .emoji-category-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.8rem;
+      color: var(--neon-cyan);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(0, 229, 238, 0.5);
+    }
+    
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 10px;
+    }
+    
+    .emoji-item {
+      font-size: 1.8rem;
+      cursor: pointer;
+      text-align: center;
+      padding: 8px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1.5px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+      position: relative;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    
+    .emoji-item:hover {
+      transform: translateY(-5px) scale(1.2) rotateY(10deg);
+      background: rgba(255, 240, 31, 0.15);
+      border-color: var(--neon-yellow);
+      box-shadow: 
+        0 10px 20px rgba(255, 240, 31, 0.4),
+        0 0 20px rgba(255, 240, 31, 0.3),
+        inset 0 0 15px rgba(255, 240, 31, 0.2);
+      filter: drop-shadow(0 5px 10px rgba(255, 240, 31, 0.5));
+      z-index: 10;
+    }
+    
+    .emoji-item:active {
+      transform: translateY(-2px) scale(1.1);
+      box-shadow: 
+        0 5px 10px rgba(255, 240, 31, 0.3),
+        0 0 10px rgba(255, 240, 31, 0.2);
+    }
+
     /* PREVIEW DE IMAGEN */
     .image-preview {
       position: fixed;
@@ -374,6 +494,8 @@
       .message { max-width: 85%; }
       .chat-header { padding: 12px 15px; }
       .input-area { padding: 12px 15px; }
+      .emoji-grid { grid-template-columns: repeat(6, 1fr); }
+      .emoji-item { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -426,6 +548,79 @@
     </div>
   </div>
 
+  <!-- 🎨 PANEL DE EMOJIS 3D NEÓN -->
+  <div class="emoji-panel" id="emoji-panel">
+    <div class="emoji-category">
+      <div class="emoji-category-title">💈 Barbería</div>
+      <div class="emoji-grid">
+        <div class="emoji-item" data-emoji="💈">💈</div>
+        <div class="emoji-item" data-emoji="✂️">✂️</div>
+        <div class="emoji-item" data-emoji="🪒">🪒</div>
+        <div class="emoji-item" data-emoji="">🧔</div>
+        <div class="emoji-item" data-emoji="👨‍">👨‍🦱</div>
+        <div class="emoji-item" data-emoji="💇‍♂️">💇‍♂️</div>
+        <div class="emoji-item" data-emoji="🎨">🎨</div>
+        <div class="emoji-item" data-emoji="✨">✨</div>
+      </div>
+    </div>
+    
+    <div class="emoji-category">
+      <div class="emoji-category-title">🔥 Emociones</div>
+      <div class="emoji-grid">
+        <div class="emoji-item" data-emoji="🔥">🔥</div>
+        <div class="emoji-item" data-emoji="😎">😎</div>
+        <div class="emoji-item" data-emoji="🤘">🤘</div>
+        <div class="emoji-item" data-emoji="💪">💪</div>
+        <div class="emoji-item" data-emoji="👊">👊</div>
+        <div class="emoji-item" data-emoji="🙌">🙌</div>
+        <div class="emoji-item" data-emoji="💯"></div>
+        <div class="emoji-item" data-emoji="⚡"></div>
+      </div>
+    </div>
+    
+    <div class="emoji-category">
+      <div class="emoji-category-title">💎 Lujo</div>
+      <div class="emoji-grid">
+        <div class="emoji-item" data-emoji="💎">💎</div>
+        <div class="emoji-item" data-emoji="👑">👑</div>
+        <div class="emoji-item" data-emoji="💰"></div>
+        <div class="emoji-item" data-emoji="🏆"></div>
+        <div class="emoji-item" data-emoji="⭐">⭐</div>
+        <div class="emoji-item" data-emoji="🌟">🌟</div>
+        <div class="emoji-item" data-emoji="💫">💫</div>
+        <div class="emoji-item" data-emoji="🎯"></div>
+      </div>
+    </div>
+    
+    <div class="emoji-category">
+      <div class="emoji-category-title">❤️ Reacciones</div>
+      <div class="emoji-grid">
+        <div class="emoji-item" data-emoji="❤️">❤️</div>
+        <div class="emoji-item" data-emoji="">🧡</div>
+        <div class="emoji-item" data-emoji="💛">💛</div>
+        <div class="emoji-item" data-emoji="💚">💚</div>
+        <div class="emoji-item" data-emoji="💙">💙</div>
+        <div class="emoji-item" data-emoji="💜">💜</div>
+        <div class="emoji-item" data-emoji="🖤">🖤</div>
+        <div class="emoji-item" data-emoji="🤍">🤍</div>
+      </div>
+    </div>
+    
+    <div class="emoji-category">
+      <div class="emoji-category-title">🎉 Celebración</div>
+      <div class="emoji-grid">
+        <div class="emoji-item" data-emoji="🎉">🎉</div>
+        <div class="emoji-item" data-emoji="🎊"></div>
+        <div class="emoji-item" data-emoji="🥳">🥳</div>
+        <div class="emoji-item" data-emoji="">🍾</div>
+        <div class="emoji-item" data-emoji="">🥂</div>
+        <div class="emoji-item" data-emoji="🎈">🎈</div>
+        <div class="emoji-item" data-emoji="🎁">🎁</div>
+        <div class="emoji-item" data-emoji="🎂">🎂</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ÁREA DE INPUT -->
   <div class="input-area">
     <input type="file" id="photo-input" accept="image/*">
@@ -436,6 +631,10 @@
     
     <button class="action-btn photo-btn" id="photo-btn" title="Enviar foto">
       <i class="fas fa-camera"></i>
+    </button>
+    
+    <button class="action-btn emoji-btn" id="emoji-btn" title="Emojis">
+      <i class="fas fa-smile"></i>
     </button>
     
     <input type="text" class="chat-input" id="message-input" placeholder="Escribe un mensaje..." autocomplete="off">
@@ -450,28 +649,56 @@
 
   <script src="config.js"></script>
   <script>
-    // 🔊 SONIDO DE VIBRACIÓN (Beep futurista)
+    // 🔊 SONIDO DE VIBRACIÓN
     const vibrateSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=');
-    
-    // 💥 EFECTO DE SONIDO AL ENVIAR
     const sendSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=');
+    const emojiSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=');
+
+    // 🎨 PANEL DE EMOJIS
+    const emojiBtn = document.getElementById('emoji-btn');
+    const emojiPanel = document.getElementById('emoji-panel');
+    const emojiItems = document.querySelectorAll('.emoji-item');
+    const messageInput = document.getElementById('message-input');
+
+    // Abrir/cerrar panel de emojis
+    emojiBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      emojiPanel.classList.toggle('show');
+      emojiSound.play().catch(() => {});
+    });
+
+    // Cerrar panel al hacer clic fuera
+    document.addEventListener('click', (e) => {
+      if (!emojiPanel.contains(e.target) && e.target !== emojiBtn) {
+        emojiPanel.classList.remove('show');
+      }
+    });
+
+    // Insertar emoji al hacer clic
+    emojiItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const emoji = item.getAttribute('data-emoji');
+        messageInput.value += emoji;
+        messageInput.focus();
+        emojiSound.play().catch(() => {});
+        
+        // Efecto visual en el emoji seleccionado
+        item.style.transform = 'scale(1.4) rotate(360deg)';
+        setTimeout(() => {
+          item.style.transform = '';
+        }, 300);
+      });
+    });
 
     // ⚡ VIBRAR CON SONIDO
     document.getElementById('vibrate-btn').addEventListener('click', () => {
-      // Vibración háptica
       if (navigator.vibrate) {
         navigator.vibrate([50, 30, 50, 30, 100]);
       }
-      
-      // Sonido de vibración
       vibrateSound.play().catch(() => {});
-      
-      // Efecto visual en el botón
       const btn = document.getElementById('vibrate-btn');
       btn.style.transform = 'scale(0.9)';
       setTimeout(() => btn.style.transform = 'scale(1)', 100);
-      
-      // Mostrar notificación
       showNotification('📳 ¡Vibración activada!');
     });
 
@@ -489,7 +716,6 @@
           const preview = document.getElementById('image-preview');
           preview.src = event.target.result;
           preview.classList.add('show');
-          
           setTimeout(() => {
             preview.classList.remove('show');
             sendPhoto(event.target.result);
@@ -514,8 +740,6 @@
       
       chatArea.appendChild(msgDiv);
       scrollToBottom();
-      
-      // Sonido de envío
       sendSound.play().catch(() => {});
     }
 
@@ -544,15 +768,11 @@
       chatArea.appendChild(msgDiv);
       input.value = '';
       scrollToBottom();
-      
-      // Sonido de envío
       sendSound.play().catch(() => {});
-      
-      // Simular respuesta
       setTimeout(() => simulateReply(), 2000);
     }
 
-    // SIMULAR RESPUESTA DEL BARBERO
+    // SIMULAR RESPUESTA
     function simulateReply() {
       const typingIndicator = document.getElementById('typing-indicator');
       typingIndicator.classList.add('show');
@@ -560,7 +780,6 @@
       
       setTimeout(() => {
         typingIndicator.classList.remove('show');
-        
         const chatArea = document.getElementById('chat-area');
         const now = new Date();
         const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
@@ -616,7 +835,6 @@
       }, 2000);
     }
 
-    // Agregar animaciones CSS dinámicas
     const style = document.createElement('style');
     style.textContent = `
       @keyframes slideDown {
@@ -630,7 +848,6 @@
     `;
     document.head.appendChild(style);
 
-    // Scroll al fondo al cargar
     scrollToBottom();
   </script>
 </body>
