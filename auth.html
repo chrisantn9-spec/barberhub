@@ -395,25 +395,38 @@
       const t={login:'Inicia tu estilo',register:'Crea tu cuenta gratis',recover:'Recupera tu contraseña',newpassword:'Crea tu nueva contraseña'};
       document.getElementById('auth-subtitle').textContent=t[n]||'';
     }
-
-    // ✅ FUNCIÓN DE REDIRECCIÓN SEGÚN ROL (UNA SOLA VEZ, AL FINAL)
-    async function handleLoginRedirect(u){
-      try{
-        const{data:p}=await supabaseClient.from('perfiles').select('rol').eq('id',u.id).single();
-        const rol = p?.rol || 'client';
-        
-        if(rol === 'admin'){
-          location.href = '/admin.html';
-        } else if(rol === 'barber'){
-          location.href = '/barbero-perfil.html';
-        } else {
-          location.href = '/dashboard.html';
-        }
-      }catch{
-        location.href = '/dashboard.html';
-      }
+async function handleLoginRedirect(u){
+  try{
+    console.log('🔍 Buscando perfil para usuario:', u.id);
+    const{data:p, error}=await supabaseClient.from('perfiles').select('rol').eq('id',u.id).single();
+    
+    if(error){
+      console.error('❌ Error al consultar perfiles:', error);
+      alert('Error al leer perfil: ' + error.message);
+      location.href = '/dashboard.html';
+      return;
     }
-
+    
+    console.log('✅ Perfil encontrado:', p);
+    const rol = p?.rol || 'client';
+    console.log(' Rol detectado:', rol);
+    
+    if(rol === 'admin'){
+      console.log(' Redirigiendo a admin.html');
+      location.href = '/admin.html';
+    } else if(rol === 'barber'){
+      console.log('💈 Redirigiendo a barbero-perfil.html');
+      location.href = '/barbero-perfil.html';
+    } else {
+      console.log('👤 Redirigiendo a dashboard.html (cliente)');
+      location.href = '/dashboard.html';
+    }
+  }catch(err){
+    console.error('❌ Error inesperado:', err);
+    location.href = '/dashboard.html';
+  }
+}
+  
     async function processOAuthCallback(){
       const h=location.hash;
       if(!h.includes('access_token')&&!h.includes('code='))return;
